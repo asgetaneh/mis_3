@@ -67,8 +67,8 @@
                         <tr>
                             <td>{{ $goal_t->name ?? '-' }}</td>
                             <td>{{ $goal_t->description ?? '-' }}</td>
-                            <td>{{ $goal_t->out_put ?? '-' }}</td>
-                            <td>{{ $goal_t->out_come ?? '-' }}</td>
+                            <td>{{ strip_tags($goal_t->out_put ?? '-' )}}</td>
+                            <td>{{ strip_tags($goal_t->out_come ?? '-') }}</td>
                             <td class="text-center" style="width: 134px;">
                                 <div
                                     role="group"

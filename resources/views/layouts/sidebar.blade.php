@@ -267,14 +267,66 @@
                             @endcan
                             </ul>
                         </li>
-                            @can('view-any', App\Models\User::class)
+
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                <p>
+                                    Plan
+                                    <i class="nav-icon right icon ion-md-arrow-round-back"></i>
+                                </p>
+                            </a>
+                            
+                            <ul class="nav nav-treeview">
+                            @can('view-any', App\Models\StrategyTranslation::class)
                             <li class="nav-item">
-                                <a href="{{ route('users.index') }}" class="nav-link">
+                                <a href="{{ route('strategy-translations.index') }}" class="nav-link">
                                     <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                    <p>Users</p>
+                                    <p>Cascade</p>
                                 </a>
                             </li>
                             @endcan
+                            @can('view-any', App\Models\Language::class)
+                            <li class="nav-item">
+                                <a href="{{ route('languages.index') }}" class="nav-link">
+                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                    <p>View Plan</p>
+                                </a>
+                            </li>
+                            @endcan
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                <p>
+                                    Report
+                                    <i class="nav-icon right icon ion-md-arrow-round-back"></i>
+                                </p>
+                            </a>
+                            
+                            <ul class="nav nav-treeview">
+                            @can('view-any', App\Models\StrategyTranslation::class)
+                            <li class="nav-item">
+                                <a href="{{ route('strategy-translations.index') }}" class="nav-link">
+                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                    <p>Reporting</p>
+                                </a>
+                            </li>
+                            @endcan
+                            @can('view-any', App\Models\Language::class)
+                            <li class="nav-item">
+                                <a href="{{ route('languages.index') }}" class="nav-link">
+                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                    <p>View Report  </p>
+                                </a>
+                            </li>
+                            @endcan
+                            </ul>
+                        </li>
+
+
+
                     </ul>
                 </li>
 
