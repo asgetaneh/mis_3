@@ -1,0 +1,49 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">
+                <a
+                    href="{{ route('reporting-period-type-ts.index') }}"
+                    class="mr-4"
+                    ><i class="icon ion-md-arrow-back"></i
+                ></a>
+                @lang('crud.reporting_period_type_translations.edit_title')
+            </h4>
+
+            <x-form
+                method="PUT"
+                action="{{ route('reporting-period-type-ts.update', $reportingPeriodTypeT) }}"
+                class="mt-4"
+            >
+                @include('app.reporting_period_type_ts.form-inputs')
+
+                <div class="mt-4">
+                    <a
+                        href="{{ route('reporting-period-type-ts.index') }}"
+                        class="btn btn-light"
+                    >
+                        <i class="icon ion-md-return-left text-primary"></i>
+                        @lang('crud.common.back')
+                    </a>
+
+                    <a
+                        href="{{ route('reporting-period-type-ts.create') }}"
+                        class="btn btn-light"
+                    >
+                        <i class="icon ion-md-add text-primary"></i>
+                        @lang('crud.common.create')
+                    </a>
+
+                    <button type="submit" class="btn btn-primary float-right">
+                        <i class="icon ion-md-save"></i>
+                        @lang('crud.common.update')
+                    </button>
+                </div>
+            </x-form>
+        </div>
+    </div>
+</div>
+@endsection
