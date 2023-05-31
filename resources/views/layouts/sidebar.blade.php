@@ -341,14 +341,7 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                            @can('view-any', App\Models\User::class)
-                            <li class="nav-item">
-                                <a href="{{ route('users.index') }}" class="nav-link">
-                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                    <p>Users</p>
-                                </a>
-                            </li>
-                            @endcan
+                           
                           
                             @can('view-any', App\Models\GoalTranslation::class)
                             <li class="nav-item">
@@ -556,6 +549,14 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
+                         @can('view-any', App\Models\User::class)
+                            <li class="nav-item">
+                                <a href="{{ route('users.index') }}" class="nav-link">
+                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                    <p>Users</p>
+                                </a>
+                            </li>
+                            @endcan
                         @can('view-any', Spatie\Permission\Models\Role::class)
                         <li class="nav-item">
                             <a href="{{ route('roles.index') }}" class="nav-link">
