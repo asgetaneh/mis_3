@@ -1,12 +1,12 @@
-@extends('layouts.main')
+@extends('layouts.app')
 @section('content') 
 
  <!-- Small boxes (Stat box) -->
       <div class="row">
-                <h1>{{ __('1.welcome') }}</h1>
+                <!-- <h1>{{ __('1.welcome') }}</h1> -->
         <div class="col-lg-3 col-xs-6">
           <!-- small box -->
-          <div class="small-box bg-aqua">
+          <div class="small-box bg-primary">
             <div class="inner">
               <h3>150</h3>
 
@@ -23,9 +23,9 @@
           <!-- small box -->
           <div class="small-box bg-green">
             <div class="inner">
-              <h3>53<sup style="font-size: 20px">%</sup></h3>
+              <h3>16<sup style="font-size: 20px"></sup></h3>
 
-              <p>Bounce Rate</p>
+              <p>Objectives</p>
             </div>
             <div class="icon">
               <i class="ion ion-stats-bars"></i>
