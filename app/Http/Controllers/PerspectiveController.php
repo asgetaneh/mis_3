@@ -26,7 +26,7 @@ class PerspectiveController extends Controller
 
         $perspective_ts = PerspectiveTranslation::search($search)
             ->latest()
-            ->paginate(5)
+            ->paginate(15)
             ->withQueryString();
 
         return view(

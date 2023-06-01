@@ -68,7 +68,7 @@
                                 {{ $perspective_t->name ?? '-' }}
                             </td>
                             <td>
-                                {{ $perspective_t->description ?? '-' }}
+                                {{ strip_tags($perspective_t->description ?? '-' )}}
                             </td>
                             <td class="text-center" style="width: 134px;">
                                 <div

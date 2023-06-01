@@ -42,9 +42,13 @@ use App\Http\Controllers\KeyPeformanceIndicatorTController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', function () { return view('welcome');});
+Route::get('/dashboard', function () { return view('layouts.dashboard');});
+Route::get('lang/home', [HomeController::class, 'languageIndex']);
+Route::get('lang/change', [HomeController::class, 'change'])->name('changeLang');
+Route::get('languages', [LanguageController::class, 'index']);
+    // institution ownerships
+
 Route::get('home', [HomeController::class, 'home'])->name('home');
 
 Route::prefix('/')
