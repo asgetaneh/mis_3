@@ -48,16 +48,16 @@
                     <thead>
                         <tr>
                             <th class="text-left">
-                                @lang('crud.objectives.inputs.goal_id')
+                                Name
                             </th>
                             <th class="text-left">
-                                @lang('crud.objectives.inputs.perspective_id')
+                               Description
                             </th>
                             <th class="text-left">
-                                @lang('crud.objectives.inputs.created_by_id')
+                                Output
                             </th>
                             <th class="text-left">
-                                @lang('crud.objectives.inputs.updated_by_id')
+                                Outcome
                             </th>
                             <th class="text-right">
                                 @lang('crud.objectives.inputs.weight')
@@ -68,29 +68,32 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($objectives as $objective)
+
+                        @forelse($objective_ts as $objective_t)
+                        @if(app()->getLocale() ==$objective_t->locale)
+
                         <tr>
-                            <td>{{ optional($objective->goal)->id ?? '-' }}</td>
+                            <td>{{ $objective_t->name ?? '-' }}</td>
                             <td>
-                                {{ optional($objective->perspective)->id ?? '-'
+                                {{ $objective_t->description ?? '-'
                                 }}
                             </td>
                             <td>
-                                {{ optional($objective->user)->name ?? '-' }}
+                                {{ $objective_t->out_put ?? '-' }}
                             </td>
                             <td>
-                                {{ optional($objective->user2)->name ?? '-' }}
+                                {{ $objective_t->out_come ?? '-' }}
                             </td>
-                            <td>{{ $objective->weight ?? '-' }}</td>
+                            <td>{{ $objective_t->objective->weight ?? '-' }}</td>
                             <td class="text-center" style="width: 134px;">
                                 <div
                                     role="group"
                                     aria-label="Row Actions"
                                     class="btn-group"
                                 >
-                                    @can('update', $objective)
+                                    @can('update', $objective_t)
                                     <a
-                                        href="{{ route('objectives.edit', $objective) }}"
+                                        href="{{ route('objectives.edit', $objective_t) }}"
                                     >
                                         <button
                                             type="button"
@@ -99,9 +102,9 @@
                                             <i class="icon ion-md-create"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('view', $objective)
+                                    @endcan @can('view', $objective_t)
                                     <a
-                                        href="{{ route('objectives.show', $objective) }}"
+                                        href="{{ route('objectives.show', $objective_t) }}"
                                     >
                                         <button
                                             type="button"
@@ -110,9 +113,9 @@
                                             <i class="icon ion-md-eye"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('delete', $objective)
+                                    @endcan @can('delete', $objective_t)
                                     <form
-                                        action="{{ route('objectives.destroy', $objective) }}"
+                                        action="{{ route('objectives.destroy', $objective_t) }}"
                                         method="POST"
                                         onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                     >
@@ -128,6 +131,7 @@
                                 </div>
                             </td>
                         </tr>
+                        @endif
                         @empty
                         <tr>
                             <td colspan="6">
@@ -138,7 +142,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="6">{!! $objectives->render() !!}</td>
+                            <td colspan="6">{!! $objective_ts->render() !!}</td>
                         </tr>
                     </tfoot>
                 </table>
