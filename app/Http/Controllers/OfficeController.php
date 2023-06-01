@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Language;
 
 use App\Models\User;
 use App\Models\Office;
+use App\Models\OfficeTranslation;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -35,27 +37,54 @@ class OfficeController extends Controller
     public function create(Request $request): View
     {
         $this->authorize('create', Office::class);
-
+        $search = $request->get('search', '');
         $users = User::pluck('name', 'id');
         $offices = Office::pluck('id', 'id');
+         $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
 
-        return view('app.offices.create', compact('users', 'offices'));
+        return view('app.offices.create', compact('users', 'offices', 'languages'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(OfficeStoreRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $this->authorize('create', Office::class);
 
-        $validated = $request->validated();
-
-        $office = Office::create($validated);
-
-        return redirect()
-            ->route('offices.edit', $office)
+       $data = $request->input();
+        $language = Language::all();
+         //$lastoffice = office::select('id')->orderBy('id','desc')->first();
+        try {
+            $office = new Office;
+             $office->created_at= new \DateTime();
+            $office->updated_at =new \DateTime();
+            $office->save();
+             foreach ($language as $key => $value) {
+                // code...
+                $office_translation = new OfficeTranslation;
+                //dd($data);
+                // if($data['parent_office_id'] ==null){
+                //     $data['parent_office_id'] =0;
+                // }
+                $office_translation ->translation_id=$office->id;
+                // $office_translation ->parent_office_id = $data['parent_office_id'];
+                $office_translation ->name = $data['name'.$value->locale];
+                 $office_translation ->locale = $value->locale;
+                $office_translation ->description = $data['description'.$value->locale];
+                $office_translation->save();
+         }
+         return redirect()
+            ->route('offices.index', $office)
             ->withSuccess(__('crud.common.created'));
+        } catch (Exception $e) { 
+            return redirect('office/new')->withErrors(['errors' => $e]);
+            }
+        $offices = officeTranslation::all();
+        return view('office.index',['offices', $offices]);
     }
 
     /**
