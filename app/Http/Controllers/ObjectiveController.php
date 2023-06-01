@@ -103,7 +103,7 @@ class ObjectiveController extends Controller
             }
 
         // code is unreachable
-        $objectives = ObjectiveTranslatione::all();
+        $objectives = ObjectiveTranslation::all();
         return view('objective.index',['objectives', $objectives]);
     }
 
