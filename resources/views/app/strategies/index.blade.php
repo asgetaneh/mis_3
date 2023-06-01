@@ -48,13 +48,10 @@
                     <thead>
                         <tr>
                             <th class="text-left">
-                                @lang('crud.strategies.inputs.objective_id')
+                                Name
                             </th>
                             <th class="text-left">
-                                @lang('crud.strategies.inputs.created_by_id')
-                            </th>
-                            <th class="text-left">
-                                @lang('crud.strategies.inputs.updated_by_id')
+                                Description
                             </th>
                             <th class="text-center">
                                 @lang('crud.common.actions')
@@ -62,16 +59,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($strategies as $strategy)
+                        @forelse($strategy_ts as $strategy_t)
+                        @if(app()->getLocale() ==$strategy_t->locale)
                         <tr>
                             <td>
-                                {{ optional($strategy->objective)->id ?? '-' }}
+                                {{ $strategy_t->name ?? '-' }}
                             </td>
                             <td>
-                                {{ optional($strategy->user)->name ?? '-' }}
-                            </td>
-                            <td>
-                                {{ optional($strategy->user2)->name ?? '-' }}
+                                {{ $strategy_t->discription ?? '-' }}
                             </td>
                             <td class="text-center" style="width: 134px;">
                                 <div
@@ -79,9 +74,9 @@
                                     aria-label="Row Actions"
                                     class="btn-group"
                                 >
-                                    @can('update', $strategy)
+                                    @can('update', $strategy_t)
                                     <a
-                                        href="{{ route('strategies.edit', $strategy) }}"
+                                        href="{{ route('strategies.edit', $strategy_t) }}"
                                     >
                                         <button
                                             type="button"
@@ -90,9 +85,9 @@
                                             <i class="icon ion-md-create"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('view', $strategy)
+                                    @endcan @can('view', $strategy_t)
                                     <a
-                                        href="{{ route('strategies.show', $strategy) }}"
+                                        href="{{ route('strategies.show', $strategy_t) }}"
                                     >
                                         <button
                                             type="button"
@@ -101,9 +96,9 @@
                                             <i class="icon ion-md-eye"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('delete', $strategy)
+                                    @endcan @can('delete', $strategy_t)
                                     <form
-                                        action="{{ route('strategies.destroy', $strategy) }}"
+                                        action="{{ route('strategies.destroy', $strategy_t) }}"
                                         method="POST"
                                         onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                     >
@@ -119,6 +114,7 @@
                                 </div>
                             </td>
                         </tr>
+                        @endif
                         @empty
                         <tr>
                             <td colspan="4">
@@ -129,7 +125,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="4">{!! $strategies->render() !!}</td>
+                            <td colspan="4">{!! $strategy_ts->render() !!}</td>
                         </tr>
                     </tfoot>
                 </table>

@@ -1,17 +1,19 @@
 @php $editing = isset($strategy) @endphp
 
 <div class="row">
+
     <x-inputs.group class="col-sm-12">
         <x-inputs.select name="objective_id" label="Objective" required>
             @php $selected = old('objective_id', ($editing ? $strategy->objective_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Objective</option>
             @foreach($objectives as $value => $label)
-            <option value="{{ $value }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label }}</option>
+            <option value="{{ $label->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->objectiveTranslations[0]->name }}</option>
             @endforeach
         </x-inputs.select>
     </x-inputs.group>
+    @foreach($languages as $key => $lang)
 
-    <x-inputs.group class="col-sm-12">
+    {{-- <x-inputs.group class="col-sm-12">
         <x-inputs.select name="created_by_id" label="User" required>
             @php $selected = old('created_by_id', ($editing ? $strategy->created_by_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the User</option>
@@ -29,5 +31,26 @@
             <option value="{{ $value }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label }}</option>
             @endforeach
         </x-inputs.select>
+    </x-inputs.group> --}}
+
+    <x-inputs.group class="col-sm-12">
+        <x-inputs.text
+            name="{{'name'.$lang->locale}}"
+            label="{{'Name in '.$lang->name}}"
+             maxlength="255"
+            placeholder="{{'name in '.$lang->name}}"
+            required
+        ></x-inputs.text>
     </x-inputs.group>
+
+    <x-inputs.group class="col-sm-12">
+        <x-inputs.textarea
+            name="{{'description'.$lang->locale}}"
+            label="{{'Description in '.$lang->name}}"
+            maxlength="255"
+            required>
+              </x-inputs.textarea
+        >
+    </x-inputs.group>
+@endforeach
 </div>
