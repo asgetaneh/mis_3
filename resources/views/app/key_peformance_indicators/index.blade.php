@@ -49,20 +49,29 @@
                 <table class="table table-borderless table-hover">
                     <thead>
                         <tr>
-                            <th class="text-right">
+                            <th class="text-left">
+                                Name
+                            </th>
+                            <th class="text-left">
+                                Description
+                            </th>
+                            <th class="text-left">
+                                Output
+                            </th>
+                            <th class="text-left">
+                                Outcome
+                            </th>
+                            <th class="text-left">
+                                Objective
+                            </th>
+                            <th class="text-left">
+                                Strategy
+                            </th>
+                            <th class="text-left">
+                                Reporting Period Type
+                            </th>
+                            <th class="text-left">
                                 @lang('crud.key_peformance_indicators.inputs.weight')
-                            </th>
-                            <th class="text-left">
-                                @lang('crud.key_peformance_indicators.inputs.objective_id')
-                            </th>
-                            <th class="text-left">
-                                @lang('crud.key_peformance_indicators.inputs.strategy_id')
-                            </th>
-                            <th class="text-left">
-                                @lang('crud.key_peformance_indicators.inputs.created_by_id')
-                            </th>
-                            <th class="text-left">
-                                @lang('crud.key_peformance_indicators.inputs.reporting_period_type_id')
                             </th>
                             <th class="text-center">
                                 @lang('crud.common.actions')
@@ -70,30 +79,73 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($keyPeformanceIndicators as
-                        $keyPeformanceIndicator)
+                        @forelse($keyPeformanceIndicator_ts as $keyPeformanceIndicator_t)
+                        @if(app()->getLocale() == $keyPeformanceIndicator_t->locale)
                         <tr>
                             <td>
-                                {{ $keyPeformanceIndicator->weight ?? '-' }}
-                            </td>
-                            <td>
                                 {{
-                                optional($keyPeformanceIndicator->objective)->id
+                                $keyPeformanceIndicator_t->name
                                 ?? '-' }}
                             </td>
                             <td>
                                 {{
-                                optional($keyPeformanceIndicator->strategy)->id
-                                ?? '-' }}
-                            </td>
-                            <td>
-                                {{ optional($keyPeformanceIndicator->user)->name
+                                $keyPeformanceIndicator_t->description
                                 ?? '-' }}
                             </td>
                             <td>
                                 {{
-                                optional($keyPeformanceIndicator->reportingPeriodType)->id
+                                $keyPeformanceIndicator_t->out_put
                                 ?? '-' }}
+                            </td>
+                            <td>
+                                {{
+                                $keyPeformanceIndicator_t->out_come
+                                ?? '-' }}
+                            </td>
+
+                            @php
+                                $objective = '';
+                                foreach ($keyPeformanceIndicator_t->keyPeformanceIndicator->objective->objectiveTranslations as $key => $value) {
+                                    if (app()->getLocale() == $value->locale){
+                                        $objective = $value->name;
+                                    }
+                                }
+                            @endphp
+
+                            @php
+                                $strategy = '';
+                                foreach ($keyPeformanceIndicator_t->keyPeformanceIndicator->strategy->strategyTranslations as $key => $value) {
+                                    if (app()->getLocale() == $value->locale){
+                                        $strategy = $value->name;
+                                    }
+                                }
+                            @endphp
+
+                            @php
+                            $reportingPeriodType = '';
+                                foreach ($keyPeformanceIndicator_t->keyPeformanceIndicator->reportingPeriodType->reportingPeriodTypeTs as $key => $value) {
+                                    if (app()->getLocale() == $value->locale){
+                                        $reportingPeriodType = $value->name;
+                                    }
+                                }
+                            @endphp
+
+                            <td>
+                                {{
+                                $objective ?? '-' }}
+                            </td>
+                            <td>
+                                {{
+                                $strategy
+                                ?? '-' }}
+                            </td>
+                            <td>
+                                {{
+                                $reportingPeriodType
+                                ?? '-' }}
+                            </td>
+                            <td>
+                                {{ $keyPeformanceIndicator_t->keyPeformanceIndicator->weight ?? '-' }}
                             </td>
                             <td class="text-center" style="width: 134px;">
                                 <div
@@ -101,9 +153,9 @@
                                     aria-label="Row Actions"
                                     class="btn-group"
                                 >
-                                    @can('update', $keyPeformanceIndicator)
+                                    @can('update', $keyPeformanceIndicator_t)
                                     <a
-                                        href="{{ route('key-peformance-indicators.edit', $keyPeformanceIndicator) }}"
+                                        href="{{ route('key-peformance-indicators.edit', $keyPeformanceIndicator_t) }}"
                                     >
                                         <button
                                             type="button"
@@ -113,9 +165,9 @@
                                         </button>
                                     </a>
                                     @endcan @can('view',
-                                    $keyPeformanceIndicator)
+                                    $keyPeformanceIndicator_t)
                                     <a
-                                        href="{{ route('key-peformance-indicators.show', $keyPeformanceIndicator) }}"
+                                        href="{{ route('key-peformance-indicators.show', $keyPeformanceIndicator_t) }}"
                                     >
                                         <button
                                             type="button"
@@ -125,9 +177,9 @@
                                         </button>
                                     </a>
                                     @endcan @can('delete',
-                                    $keyPeformanceIndicator)
+                                    $keyPeformanceIndicator_t)
                                     <form
-                                        action="{{ route('key-peformance-indicators.destroy', $keyPeformanceIndicator) }}"
+                                        action="{{ route('key-peformance-indicators.destroy', $keyPeformanceIndicator_t) }}"
                                         method="POST"
                                         onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                     >
@@ -143,6 +195,7 @@
                                 </div>
                             </td>
                         </tr>
+                        @endif
                         @empty
                         <tr>
                             <td colspan="6">
@@ -154,7 +207,7 @@
                     <tfoot>
                         <tr>
                             <td colspan="6">
-                                {!! $keyPeformanceIndicators->render() !!}
+                                {!! $keyPeformanceIndicator_ts->render() !!}
                             </td>
                         </tr>
                     </tfoot>
