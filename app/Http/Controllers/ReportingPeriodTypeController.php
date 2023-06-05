@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\Language;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Models\ReportingPeriodType;
+use App\Models\ReportingPeriodTypeT;
 use Illuminate\Http\RedirectResponse;
+use App\Models\ReportingPeriodTypeTranslation;
 use App\Http\Requests\ReportingPeriodTypeStoreRequest;
 use App\Http\Requests\ReportingPeriodTypeUpdateRequest;
 
@@ -20,14 +24,14 @@ class ReportingPeriodTypeController extends Controller
 
         $search = $request->get('search', '');
 
-        $reportingPeriodTypes = ReportingPeriodType::search($search)
+        $reportingPeriodTypeTS = ReportingPeriodTypeT::search($search)
             ->latest()
             ->paginate(5)
             ->withQueryString();
 
         return view(
             'app.reporting_period_types.index',
-            compact('reportingPeriodTypes', 'search')
+            compact('reportingPeriodTypeTS', 'search')
         );
     }
 
@@ -38,20 +42,49 @@ class ReportingPeriodTypeController extends Controller
     {
         $this->authorize('create', ReportingPeriodType::class);
 
-        return view('app.reporting_period_types.create');
+        $search = $request->get('search', '');
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
+        $users = User::pluck('name', 'id');
+        return view('app.reporting_period_types.create', compact('users', 'languages'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(
-        ReportingPeriodTypeStoreRequest $request
+        Request $request
     ): RedirectResponse {
         $this->authorize('create', ReportingPeriodType::class);
 
-        $validated = $request->validated();
+        // $validated = $request->validated();
 
-        $reportingPeriodType = ReportingPeriodType::create($validated);
+        // $reportingPeriodType = ReportingPeriodType::create($validated);
+
+        $data = $request->input();
+        $language = Language::all();
+
+        try {
+            $reportingPeriodType = new ReportingPeriodType;
+            $reportingPeriodType->save();
+             foreach ($language as $key => $value) {
+                // code...
+                $reportingPeriodTypeTS = new ReportingPeriodTypeT;
+                $reportingPeriodTypeTS ->reporting_period_type_id=$reportingPeriodType->id;
+                $reportingPeriodTypeTS ->name = $data['name'.$value->locale];
+                $reportingPeriodTypeTS ->locale = $value->locale;
+                $reportingPeriodTypeTS ->description = $data['description'.$value->locale];
+                $reportingPeriodTypeTS->save();
+         }
+         return redirect()
+            ->route('reporting-period-types.index', $reportingPeriodType)
+            ->withSuccess(__('crud.common.created'));
+        } catch (Exception $e) {
+            return redirect('reporting-period-ts/create')->withErrors(['errors' => $e]);
+            }
 
         return redirect()
             ->route('reporting-period-types.edit', $reportingPeriodType)

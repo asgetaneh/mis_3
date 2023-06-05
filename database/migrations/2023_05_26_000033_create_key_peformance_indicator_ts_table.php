@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->text('out_put');
             $table->text('out_come');
             $table->unsignedBigInteger('translation_id');
+            $table->string('locale', 8);
 
             $table->timestamps();
         });

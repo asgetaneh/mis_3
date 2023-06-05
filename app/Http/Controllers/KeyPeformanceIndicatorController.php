@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Language;
 use App\Models\Strategy;
-use Illuminate\View\View;
 use App\Models\Objective;
+use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Models\ReportingPeriodType;
 use Illuminate\Http\RedirectResponse;
 use App\Models\KeyPeformanceIndicator;
 use App\Http\Requests\KeyPeformanceIndicatorStoreRequest;
 use App\Http\Requests\KeyPeformanceIndicatorUpdateRequest;
+use App\Models\KeyPeformanceIndicatorT;
+use App\Models\ReportingPeriodTypeT;
 
 class KeyPeformanceIndicatorController extends Controller
 {
@@ -24,14 +27,14 @@ class KeyPeformanceIndicatorController extends Controller
 
         $search = $request->get('search', '');
 
-        $keyPeformanceIndicators = KeyPeformanceIndicator::search($search)
+        $keyPeformanceIndicator_ts = KeyPeformanceIndicatorT::search($search)
             ->latest()
             ->paginate(5)
             ->withQueryString();
 
         return view(
             'app.key_peformance_indicators.index',
-            compact('keyPeformanceIndicators', 'search')
+            compact('keyPeformanceIndicator_ts', 'search')
         );
     }
 
@@ -42,14 +45,19 @@ class KeyPeformanceIndicatorController extends Controller
     {
         $this->authorize('create', KeyPeformanceIndicator::class);
 
-        $objectives = Objective::pluck('id', 'id');
-        $strategies = Strategy::pluck('id', 'id');
+        $objectives = Objective::all();
+        $strategies = Strategy::all();
         $users = User::pluck('name', 'id');
-        $reportingPeriodTypes = ReportingPeriodType::pluck('id', 'id');
+        $reportingPeriodTypes = ReportingPeriodType::all();
+        $search = $request->get('search', '');
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
 
         return view(
             'app.key_peformance_indicators.create',
-            compact('objectives', 'strategies', 'users', 'reportingPeriodTypes')
+            compact('objectives', 'strategies', 'users', 'reportingPeriodTypes', 'languages')
         );
     }
 
@@ -57,13 +65,43 @@ class KeyPeformanceIndicatorController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(
-        KeyPeformanceIndicatorStoreRequest $request
+        Request $request
     ): RedirectResponse {
         $this->authorize('create', KeyPeformanceIndicator::class);
 
-        $validated = $request->validated();
+        // $validated = $request->validated();
 
-        $keyPeformanceIndicator = KeyPeformanceIndicator::create($validated);
+        // $keyPeformanceIndicator = KeyPeformanceIndicator::create($validated);
+
+        $data = $request->input();
+        $language = Language::all();
+         //$lastGoal = Goal::select('id')->orderBy('id','desc')->first();
+        try {
+            $keyPeformanceIndicator = new KeyPeformanceIndicator;
+            $keyPeformanceIndicator->weight= $data['weight'];
+            $keyPeformanceIndicator->objective_id= $data['objective_id'];
+            $keyPeformanceIndicator->strategy_id= $data['strategy_id'];
+            $keyPeformanceIndicator->reporting_period_type_id= $data['reporting_period_type_id'];
+            $keyPeformanceIndicator->created_by_id= auth()->user()->id;
+            $keyPeformanceIndicator->save();
+             foreach ($language as $key => $value) {
+                // code...
+                $kpi_translation = new KeyPeformanceIndicatorT;
+                $kpi_translation ->translation_id=$keyPeformanceIndicator->id;
+                $kpi_translation ->name = $data['name'.$value->locale];
+                $kpi_translation ->locale = $value->locale;
+                $kpi_translation ->description = $data['description'.$value->locale];
+                $kpi_translation ->out_put = $data['output'.$value->locale];
+                $kpi_translation ->out_come = $data['outcome'.$value->locale];
+                $kpi_translation->save();
+         }
+
+         return redirect()
+            ->route('key-peformance-indicators.index', $keyPeformanceIndicator)
+            ->withSuccess(__('crud.common.created'));
+        } catch (Exception $e) {
+            return redirect('key-peformance-indicators/create')->withErrors(['errors' => $e]);
+            }
 
         return redirect()
             ->route('key-peformance-indicators.edit', $keyPeformanceIndicator)

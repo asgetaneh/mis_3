@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->string('name');
             $table->text('discription');
             $table->unsignedBigInteger('translation_id');
-
+            $table->string('locale', 8);
             $table->timestamps();
         });
     }

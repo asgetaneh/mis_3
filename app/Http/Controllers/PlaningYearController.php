@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\Language;
 use Illuminate\View\View;
 use App\Models\PlaningYear;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\PlaningYearStoreRequest;
 use App\Http\Requests\PlaningYearUpdateRequest;
+use App\Models\PlaningYearTranslation;
 
 class PlaningYearController extends Controller
 {
@@ -20,14 +23,14 @@ class PlaningYearController extends Controller
 
         $search = $request->get('search', '');
 
-        $planingYears = PlaningYear::search($search)
+        $planing_year_ts = PlaningYearTranslation::search($search)
             ->latest()
             ->paginate(5)
             ->withQueryString();
 
         return view(
             'app.planing_years.index',
-            compact('planingYears', 'search')
+            compact('planing_year_ts', 'search')
         );
     }
 
@@ -37,20 +40,51 @@ class PlaningYearController extends Controller
     public function create(Request $request): View
     {
         $this->authorize('create', PlaningYear::class);
+        $search = $request->get('search', '');
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
 
-        return view('app.planing_years.create');
+        $users = User::pluck('name', 'id');
+
+        return view('app.planing_years.create', compact('users', 'languages'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(PlaningYearStoreRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $this->authorize('create', PlaningYear::class);
 
-        $validated = $request->validated();
+        // $validated = $request->validated();
 
-        $planingYear = PlaningYear::create($validated);
+        // $planingYear = PlaningYear::create($validated);
+
+        $data = $request->input();
+        $language = Language::all();
+
+        try {
+            $planningYear = new PlaningYear;
+            // if the table is modified with new columns change below code
+            // $planningYear->updated_by_id= auth()->user()->id;
+            // $planningYear->created_by_id= auth()->user()->id;
+            $planningYear->save();
+
+            foreach ($language as $key => $value) {
+                // code...
+                $planning_year_translation = new PlaningYearTranslation();
+                $planning_year_translation->planing_year_id=$planningYear->id;
+                $planning_year_translation->name = $data['name'.$value->locale];
+                $planning_year_translation->locale = $value->locale;
+                $planning_year_translation->description = $data['description'.$value->locale];
+                $planning_year_translation->save();
+         }
+         return redirect('planing-years')->with('status', "Insert successfully");
+        } catch (Exception $e) {
+            return redirect('planing-years/create')->withErrors(['errors' => $e]);
+            }
 
         return redirect()
             ->route('planing-years.edit', $planingYear)

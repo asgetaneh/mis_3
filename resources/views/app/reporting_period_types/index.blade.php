@@ -49,23 +49,36 @@
                 <table class="table table-borderless table-hover">
                     <thead>
                         <tr>
-                            <th class="text-center">
+                            <th class="">
+                                Name
+                            </th>
+                            <th class="">
+                                Description
+                            </th>
+                            <th class="">
                                 @lang('crud.common.actions')
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($reportingPeriodTypes as $reportingPeriodType)
+                        @forelse($reportingPeriodTypeTS as $reportingPeriodType_t)
+                        @if(app()->getLocale() == $reportingPeriodType_t->locale)
                         <tr>
+                            <td>
+                                {{ $reportingPeriodType_t->name ?? '-' }}
+                            </td>
+                            <td>
+                                {{ $reportingPeriodType_t->description ?? '-' }}
+                            </td>
                             <td class="text-center" style="width: 134px;">
                                 <div
                                     role="group"
                                     aria-label="Row Actions"
                                     class="btn-group"
                                 >
-                                    @can('update', $reportingPeriodType)
+                                    @can('update', $reportingPeriodType_t)
                                     <a
-                                        href="{{ route('reporting-period-types.edit', $reportingPeriodType) }}"
+                                        href="{{ route('reporting-period-types.edit', $reportingPeriodType_t) }}"
                                     >
                                         <button
                                             type="button"
@@ -74,9 +87,9 @@
                                             <i class="icon ion-md-create"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('view', $reportingPeriodType)
+                                    @endcan @can('view', $reportingPeriodType_t)
                                     <a
-                                        href="{{ route('reporting-period-types.show', $reportingPeriodType) }}"
+                                        href="{{ route('reporting-period-types.show', $reportingPeriodType_t) }}"
                                     >
                                         <button
                                             type="button"
@@ -85,9 +98,9 @@
                                             <i class="icon ion-md-eye"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('delete', $reportingPeriodType)
+                                    @endcan @can('delete', $reportingPeriodType_t)
                                     <form
-                                        action="{{ route('reporting-period-types.destroy', $reportingPeriodType) }}"
+                                        action="{{ route('reporting-period-types.destroy', $reportingPeriodType_t) }}"
                                         method="POST"
                                         onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                     >
@@ -103,6 +116,7 @@
                                 </div>
                             </td>
                         </tr>
+                        @endif
                         @empty
                         <tr>
                             <td colspan="1">
@@ -114,7 +128,7 @@
                     <tfoot>
                         <tr>
                             <td colspan="1">
-                                {!! $reportingPeriodTypes->render() !!}
+                                {!! $reportingPeriodTypeTS->render() !!}
                             </td>
                         </tr>
                     </tfoot>

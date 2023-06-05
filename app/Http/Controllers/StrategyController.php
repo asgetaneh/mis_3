@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Language;
 use App\Models\Strategy;
-use Illuminate\View\View;
 use App\Models\Objective;
+use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\StrategyStoreRequest;
 use App\Http\Requests\StrategyUpdateRequest;
+use App\Models\StrategyTranslation;
 
 class StrategyController extends Controller
 {
@@ -22,12 +24,12 @@ class StrategyController extends Controller
 
         $search = $request->get('search', '');
 
-        $strategies = Strategy::search($search)
+        $strategy_ts = StrategyTranslation::search($search)
             ->latest()
             ->paginate(5)
             ->withQueryString();
 
-        return view('app.strategies.index', compact('strategies', 'search'));
+        return view('app.strategies.index', compact('strategy_ts', 'search'));
     }
 
     /**
@@ -37,25 +39,59 @@ class StrategyController extends Controller
     {
         $this->authorize('create', Strategy::class);
 
-        $objectives = Objective::pluck('id', 'id');
+        $search = $request->get('search', '');
+        $objectives = Objective::all();
         $users = User::pluck('name', 'id');
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
 
         return view(
             'app.strategies.create',
-            compact('objectives', 'users', 'users')
+            compact('objectives', 'users', 'languages')
         );
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StrategyStoreRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $this->authorize('create', Strategy::class);
 
-        $validated = $request->validated();
+        // $validated = $request->validated();
 
-        $strategy = Strategy::create($validated);
+        // $strategy = Strategy::create($validated);
+
+        $data = $request->input();
+        $language = Language::all();
+         //$lastGoal = Goal::select('id')->orderBy('id','desc')->first();
+        try {
+            $strategy = new Strategy;
+            $strategy->updated_by_id= auth()->user()->id;
+            $strategy->created_by_id= auth()->user()->id;
+            $strategy->objective_id= $data['objective_id'];
+            $strategy->save();
+            // $strategy->created_at= new \DateTime();
+            // $strategy->updated_at =new \DateTime();
+            $strategy->save();
+             foreach ($language as $key => $value) {
+                // code...
+                $strategy_translation = new StrategyTranslation;
+                $strategy_translation ->translation_id=$strategy->id;
+                $strategy_translation ->name = $data['name'.$value->locale];
+                $strategy_translation ->locale = $value->locale;
+                $strategy_translation ->discription = $data['description'.$value->locale];
+                $strategy_translation->save();
+         }
+
+         return redirect()
+            ->route('strategies.index', $strategy)
+            ->withSuccess(__('crud.common.created'));
+        } catch (Exception $e) {
+            return redirect('strategy/new')->withErrors(['errors' => $e]);
+            }
 
         return redirect()
             ->route('strategies.edit', $strategy)

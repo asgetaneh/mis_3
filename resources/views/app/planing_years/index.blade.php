@@ -49,23 +49,36 @@
                 <table class="table table-borderless table-hover">
                     <thead>
                         <tr>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Description
+                            </th>
                             <th class="text-center">
                                 @lang('crud.common.actions')
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($planingYears as $planingYear)
+                        @forelse($planing_year_ts as $planing_year_t)
+                        @if(app()->getLocale() == $planing_year_t->locale)
                         <tr>
+                            <td>
+                                {{ $planing_year_t->name }}
+                            </td>
+                            <td>
+                                {{ $planing_year_t->description }}
+                            </td>
                             <td class="text-center" style="width: 134px;">
                                 <div
                                     role="group"
                                     aria-label="Row Actions"
                                     class="btn-group"
                                 >
-                                    @can('update', $planingYear)
+                                    @can('update', $planing_year_t)
                                     <a
-                                        href="{{ route('planing-years.edit', $planingYear) }}"
+                                        href="{{ route('planing-years.edit', $planing_year_t) }}"
                                     >
                                         <button
                                             type="button"
@@ -74,9 +87,9 @@
                                             <i class="icon ion-md-create"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('view', $planingYear)
+                                    @endcan @can('view', $planing_year_t)
                                     <a
-                                        href="{{ route('planing-years.show', $planingYear) }}"
+                                        href="{{ route('planing-years.show', $planing_year_t) }}"
                                     >
                                         <button
                                             type="button"
@@ -85,9 +98,9 @@
                                             <i class="icon ion-md-eye"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('delete', $planingYear)
+                                    @endcan @can('delete', $planing_year_t)
                                     <form
-                                        action="{{ route('planing-years.destroy', $planingYear) }}"
+                                        action="{{ route('planing-years.destroy', $planing_year_t) }}"
                                         method="POST"
                                         onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                     >
@@ -103,6 +116,7 @@
                                 </div>
                             </td>
                         </tr>
+                        @endif
                         @empty
                         <tr>
                             <td colspan="1">
@@ -113,7 +127,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="1">{!! $planingYears->render() !!}</td>
+                            <td colspan="1">{!! $planing_year_ts->render() !!}</td>
                         </tr>
                     </tfoot>
                 </table>

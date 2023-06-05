@@ -67,17 +67,36 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($reportingPeriods as $reportingPeriod)
+                        @forelse($reportingPeriodTS as $reporting_period_t)
+                        @if(app()->getLocale() == $reporting_period_t->locale)
                         <tr>
+                            @php
+                                $planningYear = "";
+                                foreach ($reporting_period_t->reportingPeriod->planingYear->planingYearTranslations as $key => $value){
+                                    if(app()->getLocale() == $value->locale){
+                                        $planningYear = $value->name;
+                                    }
+                                }
+                            @endphp
                             <td>
-                                {{ optional($reportingPeriod->planingYear)->id
+                                {{ $planningYear
                                 ?? '-' }}
                             </td>
-                            <td>{{ $reportingPeriod->start_date ?? '-' }}</td>
-                            <td>{{ $reportingPeriod->end_date ?? '-' }}</td>
+                            <td>{{ $reporting_period_t->reportingPeriod->start_date ?? '-' }}</td>
+                            <td>{{ $reporting_period_t->reportingPeriod->end_date ?? '-' }}</td>
+
+                            @php
+                                $reportPeriodType = "";
+                                foreach ($reporting_period_t->reportingPeriod->reportingPeriodType->reportingPeriodTypeTs as $key => $value){
+                                    if(app()->getLocale() == $value->locale){
+                                        $reportPeriodType = $value->name;
+                                    }
+                                }
+                            @endphp
+
                             <td>
                                 {{
-                                optional($reportingPeriod->reportingPeriodType)->id
+                                $reportPeriodType
                                 ?? '-' }}
                             </td>
                             <td class="text-center" style="width: 134px;">
@@ -86,9 +105,9 @@
                                     aria-label="Row Actions"
                                     class="btn-group"
                                 >
-                                    @can('update', $reportingPeriod)
+                                    @can('update', $reporting_period_t)
                                     <a
-                                        href="{{ route('reporting-periods.edit', $reportingPeriod) }}"
+                                        href="{{ route('reporting-periods.edit', $reporting_period_t) }}"
                                     >
                                         <button
                                             type="button"
@@ -97,9 +116,9 @@
                                             <i class="icon ion-md-create"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('view', $reportingPeriod)
+                                    @endcan @can('view', $reporting_period_t)
                                     <a
-                                        href="{{ route('reporting-periods.show', $reportingPeriod) }}"
+                                        href="{{ route('reporting-periods.show', $reporting_period_t) }}"
                                     >
                                         <button
                                             type="button"
@@ -108,9 +127,9 @@
                                             <i class="icon ion-md-eye"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('delete', $reportingPeriod)
+                                    @endcan @can('delete', $reporting_period_t)
                                     <form
-                                        action="{{ route('reporting-periods.destroy', $reportingPeriod) }}"
+                                        action="{{ route('reporting-periods.destroy', $reporting_period_t) }}"
                                         method="POST"
                                         onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                     >
@@ -126,6 +145,7 @@
                                 </div>
                             </td>
                         </tr>
+                        @endif
                         @empty
                         <tr>
                             <td colspan="5">
@@ -137,7 +157,7 @@
                     <tfoot>
                         <tr>
                             <td colspan="5">
-                                {!! $reportingPeriods->render() !!}
+                                {!! $reportingPeriodTS->render() !!}
                             </td>
                         </tr>
                     </tfoot>
