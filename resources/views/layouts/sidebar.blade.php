@@ -129,7 +129,7 @@
                             
                             @can('view-any', App\Models\Office::class)
                             <li class="nav-item">
-                                <a href="{{ route('offices.index') }}" class="nav-link">
+                                <a href="{{ route('office_translations.index') }}" class="nav-link">
                                     <i class="nav-icon icon ion-md-radio-button-off"></i>
                                     <p>Offices</p>
                                 </a>

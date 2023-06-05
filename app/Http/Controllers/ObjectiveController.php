@@ -91,7 +91,7 @@ class ObjectiveController extends Controller
                 $objective_translation ->name = $data['name'.$value->locale];
                 $objective_translation ->out_put = $data['output'.$value->locale];
                 $objective_translation ->out_come = $data['outcome'.$value->locale];
-                // $objective_translation ->locale = $value->locale; // add locale in migration later
+                $objective_translation ->locale = $value->locale; // add locale in migration later
                 $objective_translation ->description = $data['description'.$value->locale];
                 $objective_translation->save();
          }

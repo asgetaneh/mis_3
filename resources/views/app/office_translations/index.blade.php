@@ -41,7 +41,7 @@
         <div class="card-body">
             <div style="display: flex; justify-content: space-between;">
                 <h4 class="card-title">
-                    @lang('crud.office_translations.index_title')
+                    @lang('crud.offices.index_title')
                 </h4>
             </div>
 
@@ -50,7 +50,8 @@
                     <thead>
                         <tr>
                             <th class="text-left">
-                                @lang('crud.office_translations.inputs.translation_id')
+                                #
+                                <!-- @lang('crud.office_translations.inputs.translation_id') -->
                             </th>
                             <th class="text-left">
                                 @lang('crud.office_translations.inputs.name')
@@ -58,22 +59,31 @@
                             <th class="text-left">
                                 @lang('crud.office_translations.inputs.description')
                             </th>
+                            <th class="text-left">
+                                @lang('crud.office_translations.inputs.translation_id')
+                            </th>
                             <th class="text-center">
                                 @lang('crud.common.actions')
                             </th>
                         </tr>
                     </thead>
                     <tbody>
+                       @php $count =0;@endphp
                         @forelse($officeTranslations as $officeTranslation)
+                        @if(app()->getLocale() ==$officeTranslation->locale)
+                       @php $count = $count+1;@endphp
                         <tr>
                             <td>
-                                {{ optional($officeTranslation->office)->id ??
-                                '-' }}
+                              {{  $count }}  
                             </td>
                             <td>{{ $officeTranslation->name ?? '-' }}</td>
-                            <td>
+                             <td>
                                 {{ $officeTranslation->description ?? '-' }}
                             </td>
+                            <td>
+                                {{ $officeTranslation->office->office->officeTranslations[0]->name ?? '-' }}
+                            </td>
+                            
                             <td class="text-center" style="width: 134px;">
                                 <div
                                     role="group"
@@ -120,6 +130,7 @@
                                 </div>
                             </td>
                         </tr>
+                        @endif
                         @empty
                         <tr>
                             <td colspan="4">

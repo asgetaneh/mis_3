@@ -60,18 +60,15 @@ class OfficeController extends Controller
          //$lastoffice = office::select('id')->orderBy('id','desc')->first();
         try {
             $office = new Office;
-             $office->created_at= new \DateTime();
+            $office->parent_office_id = $data['parent_name']
+            $office->created_at= new \DateTime();
             $office->updated_at =new \DateTime();
             $office->save();
              foreach ($language as $key => $value) {
                 // code...
                 $office_translation = new OfficeTranslation;
-                //dd($data);
-                // if($data['parent_office_id'] ==null){
-                //     $data['parent_office_id'] =0;
-                // }
+                 
                 $office_translation ->translation_id=$office->id;
-                // $office_translation ->parent_office_id = $data['parent_office_id'];
                 $office_translation ->name = $data['name'.$value->locale];
                  $office_translation ->locale = $value->locale;
                 $office_translation ->description = $data['description'.$value->locale];

@@ -67,7 +67,7 @@ Route::prefix('/')
             KeyPeformanceIndicatorController::class
         );
         Route::resource('objectives', ObjectiveController::class);
-        Route::resource('offices', OfficeController::class);
+        Route::resource('office_translations', OfficeTranslationController::class);
         Route::resource('perspectives', PerspectiveController::class);
         Route::resource('planing-years', PlaningYearController::class);
         Route::resource('reporting-periods', ReportingPeriodController::class);

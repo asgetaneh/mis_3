@@ -2,34 +2,38 @@
 
 <div class="row">
     <x-inputs.group class="col-sm-12">
-        <x-inputs.select name="translation_id" label="Office" required>
+        <x-inputs.select name="parent_name" label="Parent Office" required>
             @php $selected = old('translation_id', ($editing ? $officeTranslation->translation_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Office</option>
             @foreach($offices as $value => $label)
-            <option value="{{ $value }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label }}</option>
+            <option value="{{ $label->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->officeTranslations[0]->name }}</option>
             @endforeach
         </x-inputs.select>
     </x-inputs.group>
 
+    @foreach($languages as $key => $lang)
+      
+            
     <x-inputs.group class="col-sm-12">
         <x-inputs.text
-            name="name"
-            label="Name"
-            :value="old('name', ($editing ? $officeTranslation->name : ''))"
-            maxlength="255"
-            placeholder="Name"
+            name="{{'name'.$lang->locale}}"
+            label="{{'Name in '.$lang->name}}"
+             maxlength="255"
+            placeholder="{{'name in '.$lang->name}}"
             required
         ></x-inputs.text>
     </x-inputs.group>
 
+      
+
     <x-inputs.group class="col-sm-12">
         <x-inputs.textarea
-            name="description"
-            label="Description"
+            name="{{'description'.$lang->locale}}"
+            label="{{'Description in '.$lang->name}}"
             maxlength="255"
-            required
-            >{{ old('description', ($editing ? $officeTranslation->description :
-            '')) }}</x-inputs.textarea
+            required>
+              </x-inputs.textarea
         >
     </x-inputs.group>
+ @endforeach
 </div>

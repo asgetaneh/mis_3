@@ -277,7 +277,7 @@ return [
         'edit_title' => 'Edit OfficeTranslation',
         'show_title' => 'Show OfficeTranslation',
         'inputs' => [
-            'translation_id' => 'Office',
+            'translation_id' => 'Parent Office',
             'name' => 'Name',
             'description' => 'Description',
         ],
