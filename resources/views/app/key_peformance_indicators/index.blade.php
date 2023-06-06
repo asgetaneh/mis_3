@@ -155,6 +155,16 @@
                                 >
                                     @can('update', $keyPeformanceIndicator_t)
                                     <a
+                                        href="{{ route('kpi-child-one-translations.add',$keyPeformanceIndicator_t) }}"
+                                    >
+                                        <button
+                                            type="button"
+                                            class="btn btn-light"
+                                        >
+                                            <i class="icon ion-md-add"></i>
+                                        </button>
+                                    </a>
+                                    <a
                                         href="{{ route('key-peformance-indicators.edit', $keyPeformanceIndicator_t) }}"
                                     >
                                         <button

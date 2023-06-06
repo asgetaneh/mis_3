@@ -119,9 +119,25 @@
                             @endcan
                             @can('view-any', App\Models\Inititive::class)
                             <li class="nav-item">
+                                <a href="{{ route('kpi-child-one-translations.index') }}" class="nav-link">
+                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                    <p>Inititives Level One</p>
+                                </a>
+                            </li>
+                            @endcan
+                            @can('view-any', App\Models\Inititive::class)
+                            <li class="nav-item">
                                 <a href="{{ route('inititives.index') }}" class="nav-link">
                                     <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                    <p>Inititives</p>
+                                    <p>Inititives Level Two</p>
+                                </a>
+                            </li>
+                            @endcan
+                            @can('view-any', App\Models\Inititive::class)
+                            <li class="nav-item">
+                                <a href="{{ route('inititives.index') }}" class="nav-link">
+                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                    <p>Inititives Level Three</p>
                                 </a>
                             </li>
                             @endcan

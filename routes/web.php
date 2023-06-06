@@ -30,6 +30,9 @@ use App\Http\Controllers\KeyPeformanceIndicatorController;
 use App\Http\Controllers\PerspectiveTranslationController;
 use App\Http\Controllers\PlaningYearTranslationController;
 use App\Http\Controllers\KeyPeformanceIndicatorTController;
+use App\Http\Controllers\KpiChildOneTranslationController;
+use App\Http\Controllers\KpiChildTwoTranslationController;
+use App\Http\Controllers\KpiChildThreeTranslationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,6 +68,24 @@ Route::prefix('/')
         Route::resource(
             'key-peformance-indicators',
             KeyPeformanceIndicatorController::class
+        );
+       // Route::GET('/kpi-child-one-translations/{id}',[
+       //      'as' => 'kpi-child-one-translations.add',
+       //      'uses' => 'KpiChildOneTranslationController@add'
+       //  ]);
+         Route::resource(
+            'kpi-child-one-translations',
+            KpiChildOneTranslationController::class
+        );
+        Route::resource('kpi-child-threes', KpiChildThreeController::class);
+        Route::resource(
+            'kpi-child-three-translations',
+            KpiChildThreeTranslationController::class
+        );
+        Route::resource('kpi-child-twos', KpiChildTwoController::class);
+        Route::resource(
+            'kpi-child-two-translations',
+            KpiChildTwoTranslationController::class
         );
         Route::resource('objectives', ObjectiveController::class);
         Route::resource('office_translations', OfficeTranslationController::class);
