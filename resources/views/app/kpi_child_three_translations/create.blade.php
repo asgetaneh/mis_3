@@ -10,7 +10,7 @@
                     class="mr-4"
                     ><i class="icon ion-md-arrow-back"></i
                 ></a>
-                @lang('crud.kpi_child_three_translations.create_title')
+                Create KPI child three
             </h4>
 
             <x-form
