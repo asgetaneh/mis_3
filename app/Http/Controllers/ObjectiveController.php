@@ -10,6 +10,7 @@ use Illuminate\View\View;
 use App\Models\Perspective;
 use Illuminate\Http\Request;
 use App\Models\GoalTranslation;
+use App\Models\PerspectiveTranslation;
 use App\Models\ObjectiveTranslation;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\ObjectiveStoreRequest;
@@ -41,8 +42,8 @@ class ObjectiveController extends Controller
     {
         $this->authorize('create', Objective::class);
         $search = $request->get('search', '');
-        $goals = Goal::all();
-         $perspectives = Perspective::all();
+        $goals = GoalTranslation::all();
+        $perspectives = PerspectiveTranslation::all();
         $users = User::pluck('name', 'id');
         $languages = Language::search($search)
             ->latest()

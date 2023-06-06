@@ -5,9 +5,10 @@
         <x-inputs.select name="goal_id" label="Goal" required>
             @php $selected = old('goal_id', ($editing ? $objective->goal_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Goal</option>
+
             @foreach($goals as $value => $label)
-             @if(app()->getLocale() ==$label->goalTranslations[0]->locale)
-            <option value="{{ $label->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->goalTranslations[0]->name }}</option>
+             @if(app()->getLocale() == $label->locale)
+            <option value="{{ $label->translation_id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
              @endif
             @endforeach
         </x-inputs.select>
@@ -18,8 +19,8 @@
             @php $selected = old('perspective_id', ($editing ? $objective->perspective_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Perspective</option>
             @foreach($perspectives as $value => $label)
-            @if(app()->getLocale() ==$label->perspectiveTranslations[0]->locale)
-            <option value="{{ $label->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->perspectiveTranslations[0]->name }}</option>
+            @if(app()->getLocale() ==$label->locale)
+            <option value="{{ $label->translation_id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
             @endif
             @endforeach
         </x-inputs.select>
