@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Language;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Models\KpiChildThree;
@@ -40,10 +41,16 @@ class KpiChildThreeTranslationController extends Controller
         $this->authorize('create', KpiChildThreeTranslation::class);
 
         $kpiChildThrees = KpiChildThree::pluck('id', 'id');
+        $search = $request->get('search', '');
+
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
 
         return view(
             'app.kpi_child_three_translations.create',
-            compact('kpiChildThrees')
+            compact('kpiChildThrees', 'languages')
         );
     }
 
@@ -51,22 +58,33 @@ class KpiChildThreeTranslationController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(
-        KpiChildThreeTranslationStoreRequest $request
+        Request $request
     ): RedirectResponse {
         $this->authorize('create', KpiChildThreeTranslation::class);
 
-        $validated = $request->validated();
+        $data = $request->input();
+        $language = Language::all();
 
-        $kpiChildThreeTranslation = KpiChildThreeTranslation::create(
-            $validated
-        );
+        try {
+            $kpiChildThree = new kpiChildThree;
+            // $kpiChildThree->kpi_child_two_id= auth()->user()->id;
+            $kpiChildThree->save();
 
-        return redirect()
-            ->route(
-                'kpi-child-three-translations.edit',
-                $kpiChildThreeTranslation
-            )
+            foreach ($language as $key => $value) {
+                // code...
+                $kpiChildThreeTranslation = new KpiChildThreeTranslation;
+                $kpiChildThreeTranslation->kpiChildThree_id=$kpiChildThree->id;
+                $kpiChildThreeTranslation->name = $data['name'.$value->locale];
+                $kpiChildThreeTranslation->locale = $value->locale;
+                $kpiChildThreeTranslation->description = $data['description'.$value->locale];
+                $kpiChildThreeTranslation->save();
+         }
+         return redirect()
+            ->route('kpi-child-three-translations.index', $kpiChildThree)
             ->withSuccess(__('crud.common.created'));
+        } catch (Exception $e) {
+            return redirect('kpi-child-three-translations/create')->withErrors(['errors' => $e]);
+            }
     }
 
     /**

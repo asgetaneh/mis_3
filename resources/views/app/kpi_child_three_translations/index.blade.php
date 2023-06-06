@@ -41,7 +41,7 @@
         <div class="card-body">
             <div style="display: flex; justify-content: space-between;">
                 <h4 class="card-title">
-                    @lang('crud.kpi_child_three_translations.index_title')
+                    KPI Child Three Translation
                 </h4>
             </div>
 
@@ -50,22 +50,22 @@
                     <thead>
                         <tr>
                             <th class="text-left">
-                                @lang('crud.kpi_child_three_translations.inputs.name')
+                                Name
                             </th>
                             <th class="text-left">
-                                @lang('crud.kpi_child_three_translations.inputs.description')
+                                Description
                             </th>
-                            <th class="text-left">
+                            {{-- <th class="text-left">
                                 @lang('crud.kpi_child_three_translations.inputs.kpiChildThree_id')
-                            </th>
+                            </th> --}}
                             <th class="text-center">
                                 @lang('crud.common.actions')
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($kpiChildThreeTranslations as
-                        $kpiChildThreeTranslation)
+                        @forelse($kpiChildThreeTranslations as $kpiChildThreeTranslation)
+                        @if(app()->getLocale() == $kpiChildThreeTranslation->locale)
                         <tr>
                             <td>
                                 {{ $kpiChildThreeTranslation->name ?? '-' }}
@@ -74,11 +74,11 @@
                                 {{ $kpiChildThreeTranslation->description ?? '-'
                                 }}
                             </td>
-                            <td>
+                            {{-- <td>
                                 {{
                                 optional($kpiChildThreeTranslation->kpiChildThree)->id
                                 ?? '-' }}
-                            </td>
+                            </td> --}}
                             <td class="text-center" style="width: 134px;">
                                 <div
                                     role="group"
@@ -127,6 +127,7 @@
                                 </div>
                             </td>
                         </tr>
+                        @endif
                         @empty
                         <tr>
                             <td colspan="4">
