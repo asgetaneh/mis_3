@@ -8,11 +8,13 @@ use Illuminate\View\View;
 use App\Models\PlaningYear;
 use Illuminate\Http\Request;
 use App\Models\ReportingPeriod;
+use App\Models\ReportingPeriodT;
 use App\Models\ReportingPeriodType;
+use App\Models\ReportingPeriodTypeT;
 use Illuminate\Http\RedirectResponse;
+use App\Models\PlaningYearTranslation;
 use App\Http\Requests\ReportingPeriodStoreRequest;
 use App\Http\Requests\ReportingPeriodUpdateRequest;
-use App\Models\ReportingPeriodT;
 
 class ReportingPeriodController extends Controller
 {
@@ -43,8 +45,8 @@ class ReportingPeriodController extends Controller
     {
         $this->authorize('create', ReportingPeriod::class);
 
-        $planingYears = PlaningYear::all();
-        $reportingPeriodTypes = ReportingPeriodType::all();
+        $planingYears = PlaningYearTranslation::all();
+        $reportingPeriodTypes = ReportingPeriodTypeT::all();
         $search = $request->get('search', '');
         $languages = Language::search($search)
             ->latest()

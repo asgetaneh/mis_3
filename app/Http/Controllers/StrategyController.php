@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\StrategyStoreRequest;
 use App\Http\Requests\StrategyUpdateRequest;
+use App\Models\ObjectiveTranslation;
 use App\Models\StrategyTranslation;
 
 class StrategyController extends Controller
@@ -40,7 +41,7 @@ class StrategyController extends Controller
         $this->authorize('create', Strategy::class);
 
         $search = $request->get('search', '');
-        $objectives = Objective::all();
+        $objectives = ObjectiveTranslation::all();
         $users = User::pluck('name', 'id');
         $languages = Language::search($search)
             ->latest()
