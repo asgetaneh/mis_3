@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('kpiChildOne_id');
             $table->string('name');
             $table->text('description');
+            $table->string('locale', 8);
 
             $table->timestamps();
         });

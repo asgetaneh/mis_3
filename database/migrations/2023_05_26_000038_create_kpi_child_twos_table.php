@@ -12,7 +12,6 @@ return new class extends Migration {
     {
         Schema::create('kpi_child_twos', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('kpi_child_one_id');
 
             $table->timestamps();
         });

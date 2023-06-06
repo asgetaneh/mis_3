@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Language;
 
 use Illuminate\View\View;
 use App\Models\KpiChildOne;
@@ -54,42 +55,68 @@ class KpiChildOneTranslationController extends Controller
      */
     public function create(Request $request): View
     {
-          
+        $search = $request->get('search', '');
         $this->authorize('create', KpiChildOneTranslation::class);
          $kpiChildOnes = KpiChildOneTranslation::pluck('id', 'id');
 
-        return view(
-            'app.kpi_child_one_translations.create',
-            compact('kpiChildOnes')
-        );
-    }
-    public function createNew($id): View
-    {
-        $this->authorize('create', KpiChildOneTranslation::class);
-        dd($kpiChildOneTranslation->id);
-        $kpiChildOnes = KpiChildOne::pluck('id', 'id');
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
 
         return view(
             'app.kpi_child_one_translations.create',
-            compact('kpiChildOnes')
+            compact('kpiChildOnes','languages')
         );
     }
+    // public function createNew($id): View
+    // {
+    //     $this->authorize('create', KpiChildOneTranslation::class);
+    //     dd($kpiChildOneTranslation->id);
+    //     $kpiChildOnes = KpiChildOne::pluck('id', 'id');
+    //      $languages = Language::search($search)
+    //         ->latest()
+    //         ->paginate(5)
+    //         ->withQueryString();
+
+    //     return view(
+    //         'app.kpi_child_one_translations.create',
+    //         compact('kpiChildOnes','languages')
+    //     );
+    // }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(
-        KpiChildOneTranslationStoreRequest $request
+    public function store(Request $request
     ): RedirectResponse {
         $this->authorize('create', KpiChildOneTranslation::class);
 
-        $validated = $request->validated();
-
-        $kpiChildOneTranslation = KpiChildOneTranslation::create($validated);
-
-        return redirect()
-            ->route('kpi-child-one-translations.edit', $kpiChildOneTranslation)
+        $data = $request->input();
+        $language = Language::all();
+         //$lastGoal = Goal::select('id')->orderBy('id','desc')->first();
+        try {
+            $KpiChildOne = new KpiChildOne;
+            $KpiChildOne->created_at= new \DateTime();
+            $KpiChildOne->updated_at =new \DateTime();
+            $KpiChildOne->save();
+             foreach ($language as $key => $value) {
+                 $kpi_child_one_translation = new KpiChildOneTranslation;
+                $kpi_child_one_translation ->kpiChildOne_id=$KpiChildOne->id;
+                $kpi_child_one_translation ->name = $data['name'.$value->locale];
+                 $kpi_child_one_translation ->locale = $value->locale;
+                $kpi_child_one_translation ->description = $data['description'.$value->locale];
+                $kpi_child_one_translation->save();
+         }
+         $kpiChildOneTranslations = KpiChildOneTranslation::all();
+         return redirect()
+            ->route('kpi-child-one-translations.index')
             ->withSuccess(__('crud.common.created'));
+        } catch (Exception $e) { 
+            return redirect('kpi-child-one-translations/new')->withErrors(['errors' => $e]);
+            }
+        $kpiChildOneTranslations = KpiChildOneTranslation::all();
+        return view('kpi-child-one-translations.index',['goals', $kpiChildOneTranslations]);
     }
 
     /**

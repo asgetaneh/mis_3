@@ -24,6 +24,34 @@ return new class extends Migration {
                 ->on('reporting_periods')
                 ->onUpdate('CASCADE')
                 ->onDelete('CASCADE');
+
+            $table
+                ->foreign('kpi_child_one_id')
+                ->references('id')
+                ->on('kpi_child_ones')
+                ->onUpdate('CASCADE')
+                ->onDelete('CASCADE');
+
+            $table
+                ->foreign('kpi_child_two_id')
+                ->references('id')
+                ->on('kpi_child_twos')
+                ->onUpdate('CASCADE')
+                ->onDelete('CASCADE');
+
+            $table
+                ->foreign('kpi_child_three_id')
+                ->references('id')
+                ->on('kpi_child_threes')
+                ->onUpdate('CASCADE')
+                ->onDelete('CASCADE');
+
+            $table
+                ->foreign('office_id')
+                ->references('id')
+                ->on('offices')
+                ->onUpdate('CASCADE')
+                ->onDelete('CASCADE');
         });
     }
 
@@ -35,6 +63,10 @@ return new class extends Migration {
         Schema::table('plan_accomplishments', function (Blueprint $table) {
             $table->dropForeign(['suitable_kpi_id']);
             $table->dropForeign(['reporting_period_id']);
+            $table->dropForeign(['kpi_child_one_id']);
+            $table->dropForeign(['kpi_child_two_id']);
+            $table->dropForeign(['kpi_child_three_id']);
+            $table->dropForeign(['office_id']);
         });
     }
 };

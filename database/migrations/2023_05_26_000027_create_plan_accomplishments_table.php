@@ -18,6 +18,10 @@ return new class extends Migration {
             $table->double('accom_value');
             $table->tinyInteger('plan_status');
             $table->tinyInteger('accom_status');
+            $table->unsignedBigInteger('kpi_child_one_id');
+            $table->unsignedBigInteger('kpi_child_two_id');
+            $table->unsignedBigInteger('kpi_child_three_id');
+            $table->unsignedBigInteger('office_id');
 
             $table->timestamps();
         });

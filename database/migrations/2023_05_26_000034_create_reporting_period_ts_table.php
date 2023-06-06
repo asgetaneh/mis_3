@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->string('name');
             $table->text('description');
             $table->unsignedBigInteger('reporting_period_id');
-            $table->string('locale', 8);
+
             $table->timestamps();
         });
     }
