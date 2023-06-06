@@ -65,6 +65,7 @@
                     </thead>
                     <tbody>
                         @forelse($kpiChildOneTranslations as $kpiChildOneTranslation)
+                        @if(app()->getLocale() ==$kpiChildOneTranslation->locale)
                         <tr>
                             <td>
                                 {{
@@ -124,6 +125,7 @@
                                 </div>
                             </td>
                         </tr>
+                        @endif
                         @empty
                         <tr>
                             <td colspan="4">

@@ -41,7 +41,7 @@
         <div class="card-body">
             <div style="display: flex; justify-content: space-between;">
                 <h4 class="card-title">
-                    @lang('crud.kpi_child_two_translations.index_title')
+                     Initiative Level Two
                 </h4>
             </div>
 
@@ -50,13 +50,10 @@
                     <thead>
                         <tr>
                             <th class="text-left">
-                                @lang('crud.kpi_child_two_translations.inputs.name')
+                                Name
                             </th>
                             <th class="text-left">
-                                @lang('crud.kpi_child_two_translations.inputs.description')
-                            </th>
-                            <th class="text-left">
-                                @lang('crud.kpi_child_two_translations.inputs.kpi_child_two_id')
+                                Description
                             </th>
                             <th class="text-center">
                                 @lang('crud.common.actions')
@@ -64,19 +61,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($kpiChildTwoTranslations as
-                        $kpiChildTwoTranslation)
+                        @forelse($kpiChildTwoTranslations as $kpiChildTwoTranslation)
+                        @if(app()->getLocale() ==$kpiChildTwoTranslation->locale)
                         <tr>
                             <td>{{ $kpiChildTwoTranslation->name ?? '-' }}</td>
                             <td>
                                 {{ $kpiChildTwoTranslation->description ?? '-'
                                 }}
                             </td>
-                            <td>
-                                {{
-                                optional($kpiChildTwoTranslation->kpiChildTwo)->id
-                                ?? '-' }}
-                            </td>
+                            
                             <td class="text-center" style="width: 134px;">
                                 <div
                                     role="group"
@@ -125,6 +118,7 @@
                                 </div>
                             </td>
                         </tr>
+                         @endif
                         @empty
                         <tr>
                             <td colspan="4">

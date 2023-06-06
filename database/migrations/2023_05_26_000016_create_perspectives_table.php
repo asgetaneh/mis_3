@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('created_by_id');
             $table->unsignedBigInteger('updated_by_id');
-
+            $table->boolean('is_active')->default(1);
             $table->timestamps();
         });
     }

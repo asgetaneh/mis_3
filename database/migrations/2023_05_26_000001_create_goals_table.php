@@ -12,6 +12,7 @@ return new class extends Migration {
     {
         Schema::create('goals', function (Blueprint $table) {
             $table->bigIncrements('id');
+            // $table->double('weight');
             $table->boolean('is_active')->default(1);
             $table->foreignId('created_by_id');
             $table->foreignId('updated_by');

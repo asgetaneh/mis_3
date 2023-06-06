@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('name');
             $table->text('description');
             $table->unsignedBigInteger('kpi_child_two_id');
-
+            $table->string('locale', 8);
             $table->timestamps();
         });
     }

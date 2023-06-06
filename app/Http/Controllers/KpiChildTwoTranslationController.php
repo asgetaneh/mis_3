@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Language;
 use Illuminate\View\View;
 use App\Models\KpiChildTwo;
 use Illuminate\Http\Request;
@@ -38,30 +38,50 @@ class KpiChildTwoTranslationController extends Controller
     public function create(Request $request): View
     {
         $this->authorize('create', KpiChildTwoTranslation::class);
-
+        $search = $request->get('search', '');
         $kpiChildTwos = KpiChildTwo::pluck('id', 'id');
-
+         $languages = Language::search($search)
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
         return view(
             'app.kpi_child_two_translations.create',
-            compact('kpiChildTwos')
+            compact('kpiChildTwos','languages')
         );
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(
-        KpiChildTwoTranslationStoreRequest $request
+    public function store(Request $request
     ): RedirectResponse {
         $this->authorize('create', KpiChildTwoTranslation::class);
 
-        $validated = $request->validated();
-
-        $kpiChildTwoTranslation = KpiChildTwoTranslation::create($validated);
-
-        return redirect()
-            ->route('kpi-child-two-translations.edit', $kpiChildTwoTranslation)
+        $data = $request->input();
+        $language = Language::all();
+         //$lastGoal = Goal::select('id')->orderBy('id','desc')->first();
+        try {
+            $KpiChildTwo = new KpiChildTwo;
+            $KpiChildTwo->created_at= new \DateTime();
+            $KpiChildTwo->updated_at =new \DateTime();
+            $KpiChildTwo->save();
+             foreach ($language as $key => $value) {
+                 $kpi_child_two_translation = new KpiChildTwoTranslation;
+                $kpi_child_two_translation ->kpi_child_two_id=$KpiChildTwo->id;
+                $kpi_child_two_translation ->name = $data['name'.$value->locale];
+                 $kpi_child_two_translation ->locale = $value->locale;
+                $kpi_child_two_translation ->description = $data['description'.$value->locale];
+                $kpi_child_two_translation->save();
+         }
+         $kpiChildTwoTranslation = KpiChildTwoTranslation::all();
+         return redirect()
+            ->route('kpi-child-two-translations.index')
             ->withSuccess(__('crud.common.created'));
+        } catch (Exception $e) { 
+            return redirect('kpi-child-two-translations/new')->withErrors(['errors' => $e]);
+            }
+        $kpiChildTwoTranslation = KpiChildTwoTranslation::all();
+        return view('kpi-child-two-translations.index',['goals', $kpiChildtwoTranslations]);
     }
 
     /**

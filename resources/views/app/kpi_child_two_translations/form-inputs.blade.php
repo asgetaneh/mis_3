@@ -1,35 +1,27 @@
 @php $editing = isset($kpiChildTwoTranslation) @endphp
 
 <div class="row">
+     @foreach($languages as $key => $lang)
+
     <x-inputs.group class="col-sm-12">
         <x-inputs.text
-            name="name"
-            label="Name"
-            :value="old('name', ($editing ? $kpiChildTwoTranslation->name : ''))"
-            maxlength="255"
-            placeholder="Name"
+            name="{{'name'.$lang->locale}}"
+            label="{{'Name in '.$lang->name}}"
+             maxlength="255"
+            placeholder="{{'name in '.$lang->name}}"
             required
         ></x-inputs.text>
     </x-inputs.group>
 
     <x-inputs.group class="col-sm-12">
-        <x-inputs.textarea
-            name="description"
-            label="Description"
+         <x-inputs.textarea
+            name="{{'description'.$lang->locale}}"
+            label="{{'Description in '.$lang->name}}"
             maxlength="255"
-            required
-            >{{ old('description', ($editing ?
-            $kpiChildTwoTranslation->description : '')) }}</x-inputs.textarea
+            required>
+              </x-inputs.textarea
         >
     </x-inputs.group>
+     @endforeach
 
-    <x-inputs.group class="col-sm-12">
-        <x-inputs.select name="kpi_child_two_id" label="Kpi Child Two" required>
-            @php $selected = old('kpi_child_two_id', ($editing ? $kpiChildTwoTranslation->kpi_child_two_id : '')) @endphp
-            <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Kpi Child Two</option>
-            @foreach($kpiChildTwos as $value => $label)
-            <option value="{{ $value }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label }}</option>
-            @endforeach
-        </x-inputs.select>
-    </x-inputs.group>
 </div>
