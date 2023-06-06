@@ -8,15 +8,17 @@ use App\Models\Strategy;
 use App\Models\Objective;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
+use App\Models\OfficeTranslation;
+use Illuminate\Support\Facades\DB;
 use App\Models\ReportingPeriodType;
-use Illuminate\Http\RedirectResponse;
-use App\Models\KeyPeformanceIndicator;
-use App\Http\Requests\KeyPeformanceIndicatorStoreRequest;
-use App\Http\Requests\KeyPeformanceIndicatorUpdateRequest;
-use App\Models\KeyPeformanceIndicatorT;
+use App\Models\StrategyTranslation;
 use App\Models\ObjectiveTranslation;
 use App\Models\ReportingPeriodTypeT;
-use App\Models\StrategyTranslation;
+use Illuminate\Http\RedirectResponse;
+use App\Models\KeyPeformanceIndicator;
+use App\Models\KeyPeformanceIndicatorT;
+use App\Http\Requests\KeyPeformanceIndicatorStoreRequest;
+use App\Http\Requests\KeyPeformanceIndicatorUpdateRequest;
 
 class KeyPeformanceIndicatorController extends Controller
 {
@@ -51,6 +53,8 @@ class KeyPeformanceIndicatorController extends Controller
         $strategies = StrategyTranslation::all();
         $users = User::pluck('name', 'id');
         $reportingPeriodTypes = ReportingPeriodTypeT::all();
+        $offices = OfficeTranslation::all();
+
         $search = $request->get('search', '');
         $languages = Language::search($search)
             ->latest()
@@ -59,7 +63,7 @@ class KeyPeformanceIndicatorController extends Controller
 
         return view(
             'app.key_peformance_indicators.create',
-            compact('objectives', 'strategies', 'users', 'reportingPeriodTypes', 'languages')
+            compact('objectives', 'strategies', 'users', 'reportingPeriodTypes', 'languages', 'offices')
         );
     }
 
@@ -76,6 +80,7 @@ class KeyPeformanceIndicatorController extends Controller
         // $keyPeformanceIndicator = KeyPeformanceIndicator::create($validated);
 
         $data = $request->input();
+        $offices = $request->input('offices');
         $language = Language::all();
          //$lastGoal = Goal::select('id')->orderBy('id','desc')->first();
         try {
@@ -98,6 +103,10 @@ class KeyPeformanceIndicatorController extends Controller
                 $kpi_translation->save();
          }
 
+        foreach($offices as $office){
+            $kpiOffice = DB::insert('insert into kpi_office (office_id, kpi_id) values (?, ?)', [$office, $keyPeformanceIndicator->id]);
+        }
+
          return redirect()
             ->route('key-peformance-indicators.index', $keyPeformanceIndicator)
             ->withSuccess(__('crud.common.created'));
@@ -105,9 +114,6 @@ class KeyPeformanceIndicatorController extends Controller
             return redirect('key-peformance-indicators/create')->withErrors(['errors' => $e]);
             }
 
-        return redirect()
-            ->route('key-peformance-indicators.edit', $keyPeformanceIndicator)
-            ->withSuccess(__('crud.common.created'));
     }
 
     /**
