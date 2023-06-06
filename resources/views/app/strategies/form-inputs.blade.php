@@ -7,7 +7,9 @@
             @php $selected = old('objective_id', ($editing ? $strategy->objective_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Objective</option>
             @foreach($objectives as $value => $label)
-            <option value="{{ $label->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->objectiveTranslations[0]->name }}</option>
+                @if(app()->getLocale() ==$label->locale)
+                    <option value="{{ $label->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
+                @endif
             @endforeach
         </x-inputs.select>
     </x-inputs.group>

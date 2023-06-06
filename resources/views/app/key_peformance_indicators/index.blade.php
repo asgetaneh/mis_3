@@ -155,7 +155,7 @@
                                 >
                                     @can('update', $keyPeformanceIndicator_t)
                                     <a
-                                        href="{{ route('kpi-child-one-translations.add',$keyPeformanceIndicator_t) }}"
+                                        href="{{ route('kpi-child-one-translations.create',$keyPeformanceIndicator_t) }}"
                                     >
                                         <button
                                             type="button"

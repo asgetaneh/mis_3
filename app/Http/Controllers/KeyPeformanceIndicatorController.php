@@ -14,7 +14,9 @@ use App\Models\KeyPeformanceIndicator;
 use App\Http\Requests\KeyPeformanceIndicatorStoreRequest;
 use App\Http\Requests\KeyPeformanceIndicatorUpdateRequest;
 use App\Models\KeyPeformanceIndicatorT;
+use App\Models\ObjectiveTranslation;
 use App\Models\ReportingPeriodTypeT;
+use App\Models\StrategyTranslation;
 
 class KeyPeformanceIndicatorController extends Controller
 {
@@ -45,10 +47,10 @@ class KeyPeformanceIndicatorController extends Controller
     {
         $this->authorize('create', KeyPeformanceIndicator::class);
 
-        $objectives = Objective::all();
-        $strategies = Strategy::all();
+        $objectives = ObjectiveTranslation::all();
+        $strategies = StrategyTranslation::all();
         $users = User::pluck('name', 'id');
-        $reportingPeriodTypes = ReportingPeriodType::all();
+        $reportingPeriodTypes = ReportingPeriodTypeT::all();
         $search = $request->get('search', '');
         $languages = Language::search($search)
             ->latest()

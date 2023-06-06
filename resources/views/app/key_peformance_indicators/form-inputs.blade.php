@@ -7,8 +7,8 @@
             @php $selected = old('objective_id', ($editing ? $keyPeformanceIndicator->objective_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Objective</option>
             @foreach($objectives as $value => $label)
-                @if(app()->getLocale() == $label->objectiveTranslations[0]->locale)
-                    <option value="{{ $label->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->objectiveTranslations[0]->name }}</option>
+                @if(app()->getLocale() == $label->locale)
+                    <option value="{{ $label->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
                 @endif
             @endforeach
         </x-inputs.select>
@@ -19,8 +19,8 @@
             @php $selected = old('strategy_id', ($editing ? $keyPeformanceIndicator->strategy_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Strategy</option>
             @foreach($strategies as $value => $label)
-                @if(app()->getLocale() == $label->strategyTranslations[0]->locale)
-                    <option value="{{ $label->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->strategyTranslations[0]->name }}</option>
+                @if(app()->getLocale() == $label->locale)
+                    <option value="{{ $label->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
                 @endif
             @endforeach
         </x-inputs.select>
@@ -35,8 +35,8 @@
             @php $selected = old('reporting_period_type_id', ($editing ? $keyPeformanceIndicator->reporting_period_type_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Reporting Period Type</option>
             @foreach($reportingPeriodTypes as $value => $label)
-                @if(app()->getLocale() == $label->reportingPeriodTypeTs[0]->locale)
-                    <option value="{{ $label->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->reportingPeriodTypeTs[0]->name }}</option>
+                @if(app()->getLocale() == $label->locale)
+                    <option value="{{ $label->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
                 @endif
             @endforeach
         </x-inputs.select>
