@@ -102,8 +102,8 @@
                                 $keyPeformanceIndicator_t->out_come
                                 ?? '-' }}
                             </td>
-
                             @php
+                            
                                 $objective = '';
                                 foreach ($keyPeformanceIndicator_t->keyPeformanceIndicator->objective->objectiveTranslations as $key => $value) {
                                     if (app()->getLocale() == $value->locale){
@@ -155,7 +155,7 @@
                                 >
                                     @can('update', $keyPeformanceIndicator_t)
                                     <a
-                                        href="{{ route('kpi-child-one-translations.create',$keyPeformanceIndicator_t) }}"
+                                        href="{{ route('kpi-Chain',$keyPeformanceIndicator_t->keyPeformanceIndicator) }}"
                                     >
                                         <button
                                             type="button"

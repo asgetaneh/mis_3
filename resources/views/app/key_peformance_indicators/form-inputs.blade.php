@@ -8,7 +8,7 @@
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Objective</option>
             @foreach($objectives as $value => $label)
                 @if(app()->getLocale() == $label->locale)
-                    <option value="{{ $label->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
+                    <option value="{{ $label->objective->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
                 @endif
             @endforeach
         </x-inputs.select>
@@ -20,7 +20,7 @@
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Strategy</option>
             @foreach($strategies as $value => $label)
                 @if(app()->getLocale() == $label->locale)
-                    <option value="{{ $label->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
+                    <option value="{{ $label->strategy->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
                 @endif
             @endforeach
         </x-inputs.select>

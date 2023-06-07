@@ -33,6 +33,9 @@ use App\Http\Controllers\KeyPeformanceIndicatorTController;
 use App\Http\Controllers\KpiChildOneTranslationController;
 use App\Http\Controllers\KpiChildTwoTranslationController;
 use App\Http\Controllers\KpiChildThreeTranslationController;
+use App\Http\Controllers\KpiChildOneController;
+use App\Http\Controllers\KpiChildTwoController;
+use App\Http\Controllers\KpiChildThreeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,7 +56,8 @@ Route::get('languages', [LanguageController::class, 'index']);
     // institution ownerships
 
 Route::get('home', [HomeController::class, 'home'])->name('home');
-
+Route::get('kpi_chain/{id}', [KeyPeformanceIndicatorController::class, 'kpiChain'])->name('kpi-Chain');
+Route::POST('kpi_chain/save', [KeyPeformanceIndicatorController::class, 'kpiChainSave'])->name('kpi-Chain-save');
 Route::prefix('/')
     ->middleware('auth')
     ->group(function () {
@@ -143,5 +147,6 @@ Route::prefix('/')
             StrategyTranslationController::class
         );
         Route::resource('languages', LanguageController::class);
+
     });
 require __DIR__.'/auth.php';

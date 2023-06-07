@@ -17,6 +17,7 @@ use App\Models\KeyPeformanceIndicatorT;
 use App\Models\ObjectiveTranslation;
 use App\Models\ReportingPeriodTypeT;
 use App\Models\StrategyTranslation;
+use App\Models\KpiChildOne;
 
 class KeyPeformanceIndicatorController extends Controller
 {
@@ -31,7 +32,7 @@ class KeyPeformanceIndicatorController extends Controller
 
         $keyPeformanceIndicator_ts = KeyPeformanceIndicatorT::search($search)
             ->latest()
-            ->paginate(5)
+            ->paginate(15)
             ->withQueryString();
 
         return view(
@@ -54,7 +55,7 @@ class KeyPeformanceIndicatorController extends Controller
         $search = $request->get('search', '');
         $languages = Language::search($search)
             ->latest()
-            ->paginate(5)
+            ->paginate(15)
             ->withQueryString();
 
         return view(
@@ -184,4 +185,34 @@ class KeyPeformanceIndicatorController extends Controller
             ->route('key-peformance-indicators.index')
             ->withSuccess(__('crud.common.removed'));
     }
+    public function kpiChain(
+        Request $request, $id
+    ): View {
+        $KpiChildOne = KpiChildOne::all();
+        $keyPeformanceIndicator = KeyPeformanceIndicator::find($id);
+         return view(
+            'app.key_peformance_indicators.chain',
+            compact(
+                'keyPeformanceIndicator',
+                'KpiChildOne'
+            )
+        );
+    }
+    public function kpiChainSave(
+        Request $request
+    ): View {
+        $data = $request->input();
+        dd($data);
+        $KpiChildOne = KpiChildOne::all();
+        $keyPeformanceIndicator = KeyPeformanceIndicator::find($id);
+         return view(
+            'app.key_peformance_indicators.chain',
+            compact(
+                'keyPeformanceIndicator',
+                'KpiChildOne'
+            )
+        );
+    }
 }
+
+
