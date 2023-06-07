@@ -27,6 +27,18 @@
     </x-inputs.group>
 
     <x-inputs.group class="col-sm-12">
+        <x-inputs.select class="select2" multiple="multiple" data-placeholder="Select a State" name="offices[]" label="Office" required>
+            @php $selected = old('office_id', ($editing ? $suitableKpi->office_id : '')) @endphp
+            {{-- <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Office</option> --}}
+            @foreach($offices as $value => $label)
+                @if(app()->getLocale() == $label->locale)
+                    <option value="{{ $label->translation_id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
+                @endif
+            @endforeach
+        </x-inputs.select>
+    </x-inputs.group>
+
+    <x-inputs.group class="col-sm-12">
         <x-inputs.select
             name="reporting_period_type_id"
             label="Reporting Period Type"
@@ -36,7 +48,7 @@
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Reporting Period Type</option>
             @foreach($reportingPeriodTypes as $value => $label)
                 @if(app()->getLocale() == $label->locale)
-                    <option value="{{ $label->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
+                    <option value="{{ $label->reporting_period_type_id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
                 @endif
             @endforeach
         </x-inputs.select>
