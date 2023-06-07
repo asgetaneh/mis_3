@@ -62,4 +62,8 @@ class KeyPeformanceIndicator extends Model
     {
         return $this->belongsToMany(Office::class, 'kpi_office', 'kpi_id');
     }
+    public function kpiChildOnes()
+    {
+        return $this->belongsToMany(KpiChildOne::class);
+    }
 }

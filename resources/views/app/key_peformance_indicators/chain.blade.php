@@ -4,15 +4,6 @@
 <div class="container">
     <div class="card">
         <div class="card-body">
-            <h4 class="card-title">
-                <a
-                    href="{{ route('key-peformance-indicators.index') }}"
-                    class="mr-4"
-                    ><i class="icon ion-md-arrow-back"></i
-                ></a>
-                Add sub chain for Key performance indicator
-            </h4>
-
             <x-form
                 method="POST"
                 action="{{ route('kpi-Chain-save') }}"
@@ -31,10 +22,72 @@
 
                     <button type="submit" class="btn btn-primary float-right">
                         <i class="icon ion-md-save"></i>
-                        @lang('crud.common.create')
+                        Add
                     </button>
+                   
+                         
                 </div>
             </x-form>
+             <div class="table-responsive">
+                           <h4 class="card-title"><u>
+                             Added sub chain for Key performance indicator({{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->name}})</u>
+                             </h4>
+                        <table class="table table-borderless table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-left">
+                                        Name
+                                    </th>
+                                    <th class="text-left">
+                                        Description
+                                    </th>
+                                    <th class="text-left">
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($child_one_adds as $child_one_add)
+                                     <tr>
+                                    <td>
+                                        {{
+                                        $child_one_add->kpiChildOneTranslations[0]->name
+                                        ?? '-' }}
+                                    </td>
+                                    <td>
+                                        {{
+                                        $child_one_add->kpiChildOneTranslations[0]->description
+                                        ?? '-' }}
+                                    </td>
+                                    <td>
+                                         @can('delete',
+                                        $child_one_add)
+                                        <form
+                                            action="{{ route('kpi-Chain-remove', [$keyPeformanceIndicator,$child_one_add]) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
+                                        >
+                                            @csrf @method('DELETE')
+                                            <button
+                                                type="submit"
+                                                class="btn btn-light text-danger"
+                                            >
+                                                <i class="icon ion-md-trash"></i>
+                                            </button>
+                                        </form>
+                                        @endcan
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="">
+                                        @lang('crud.common.no_items_found')
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody> 
+                        </table>
+                    </div>
         </div>
     </div>
 </div>

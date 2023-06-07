@@ -35,7 +35,7 @@ class KeyPeformanceIndicatorController extends Controller
 
         $keyPeformanceIndicator_ts = KeyPeformanceIndicatorT::search($search)
             ->latest()
-            ->paginate(5)
+            ->paginate(15)
             ->withQueryString();
 
         return view(
@@ -197,11 +197,15 @@ class KeyPeformanceIndicatorController extends Controller
     ): View {
         $KpiChildOne = KpiChildOne::all();
         $keyPeformanceIndicator = KeyPeformanceIndicator::find($id);
+       
+        $child_one_adds = $keyPeformanceIndicator->kpiChildOnes;  
+         
          return view(
             'app.key_peformance_indicators.chain',
             compact(
                 'keyPeformanceIndicator',
-                'KpiChildOne'
+                'KpiChildOne',
+                 'child_one_adds'
             )
         );
     }
@@ -209,15 +213,46 @@ class KeyPeformanceIndicatorController extends Controller
         Request $request
     ): View {
         $data = $request->input();
-        dd($data);
-        $KpiChildOne = KpiChildOne::all();
-        $keyPeformanceIndicator = KeyPeformanceIndicator::find($id);
+        $kpi = $data['keyPeformanceIndicator'];
+        $chaild_one_lists = $data['kpi_one_child'];
+        
+         foreach($chaild_one_lists as $chaild_one_list){
+            $kpi_chaild_one = DB::insert('insert into key_peformance_indicator_kpi_child_one (kpi_child_one_id, key_peformance_indicator_id) values (?, ?)', [$chaild_one_list, $kpi]);
+        }
+         $search = $request->get('search', '');
+
+        $keyPeformanceIndicator_ts = KeyPeformanceIndicatorT::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
+        return view(
+            'app.key_peformance_indicators.index',
+            compact('keyPeformanceIndicator_ts', 'search')
+        );
+         
+    }
+     public function kpiChainRemove($kpi, $child_one,
+        Request $request
+    ): View {
+        $keyPeformanceIndicator = KeyPeformanceIndicator::find($kpi);
+        
+        $keyPeformanceIndicator->find($kpi)->kpiChildOnes()->detach();
+
+       $KpiChildOne = KpiChildOne::all();
+        $keyPeformanceIndicator = KeyPeformanceIndicator::find($kpi);
+       
+        $child_one_adds = $keyPeformanceIndicator->kpiChildOnes;  
+         
          return view(
             'app.key_peformance_indicators.chain',
             compact(
                 'keyPeformanceIndicator',
-                'KpiChildOne'
+                'KpiChildOne',
+                 'child_one_adds'
             )
         );
+         
     }
+
 }

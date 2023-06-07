@@ -58,6 +58,7 @@ Route::get('languages', [LanguageController::class, 'index']);
 Route::get('home', [HomeController::class, 'home'])->name('home');
 Route::get('kpi_chain/{id}', [KeyPeformanceIndicatorController::class, 'kpiChain'])->name('kpi-Chain');
 Route::POST('kpi_chain/save', [KeyPeformanceIndicatorController::class, 'kpiChainSave'])->name('kpi-Chain-save');
+Route::DELETE('kpi_chain_remove/{kpi}/{childone}', [KeyPeformanceIndicatorController::class, 'kpiChainRemove'])->name('kpi-Chain-remove');
 Route::prefix('/')
     ->middleware('auth')
     ->group(function () {
