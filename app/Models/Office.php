@@ -54,4 +54,8 @@ class Office extends Model
             'kpi_id'
         );
     }
+    public function performers()
+    {
+        return $this->hasMany(Performer::class, 'office_id');
+    }
 }

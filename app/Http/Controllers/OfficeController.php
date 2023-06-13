@@ -60,7 +60,7 @@ class OfficeController extends Controller
          //$lastoffice = office::select('id')->orderBy('id','desc')->first();
         try {
             $office = new Office;
-            $office->parent_office_id = $data['parent_name']
+            $office->parent_office_id = $data['parent_name'];
             $office->created_at= new \DateTime();
             $office->updated_at =new \DateTime();
             $office->save();
@@ -138,4 +138,5 @@ class OfficeController extends Controller
             ->route('offices.index')
             ->withSuccess(__('crud.common.removed'));
     }
+    
 }

@@ -8,18 +8,18 @@
                 <a href="{{ route('suitable-kpis.index') }}" class="mr-4"
                     ><i class="icon ion-md-arrow-back"></i
                 ></a>
-                @lang('crud.suitable_kpis.create_title')
+                Choose office and reporting Planing Year
             </h4>
 
             <x-form
                 method="POST"
-                action="{{ route('suitable-kpis.store') }}"
+                action="{{ route('suitable-kpi',0) }}"
                 class="mt-4"
             >
                 @include('app.suitable_kpis.form-inputs')
 
                 <div class="mt-4">
-                    <a
+                    <abs
                         href="{{ route('suitable-kpis.index') }}"
                         class="btn btn-light"
                     >
@@ -29,7 +29,7 @@
 
                     <button type="submit" class="btn btn-primary float-right">
                         <i class="icon ion-md-save"></i>
-                        @lang('crud.common.create')
+                       Choose
                     </button>
                 </div>
             </x-form>

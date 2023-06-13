@@ -82,7 +82,7 @@
                         imageUrl: src,
 
                         refreshUrl() {
-                            this.imageUrl = this.$el.getAttribute("image-url")
+                            thilogins.imageUrl = this.$el.getAttribute("image-url")
                         },
 
                         fileChosen(event) {

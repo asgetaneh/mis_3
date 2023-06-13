@@ -11,7 +11,8 @@ use Illuminate\Http\RedirectResponse;
 use App\Models\KeyPeformanceIndicator;
 use App\Http\Requests\SuitableKpiStoreRequest;
 use App\Http\Requests\SuitableKpiUpdateRequest;
-
+use Illuminate\Support\Facades\DB;
+ 
 class SuitableKpiController extends Controller
 {
     /**
@@ -20,12 +21,12 @@ class SuitableKpiController extends Controller
     public function index(Request $request): View
     {
         $this->authorize('view-any', SuitableKpi::class);
-
+       
         $search = $request->get('search', '');
 
         $suitableKpis = SuitableKpi::search($search)
             ->latest()
-            ->paginate(5)
+            ->paginate(50)
             ->withQueryString();
 
         return view(
@@ -40,15 +41,82 @@ class SuitableKpiController extends Controller
     public function create(Request $request): View
     {
         $this->authorize('create', SuitableKpi::class);
-
-        $keyPeformanceIndicators = KeyPeformanceIndicator::pluck('id', 'id');
-        $offices = Office::pluck('id', 'id');
-        $planingYears = PlaningYear::pluck('id', 'id');
+        $user = auth()->user();
+        $user_managing_office = $user->offices;
+        $search = $request->get('search', '');
+        $planingYears = PlaningYear::search($search)
+            ->latest()->paginate(50)->withQueryString();
 
         return view(
             'app.suitable_kpis.create',
-            compact('keyPeformanceIndicators', 'offices', 'planingYears')
+            compact('user_managing_office', 'planingYears')
         );
+    }
+     public function officeSuitableKpi(Request $request, $recover_request =null){
+        $data = $request->input();
+        $m_office = auth()->user()->offices[0]->id;
+        $planyear = PlaningYear::select('id')->orderBy('id','desc')->first();
+        $planyear= $planyear->id;
+         if (isset($_POST['user_managing_office'])) {
+             $m_office = $data['user_managing_office'];
+              $planyear = $data['planing_year_id'];
+        }
+        $search = $request->get('search', '');
+       
+         $suitableKpis = SuitableKpi::where('office_id' , '=', $m_office)->where('planing_year_id' , '=', $planyear)    ->paginate(5);
+          if ($recover_request =="1" ||$suitableKpis->isEmpty() ) { 
+           $offfice = Office::find($m_office);
+            $kpis = $offfice->keyPeformanceIndicators;//dd($kpis);
+            $planyear = PlaningYear::find($planyear);
+            $m_office = Office::find($m_office);
+            return view(
+                'app.suitable_kpis.list_kpi',
+                compact('kpis', 'planyear','m_office', 'search')
+            );
+           
+            
+         }
+         else{
+            return view(
+                'app.suitable_kpis.index',
+                compact('suitableKpis', 'planyear','m_office', 'search')
+            );
+         } 
+
+    }
+    public function selectOfficeSuitableKpi(Request $request){
+        $data = $request->input();
+         $search = $request->get('search', '');
+        $Kpi = $data['kpi'];
+        $office = $data['office'];
+        
+         
+        if($data['nonsuitable']){
+             foreach ($Kpi as $key => $value) {
+                $suitable_Kpi = SuitableKpi::where('key_peformance_indicator_id' , '=', $value)->where('office_id' , '=', $office);
+                 $suitable_Kpi-> delete($suitable_Kpi);
+
+             }
+             return redirect()->to('suitable-kpis');
+        }
+        else{//dd($data);
+            foreach ($Kpi as $key => $value){
+                $suitnew = new SuitableKpi;
+                $suitnew->key_peformance_indicator_id = $value;
+                $suitnew-> office_id = $data['office'];
+                $suitnew-> planing_year_id = $data['planyear'];
+                $suitnew->save();
+            }
+            $m_office = $data['office'];
+            $planyear = $data['planyear'];
+            $suitableKpis = SuitableKpi::where('office_id' , '=', $m_office)->where('planing_year_id' , '=', $planyear)    ->paginate(5);
+             return view(
+                'app.suitable_kpis.index',
+                compact('suitableKpis', 'planyear','m_office', 'search')
+            );
+        }
+       $suitableKpis = SuitableKpi::all();
+         
     }
 
     /**
@@ -132,4 +200,6 @@ class SuitableKpiController extends Controller
             ->route('suitable-kpis.index')
             ->withSuccess(__('crud.common.removed'));
     }
+   
+
 }

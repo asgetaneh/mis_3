@@ -49,7 +49,9 @@ use App\Http\Controllers\KpiChildThreeController;
 */
 
 Route::get('/', function () { return view('welcome');});
-Route::get('/dashboard', function () { return view('layouts.dashboard');});
+Route::get('/dashboard', [HomeController::class, 'index'])->name('home');
+
+// Route::get('/dashboard', function () { return view('layouts.dashboard');});
 Route::get('lang/home', [HomeController::class, 'languageIndex']);
 Route::get('lang/change', [HomeController::class, 'change'])->name('changeLang');
 Route::get('languages', [LanguageController::class, 'index']);
@@ -59,6 +61,8 @@ Route::get('home', [HomeController::class, 'home'])->name('home');
 Route::get('kpi_chain/{id}', [KeyPeformanceIndicatorController::class, 'kpiChain'])->name('kpi-Chain');
 Route::POST('kpi_chain/save', [KeyPeformanceIndicatorController::class, 'kpiChainSave'])->name('kpi-Chain-save');
 Route::DELETE('kpi_chain_remove/{kpi}/{childone}', [KeyPeformanceIndicatorController::class, 'kpiChainRemove'])->name('kpi-Chain-remove');
+Route::POST('assign-office', [HomeController::class, 'assignOffice'])->name('assign-office');
+
 Route::prefix('/')
     ->middleware('auth')
     ->group(function () {
@@ -148,6 +152,11 @@ Route::prefix('/')
             StrategyTranslationController::class
         );
         Route::resource('languages', LanguageController::class);
+
+        Route::match(array('GET', 'POST'),'suitable-kpi/{recover_request}', [SuitableKpiController::class, 'officeSuitableKpi'])->name('suitable-kpi');
+        Route::GET('select-suitable-kpi', [SuitableKpiController::class, 'selectOfficeSuitableKpi'])->name('select-suitable-kpi');
+        Route::POST('suitable-kpi/save', [SuitableKpiController::class, 'kpiChainSave'])->name('kpi-Chain-save');
+        Route::DELETE('kpi_chain_remove/{kpi}/{childone}', [SuitableKpiController::class, 'kpiChainRemove'])->name('kpi-Chain-remove');
 
     });
 require __DIR__.'/auth.php';

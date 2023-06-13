@@ -10,7 +10,12 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('performer', function (Blueprint $table) {
+        Schema::create('performers', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users') ->onDelete('cascade');
+            $table->unsignedBigInteger('office_id');
+             $table->foreign('office_id')->references('id')->on('offices') ->onDelete('cascade');
             $table->timestamps();
         });
     }

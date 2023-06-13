@@ -67,7 +67,7 @@ class User extends Authenticatable
         return $this->hasMany(KeyPeformanceIndicator::class, 'created_by_id');
     }
 
-    public function offices()
+    public function offices2()
     {
         return $this->hasMany(Office::class, 'holder_id');
     }
@@ -77,7 +77,7 @@ class User extends Authenticatable
         return $this->hasMany(Language::class, 'created_by_id');
     }
 
-    public function offices2()
+    public function offices()
     {
         return $this->belongsToMany(Office::class, 'manager');
     }
@@ -85,5 +85,9 @@ class User extends Authenticatable
     public function isSuperAdmin(): bool
     {
         return $this->hasRole('super-admin');
+    }
+     public function performers()
+    {
+        return $this->hasMany(Performer::class, 'user_id');
     }
 }

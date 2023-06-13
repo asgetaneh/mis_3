@@ -296,7 +296,7 @@
                             <ul class="nav nav-treeview">
                             @can('view-any', App\Models\StrategyTranslation::class)
                             <li class="nav-item">
-                                <a href="{{ route('strategy-translations.index') }}" class="nav-link">
+                                <a href="{{ route('suitable-kpis.create') }}" class="nav-link">
                                     <i class="nav-icon icon ion-md-radio-button-off"></i>
                                     <p>Cascade</p>
                                 </a>
