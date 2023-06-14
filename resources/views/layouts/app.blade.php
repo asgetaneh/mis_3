@@ -31,7 +31,8 @@
         <link rel="stylesheet" href="{{ asset('assets/dist/css/adminlte.min.css') }}">
 
         <!-- Icons -->
-        <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+        {{-- <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet"> --}}
+        <link href="{{ asset('assets/ionicon/ionicons.min.css') }}" rel="stylesheet">
 
         <!-- Small Ionicons Fixes for AdminLTE -->
         <style>
