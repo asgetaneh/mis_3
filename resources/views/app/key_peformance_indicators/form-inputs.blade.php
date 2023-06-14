@@ -27,7 +27,7 @@
     </x-inputs.group>
 
     <x-inputs.group class="col-sm-12">
-        <x-inputs.select class="select2" multiple="multiple" data-placeholder="Select a State" name="offices[]" label="Office" required>
+        <x-inputs.select class="select2" multiple="multiple" data-placeholder="Select office" name="offices[]" label="Office" required>
             @php $selected = old('office_id', ($editing ? $suitableKpi->office_id : '')) @endphp
             {{-- <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Office</option> --}}
             @foreach($offices as $value => $label)
