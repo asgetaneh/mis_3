@@ -24,8 +24,8 @@
                         <i class="icon ion-md-save"></i>
                         Add
                     </button>
-                   
-                         
+
+
                 </div>
             </x-form>
              <div class="table-responsive">
@@ -85,10 +85,19 @@
                                     </td>
                                 </tr>
                                 @endforelse
-                            </tbody> 
+                            </tbody>
                         </table>
                     </div>
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+
+        $('.select2').select2();
+
+    });
+</script>
 @endsection
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
