@@ -57,6 +57,10 @@ Route::get('lang/change', [HomeController::class, 'change'])->name('changeLang')
 Route::get('languages', [LanguageController::class, 'index']);
     // institution ownerships
 
+Route::get('kpi-chain-two/{id}', [KpiChildOneController::class, 'kpiChainTwo'])->name('kpi-chain-two.create');
+Route::POST('kpi-chain-two/save', [KpiChildOneController::class, 'kpiChainTwoStore'])->name('kpi-chain-two.store');
+Route::DELETE('kpi-chain-two-remove/{kpiOne}/{childtwo}', [KpiChildOneController::class, 'kpiChainTwoRemove'])->name('kpi-chain-two.remove');
+
 Route::get('home', [HomeController::class, 'home'])->name('home');
 Route::get('kpi_chain/{id}', [KeyPeformanceIndicatorController::class, 'kpiChain'])->name('kpi-Chain');
 Route::POST('kpi_chain/save', [KeyPeformanceIndicatorController::class, 'kpiChainSave'])->name('kpi-Chain-save');
@@ -155,7 +159,7 @@ Route::prefix('/')
 
         Route::match(array('GET', 'POST'),'suitable-kpi/{recover_request}', [SuitableKpiController::class, 'officeSuitableKpi'])->name('suitable-kpi');
         Route::GET('select-suitable-kpi', [SuitableKpiController::class, 'selectOfficeSuitableKpi'])->name('select-suitable-kpi');
-        Route::POST('suitable-kpi/save', [SuitableKpiController::class, 'kpiChainSave'])->name('kpi-Chain-save');
+        Route::POST('suitable-kpi/save', [SuitableKpiController::class, 'kpiChainSave'])->name('kpi-Chain-sae');
         Route::DELETE('kpi_chain_remove/{kpi}/{childone}', [SuitableKpiController::class, 'kpiChainRemove'])->name('kpi-Chain-remove');
 
     });
