@@ -28,7 +28,7 @@
         {{-- <link href="{{ asset('css/app.css') }}" rel="stylesheet"> --}}
         {{-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/css/adminlte.min.css"> --}}
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
-        <link rel="stylesheet" href="{{ asset('assets/dist/css/adminlte.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/dist/css/AdminLTE.min.css') }}">
 
         <!-- Icons -->
         {{-- <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet"> --}}
