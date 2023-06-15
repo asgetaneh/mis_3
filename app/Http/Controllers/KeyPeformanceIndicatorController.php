@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Office;
 use App\Models\Language;
 use App\Models\Strategy;
 use App\Models\Objective;
 use Illuminate\View\View;
+use App\Models\KpiChildOne;
 use Illuminate\Http\Request;
 use App\Models\OfficeTranslation;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +21,6 @@ use App\Models\KeyPeformanceIndicator;
 use App\Models\KeyPeformanceIndicatorT;
 use App\Http\Requests\KeyPeformanceIndicatorStoreRequest;
 use App\Http\Requests\KeyPeformanceIndicatorUpdateRequest;
-use App\Models\KpiChildOne;
 
 
 class KeyPeformanceIndicatorController extends Controller
@@ -55,7 +56,9 @@ class KeyPeformanceIndicatorController extends Controller
         $strategies = StrategyTranslation::all();
         $users = User::pluck('name', 'id');
         $reportingPeriodTypes = ReportingPeriodTypeT::all();
-        $offices = OfficeTranslation::all();
+        $offices = OfficeTranslation::whereHas('office', function ($query) {
+            $query->where('parent_office_id', 1);
+        })->get();
 
         $search = $request->get('search', '');
         $languages = Language::search($search)
@@ -197,9 +200,9 @@ class KeyPeformanceIndicatorController extends Controller
     ): View {
         $KpiChildOne = KpiChildOne::all();
         $keyPeformanceIndicator = KeyPeformanceIndicator::find($id);
-       
-        $child_one_adds = $keyPeformanceIndicator->kpiChildOnes;  
-         
+
+        $child_one_adds = $keyPeformanceIndicator->kpiChildOnes;
+
          return view(
             'app.key_peformance_indicators.chain',
             compact(
@@ -215,7 +218,7 @@ class KeyPeformanceIndicatorController extends Controller
         $data = $request->input();
         $kpi = $data['keyPeformanceIndicator'];
         $chaild_one_lists = $data['kpi_one_child'];
-        
+
          foreach($chaild_one_lists as $chaild_one_list){
             $kpi_chaild_one = DB::insert('insert into key_peformance_indicator_kpi_child_one (kpi_child_one_id, key_peformance_indicator_id) values (?, ?)', [$chaild_one_list, $kpi]);
         }
@@ -230,20 +233,20 @@ class KeyPeformanceIndicatorController extends Controller
             'app.key_peformance_indicators.index',
             compact('keyPeformanceIndicator_ts', 'search')
         );
-         
+
     }
      public function kpiChainRemove($kpi, $child_one,
         Request $request
     ): View {
         $keyPeformanceIndicator = KeyPeformanceIndicator::find($kpi);
-        
+
         $keyPeformanceIndicator->find($kpi)->kpiChildOnes()->detach();
 
        $KpiChildOne = KpiChildOne::all();
         $keyPeformanceIndicator = KeyPeformanceIndicator::find($kpi);
-       
-        $child_one_adds = $keyPeformanceIndicator->kpiChildOnes;  
-         
+
+        $child_one_adds = $keyPeformanceIndicator->kpiChildOnes;
+
          return view(
             'app.key_peformance_indicators.chain',
             compact(
@@ -252,7 +255,7 @@ class KeyPeformanceIndicatorController extends Controller
                  'child_one_adds'
             )
         );
-         
+
     }
 
 }

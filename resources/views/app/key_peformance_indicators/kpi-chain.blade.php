@@ -10,20 +10,20 @@
         Add sub chain for Key performance indicator({{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->name}})
     </h4>
     <x-inputs.group class="col-sm-12">
-     <input type="hidden" value="{{ $keyPeformanceIndicator->id }}" name="keyPeformanceIndicator"> 
+     <input type="hidden" value="{{ $keyPeformanceIndicator->id }}" name="keyPeformanceIndicator">
 
-     <select class="form-control select2 {{ $errors->has('locations') ? 'is-invalid' : '' }}" name="kpi_one_child[]" id="locations" multiple>
+        <x-inputs.select class="select2 {{ $errors->has('locations') ? 'is-invalid' : '' }}" name="kpi_one_child[]" id="locations" multiple>
                     @foreach($KpiChildOne as $id => $kpi_one)
                         <option value="{{ $kpi_one->id }}" {{ in_array($id, old('locations', [])) ? 'selected' : '' }}>{{ $kpi_one-> kpiChildOneTranslations[0]->name }}</option>
 
                     @endforeach
-                </select>
-      
+        </x-inputs.select>
+
     </x-inputs.group>
- 
+
 
     {{-- <x-inputs.group class="col-sm-12">
-       
+
         <x-inputs.select name="created_by_id" label="User" required>
             @php $selected = old('created_by_id', ($editing ? $keyPeformanceIndicator->created_by_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the User</option>
@@ -31,5 +31,5 @@
             <option value="{{ $value }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label }}</option>
             @endforeach
         </x-inputs.select>
-    </x-inputs.group> --}}  
+    </x-inputs.group> --}}
 </div>
