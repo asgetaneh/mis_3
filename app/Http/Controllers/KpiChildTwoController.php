@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Language;
 use Illuminate\View\View;
-use App\Models\KpiChildTwo;
 use App\Models\KpiChildOne;
+use App\Models\KpiChildTwo;
 use Illuminate\Http\Request;
+use App\Models\KpiChildThree;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
+use App\Models\KpiChildTwoTranslation;
 use App\Http\Requests\KpiChildTwoStoreRequest;
 use App\Http\Requests\KpiChildTwoUpdateRequest;
 
@@ -118,4 +122,76 @@ class KpiChildTwoController extends Controller
             ->route('kpi-child-twos.index')
             ->withSuccess(__('crud.common.removed'));
     }
+
+    public function kpiChainThree(Request $request, $id): View
+    {
+        $KpiChildTwo = KpiChildTwo::find($id);
+        $KpiChildThree = KpiChildThree::all();
+
+        // fix below code later
+        // $childThreeAdds = $KpiChildTwo->kpiChildThrees;
+        // dd($childThreeAdds);
+
+        $languages = Language::all();
+
+        return view(
+            'app.kpi_child_two_translations.chain',
+            compact(
+                'KpiChildTwo',
+                'KpiChildThree',
+                // 'childThreeAdds',
+                'languages'
+            )
+        );
+    }
+
+    public function kpiChainThreeStore(Request $request){
+        // dd($request);
+
+        $data = $request->input();
+        $kpiChildTwo = $data['kpiChildTwoId'];
+        $childThreeLists = $data['kpiThreeLists'];
+
+        foreach($childThreeLists as $childThreeList){
+            $kpiChildOneTwo = DB::insert('insert into kpi_child_three_kpi_child_two (kpi_child_three_id, kpi_child_two_id) values (?, ?)', [$childThreeList, $kpiChildTwo]);
+        }
+
+        $search = $request->get('search', '');
+
+        $kpiChildTwoTranslations = KpiChildTwoTranslation::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
+        return redirect()->
+            route('kpi-child-two-translations.index', $kpiChildTwoTranslations)
+        ->withSuccess(__('crud.common.created'));
+
+    }
+
+    // below code is to be worked later
+    public function kpiChainThreeRemove($kpiChildOne, $childTwo,
+        Request $request
+    ): View {
+
+        $kpiChildOne = KpiChildOne::find($kpiChildOne);
+
+        $kpiChildOne->find($kpiChildOne)->kpiChildTwos()->detach();
+
+        $KpiChildTwo = KpiChildTwo::all();
+        $kpiChildOne = KpiChildOne::find($kpiChildOne);
+
+        $childTwoAdds = $kpiChildOne->kpiChildTwos;
+
+        return view(
+            'app.key_peformance_indicators.chain',
+            compact(
+                'kpiChildOne',
+                'KpiChildTwo',
+                'childTwoAdds'
+            )
+        );
+
+    }
+
 }
