@@ -60,6 +60,9 @@ Route::get('languages', [LanguageController::class, 'index']);
 Route::get('kpi-chain-two/{id}', [KpiChildOneController::class, 'kpiChainTwo'])->name('kpi-chain-two.create');
 Route::POST('kpi-chain-two/save', [KpiChildOneController::class, 'kpiChainTwoStore'])->name('kpi-chain-two.store');
 Route::DELETE('kpi-chain-two-remove/{kpiOne}/{childtwo}', [KpiChildOneController::class, 'kpiChainTwoRemove'])->name('kpi-chain-two.remove');
+Route::get('kpi-chain-three/{id}', [KpiChildTwoController::class, 'kpiChainThree'])->name('kpi-chain-three.create');
+Route::POST('kpi-chain-three/save', [KpiChildTwoController::class, 'kpiChainThreeStore'])->name('kpi-chain-three.store');
+Route::DELETE('kpi-chain-three-remove/{kpiTwo}/{childthree}', [KpiChildTwoController::class, 'kpiChainThreeRemove'])->name('kpi-chain-three.remove');
 
 Route::get('home', [HomeController::class, 'home'])->name('home');
 Route::get('kpi_chain/{id}', [KeyPeformanceIndicatorController::class, 'kpiChain'])->name('kpi-Chain');
