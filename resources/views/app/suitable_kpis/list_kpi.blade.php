@@ -45,11 +45,11 @@
                                         <i class="ace-icon fa fa-stop green"></i>
                                         Select As Suitable</a>
                                 </li>
-                                <li>
+                                <!-- <li>
                                     <a href="#" id="nonsuitablebutton">
                                         <i class="ace-icon fa fa-stop red"></i>
                                         Select As Non Suitable</a>
-                                </li>
+                                </li> -->
 
 
                             </ul>
@@ -123,15 +123,10 @@
                                 {{ $kpi->weight ?? '-' }}
                             </td>
                             <td class="text-center" style="width: 134px;">
-                                @forelse ($kpi->suitableKpis as $kpi_exist_on_suitable)
-
-                                    <p class="bg-success text-white ">Suitable</p>
-
-                                @empty
+                                 
 
                                     <p class="bg-danger text-white ">Not Suitable</p>
 
-                                @endforelse
                             </td>
                         </tr>
                          @empty

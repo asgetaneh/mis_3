@@ -24,10 +24,14 @@ class SuitableKpiController extends Controller
        
         $search = $request->get('search', '');
 
-        $suitableKpis = SuitableKpi::search($search)
-            ->latest()
-            ->paginate(50)
-            ->withQueryString();
+        // $suitableKpis = SuitableKpi::search($search)
+        //     ->latest()
+        //     ->paginate(50)
+        //     ->withQueryString();
+        $m_office = auth()->user()->offices[0]->id; 
+        
+        $planyear = PlaningYear::select('id')->orderBy('id','desc')->first()->id;//dd($planyear);
+        $suitableKpis = SuitableKpi::where('office_id' , '=', $m_office)->where('planing_year_id' , '=', $planyear)    ->paginate(5);
 
         return view(
             'app.suitable_kpis.index',
@@ -64,14 +68,22 @@ class SuitableKpiController extends Controller
         $search = $request->get('search', '');
        
          $suitableKpis = SuitableKpi::where('office_id' , '=', $m_office)->where('planing_year_id' , '=', $planyear)    ->paginate(5);
-          if ($recover_request =="1" ||$suitableKpis->isEmpty() ) { 
-           $offfice = Office::find($m_office);
-            $kpis = $offfice->keyPeformanceIndicators;//dd($kpis);
+         $suitableKpisArray =[];
+         $suitableKpis_array = SuitableKpi::select('key_peformance_indicator_id')->where('office_id' , '=', $m_office)->where('planing_year_id' , '=', $planyear)->get();
+         foreach ($suitableKpis_array as $key => $value) {
+            $suitableKpisArray[] = $value->key_peformance_indicator_id;
+            
+         }               
+          if ($recover_request =="1" ||$suitableKpis->isEmpty()) { 
+            $offfice = Office::find($m_office);
+            $kpis = $offfice->keyPeformanceIndicators;
+            $kpis = keyPeformanceIndicator::whereNotIn('id', $suitableKpisArray)->get();
+             // $kpis = KeyPeformanceIndicator::where('office_id' , '=', $m_office)->where('planing_year_id' , '=', $planyear)    ->paginate(5);
             $planyear = PlaningYear::find($planyear);
             $m_office = Office::find($m_office);
             return view(
                 'app.suitable_kpis.list_kpi',
-                compact('kpis', 'planyear','m_office', 'search')
+                compact('suitableKpis', 'kpis', 'planyear','m_office', 'search')
             );
            
             

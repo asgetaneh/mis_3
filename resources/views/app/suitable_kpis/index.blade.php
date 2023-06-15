@@ -68,6 +68,9 @@
                             <th class="text-left">
                                 @lang('crud.suitable_kpis.inputs.planing_year_id')
                             </th>
+                            <th class="text-left">
+                               Status
+                            </th>
                             <th class="text-center">
                                 @lang('crud.common.actions')
                             </th>
@@ -88,13 +91,17 @@
                                 {{ $suitableKpi->planingYear->planingYearTranslations[0]->name ??
                                 '-' }}
                             </td>
+                            <td>
+                                  <p class="bg-info text-white  text-center "> Suitable
+                                  </p>
+                            </td>
                             <td class="text-center" style="width: 134px;">
                                  
                                      @can('delete', $suitableKpi)
                                     <form
                                         action="{{ route('suitable-kpis.destroy', $suitableKpi) }}"
                                         method="POST"
-                                        onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
+                                        onsubmit="return confirm('{{ __('Are_you_sure to set KPI as not suitable') }}')"
                                     >
                                         @csrf @method('DELETE')
                                         <button  title="make un suitable"

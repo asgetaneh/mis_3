@@ -193,87 +193,8 @@
                                 </a>
                             </li>
                             @endcan
-                            @can('view-any', App\Models\InititiveTranslation::class)
-                            <li class="nav-item">
-                                <a href="{{ route('inititive-translations.index') }}" class="nav-link">
-                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                    <p>Inititive Translations</p>
-                                </a>
-                            </li>
-                            @endcan
-                            @can('view-any', App\Models\KeyPeformanceIndicatorT::class)
-                            <li class="nav-item">
-                                <a href="{{ route('key-peformance-indicator-ts.index') }}" class="nav-link">
-                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                    <p>Key Peformance Indicator Translations</p>
-                                </a>
-                            </li>
-                            @endcan
-                            @can('view-any', App\Models\ObjectiveTranslation::class)
-                            <li class="nav-item">
-                                <a href="{{ route('objective-translations.index') }}" class="nav-link">
-                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                    <p>Objective Translations</p>
-                                </a>
-                            </li>
-                            @endcan
-                            @can('view-any', App\Models\OfficeTranslation::class)
-                            <li class="nav-item">
-                                <a href="{{ route('office-translations.index') }}" class="nav-link">
-                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                    <p>Office Translations</p>
-                                </a>
-                            </li>
-                            @endcan
-                            @can('view-any', App\Models\PerspectiveTranslation::class)
-                            <li class="nav-item">
-                                <a href="{{ route('perspective-translations.index') }}" class="nav-link">
-                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                    <p>Perspective Translations</p>
-                                </a>
-                            </li>
-                            @endcan
-                            @can('view-any', App\Models\PlanAccomplishment::class)
-                            <li class="nav-item">
-                                <a href="{{ route('plan-accomplishments.index') }}" class="nav-link">
-                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                    <p>Plan Accomplishments</p>
-                                </a>
-                            </li>
-                            @endcan
-                            @can('view-any', App\Models\PlaningYearTranslation::class)
-                            <li class="nav-item">
-                                <a href="{{ route('planing-year-translations.index') }}" class="nav-link">
-                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                    <p>Planing Year Translations</p>
-                                </a>
-                            </li>
-                            @endcan
-                            @can('view-any', App\Models\ReportingPeriodT::class)
-                            <li class="nav-item">
-                                <a href="{{ route('reporting-period-ts.index') }}" class="nav-link">
-                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                    <p>Reporting Period Translations</p>
-                                </a>
-                            </li>
-                            @endcan
-                            @can('view-any', App\Models\ReportingPeriodTypeT::class)
-                            <li class="nav-item">
-                                <a href="{{ route('reporting-period-type-ts.index') }}" class="nav-link">
-                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                    <p>Reporting Period Type Translations</p>
-                                </a>
-                            </li>
-                            @endcan
-                            @can('view-any', App\Models\StrategyTranslation::class)
-                            <li class="nav-item">
-                                <a href="{{ route('strategy-translations.index') }}" class="nav-link">
-                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                    <p>Strategy Translations</p>
-                                </a>
-                            </li>
-                            @endcan
-                            @can('view-any', App\Models\Language::class)
+                             
+                            @can('view-any', App\Models\Language::class) 
                             <li class="nav-item">
                                 <a href="{{ route('languages.index') }}" class="nav-link">
                                     <i class="nav-icon icon ion-md-radio-button-off"></i>
@@ -303,6 +224,18 @@
                             </li>
                             @endcan
                             @can('view-any', App\Models\Language::class)
+
+
+                            <li class="nav-item">
+                                @if(Auth::user()!= [])
+                                <a href="{{ route('plan-accomplishment',Auth::user()->id) }}" class="nav-link">
+                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                    <p>Planning</p>
+                                </a>
+                                @endif
+                            </li>
+                            @endcan
+                             @can('view-any', App\Models\Language::class)
                             <li class="nav-item">
                                 <a href="{{ route('languages.index') }}" class="nav-link">
                                     <i class="nav-icon icon ion-md-radio-button-off"></i>
