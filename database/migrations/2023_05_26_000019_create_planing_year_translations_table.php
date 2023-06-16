@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('planing_year_id');
             $table->string('name');
             $table->text('description');
-
+             $table->string('locale', 8);
             $table->timestamps();
         });
     }
