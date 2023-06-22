@@ -138,5 +138,8 @@ class OfficeController extends Controller
             ->route('offices.index')
             ->withSuccess(__('crud.common.removed'));
     }
+    public function officeFetch(){
+        dd("here");
+    }
     
 }

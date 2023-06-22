@@ -55,10 +55,11 @@ class KeyPeformanceIndicatorController extends Controller
         $objectives = ObjectiveTranslation::all();
         $strategies = StrategyTranslation::all();
         $users = User::pluck('name', 'id');
+        $offices = OfficeTranslation::all();
         $reportingPeriodTypes = ReportingPeriodTypeT::all();
-        $offices = OfficeTranslation::whereHas('office', function ($query) {
-            $query->where('parent_office_id', 1);
-        })->get();
+        // $offices = OfficeTranslation::whereHas('office', function ($query) {
+        //     $query->where('parent_office_id', 1);
+        // })->get();
 
         $search = $request->get('search', '');
         $languages = Language::search($search)
