@@ -12,18 +12,18 @@
                     <div class="mb-3 row">
                         <table class="table table-borderless table-hover">
                     <tbody>
-                    
+
                         @forelse($kpis['goal'] as $goal)
                         <tr>
                             <td>
-                                 <a class="btn btn-white" href='{{url("/plan-accomplishment-goalclick/{$user_offices}/{$goal->id}/{$kpis["offwithkpi"]->id}")}}' role="button" aria-expanded="false" aria-controls="collapseExample">
+                                 <a class="btn btn-white" href='{{ url("/get-objectives/{$goal->id}") }}' role="button" aria-expanded="false" aria-controls="collapseExample">
                                 {{
                                 optional($goal->goalTranslations[0])->name
                                 ?? '-' }}
                             </a>
                             </td>
-                            
-                           
+
+
                         </tr>
                         @empty
                         <tr>
@@ -32,7 +32,7 @@
                             </td>
                         </tr>
                         @endforelse
-                       
+
                     </tbody>
                     <tfoot>
                         <tr>
@@ -41,19 +41,19 @@
                         </tr>
                     </tfoot>
                 </table>
-                    </div>                    
+                    </div>
                 </form>
             </div>
         </div>
-    </div>  
+    </div>
     <div class="col-md-10">
-      
+
          <div class="card" class="collapse" id="{{$goal->id}}">
             <div class="card-header">Management information systems (MIS)</div>
             <div class="card-body">
                    <table class="table table-borderless table-hover">
                     <tbody>
-                    
+
                         @forelse($suitableKpis as $suitable)
                         <tr>
                             <td>
@@ -63,25 +63,25 @@
                                     ?? '-' }}
                                 </a>
                             </td>
-                            
+
                         </tr>
                         <tr>
                             <td>
-                            
+
                             @if($suitable->keyPeformanceIndicator->kpiChildOnes->isEmpty())
                                 {{
                                 optional($suitable->keyPeformanceIndicator->kpiChildOnes)->id
                                 ?? '-' }}
                                 @else
-                                
+
                                  <table class="table table-stripe ">
                                      <tr>
-                                      
+
                                       @forelse($suitable->keyPeformanceIndicator->kpiChildOnes as $kpiChildOne)
                                              <tr>
                                                 <td></td>
                                                 @forelse($kpiChildOne->kpiChildTwos as $kpiChildTwo)
-                                                
+
                                                     <td>
                                                         {{$kpiChildTwo->kpiChildTwoTranslations[0]->name}}
                                                     </td>
@@ -89,7 +89,7 @@
                                                 @endforelse
                                                 </tr>
 
-                                     
+
                                         <tr>
                                         <td>
                                             {{$kpiChildOne->kpiChildOneTranslations[0]->name}}
@@ -97,13 +97,13 @@
                                         </tr>
                                     @empty
                                     @endforelse
-                                
-                                     </tr>  
 
-                                     
+                                     </tr>
+
+
                                  </table>
-                                    
-                               
+
+
                                 @endif
                             </td>
                         </tr>
@@ -114,7 +114,7 @@
                             </td>
                         </tr>
                         @endforelse
-                        
+
                     </tbody>
                     <tfoot>
                         <tr>
@@ -123,10 +123,10 @@
                         </tr>
                     </tfoot>
                 </table>
- 
+
             </div>
         </div>
-    </div>  
+    </div>
 </div>
-    
+
 @endsection
