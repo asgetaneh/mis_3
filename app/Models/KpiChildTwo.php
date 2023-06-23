@@ -29,7 +29,7 @@ class KpiChildTwo extends Model
 
     public function kpiChildThrees()
     {
-        return $this->hasMany(KpiChildThree::class);
+        return $this->belongsToMany(KpiChildThree::class); // changed from hasMany to belongsToMany
     }
 
     public function planAccomplishments()

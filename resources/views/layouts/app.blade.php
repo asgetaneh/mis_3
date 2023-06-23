@@ -18,6 +18,7 @@
 
         <script src="https://unpkg.com/alpinejs@3.10.2/dist/cdn.min.js" defer></script>
         <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/plugins/fontawesome-free/css/all.min.css') }}">
 
         <!-- Fonts -->
         <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -45,6 +46,7 @@
         }
         </style>
 
+        @yield('style')
 
         @livewireStyles
     </head>

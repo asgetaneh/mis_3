@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\Office;
+use App\Models\Objective;
+use App\Models\Goal;
 use Illuminate\View\View;
 use App\Models\SuitableKpi;
 use Illuminate\Http\Request;
 use App\Models\ReportingPeriod;
 use App\Models\PlanAccomplishment;
+use Illuminate\Support\Facades\DB;
+use App\Models\ReportingPeriodType;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\PlanAccomplishmentStoreRequest;
 use App\Http\Requests\PlanAccomplishmentUpdateRequest;
-use App\Models\Office;
-use App\Models\User;
-use Illuminate\Support\Facades\DB;
 
 
 
@@ -143,8 +146,8 @@ class PlanAccomplishmentController extends Controller
     }
 
     public function officeKpiObjectiveGoal($user){
-        $getuser = User::find($user); 
-        $user_offices = $getuser->offices[0]->id; 
+        $getuser = User::find($user);
+        $user_offices = $getuser->offices[0]->id;
         $kpis = $this->getOfficeKPI($user_offices);
           //dd($kpis);
           $suitableKpis =[];
@@ -152,7 +155,7 @@ class PlanAccomplishmentController extends Controller
             'app.plan_accomplishments.list_goal',
             compact('kpis','user_offices','suitableKpis')
         );
-         
+
     }
     public function getOfficeKPI($off){
         $fun_kpi =[];
@@ -162,18 +165,18 @@ class PlanAccomplishmentController extends Controller
                 foreach ($getoffice->keyPeformanceIndicators as $key => $kpi) {
                     $fun_kpi[$key] = $kpi;
                    $fun_goal[$key] = $kpi->objective->goal;
-                } 
+                }
                 $fun_kpi= array_unique($fun_kpi);
                  $fun_goal= array_unique($fun_goal);
                // $fun_goal = $fun_goal->unique(); // for collection
                  return ['kpi'=>$fun_kpi,'goal'=>$fun_goal,'offwithkpi'=>$getoffice];
-                
+
              }
             // get parent office kpi
             else{
                 if($getoffice->parent_office_id==null){
                     echo "office has no parent office and Kpi registered";
-                } 
+                }
               $office = $getoffice->parent_office_id;
               $goalKpi = $this->getOfficeKPI($office);
               return $goalKpi;
@@ -185,18 +188,18 @@ class PlanAccomplishmentController extends Controller
    public function planaccomplishmentGoalClick($off,$gol_id,$offwithkpi){
         $this->authorize('create', PlanAccomplishment::class);
        $user = auth()->user()->id;
-       $getuser = User::find($user); 
-       $user_offices = $getuser->offices[0]->id; 
+       $getuser = User::find($user);
+       $user_offices = $getuser->offices[0]->id;
        $getoffice = Office::find($offwithkpi);
         if(!$getoffice->keyPeformanceIndicators->isEmpty()){
             foreach ($getoffice->keyPeformanceIndicators as $key => $kpi) {
                 $fun_kpi[$key] = $kpi;
                 $fun_goal[$key] = $kpi->objective->goal;
-            } 
+            }
             $fun_kpi= array_unique($fun_kpi);
             $fun_goal= array_unique($fun_goal);
            $kpis = ['kpi'=>$fun_kpi,'goal'=>$fun_goal,'offwithkpi'=>$getoffice];
-            
+
             }
        $suitableKpis = SuitableKpi::select('suitable_kpis.*')
                     ->join('offices', 'suitable_kpis.office_id', '=', 'offices.id')
@@ -207,7 +210,7 @@ class PlanAccomplishmentController extends Controller
                     ->where('goals.id' , '=', $gol_id)
                     ->get();
                    // dd($suitableKpis);
-        
+
        return view(
             'app.plan_accomplishments.list_goal',
             compact('kpis','user_offices','suitableKpis')
@@ -216,5 +219,39 @@ class PlanAccomplishmentController extends Controller
 
    }
 
-      
+   public function getAllObjectives($goalId)
+   {
+       $goal = Goal::find($goalId);
+       //dd($goal);
+       $objectives = Objective::where('goal_id', $goalId)->get();
+       $reportingTypes = ReportingPeriodType::all();
+       
+       $user = auth()->user()->id;
+       $getuser = User::find($user);
+       $user_offices = $getuser->offices[0]->id;
+       $getoffice = Office::find($user_offices);
+        $kpis = ['kpi' => [],'goal' => $goal, 'offwithkpi' => $getoffice];
+        //dd($getoffice->keyPeformanceIndicators);
+       if (!$getoffice->keyPeformanceIndicators->isEmpty()) {
+           foreach ($getoffice->keyPeformanceIndicators as $key => $kpi) {
+               $fun_kpi[$key] = $kpi;
+               $fun_goal[$key] = $kpi->objective->goal;
+           }
+           $fun_kpi = array_unique($fun_kpi);
+           $fun_goal = array_unique($fun_goal);
+           $kpis = ['kpi' => $fun_kpi, 'goal' => $fun_goal, 'offwithkpi' => $getoffice];
+       }
+
+       return view('app.plan_accomplishments.planning', [
+           'allData' => $objectives,
+           'kpis' => $kpis,
+           'user_offices' => $user_offices,
+           'reportingTypes' => $reportingTypes,
+       ]);
+   }
+
+   public function savePlan(Request $request){
+       dd($request);
+   }
+
 }

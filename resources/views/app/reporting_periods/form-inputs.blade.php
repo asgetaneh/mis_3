@@ -7,7 +7,7 @@
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Planing Year</option>
             @foreach($planingYears as $value => $label)
                 @if(app()->getLocale() ==$label->locale)
-                    <option value="{{ $label->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
+                    <option value="{{ $label->planing_year_id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
                 @endif
             @endforeach
         </x-inputs.select>
@@ -16,6 +16,7 @@
     <div class="w-100 row pl-2">
     <x-inputs.group class="col">
         <x-inputs.date
+            id="start_date"
             name="start_date"
             label="Start Date"
             :value="old('start_date', ($editing ? $reportingPeriod->start_date : ''))"
@@ -27,6 +28,8 @@
 
     <x-inputs.group class="col">
         <x-inputs.date
+        
+             id="end_date"
             name="end_date"
             label="End Date"
             :value="old('end_date', ($editing ? $reportingPeriod->end_date : ''))"
@@ -67,3 +70,36 @@
     @endforeach
 
 </div>
+<style>
+<link rel="stylesheet" href="../assets/am/redmond.calendars.picker.css">
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="../assets/am/jquery.plugin.js"></script>
+
+<script src="../assets/am/jquery.calendars.js"></script>
+<script src="../assets/am/jquery.calendars.plus.js"></script>
+<script src="../assets/am/jquery.calendars.picker.js"></script>
+
+<script src="../assets/am/jquery.calendars.ethiopian.js"></script>
+/* <script src="../assets/am/jquery.calendars.ethiopian-am.js"></script>
+<script type="text/javascript" src="../assets/am/jquery.calendars.picker-am.js"></script> */
+
+<script src="{{ asset('assets/am/jquery.calendars.picker-am.js') }}">
+<script src="{{ asset('assets/am/jquery.calendars.ethiopian-am.js') }}">
+<script src="{{ asset('assets/am/jquery.calendars.ethiopian.js') }}">
+<script src="{{ asset('assets/am/jquery.calendars.picker.js') }}">
+<script src="{{ asset('assets/am/jquery.calendars.plus.js') }}">
+<script src="{{ asset('assets/am/jquery.calendars.js') }}">
+<script src="{{ asset('assets/am/jquery.plugin.js') }}">
+
+    <link rel="stylesheet" href="{{ asset('assets/am/css/AdminLTE.min.css') }}">
+</style>
+<script>
+$(function() {
+     var calendar = $.calendars.instance('ethiopian','am');
+    $('#start_date').calendarsPicker({calendar: calendar});
+    $('#end_date').calendarsPicker({calendar: calendar});
+
+    $('#inlineDatepicker').calendarsPicker({calendar: calendar, onSelect: showDate});
+}); 
+</script>

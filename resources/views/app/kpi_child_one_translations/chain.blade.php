@@ -7,7 +7,7 @@
                 <h4 class="card-title">
                     <a href="{{ route('kpi-child-one-translations.index') }}" class="mr-4"><i
                             class="icon ion-md-arrow-back"></i></a>
-                    Add sub chain for Key performance indicator child ({{ $KpiChildOne->kpiChildOneTranslations[0]->name }})
+                     Add sub chain for Key performance indicator child ({{ $KpiChildOne->kpiChildOneTranslations[0]->name }})
                 </h4>
 
                 <x-form method="POST" action="{{ route('kpi-chain-two.store') }}" class="mt-4">

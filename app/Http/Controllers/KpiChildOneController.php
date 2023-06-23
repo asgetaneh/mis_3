@@ -6,6 +6,8 @@ use App\Models\Language;
 use Illuminate\View\View;
 use App\Models\KpiChildOne;
 use App\Models\KpiChildTwo;
+use App\Models\KpiChildTwoTranslation;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
@@ -129,7 +131,7 @@ class KpiChildOneController extends Controller
     public function kpiChainTwo(Request $request, $id): View
     {
         $KpiChildOne = KpiChildOne::find($id);
-        $KpiChildTwo = KpiChildTwo::all();
+        $KpiChildTwo_t = KpiChildTwoTranslation::all();
 
         // fix below code later
         // $childTwoAdds = $KpiChildOne->kpiChildTwos;
@@ -141,7 +143,7 @@ class KpiChildOneController extends Controller
             'app.kpi_child_one_translations.chain',
             compact(
                 'KpiChildOne',
-                'KpiChildTwo',
+                'KpiChildTwo_t',
                 // 'childTwoAdds',
                 'languages'
             )
