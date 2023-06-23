@@ -11,6 +11,7 @@ use App\Models\KpiChildThree;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use App\Models\KpiChildTwoTranslation;
+use App\Models\KpiChildThreeTranslation;
 use App\Http\Requests\KpiChildTwoStoreRequest;
 use App\Http\Requests\KpiChildTwoUpdateRequest;
 
@@ -126,11 +127,15 @@ class KpiChildTwoController extends Controller
     public function kpiChainThree(Request $request, $id): View
     {
         $KpiChildTwo = KpiChildTwo::find($id);
-        $KpiChildThree = KpiChildThree::all();
 
-        // fix below code later
-        // $childThreeAdds = $KpiChildTwo->kpiChildThrees;
-        // dd($childThreeAdds);
+        $kpiChildThreeList = [];
+        foreach ($KpiChildTwo->kpiChildThrees as $threes){
+            array_push($kpiChildThreeList, $threes->id);
+        }
+
+        $KpiChildThree_t = KpiChildThreeTranslation::whereNotIn('kpiChildThree_id', $kpiChildThreeList)->get();
+
+        $childThreeAdds = $KpiChildTwo->kpiChildThrees;
 
         $languages = Language::all();
 
@@ -138,8 +143,8 @@ class KpiChildTwoController extends Controller
             'app.kpi_child_two_translations.chain',
             compact(
                 'KpiChildTwo',
-                'KpiChildThree',
-                // 'childThreeAdds',
+                'KpiChildThree_t',
+                'childThreeAdds',
                 'languages'
             )
         );
@@ -153,7 +158,7 @@ class KpiChildTwoController extends Controller
         $childThreeLists = $data['kpiThreeLists'];
 
         foreach($childThreeLists as $childThreeList){
-            $kpiChildOneTwo = DB::insert('insert into kpi_child_three_kpi_child_two (kpi_child_three_id, kpi_child_two_id) values (?, ?)', [$childThreeList, $kpiChildTwo]);
+            $kpiChildTwoThree = DB::insert('insert into kpi_child_three_kpi_child_two (kpi_child_three_id, kpi_child_two_id) values (?, ?)', [$childThreeList, $kpiChildTwo]);
         }
 
         $search = $request->get('search', '');
@@ -163,33 +168,40 @@ class KpiChildTwoController extends Controller
             ->paginate(5)
             ->withQueryString();
 
-        return redirect()->
-            route('kpi-child-two-translations.index', $kpiChildTwoTranslations)
-        ->withSuccess(__('crud.common.created'));
+        return redirect('kpi-child-two-translations')->with(
+            [
+                'kpiChildTwoTranslations' => $kpiChildTwoTranslations,
+                'search' => $search
+            ]
+        );
 
     }
 
     // below code is to be worked later
-    public function kpiChainThreeRemove($kpiChildOne, $childTwo,
+    public function kpiChainThreeRemove($childTwo, $childThree,
         Request $request
-    ): View {
+    ) {
 
-        $kpiChildOne = KpiChildOne::find($kpiChildOne);
+        $kpiChildTwo = kpiChildTwo::find($childTwo);
 
-        $kpiChildOne->find($kpiChildOne)->kpiChildTwos()->detach();
+        $kpiChildTwo->find($childTwo)->kpiChildThrees()->detach($childThree);
 
-        $KpiChildTwo = KpiChildTwo::all();
-        $kpiChildOne = KpiChildOne::find($kpiChildOne);
+        $kpiChildThreeList = [];
+        foreach ($kpiChildTwo->kpiChildThrees as $threes){
+            array_push($kpiChildThreeList, $threes->id);
+        }
 
-        $childTwoAdds = $kpiChildOne->kpiChildTwos;
+        $KpiChildThree = KpiChildThreeTranslation::whereNotIn('kpiChildThree_id', $kpiChildThreeList)->get();
 
-        return view(
-            'app.key_peformance_indicators.chain',
-            compact(
-                'kpiChildOne',
-                'KpiChildTwo',
-                'childTwoAdds'
-            )
+        $childThreeAdds = $kpiChildTwo->kpiChildThrees;
+
+        return redirect()->back()->with(
+            [
+                'kpiChildTwo' => $kpiChildTwo,
+                'KpiChildThree' => $KpiChildThree,
+                'childThreeAdds' => $childThreeAdds
+            ]
+
         );
 
     }

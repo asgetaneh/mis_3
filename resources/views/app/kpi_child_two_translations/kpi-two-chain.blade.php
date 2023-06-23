@@ -17,9 +17,9 @@
         <input type="hidden" value="{{ $KpiChildTwo->id }}" name="kpiChildTwoId">
 
         <x-inputs.select class="select2" multiple="multiple" name="kpiThreeLists[]" data-placeholder="Select KPIs" label="KPI child three">
-            @forelse($KpiChildThree as $key => $label)
-                @if(app()->getLocale() == $label->kpiChildThreeTranslations[0]->locale)
-                    <option value="{{ $label->kpiChildThreeTranslations[0]->kpiChildThree_id }}">{{ $label->kpiChildThreeTranslations[0]->name }}</option>
+            @forelse($KpiChildThree_t as $key => $label)
+                @if(app()->getLocale() == $label->locale)
+                    <option value="{{ $label->kpiChildThree_id }}">{{ $label->name }}</option>
                 @endif
             @empty
                 <option value="" disabled>No kpi child three</option>

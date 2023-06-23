@@ -131,11 +131,15 @@ class KpiChildOneController extends Controller
     public function kpiChainTwo(Request $request, $id): View
     {
         $KpiChildOne = KpiChildOne::find($id);
-        $KpiChildTwo_t = KpiChildTwoTranslation::all();
 
-        // fix below code later
-        // $childTwoAdds = $KpiChildOne->kpiChildTwos;
-        // dd($childTwoAdds);
+        $kpiChildTwoList = [];
+        foreach ($KpiChildOne->kpiChildTwos as $twos){
+            array_push($kpiChildTwoList, $twos->id);
+        }
+
+        $KpiChildTwo_t = KpiChildTwoTranslation::whereNotIn('kpi_child_two_id', $kpiChildTwoList)->get();
+
+        $childTwoAdds = $KpiChildOne->kpiChildTwos;
 
         $languages = Language::all();
 
@@ -144,7 +148,7 @@ class KpiChildOneController extends Controller
             compact(
                 'KpiChildOne',
                 'KpiChildTwo_t',
-                // 'childTwoAdds',
+                'childTwoAdds',
                 'languages'
             )
         );
@@ -168,34 +172,40 @@ class KpiChildOneController extends Controller
             ->paginate(5)
             ->withQueryString();
 
-        return view(
-            'app.kpi_child_one_translations.index',
-            compact('kpiChildOneTranslations', 'search')
+        return redirect('kpi-child-one-translations')->with(
+            [
+                'kpiChildOneTranslations' => $kpiChildOneTranslations,
+                'search' => $search
+            ]
         );
 
     }
 
     // below code is to be worked later
-    public function kpiChainTwoRemove($kpiChildOne, $childTwo,
+    public function kpiChainTwoRemove($childOne, $childTwo,
         Request $request
-    ): View {
+    ) {
 
-        $kpiChildOne = KpiChildOne::find($kpiChildOne);
+        $kpiChildOne = KpiChildOne::find($childOne);
 
-        $kpiChildOne->find($kpiChildOne)->kpiChildTwos()->detach();
+        $kpiChildOne->find($childOne)->kpiChildTwos()->detach($childTwo);
 
-        $KpiChildTwo = KpiChildTwo::all();
-        $kpiChildOne = KpiChildOne::find($kpiChildOne);
+        $kpiChildTwoList = [];
+        foreach ($kpiChildOne->kpiChildTwos as $twos){
+            array_push($kpiChildTwoList, $twos->id);
+        }
+
+        $KpiChildTwo = KpiChildTwoTranslation::whereNotIn('kpi_child_two_id', $kpiChildTwoList)->get();
 
         $childTwoAdds = $kpiChildOne->kpiChildTwos;
 
-        return view(
-            'app.key_peformance_indicators.chain',
-            compact(
-                'kpiChildOne',
-                'KpiChildTwo',
-                'childTwoAdds'
-            )
+        return redirect()->back()->with(
+            [
+                'kpiChildOne' => $kpiChildOne,
+                'KpiChildTwo' => $KpiChildTwo,
+                'childTwoAdds' => $childTwoAdds
+            ]
+
         );
 
     }
