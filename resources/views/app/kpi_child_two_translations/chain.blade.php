@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
+    <div class="container-fluid">
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">
@@ -27,9 +27,9 @@
                 </x-form>
 
                 {{-- below code to be worked later --}}
-                {{-- <div class="table-responsive">
+                <div class="table-responsive">
                     <h4 class="card-title"><u>
-                        Add sub chain for Key performance indicator child ({{ $KpiChildOne->kpiChildOneTranslations[0]->name }})</u>
+                        Add sub chain for Key performance indicator child ({{ $KpiChildTwo->kpiChildTwoTranslations[0]->name }})</u>
                     </h4>
                     <table class="table table-borderless table-hover">
                         <thead>
@@ -46,18 +46,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($childTwoAdds as $childTwoAdd)
+                            @forelse($childThreeAdds as $childThreeAdd)
                                 <tr>
                                     <td>
-                                        {{ $childTwoAdd->kpiChildTwoTranslations[0]->name ?? '-' }}
+                                        {{ $childThreeAdd->kpiChildThreeTranslations[0]->name ?? '-' }}
                                     </td>
                                     <td>
-                                        {{ $childTwoAdd->kpiChildTwoTranslations[0]->description ?? '-' }}
+                                        {{ $childThreeAdd->kpiChildThreeTranslations[0]->description ?? '-' }}
                                     </td>
                                     <td>
-                                        @can('delete', $childTwoAdd)
+                                        @can('delete', $childThreeAdd)
                                             <form
-                                                action="{{ route('kpi-chain-two.remove', [$KpiChildOne, $childTwoAdd]) }}"
+                                                action="{{ route('kpi-chain-three.remove', [$KpiChildTwo, $childThreeAdd]) }}"
                                                 method="POST"
                                                 onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')">
                                                 @csrf @method('DELETE')
@@ -77,7 +77,7 @@
                             @endforelse
                         </tbody>
                     </table>
-                </div> --}}
+                </div>
 
             </div>
         </div>

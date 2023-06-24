@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
+    <div class="container-fluid">
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">
@@ -27,7 +27,7 @@
                 </x-form>
 
                 {{-- below code to be worked later --}}
-                {{-- <div class="table-responsive">
+                <div class="table-responsive">
                     <h4 class="card-title"><u>
                         Add sub chain for Key performance indicator child ({{ $KpiChildOne->kpiChildOneTranslations[0]->name }})</u>
                     </h4>
@@ -77,7 +77,7 @@
                             @endforelse
                         </tbody>
                     </table>
-                </div> --}}
+                </div>
 
             </div>
         </div>
