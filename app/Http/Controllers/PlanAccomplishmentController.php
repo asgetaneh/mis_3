@@ -16,6 +16,7 @@ use App\Models\ReportingPeriodType;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\PlanAccomplishmentStoreRequest;
 use App\Http\Requests\PlanAccomplishmentUpdateRequest;
+use Illuminate\Support\Str;
 
 
 
@@ -174,7 +175,8 @@ class PlanAccomplishmentController extends Controller
              }
             // get parent office kpi
             else{
-                if($getoffice->parent_office_id==null){
+                return ['kpi'=>[],'goal'=>[],'offwithkpi'=>$getoffice];
+                 if($getoffice->parent_office_id==null){
                     echo "office has no parent office and Kpi registered";
                 }
               $office = $getoffice->parent_office_id;
@@ -251,7 +253,14 @@ class PlanAccomplishmentController extends Controller
    }
 
    public function savePlan(Request $request){
-       dd($request);
+         $data = $request->input();
+         foreach ($data as $key => $value) {
+            $i= (string)$key ;
+             $length1 =  Str::length($i);
+            echo $length1.'->'.$i[0].'->'.$i[1].'->'.$i[2].'->'.$i[3]."->".$value."<br/>";
+            # code...
+         }
+       dd($data);
    }
 
 }

@@ -48,7 +48,7 @@
     </div>
     <div class="col-md-10">
 
-         <div class="card" class="collapse" id="{{$goal->id}}">
+         <div class="card" class="collapse">
             <div class="card-header">Management information systems (MIS)</div>
             <div class="card-body">
                    <table class="table table-borderless table-hover">
