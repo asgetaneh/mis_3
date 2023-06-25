@@ -15,6 +15,7 @@ use Illuminate\Http\RedirectResponse;
 use App\Models\PlaningYearTranslation;
 use App\Http\Requests\ReportingPeriodStoreRequest;
 use App\Http\Requests\ReportingPeriodUpdateRequest;
+use Andegna\DateTimeFactory;
 
 class ReportingPeriodController extends Controller
 {
@@ -74,13 +75,26 @@ class ReportingPeriodController extends Controller
         // $reportingPeriod = ReportingPeriod::create($validated);
 
         $data = $request->input();
+
+        $startDate = $data['start_date'];
+        $endDate = $data['end_date'];
+
+        $startDate = explode('/', $data['start_date']);
+        $endDate = explode('/', $data['end_date']);
+
+        $startDate = DateTimeFactory::of($startDate[2], $startDate[1], $startDate[0]);
+        $startDate = $startDate->format('Y-m-d');
+
+        $endDate = DateTimeFactory::of($endDate[2], $endDate[1], $endDate[0]);
+        $endDate = $endDate->format('Y-m-d');
+
         $language = Language::all();
          //$lastGoal = Goal::select('id')->orderBy('id','desc')->first();
         try {
             $reportingPeriod = new ReportingPeriod;
             $reportingPeriod->planing_year_id= $data['planing_year_id'];
-            $reportingPeriod->start_date= $data['start_date'];
-            $reportingPeriod->end_date= $data['end_date'];
+            $reportingPeriod->start_date= $startDate;
+            $reportingPeriod->end_date= $endDate;
             $reportingPeriod->reporting_period_type_id= $data['reporting_period_type_id'];
             $reportingPeriod->save();
 
