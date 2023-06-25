@@ -36,4 +36,17 @@
         </div>
     </div>
 </div>
+
+<script>
+
+    $(document).ready(function() {
+
+        // sets the date input to Ethiopian using keith wood jquery plugin
+        var calendar = $.calendars.instance('ethiopian', 'am');
+        $('#start_date').calendarsPicker({calendar: calendar});
+        $('#end_date').calendarsPicker({calendar: calendar});
+
+    });
+</script>
+
 @endsection

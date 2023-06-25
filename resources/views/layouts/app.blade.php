@@ -31,6 +31,12 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
         <link rel="stylesheet" href="{{ asset('assets/dist/css/AdminLTE.min.css') }}">
 
+        {{-- Calender Styles --}}
+        <link href="{{ asset('assets/plugins/custom/prismjs/prismjs.bundle.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('assets/plugins/custom/prismjs/prismjs.bundle.css') }}" rel="stylesheet" type="text/css" />
+        <link href="{{ asset('assets/plugins/custom/prismjs/prismjs.bundle.css') }}" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" type="text/css" href="{{ asset('assets/calendar/css/redmond.calendars.picker.css') }}">
+
         <!-- Icons -->
         {{-- <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet"> --}}
         <link href="{{ asset('assets/ionicon/ionicons.min.css') }}" rel="stylesheet">
@@ -72,6 +78,17 @@
 
         <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
         <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+        {{-- Calender Scripts --}}
+        <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
+        <script src=" {{ asset('assets/calendar/js/jquery.plugin.js') }}"></script>
+        <script src=" {{ asset('assets/calendar/js/jquery.calendars.js') }}"></script>
+        <script src=" {{ asset('assets/calendar/js/jquery.calendars.plus.js') }}"></script>
+        <script src=" {{ asset('assets/calendar/js/jquery.calendars.picker.js') }}"></script>
+        <script src=" {{ asset('assets/calendar/js/jquery.calendars.ethiopian.js') }}"></script>
+        <script src=" {{ asset('assets/calendar/js/jquery.calendars.ethiopian-am.js') }}"></script>
+        <script src=" {{ asset('assets/calendar/js/jquery.calendars.picker-am.js') }}"></script>
 
         @if (session()->has('success'))
         <script>
