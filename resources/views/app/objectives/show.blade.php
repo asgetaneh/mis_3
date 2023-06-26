@@ -11,29 +11,71 @@
                 @lang('crud.objectives.show_title')
             </h4>
 
-            <div class="mt-4">
+            <div class="mt-4 pt-5">
                 <div class="mb-4">
-                    <h5>@lang('crud.objectives.inputs.goal_id')</h5>
-                    <span>{{ optional($objective->goal)->id ?? '-' }}</span>
+                    <h5>Goal</h5>
+                    @forelse($objective->goal->goalTranslations as $key => $value)
+                            @if (app()->getLocale() == $value->locale)
+                                <p class="">{{ $value->name ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>No goal for this Objective!</p>
+                        @endforelse
                 </div>
+                <hr>
                 <div class="mb-4">
-                    <h5>@lang('crud.objectives.inputs.perspective_id')</h5>
-                    <span
-                        >{{ optional($objective->perspective)->id ?? '-'
-                        }}</span
-                    >
+                    <h5>Perspective</h5>
+                    @forelse($objective->perspective->perspectiveTranslations as $key => $value)
+                            @if (app()->getLocale() == $value->locale)
+                                <p class="">{{ $value->name ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>No perspective for this Objective!</p>
+                        @endforelse
                 </div>
+                <hr>
                 <div class="mb-4">
-                    <h5>@lang('crud.objectives.inputs.created_by_id')</h5>
-                    <span>{{ optional($objective->user)->name ?? '-' }}</span>
+                    <h5>Name</h5>
+                    @forelse($objective->objectiveTranslations as $key => $value)
+                            @if (app()->getLocale() == $value->locale)
+                                <p class="">{{ $value->name ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>-</p>
+                        @endforelse
                 </div>
+                <hr>
                 <div class="mb-4">
-                    <h5>@lang('crud.objectives.inputs.updated_by_id')</h5>
-                    <span>{{ optional($objective->user2)->name ?? '-' }}</span>
+                    <h5>Description</h5>
+                    @forelse($objective->objectiveTranslations as $key => $value)
+                            @if (app()->getLocale() == $value->locale)
+                                <p class="text-justify">{{ $value->description ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>-</p>
+                        @endforelse
                 </div>
+                <hr>
                 <div class="mb-4">
-                    <h5>@lang('crud.objectives.inputs.weight')</h5>
-                    <span>{{ $objective->weight ?? '-' }}</span>
+                    <h5>Output</h5>
+                    @forelse($objective->objectiveTranslations as $key => $value)
+                            @if (app()->getLocale() == $value->locale)
+                                <p class="text-justify">{{ $value->out_put ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>-</p>
+                        @endforelse
+                </div>
+                <hr>
+                <div class="mb-4">
+                    <h5>Outcome</h5>
+                    @forelse($objective->objectiveTranslations as $key => $value)
+                            @if (app()->getLocale() == $value->locale)
+                                <p class="text-justify">{{ $value->out_come ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>-</p>
+                        @endforelse
                 </div>
             </div>
 
