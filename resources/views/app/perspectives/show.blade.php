@@ -11,16 +11,27 @@
                 @lang('crud.perspectives.show_title')
             </h4>
 
-            <div class="mt-4">
+            <div class="mt-4 pt-5">
                 <div class="mb-4">
-                    <h5>@lang('crud.perspectives.inputs.created_by_id')</h5>
-                    <span>{{ optional($perspective->user)->name ?? '-' }}</span>
+                    <h5>Name</h5>
+                        @forelse($perspective->perspectiveTranslations as $key => $value)
+                            @if (app()->getLocale() == $value->locale)
+                                <p class="">{{ $value->name ?? '-' }}</p>
+                            @endif
+                        @empty
+
+                        @endforelse
                 </div>
+                <hr>
                 <div class="mb-4">
-                    <h5>@lang('crud.perspectives.inputs.updated_by_id')</h5>
-                    <span
-                        >{{ optional($perspective->user2)->name ?? '-' }}</span
-                    >
+                    <h5>Description</h5>
+                    @forelse($perspective->perspectiveTranslations as $key => $value)
+                            @if (app()->getLocale() == $value->locale)
+                                <p class="text-justify">{{ $value->description ?? '-' }}</p>
+                            @endif
+                        @empty
+
+                    @endforelse
                 </div>
             </div>
 

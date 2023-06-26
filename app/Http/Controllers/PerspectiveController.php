@@ -26,7 +26,7 @@ class PerspectiveController extends Controller
 
         $perspective_ts = PerspectiveTranslation::search($search)
             ->latest()
-            ->paginate(15)
+            ->paginate(10)
             ->withQueryString();
 
         return view(
@@ -56,7 +56,7 @@ class PerspectiveController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request): RedirectResponse
-    {  
+    {
         $this->authorize('create', Perspective::class);
         //
         $data = $request->input();
@@ -64,7 +64,7 @@ class PerspectiveController extends Controller
          //$lastperspective = perspective::select('id')->orderBy('id','desc')->first();
         try {
             $perspective = new Perspective;
-             
+
             $perspective->created_at= new \DateTime();
              $perspective->updated_by_id= auth()->user()->id;
             $perspective->created_by_id= auth()->user()       ->id;
@@ -84,7 +84,7 @@ class PerspectiveController extends Controller
                 $perspective_translation->save();
          }
          return redirect('perspectives')->with('status', "Insert successfully");
-        } catch (Exception $e) { 
+        } catch (Exception $e) {
             return redirect('perspective-new')->withErrors(['errors' => $e]);
             }
         $perspective = perspectiveTranslation::all();
