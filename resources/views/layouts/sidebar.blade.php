@@ -176,7 +176,7 @@
                                 </a>
                             </li>
                             @endcan
-                            
+                           {{-- 
                             @can('view-any', App\Models\SuitableKpi::class)
                             <li class="nav-item">
                                 <a href="{{ route('suitable-kpis.index') }}" class="nav-link">
@@ -192,7 +192,7 @@
                                     <p>Gender Translations</p>
                                 </a>
                             </li>
-                            @endcan
+                            @endcan--}}
                              
                             @can('view-any', App\Models\Language::class) 
                             <li class="nav-item">
@@ -215,14 +215,14 @@
                             </a>
                             
                             <ul class="nav nav-treeview">
-                            @can('view-any', App\Models\StrategyTranslation::class)
+                        {{--    @can('view-any', App\Models\StrategyTranslation::class)
                             <li class="nav-item">
                                 <a href="{{ route('suitable-kpis.create') }}" class="nav-link">
                                     <i class="nav-icon icon ion-md-radio-button-off"></i>
                                     <p>Cascade</p>
                                 </a>
                             </li>
-                            @endcan
+                            @endcan--}}
                             @can('view-any', App\Models\Language::class)
 
 
@@ -236,8 +236,8 @@
                             </li>
                             @endcan
                              @can('view-any', App\Models\Language::class)
-                            <li class="nav-item">
-                                <a href="{{ route('languages.index') }}" class="nav-link">
+                             <li class="nav-item">
+                                <a href="{{ route('view-plan-accomplishment') }}" class="nav-link">
                                     <i class="nav-icon icon ion-md-radio-button-off"></i>
                                     <p>View Plan</p>
                                 </a>

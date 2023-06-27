@@ -22,10 +22,10 @@ class ReportingPeriod extends Model
 
     protected $table = 'reporting_periods';
 
-    public function planingYear()
-    {
-        return $this->belongsTo(PlaningYear::class);
-    }
+    // public function planingYear()
+    // {
+    //     return $this->belongsTo(PlaningYear::class);
+    // }
 
     public function reportingPeriodType()
     {

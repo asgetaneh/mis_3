@@ -305,7 +305,7 @@ return [
         'edit_title' => 'Edit PlanAccomplishment',
         'show_title' => 'Show PlanAccomplishment',
         'inputs' => [
-            'suitable_kpi_id' => 'Suitable Kpi',
+            'kpi' => 'KPI Name',
             'reporting_period_id' => 'Reporting Period',
             'plan_value' => 'Plan Value',
             'accom_value' => 'Accom Value',

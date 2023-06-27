@@ -157,10 +157,7 @@
                                 @forelse($data->KeyPeformanceIndicators as $kpi)
                                     <div class="card collapsed-card p-2">
                                         <div class="card-header">
-                                            <h3 class="card-title">KPI: {{ $kpi->KeyPeformanceIndicatorTs[0]->name }} (Reporting:{{$kpi->reportingPeriodType->reportingPeriodTypeTs[0]->name }})
-                                            (which period?)
-                                              {{--  getReportingPeriod($kpi->reportingPeriodType->id,$date)--}}
-                                            </h3>
+                                            <h3 class="card-title">KPI: {{ $kpi->KeyPeformanceIndicatorTs[0]->name }}</h3>
                                             <div class="card-tools">
                                                 <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
                                                 </button>
@@ -282,7 +279,7 @@
                                             </p>
                                         @endif
 
-                                     {{--   <textarea name="desc{{ $kpi->id}}" style="height: 100px;" class="form-control" name="" id="" placeholder="Narration here" required></textarea>--}}
+                                        <textarea name="desc{{ $kpi->id}}" style="height: 100px;" class="form-control" name="" id="" placeholder="Narration here" required></textarea>
 
                                     </div>
 

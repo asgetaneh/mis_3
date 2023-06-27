@@ -24,13 +24,22 @@ class PlanAccomplishment extends Model
 
     protected $table = 'plan_accomplishments';
 
-    public function suitableKpi()
+    public function Kpi()
     {
-        return $this->belongsTo(SuitableKpi::class);
+        return $this->belongsTo(KeyPeformanceIndicator::class);
     }
 
     public function reportingPeriod()
     {
         return $this->belongsTo(ReportingPeriod::class);
+    }
+    public function planIndividual($kkp,$one,$two,$three,$office){
+        
+        $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id' , '=', $office)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_two_id' , '=', $two)->where('kpi_child_three_id' , '=', $three)->get();
+       return $planAccomplishments;
+    }
+    public function planSum($kkp,$office){
+        $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id' , '=', $office)->where('kpi_id' , '=', $kkp)->get();
+       return $planAccomplishments;
     }
 }

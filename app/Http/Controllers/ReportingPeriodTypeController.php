@@ -26,7 +26,7 @@ class ReportingPeriodTypeController extends Controller
 
         $reportingPeriodTypeTS = ReportingPeriodTypeT::search($search)
             ->latest()
-            ->paginate(5)
+            ->paginate(10)
             ->withQueryString();
 
         return view(

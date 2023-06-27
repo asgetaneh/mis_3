@@ -1,18 +1,18 @@
 @php $editing = isset($reportingPeriod) @endphp
 
 <div class="row">
-    <x-inputs.group class="col-sm-12">
-        <x-inputs.select name="planing_year_id" label="Planing Year" required>
-            @php $selected = old('planing_year_id', ($editing ? $reportingPeriod->planing_year_id : '')) @endphp
-            <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Planing Year</option>
-            @foreach($planingYears as $value => $label)
-                @if(app()->getLocale() ==$label->locale)
-                    <option value="{{ $label->planing_year_id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
-                @endif
-            @endforeach
-        </x-inputs.select>
-    </x-inputs.group>
+     @foreach ($languages as $key => $lang)
+        <x-inputs.group class="col-sm-12">
+            <x-inputs.text name="{{ 'name' . $lang->locale }}" label="{{ 'Name in ' . $lang->name }}" maxlength="255"
+                placeholder="{{ 'name in ' . $lang->name }}" required></x-inputs.text>
+        </x-inputs.group>
 
+        <x-inputs.group class="col-sm-12">
+            <x-inputs.textarea name="{{ 'description' . $lang->locale }}" label="{{ 'Description in ' . $lang->name }}"
+                maxlength="255" required>
+            </x-inputs.textarea>
+        </x-inputs.group>
+    @endforeach
     <div class="w-100 row pl-2">
     <x-inputs.group class="col">
         <x-inputs.date
@@ -56,18 +56,7 @@
         </x-inputs.select>
     </x-inputs.group>
 
-    @foreach ($languages as $key => $lang)
-        <x-inputs.group class="col-sm-12">
-            <x-inputs.text name="{{ 'name' . $lang->locale }}" label="{{ 'Name in ' . $lang->name }}" maxlength="255"
-                placeholder="{{ 'name in ' . $lang->name }}" required></x-inputs.text>
-        </x-inputs.group>
-
-        <x-inputs.group class="col-sm-12">
-            <x-inputs.textarea name="{{ 'description' . $lang->locale }}" label="{{ 'Description in ' . $lang->name }}"
-                maxlength="255" required>
-            </x-inputs.textarea>
-        </x-inputs.group>
-    @endforeach
+   
 
 </div>
 <style>

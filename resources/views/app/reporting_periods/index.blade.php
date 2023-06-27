@@ -50,7 +50,7 @@
                     <thead>
                         <tr>
                             <th class="text-left">
-                                @lang('crud.reporting_periods.inputs.planing_year_id')
+                               Name
                             </th>
                             <th class="text-left">
                                 @lang('crud.reporting_periods.inputs.start_date')
@@ -70,30 +70,21 @@
                         @forelse($reportingPeriodTS as $reporting_period_t)
                         @if(app()->getLocale() == $reporting_period_t->locale)
                         <tr>
-                            @php
-                                $planningYear = "";
-                                foreach ($reporting_period_t->reportingPeriod->planingYear->planingYearTranslations as $key => $value){
-                                    if(app()->getLocale() == $value->locale){
-                                        $planningYear = $value->name;
-                                    }
-                                }
-                            @endphp
-                            <td>
-                                {{ $planningYear
-                                ?? '-' }}
+                             <td>{{ $reporting_period_t->name ?? '-' }}
                             </td>
-                            <td>{{ $reporting_period_t->reportingPeriod->start_date ?? '-' }}</td>
-                            <td>{{ $reporting_period_t->reportingPeriod->end_date ?? '-' }}</td>
+                            <td>{{ $reporting_period_t->reportingPeriod->start_date ?? '-' }}
+                            </td>
+                            <td>{{ $reporting_period_t->reportingPeriod->end_date ?? '-' }}
+                            </td>
 
                             @php
                                 $reportPeriodType = "";
-                                foreach ($reporting_period_t->reportingPeriod->reportingPeriodType->reportingPeriodTypeTs as $key => $value){
+                                 foreach ($reporting_period_t->reportingPeriod->reportingPeriodType->reportingPeriodTypeTs as $key => $value){
                                     if(app()->getLocale() == $value->locale){
                                         $reportPeriodType = $value->name;
                                     }
                                 }
                             @endphp
-
                             <td>
                                 {{
                                 $reportPeriodType

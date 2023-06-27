@@ -50,11 +50,20 @@
                     <thead>
                         <tr>
                             <th class="text-left">
-                                @lang('crud.plan_accomplishments.inputs.suitable_kpi_id')
+                                @lang('crud.plan_accomplishments.inputs.kpi')
                             </th>
                             <th class="text-left">
                                 @lang('crud.plan_accomplishments.inputs.reporting_period_id')
                             </th>
+                            <!-- <td>
+                             @forelse($planAccomplishments as $planAccomplishment)
+                               @forelse($planAccomplishment->Kpi-> kpiChildOnes as $choneT)
+                                         {{$choneT->id}}
+                                 @empty
+                             @endforelse
+                             @empty
+                             @endforelse
+                            </td> -->
                             <th class="text-right">
                                 @lang('crud.plan_accomplishments.inputs.plan_value')
                             </th>
@@ -76,15 +85,35 @@
                         @forelse($planAccomplishments as $planAccomplishment)
                         <tr>
                             <td>
-                                {{
-                                optional($planAccomplishment->suitableKpi)->id
-                                ?? '-' }}
+                              @forelse($planAccomplishment->Kpi-> keyPeformanceIndicatorTs as $kpi)
+                                @if(app()->getLocale() == $kpi->locale) 
+                                        {{$kpi->name}}
+                                @endif
+                                @empty
+                             @endforelse
                             </td>
+                               @forelse($planAccomplishment->Kpi->kpiChildOnes as $chone)
+                               <tr>
+                               <td>
+                                 @forelse($chone->kpiChildOneTranslations as $choneT)
+                                  @if(app()->getLocale() == $choneT->locale) 
+                                        {{$choneT->name}}
+                                @endif
+                                  @empty
+                             @endforelse
+                            </td>
+                            </tr>
+                              @empty
+                             @endforelse
                             <td>
-                                {{
-                                optional($planAccomplishment->reportingPeriod)->start_date
-                                ?? '-' }}
-                            </td>
+                            @forelse($planAccomplishment->reportingPeriod->reportingPeriodTs as $rperiod)
+                                @if(app()->getLocale() == $rperiod->locale) 
+                                        {{$rperiod->name}}
+                                @endif
+                                @empty
+                             @endforelse
+                             </td>
+                             
                             <td>
                                 {{ $planAccomplishment->plan_value ?? '-' }}
                             </td>

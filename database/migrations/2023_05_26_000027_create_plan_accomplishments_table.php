@@ -12,15 +12,15 @@ return new class extends Migration {
     {
         Schema::create('plan_accomplishments', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('suitable_kpi_id');
+            $table->unsignedBigInteger('kpi_id');
             $table->unsignedBigInteger('reporting_period_id');
             $table->double('plan_value');
-            $table->double('accom_value');
-            $table->tinyInteger('plan_status');
-            $table->tinyInteger('accom_status');
-            $table->unsignedBigInteger('kpi_child_one_id');
-            $table->unsignedBigInteger('kpi_child_two_id');
-            $table->unsignedBigInteger('kpi_child_three_id');
+            $table->double('accom_value')->default(0);
+            $table->tinyInteger('plan_status')->default(0);
+            $table->tinyInteger('accom_status')->default(0);
+            $table->unsignedBigInteger('kpi_child_one_id')->default(0);
+            $table->unsignedBigInteger('kpi_child_two_id')->default(0);
+            $table->unsignedBigInteger('kpi_child_three_id')->default(0);
             $table->unsignedBigInteger('office_id');
 
             $table->timestamps();

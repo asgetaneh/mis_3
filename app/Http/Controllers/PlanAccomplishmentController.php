@@ -253,14 +253,74 @@ class PlanAccomplishmentController extends Controller
    }
 
    public function savePlan(Request $request){
-         $data = $request->input();
-         foreach ($data as $key => $value) {
-            $i= (string)$key ;
-             $length1 =  Str::length($i);
-            echo $length1.'->'.$i[0].'->'.$i[1].'->'.$i[2].'->'.$i[3]."->".$value."<br/>";
+       $kpi = $request->input();
+       $user = auth()->user()->id;
+       $getuser = User::find($user);
+       $user_offices = $getuser->offices[0]->id;
+       $getoffice = Office::find($user_offices);
+         foreach ($kpi as $key => $value) {
+            $str_key= (string)$key ;
+            $length =  Str::length($str_key);
+            
+              if($str_key[0]!='_'){
+                echo $key.'--'.$value."<br/>";
+                if($str_key[0]!='d'){
+                    $plan_accom = new PlanAccomplishment;
+                    $plan_accom->kpi_id= $str_key[0];
+                   if($length > 1){
+                        $plan_accom->kpi_child_one_id= $str_key[1];
+                        if($length > 2){
+                             $plan_accom->kpi_child_two_id= $str_key[2];
+                             if($length > 3){
+                                $plan_accom->kpi_child_three_id= $str_key[3];
+                            }
+                        }
+                    }
+                    $plan_accom->office_id=$user_offices;
+                    $plan_accom->plan_value=$value;
+                    $plan_accom->accom_value=0;
+                    $plan_accom->plan_status=0;
+                    $plan_accom->accom_status=0;
+                    $plan_accom->reporting_period_id='1';
+                    $plan_accom->save();
+                
+                }
+                else{
+                    echo "here is ".$str_key[4]."<br/>";
+                }
+                
+              }
+            // echo $length1.'->'.$i[0].'->'.$i[1].'->'.$i[2].'->'. "->".$value."<br/>";
             # code...
          }
-       dd($data);
+        $search = $request->get('search', '');
+          $planAccomplishments = PlanAccomplishment::where('office_id' , '=', $user_offices)->where('reporting_period_id' , '=', '1')  
+
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+            return redirect()
+            ->route('view-plan-accomplishment')
+            ->withSuccess(__('crud.common.created'));
+
+         return view(
+            'app.plan_accomplishments.index',
+            compact('planAccomplishments', 'search')
+        );
+         
+   }
+   public function viewPlanAccomplishment(Request $request){
+        $search = $request->get('search', '');
+       $office = auth()->user()->offices[0]->id;
+        $planAccomplishments = PlanAccomplishment::where('office_id' , '=', $office)->where('reporting_period_id' , '=', '1') 
+            ->latest()
+            ->paginate(9999999999999)
+            ->withQueryString();
+        return view(
+            'app.plan_accomplishments.index2',
+            compact('planAccomplishments', 'search')
+        );
+
    }
 
 }

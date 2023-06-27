@@ -148,7 +148,7 @@
         ></x-inputs.number>
     </x-inputs.group>
 </div>
-<!-- 
+{{--
 @foreach($offices as $value => $label)
                 @if(app()->getLocale() == $label->locale)
                    <select id="main[{{$label->id}}]" class="main">
@@ -291,4 +291,4 @@ $('.main').change(function() {
 
 
 </script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> --}}

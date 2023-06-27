@@ -11,12 +11,12 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('reporting_periods', function (Blueprint $table) {
-            $table
-                ->foreign('planing_year_id')
-                ->references('id')
-                ->on('planing_years')
-                ->onUpdate('CASCADE')
-                ->onDelete('CASCADE');
+            // $table
+            //     ->foreign('planing_year_id')
+            //     ->references('id')
+            //     ->on('planing_years')
+            //     ->onUpdate('CASCADE')
+            //     ->onDelete('CASCADE');
 
             $table
                 ->foreign('reporting_period_type_id')

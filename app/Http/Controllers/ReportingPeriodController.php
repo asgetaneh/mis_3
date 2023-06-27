@@ -29,7 +29,7 @@ class ReportingPeriodController extends Controller
 
         $reportingPeriodTS = ReportingPeriodT::search($search)
             ->latest()
-            ->paginate(5)
+            ->paginate(15)
             ->withQueryString();
 
         return view(
@@ -78,7 +78,7 @@ class ReportingPeriodController extends Controller
          //$lastGoal = Goal::select('id')->orderBy('id','desc')->first();
         try {
             $reportingPeriod = new ReportingPeriod;
-            $reportingPeriod->planing_year_id= $data['planing_year_id'];
+            // $reportingPeriod->planing_year_id= $data['planing_year_id'];
             $reportingPeriod->start_date= $data['start_date'];
             $reportingPeriod->end_date= $data['end_date'];
             $reportingPeriod->reporting_period_type_id= $data['reporting_period_type_id'];
