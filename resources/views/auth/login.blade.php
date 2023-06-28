@@ -77,9 +77,10 @@
         <div class="col-lg-4 col-md-6 form-container">
             <div class="login d-flex align-items-center py-5">
                 <div class="container">
+                    <img src="{{ asset('images/smis.png') }}" alt="" class="img-fluid d-block mx-auto mb-5" width="250" height="250">
                     <div class="row">
                         <div class="col-md-9 col-lg-8 mx-auto">
-                            <h3 class="login-heading mb-4">Login</h3>
+                            {{-- <h3 class="login-heading mb-4">Login</h3> --}}
 
                             <!-- Sign In Form -->
                             <form action="{{ route('login') }}" method="post">
