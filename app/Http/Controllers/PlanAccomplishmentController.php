@@ -21,6 +21,8 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Andegna\DateTime as Et_date;
 use Andegna\DateTimeFactory;
+use App\Models\PlaningYear;
+use App\Models\ReportNarration;
 use DateTime;
 
 
@@ -270,7 +272,7 @@ class PlanAccomplishmentController extends Controller
             $length =  Str::length($str_key);
             
               if($str_key[0]!='_'){
-                echo $key.'--'.$value."<br/>";
+                //echo $key.'--'.$value."<br/>";
                 if($str_key[0]!='d'){
                     $plan_accom = new PlanAccomplishment;
                     $plan_accom->kpi_id= $str_key[0];
@@ -280,6 +282,8 @@ class PlanAccomplishmentController extends Controller
                    /// $Date = Carbon::now();
                     //$ethipic = new Et_date($Date);
                     //$ethiopian_date = \Andegna\DateTimeFactory::now();
+                    $planning = PlaningYear::where('is_active',true)->get(); 
+
                     $report_period = $this->getReportingPeriod($report_period_type);                 
                    if($length > 1){
                         $plan_accom->kpi_child_one_id= $str_key[1];
@@ -295,19 +299,26 @@ class PlanAccomplishmentController extends Controller
                     $plan_accom->accom_value=0;
                     $plan_accom->plan_status=0;
                     $plan_accom->accom_status=0;
+                     $plan_accom->planning_year_id=$planning[0]->id;
                     $plan_accom->reporting_period_id=$report_period[0]->id;
-                   // dd($str_key[0]);
-                    $plan_accom->save();
-                
+                 $plan_accom->save();
+                $kpi_match_for_naration = $str_key[0];
                 }
-                else{
+                else{//dump($value);
+                   $naration =new ReportNarration;
+                   $naration->plan_naration=$value;
+                    $naration->key_peformance_indicator_id=$str_key[4];
+                    $naration->office_id=$user_offices;
+                    $naration->reporting_period_id=$report_period[0]->id;
+                    $naration->planing_year_id=$planning[0]->id;
+                    $naration->save();
                     echo "here is ".$str_key[4]."<br/>";
                 }
                 
               }
             // echo $length1.'->'.$i[0].'->'.$i[1].'->'.$i[2].'->'. "->".$value."<br/>";
             # code...
-         }
+         }//dd("wait");
         $search = $request->get('search', '');
           $planAccomplishments = PlanAccomplishment::where('office_id' , '=', $user_offices)->where('reporting_period_id' , '=', '1')  
 
@@ -332,7 +343,7 @@ class PlanAccomplishmentController extends Controller
             ->paginate(9999999999999)
             ->withQueryString();
         return view(
-            'app.plan_accomplishments.index2',
+            'app.plan_accomplishments.view-planning',
             compact('planAccomplishments', 'search')
         );
 

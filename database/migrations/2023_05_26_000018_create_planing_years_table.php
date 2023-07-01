@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('planing_years', function (Blueprint $table) {
             $table->bigIncrements('id');
-
+             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

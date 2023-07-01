@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('kpi_id');
             $table->unsignedBigInteger('reporting_period_id');
+            $table->unsignedBigInteger('planning_year_id');
             $table->double('plan_value');
             $table->double('accom_value')->default(0);
             $table->tinyInteger('plan_status')->default(0);

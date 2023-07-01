@@ -26,6 +26,13 @@ return new class extends Migration {
                 ->onDelete('CASCADE');
 
             $table
+                ->foreign('planning_year_id')
+                ->references('id')
+                ->on('planing_years')
+                ->onUpdate('CASCADE')
+                ->onDelete('CASCADE');
+ 
+            $table
                 ->foreign('kpi_child_one_id')
                 ->references('id')
                 ->on('kpi_child_ones')

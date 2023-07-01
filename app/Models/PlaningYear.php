@@ -26,6 +26,10 @@ class PlaningYear extends Model
     {
         return $this->hasMany(PlaningYearTranslation::class);
     }
+    public function planAccomplishments()
+    {
+        return $this->hasMany(PlanAccomplishment::class);
+    }
 
     public function suitableKpis()
     {
