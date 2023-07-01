@@ -22,7 +22,7 @@ class KpiChildOneTranslationController extends Controller
 
         $kpiChildOneTranslations = KpiChildOneTranslation::search($search)
             ->latest()
-            ->paginate(5)
+            ->paginate(15)
             ->withQueryString();
             $url = $request->fullUrl();
          return view(

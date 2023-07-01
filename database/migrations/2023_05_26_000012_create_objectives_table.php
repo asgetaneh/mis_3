@@ -16,7 +16,9 @@ return new class extends Migration {
             $table->unsignedBigInteger('perspective_id');
             $table->unsignedBigInteger('created_by_id');
             $table->unsignedBigInteger('updated_by_id');
-            $table->double('weight');
+             $table->double('weight');
+            $table->boolean('is_active');
+            $table->integer('objective_number');
 
             $table->timestamps();
         });

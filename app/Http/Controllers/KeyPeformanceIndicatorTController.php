@@ -27,7 +27,7 @@ class KeyPeformanceIndicatorTController extends Controller
             ->withQueryString();
 
         return view(
-            'app.key_peformance_indicator_ts.index',
+            'app.key_peformance_indicator_translations.index',
             compact('keyPeformanceIndicatorTs', 'search')
         );
     }

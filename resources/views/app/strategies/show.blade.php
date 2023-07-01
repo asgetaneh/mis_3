@@ -11,18 +11,38 @@
                 @lang('crud.strategies.show_title')
             </h4>
 
-            <div class="mt-4">
+            <div class="mt-4 pt-5">
                 <div class="mb-4">
-                    <h5>@lang('crud.strategies.inputs.objective_id')</h5>
-                    <span>{{ optional($strategy->objective)->id ?? '-' }}</span>
+                    <h5>Objective</h5>
+                    @forelse($strategy->objective->objectiveTranslations as $key => $value)
+                            @if (app()->getLocale() == $value->locale)
+                                <p class="">{{ $value->name ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>No objective for this Strategy!</p>
+                        @endforelse
                 </div>
+                <hr>
                 <div class="mb-4">
-                    <h5>@lang('crud.strategies.inputs.created_by_id')</h5>
-                    <span>{{ optional($strategy->user)->name ?? '-' }}</span>
+                    <h5>Name</h5>
+                    @forelse($strategy->strategyTranslations as $key => $value)
+                            @if (app()->getLocale() == $value->locale)
+                                <p class="">{{ $value->name ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>-</p>
+                        @endforelse
                 </div>
+                <hr>
                 <div class="mb-4">
-                    <h5>@lang('crud.strategies.inputs.updated_by_id')</h5>
-                    <span>{{ optional($strategy->user2)->name ?? '-' }}</span>
+                    <h5>Description</h5>
+                    @forelse($strategy->strategyTranslations as $key => $value)
+                            @if (app()->getLocale() == $value->locale)
+                                <p class="text-justify">{{ $value->discription ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>-</p>
+                        @endforelse
                 </div>
             </div>
 

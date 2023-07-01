@@ -11,14 +11,49 @@
                 @lang('crud.goals.show_title')
             </h4>
 
-            <div class="mt-4">
+            <div class="mt-4 pt-5">
                 <div class="mb-4">
-                    <h5>@lang('crud.goals.inputs.is_active')</h5>
-                    <span>{{ $goal->is_active ?? '-' }}</span>
+                    <h5>Name</h5>
+                    @forelse($goal->goalTranslations as $key => $value)
+                            @if (app()->getLocale() == $value->locale)
+                                <p class="">{{ $value->name ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>-</p>
+                        @endforelse
                 </div>
+                <hr>
                 <div class="mb-4">
-                    <h5>@lang('crud.goals.inputs.created_by_id')</h5>
-                    <span>{{ $goal->created_by_id ?? '-' }}</span>
+                    <h5>Description</h5>
+                    @forelse($goal->goalTranslations as $key => $value)
+                            @if (app()->getLocale() == $value->locale)
+                                <p class="text-justify">{{ $value->description ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>-</p>
+                        @endforelse
+                </div>
+                <hr>
+                <div class="mb-4">
+                    <h5>Output</h5>
+                    @forelse($goal->goalTranslations as $key => $value)
+                            @if (app()->getLocale() == $value->locale)
+                                <p class="text-justify">{{ $value->out_put ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>-</p>
+                        @endforelse
+                </div>
+                <hr>
+                <div class="mb-4">
+                    <h5>Outcome</h5>
+                    @forelse($goal->goalTranslations as $key => $value)
+                            @if (app()->getLocale() == $value->locale)
+                                <p class="text-justify">{{ $value->out_come ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>-</p>
+                        @endforelse
                 </div>
             </div>
 

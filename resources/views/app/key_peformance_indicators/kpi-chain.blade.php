@@ -13,8 +13,8 @@
      <input type="hidden" value="{{ $keyPeformanceIndicator->id }}" name="keyPeformanceIndicator">
 
         <x-inputs.select class="select2 {{ $errors->has('locations') ? 'is-invalid' : '' }}" name="kpi_one_child[]" id="locations" multiple>
-                    @foreach($KpiChildOne as $id => $kpi_one)
-                        <option value="{{ $kpi_one->id }}" {{ in_array($id, old('locations', [])) ? 'selected' : '' }}>{{ $kpi_one-> kpiChildOneTranslations[0]->name }}</option>
+                    @foreach($KpiChildOne as $key => $value)
+                        <option value="{{ $value->id }}" {{ in_array($key, old('locations', [])) ? 'selected' : '' }}>{{ $value-> kpiChildOneTranslations[0]->name }}</option>
 
                     @endforeach
         </x-inputs.select>

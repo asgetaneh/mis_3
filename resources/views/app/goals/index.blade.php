@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
     <div class="searchbar mt-0 mb-4">
         <div class="row">
             <div class="col-md-6">
@@ -40,10 +40,11 @@
                 <h4 class="card-title">@lang('crud.goals.index_title')</h4>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-borderless table-hover">
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th class="text-left">
                                 Name
                             </th>
@@ -62,9 +63,13 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $count = 1;
+                        @endphp
                         @forelse($goal_ts as $goal_t)
                          @if(app()->getLocale() ==$goal_t->locale)
                         <tr>
+                            <td>{{ $count++ }}</td>
                             <td>{{ $goal_t->name ?? '-' }}</td>
                             <td>{{ $goal_t->description ?? '-' }}</td>
                             <td>{{ strip_tags($goal_t->out_put ?? '-' )}}</td>
@@ -85,7 +90,7 @@
                                         </button>
                                     </a>
                                     @endcan @can('view', $goal_t)
-                                    <a href="{{ route('goals.show', $goal_t) }}">
+                                    <a href="{{ route('goals.show', $goal_t->translation_id) }}">
                                         <button
                                             type="button"
                                             class="btn btn-light"
@@ -95,7 +100,7 @@
                                     </a>
                                     @endcan @can('delete', $goal_t)
                                     <form
-                                        action="{{ route('goals.destroy', $goal_t) }}"
+                                        action="{{ route('goals.destroy', $goal_t->translation_id) }}"
                                         method="POST"
                                         onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                     >
@@ -120,12 +125,10 @@
                         </tr>
                         @endforelse
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="3">{!! $goal_ts->render() !!}</td>
-                        </tr>
-                    </tfoot>
                 </table>
+                <div class="float-right">
+                    {!! $goal_ts->render() !!}
+                </div>
             </div>
         </div>
     </div>

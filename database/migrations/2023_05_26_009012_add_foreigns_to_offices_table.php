@@ -11,12 +11,6 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('offices', function (Blueprint $table) {
-            $table
-                ->foreign('holder_id')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('CASCADE')
-                ->onDelete('CASCADE');
 
             $table
                 ->foreign('parent_office_id')

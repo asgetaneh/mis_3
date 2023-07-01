@@ -10,20 +10,20 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('kpi_child_one_kpi_child_two', function (
+        Schema::table('key_peformance_indicator_kpi_child_three', function (
             Blueprint $table
         ) {
             $table
-                ->foreign('kpi_child_one_id')
+                ->foreign('kpi_child_three_id')
                 ->references('id')
-                ->on('kpi_child_ones')
+                ->on('kpi_child_threes')
                 ->onUpdate('CASCADE')
                 ->onDelete('CASCADE');
 
             $table
-                ->foreign('kpi_child_two_id')
+                ->foreign('key_peformance_indicator_id')
                 ->references('id')
-                ->on('kpi_child_twos')
+                ->on('key_peformance_indicators')
                 ->onUpdate('CASCADE')
                 ->onDelete('CASCADE');
         });
@@ -34,10 +34,10 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('kpi_child_one_kpi_child_two', function (
+        Schema::table('kpi_child_three_kpi_child_two', function (
             Blueprint $table
         ) {
-            $table->dropForeign(['kpi_child_one_id']);
+            $table->dropForeign(['kpi_child_three_id']);
             $table->dropForeign(['kpi_child_two_id']);
         });
     }

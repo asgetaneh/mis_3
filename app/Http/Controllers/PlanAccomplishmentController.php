@@ -11,12 +11,18 @@ use App\Models\SuitableKpi;
 use Illuminate\Http\Request;
 use App\Models\ReportingPeriod;
 use App\Models\PlanAccomplishment;
+use App\Models\KeyPeformanceIndicator;
 use Illuminate\Support\Facades\DB;
 use App\Models\ReportingPeriodType;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\PlanAccomplishmentStoreRequest;
 use App\Http\Requests\PlanAccomplishmentUpdateRequest;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
+use Andegna\DateTime as Et_date;
+use Andegna\DateTimeFactory;
+use DateTime;
+
 
 
 
@@ -258,6 +264,7 @@ class PlanAccomplishmentController extends Controller
        $getuser = User::find($user);
        $user_offices = $getuser->offices[0]->id;
        $getoffice = Office::find($user_offices);
+        //dd($kpi);
          foreach ($kpi as $key => $value) {
             $str_key= (string)$key ;
             $length =  Str::length($str_key);
@@ -267,6 +274,13 @@ class PlanAccomplishmentController extends Controller
                 if($str_key[0]!='d'){
                     $plan_accom = new PlanAccomplishment;
                     $plan_accom->kpi_id= $str_key[0];
+                    $kpi = KeyPeformanceIndicator::find( $plan_accom->kpi_id);
+                    $report_period_type = $kpi->reportingPeriodType->id;
+                    // get current date
+                   /// $Date = Carbon::now();
+                    //$ethipic = new Et_date($Date);
+                    //$ethiopian_date = \Andegna\DateTimeFactory::now();
+                    $report_period = $this->getReportingPeriod($report_period_type);                 
                    if($length > 1){
                         $plan_accom->kpi_child_one_id= $str_key[1];
                         if($length > 2){
@@ -281,7 +295,8 @@ class PlanAccomplishmentController extends Controller
                     $plan_accom->accom_value=0;
                     $plan_accom->plan_status=0;
                     $plan_accom->accom_status=0;
-                    $plan_accom->reporting_period_id='1';
+                    $plan_accom->reporting_period_id=$report_period[0]->id;
+                   // dd($str_key[0]);
                     $plan_accom->save();
                 
                 }
@@ -321,6 +336,30 @@ class PlanAccomplishmentController extends Controller
             compact('planAccomplishments', 'search')
         );
 
+   }
+   public function getReportingPeriod($report_period_type){
+        $report_period_list = ReportingPeriod::all();
+        $date = new \DateTime() ;
+        $ethiopic_today = DateTimeFactory::fromDateTime($date); 
+        foreach ($report_period_list as $key => $value) {
+            // today date
+             $ethiopic_today_tostring = $ethiopic_today->getYear().'-'.$ethiopic_today->getMonth().'-'.$ethiopic_today->getDay();
+            $now_et_date = DateTime::createFromFormat('Y-m-d',  $ethiopic_today_tostring);
+            // start date
+             $from_String_start_date = [$year, $month, $day] = explode('-', $value->start_date);
+           $start_date = DateTime::createFromFormat('Y-m-d',  $from_String_start_date[0].'-'.$from_String_start_date[1].'-'.$from_String_start_date[2]);
+            // end date
+            $from_String_end_date = [$year, $month, $day] = explode('-', $value->end_date);
+            $end_date = DateTime::createFromFormat('Y-m-d',  $from_String_end_date[0].'-'.$from_String_end_date[1].'-'.$from_String_end_date[2]); 
+             if($start_date < $now_et_date && $end_date > $now_et_date){
+                $report_period = ReportingPeriod::where('id' , '=', $value->id)->where('reporting_period_type_id' , '=', $report_period_type)->get();
+                    if($report_period){
+                             return $report_period;
+                    }
+                
+           
+            }
+        }        
    }
 
 }

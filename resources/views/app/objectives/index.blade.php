@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
     <div class="searchbar mt-0 mb-4">
         <div class="row">
             <div class="col-md-6">
@@ -43,10 +43,11 @@
                 <h4 class="card-title">@lang('crud.objectives.index_title')</h4>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-borderless table-hover">
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th class="text-left">
                                 Name
                             </th>
@@ -68,11 +69,15 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $count = 1;
+                        @endphp
 
                         @forelse($objective_ts as $objective_t)
                         @if(app()->getLocale() ==$objective_t->locale)
 
                         <tr>
+                            <td>{{ $count++ }}</td>
                             <td>{{ $objective_t->name ?? '-' }}</td>
                             <td>
                                 {{ $objective_t->description ?? '-'
@@ -104,7 +109,7 @@
                                     </a>
                                     @endcan @can('view', $objective_t)
                                     <a
-                                        href="{{ route('objectives.show', $objective_t) }}"
+                                        href="{{ route('objectives.show', $objective_t->translation_id) }}"
                                     >
                                         <button
                                             type="button"
@@ -115,7 +120,7 @@
                                     </a>
                                     @endcan @can('delete', $objective_t)
                                     <form
-                                        action="{{ route('objectives.destroy', $objective_t) }}"
+                                        action="{{ route('objectives.destroy', $objective_t->translation_id) }}"
                                         method="POST"
                                         onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                     >
@@ -140,12 +145,10 @@
                         </tr>
                         @endforelse
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="6">{!! $objective_ts->render() !!}</td>
-                        </tr>
-                    </tfoot>
                 </table>
+                <div class="float-right">
+                    {!! $objective_ts->render() !!}
+                </div>
             </div>
         </div>
     </div>

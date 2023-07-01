@@ -7,11 +7,11 @@
                 <h4 class="card-title">
                     <a href="{{ route('kpi-child-one-translations.index') }}" class="mr-4"><i
                             class="icon ion-md-arrow-back"></i></a>
-                    Add sub chain for Key performance indicator child ({{ $KpiChildTwo->kpiChildTwoTranslations[0]->name }})
+                     Add sub chain two for Key performance indicator({{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->name }})
                 </h4>
 
-                <x-form method="POST" action="{{ route('kpi-chain-three.store') }}" class="mt-4">
-                    @include('app.kpi_child_two_translations.kpi-two-chain')
+                <x-form method="POST" action="{{ route('kpi-chain-two.store') }}" class="mt-4">
+                    @include('app.key_peformance_indicators.two-chain_form-inputs')
 
                     <div class="mt-4">
                         <a href="{{ route('kpi-child-one-translations.index') }}" class="btn btn-light">
@@ -29,8 +29,7 @@
                 {{-- below code to be worked later --}}
                 <div class="table-responsive">
                     <h4 class="card-title"><u>
-                        Add sub chain for Key performance indicator child ({{ $KpiChildTwo->kpiChildTwoTranslations[0]->name }})</u>
-                    </h4>
+                     </h4>
                     <table class="table table-borderless table-hover">
                         <thead>
                             <tr>
@@ -46,18 +45,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($childThreeAdds as $childThreeAdd)
+                            @forelse($childTwoAdds as $childTwoAdd)
                                 <tr>
                                     <td>
-                                        {{ $childThreeAdd->kpiChildThreeTranslations[0]->name ?? '-' }}
+                                        {{ $childTwoAdd->kpiChildTwoTranslations[0]->name ?? '-' }}
                                     </td>
                                     <td>
-                                        {{ $childThreeAdd->kpiChildThreeTranslations[0]->description ?? '-' }}
+                                        {{ $childTwoAdd->kpiChildTwoTranslations[0]->description ?? '-' }}
                                     </td>
                                     <td>
-                                        @can('delete', $childThreeAdd)
-                                            <form
-                                                action="{{ route('kpi-chain-three.remove', [$KpiChildTwo, $childThreeAdd]) }}"
+                                             <form
+                                                action="{{ route('kpi-chain-two.remove', [$keyPeformanceIndicator, $childTwoAdd]) }}"
                                                 method="POST"
                                                 onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')">
                                                 @csrf @method('DELETE')
@@ -65,7 +63,6 @@
                                                     <i class="icon ion-md-trash"></i>
                                                 </button>
                                             </form>
-                                        @endcan
                                     </td>
                                 </tr>
                             @empty

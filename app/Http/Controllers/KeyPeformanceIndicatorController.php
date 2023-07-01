@@ -19,6 +19,12 @@ use App\Models\ReportingPeriodTypeT;
 use Illuminate\Http\RedirectResponse;
 use App\Models\KeyPeformanceIndicator;
 use App\Models\KeyPeformanceIndicatorT;
+use App\Models\KpiChildOneTranslation;
+use App\Models\KpiChildTwoTranslation;
+use App\Models\KpiChildThreeTranslation;
+
+
+
 use App\Http\Requests\KeyPeformanceIndicatorStoreRequest;
 use App\Http\Requests\KeyPeformanceIndicatorUpdateRequest;
 
@@ -33,15 +39,29 @@ class KeyPeformanceIndicatorController extends Controller
         $this->authorize('view-any', KeyPeformanceIndicator::class);
 
         $search = $request->get('search', '');
-
         $keyPeformanceIndicator_ts = KeyPeformanceIndicatorT::search($search)
             ->latest()
             ->paginate(15)
             ->withQueryString();
+           
+        $kpiChildOneTranslations = KpiChildOneTranslation::search($search)
+             ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+             $kpiChildTwoTranslations = KpiChildTwoTranslation::search($search)
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+            $kpiChildThreeTranslations = KpiChildThreeTranslation::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
 
         return view(
             'app.key_peformance_indicators.index',
-            compact('keyPeformanceIndicator_ts', 'search')
+            compact('keyPeformanceIndicator_ts','kpiChildOneTranslations', 'kpiChildTwoTranslations','kpiChildThreeTranslations','search')
         );
     }
 
@@ -196,12 +216,15 @@ class KeyPeformanceIndicatorController extends Controller
             ->route('key-peformance-indicators.index')
             ->withSuccess(__('crud.common.removed'));
     }
-     public function kpiChain(
-        Request $request, $id
-    ): View {
-        $KpiChildOne = KpiChildOne::all();
-        $keyPeformanceIndicator = KeyPeformanceIndicator::find($id);
 
+     public function kpiChain( Request $request, $id ): View {
+         $keyPeformanceIndicator = KeyPeformanceIndicator::find($id);
+        $kpiChildOneList = [];
+        foreach ($keyPeformanceIndicator->kpiChildOnes as $ones){
+            array_push($kpiChildOneList, $ones->id);
+        }
+
+        $KpiChildOne = KpiChildOne::whereNotIn('id', $kpiChildOneList)->get();
         $child_one_adds = $keyPeformanceIndicator->kpiChildOnes;
 
          return view(
@@ -217,22 +240,34 @@ class KeyPeformanceIndicatorController extends Controller
         Request $request
     ): View {
         $data = $request->input();
-        $kpi = $data['keyPeformanceIndicator'];
+        $keyPeformanceIndicator = $data['keyPeformanceIndicator'];
         $chaild_one_lists = $data['kpi_one_child'];
 
          foreach($chaild_one_lists as $chaild_one_list){
-            $kpi_chaild_one = DB::insert('insert into key_peformance_indicator_kpi_child_one (kpi_child_one_id, key_peformance_indicator_id) values (?, ?)', [$chaild_one_list, $kpi]);
+            $kpi_chaild_one = DB::insert('insert into key_peformance_indicator_kpi_child_one (kpi_child_one_id, key_peformance_indicator_id) values (?, ?)', [$chaild_one_list, $keyPeformanceIndicator]);
         }
-         $search = $request->get('search', '');
+        $kpiChildOneList = [];
+        $keyPeformanceIndicator = KeyPeformanceIndicator::find($keyPeformanceIndicator);
+        foreach ($keyPeformanceIndicator->kpiChildOnes as $ones){
+            array_push($kpiChildOneList, $ones->id);
+        }
+         $KpiChildOne = KpiChildOne::whereNotIn('id', $kpiChildOneList)->get();
+        $child_one_adds = $keyPeformanceIndicator->kpiChildOnes;
+             return view(
+            'app.key_peformance_indicators.chain',
+            compact(
+                'keyPeformanceIndicator',
+                'KpiChildOne',
+                 'child_one_adds'
+            )
+        );
+            return redirect()->route('kpi-Chain', [$keyPeformanceIndicator]);
 
-        $keyPeformanceIndicator_ts = KeyPeformanceIndicatorT::search($search)
-            ->latest()
-            ->paginate(5)
-            ->withQueryString();
+             return redirect()->back()->with(
+            [
+                'keyPeformanceIndicator' => $keyPeformanceIndicator,
+             ]
 
-        return view(
-            'app.key_peformance_indicators.index',
-            compact('keyPeformanceIndicator_ts', 'search')
         );
 
     }
@@ -255,6 +290,166 @@ class KeyPeformanceIndicatorController extends Controller
                 'KpiChildOne',
                  'child_one_adds'
             )
+        );
+
+    }
+    public function kpiChainTwo(Request $request, $id): View
+    {
+        $keyPeformanceIndicator = KeyPeformanceIndicator::find($id);
+
+        $kpiChildTwoList = [];
+        foreach ($keyPeformanceIndicator->kpiChildTwos as $twos){
+            array_push($kpiChildTwoList, $twos->id);
+        }
+
+        $KpiChildTwo_t = KpiChildTwoTranslation::whereNotIn('kpi_child_two_id', $kpiChildTwoList)->get();
+
+        $childTwoAdds = $keyPeformanceIndicator->kpiChildTwos;
+
+        $languages = Language::all();
+
+        return view(
+            'app.key_peformance_indicators.two_chain',
+            compact(
+                'keyPeformanceIndicator',
+                'KpiChildTwo_t',
+                'childTwoAdds',
+                'languages'
+            )
+        );
+    }
+
+    public function kpiChainTwoStore(Request $request){
+        // dd($request);
+
+        $data = $request->input();
+        $keyPeformanceIndicator = $data['kpiId'];
+        $childTwoLists = $data['kpiTwoLists'];
+
+        foreach($childTwoLists as $childOneList){
+            $kpiChildOneTwo = DB::insert('insert into key_peformance_indicator_kpi_child_two (key_peformance_indicator_id, kpi_child_two_id) values (?, ?)', [$keyPeformanceIndicator, $childOneList]);
+        }
+
+        $search = $request->get('search', '');
+
+        $keyPeformanceIndicators = KeyPeformanceIndicatorT::search($search)
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+             return redirect()->back()->with(
+            [
+                'keyPeformanceIndicator' => $keyPeformanceIndicator,
+             ]
+
+        );
+
+    }
+
+    // below code is to be worked later
+    public function kpiChainTwoRemove($keyPeformanceIndicator_id, $childTwo,
+        Request $request
+    ) {
+
+        $keyPeformanceIndicator = KeyPeformanceIndicator::find($keyPeformanceIndicator_id);
+
+        $keyPeformanceIndicator->find($keyPeformanceIndicator_id)->kpiChildTwos()->detach($childTwo);
+
+        $kpiChildTwoList = [];
+        foreach ($keyPeformanceIndicator->kpiChildTwos as $twos){
+            array_push($kpiChildTwoList, $twos->id);
+        }
+
+        $KpiChildTwo = KpiChildTwoTranslation::whereNotIn('kpi_child_two_id', $kpiChildTwoList)->get();
+
+        $childTwoAdds = $keyPeformanceIndicator->kpiChildTwos;
+
+        return redirect()->back()->with(
+            [
+                'keyPeformanceIndicator' => $keyPeformanceIndicator,
+                'KpiChildTwo' => $KpiChildTwo,
+                'childTwoAdds' => $childTwoAdds
+            ]
+
+        );
+
+    }
+
+    public function kpiChainThree(Request $request, $id): View
+    {
+        $keyPeformanceIndicator = KeyPeformanceIndicator::find($id);
+
+        $kpiChildThreeList = [];
+        foreach ($keyPeformanceIndicator->kpiChildThrees as $three){
+            array_push($kpiChildThreeList, $three->id);
+        }
+
+        $KpiChildThree_t = KpiChildThreeTranslation::whereNotIn('kpiChildThree_id', $kpiChildThreeList)->get();
+
+        $childThreeAdds = $keyPeformanceIndicator->kpiChildThrees;
+
+        $languages = Language::all();
+
+        return view(
+            'app.key_peformance_indicators.three_chain',
+            compact(
+                'keyPeformanceIndicator',
+                'KpiChildThree_t',
+                'childThreeAdds',
+                'languages'
+            )
+        );
+    }
+    public function kpiChainThreeStore(Request $request){
+        // dd($request);
+
+        $data = $request->input();
+        $keyPeformanceIndicator = $data['kpiId'];
+        $childThreeLists = $data['kpiThreeLists'];
+
+        foreach($childThreeLists as $childThreeList){
+            $kpiChildThree = DB::insert('insert into key_peformance_indicator_kpi_child_three (kpi_child_three_id, key_peformance_indicator_id) values (?, ?)', [$childThreeList, $keyPeformanceIndicator]);
+        }
+
+        $search = $request->get('search', '');
+        $keyPeformanceIndicators = KeyPeformanceIndicatorT::search($search)
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+             return redirect()->back()->with(
+            [
+                'keyPeformanceIndicator' => $keyPeformanceIndicator,
+             ]
+
+        );
+
+
+    }
+
+    // below code is to be worked later
+    public function kpiChainThreeRemove($keyPeformanceIndicator_id, $childThree,
+        Request $request
+    ) {
+
+        $keyPeformanceIndicator = KeyPeformanceIndicator::find($keyPeformanceIndicator_id);
+
+        $keyPeformanceIndicator->find($keyPeformanceIndicator_id)->kpiChildThrees()->detach($childThree);
+
+        $kpiChildThreeList = [];
+        foreach ($keyPeformanceIndicator->kpiChildThrees as $threes){
+            array_push($kpiChildThreeList, $threes->id);
+        }
+
+        $KpiChildThree = KpiChildThreeTranslation::whereNotIn('kpiChildThree_id', $kpiChildThreeList)->get();
+
+        $childThreeAdds = $keyPeformanceIndicator->kpiChildThrees;
+
+        return redirect()->back()->with(
+            [
+                'keyPeformanceIndicator' => $keyPeformanceIndicator,
+                'KpiChildThree' => $KpiChildThree,
+                'childThreeAdds' => $childThreeAdds
+            ]
+
         );
 
     }

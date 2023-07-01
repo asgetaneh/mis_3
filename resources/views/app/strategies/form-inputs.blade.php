@@ -49,7 +49,7 @@
         <x-inputs.textarea
             name="{{'description'.$lang->locale}}"
             label="{{'Description in '.$lang->name}}"
-            maxlength="255"
+            maxlength=""
             required>
               </x-inputs.textarea
         >

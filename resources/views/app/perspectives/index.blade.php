@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
     <div class="searchbar mt-0 mb-4">
         <div class="row">
             <div class="col-md-6">
@@ -45,10 +45,11 @@
                 </h4>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-borderless table-hover">
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th class="text-left">
                                 Name
                             </th>
@@ -61,9 +62,13 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $count = 1;
+                        @endphp
                         @forelse($perspective_ts as $perspective_t)
-                         @if(app()->getLocale() ==$perspective_t->locale)     
+                         @if(app()->getLocale() ==$perspective_t->locale)
                         <tr>
+                            <td>{{ $count++ }}</td>
                             <td>
                                 {{ $perspective_t->name ?? '-' }}
                             </td>
@@ -89,7 +94,7 @@
                                     </a>
                                     @endcan @can('view', $perspective_t)
                                     <a
-                                        href="{{ route('perspectives.show', $perspective_t) }}"
+                                        href="{{ route('perspectives.show', $perspective_t->translation_id) }}"
                                     >
                                         <button
                                             type="button"
@@ -100,7 +105,7 @@
                                     </a>
                                     @endcan @can('delete', $perspective_t)
                                     <form
-                                        action="{{ route('perspectives.destroy', $perspective_t) }}"
+                                        action="{{ route('perspectives.destroy', $perspective_t->translation_id) }}"
                                         method="POST"
                                         onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                     >
@@ -125,12 +130,10 @@
                         </tr>
                         @endforelse
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="3">{!! $perspective_ts->render() !!}</td>
-                        </tr>
-                    </tfoot>
                 </table>
+                <div class="float-right">
+                    {!! $perspective_ts->render() !!}
+                </div>
             </div>
         </div>
     </div>

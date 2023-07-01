@@ -150,60 +150,6 @@ class KpiChildTwoController extends Controller
         );
     }
 
-    public function kpiChainThreeStore(Request $request){
-        // dd($request);
-
-        $data = $request->input();
-        $kpiChildTwo = $data['kpiChildTwoId'];
-        $childThreeLists = $data['kpiThreeLists'];
-
-        foreach($childThreeLists as $childThreeList){
-            $kpiChildTwoThree = DB::insert('insert into kpi_child_three_kpi_child_two (kpi_child_three_id, kpi_child_two_id) values (?, ?)', [$childThreeList, $kpiChildTwo]);
-        }
-
-        $search = $request->get('search', '');
-
-        $kpiChildTwoTranslations = KpiChildTwoTranslation::search($search)
-            ->latest()
-            ->paginate(5)
-            ->withQueryString();
-
-        return redirect('kpi-child-two-translations')->with(
-            [
-                'kpiChildTwoTranslations' => $kpiChildTwoTranslations,
-                'search' => $search
-            ]
-        );
-
-    }
-
-    // below code is to be worked later
-    public function kpiChainThreeRemove($childTwo, $childThree,
-        Request $request
-    ) {
-
-        $kpiChildTwo = kpiChildTwo::find($childTwo);
-
-        $kpiChildTwo->find($childTwo)->kpiChildThrees()->detach($childThree);
-
-        $kpiChildThreeList = [];
-        foreach ($kpiChildTwo->kpiChildThrees as $threes){
-            array_push($kpiChildThreeList, $threes->id);
-        }
-
-        $KpiChildThree = KpiChildThreeTranslation::whereNotIn('kpiChildThree_id', $kpiChildThreeList)->get();
-
-        $childThreeAdds = $kpiChildTwo->kpiChildThrees;
-
-        return redirect()->back()->with(
-            [
-                'kpiChildTwo' => $kpiChildTwo,
-                'KpiChildThree' => $KpiChildThree,
-                'childThreeAdds' => $childThreeAdds
-            ]
-
-        );
-
-    }
+    
 
 }

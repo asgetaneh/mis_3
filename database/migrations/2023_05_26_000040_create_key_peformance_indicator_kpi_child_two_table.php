@@ -10,10 +10,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('kpi_child_three_kpi_child_two', function (
+        Schema::create('key_peformance_indicator_kpi_child_two', function (
             Blueprint $table
         ) {
-            $table->unsignedBigInteger('kpi_child_three_id');
+            $table->unsignedBigInteger('key_peformance_indicator_id');
             $table->unsignedBigInteger('kpi_child_two_id');
         });
     }
@@ -23,6 +23,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('kpi_child_three_kpi_child_two');
+        Schema::dropIfExists('key_peformance_indicator_kpi_child_two');
     }
 };

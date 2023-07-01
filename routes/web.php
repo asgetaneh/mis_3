@@ -57,12 +57,12 @@ Route::get('lang/change', [HomeController::class, 'change'])->name('changeLang')
 Route::get('languages', [LanguageController::class, 'index']);
     // institution ownerships
 
-Route::get('kpi-chain-two/{id}', [KpiChildOneController::class, 'kpiChainTwo'])->name('kpi-chain-two.create');
-Route::POST('kpi-chain-two/save', [KpiChildOneController::class, 'kpiChainTwoStore'])->name('kpi-chain-two.store');
-Route::DELETE('kpi-chain-two-remove/{kpiOne}/{childtwo}', [KpiChildOneController::class, 'kpiChainTwoRemove'])->name('kpi-chain-two.remove');
-Route::get('kpi-chain-three/{id}', [KpiChildTwoController::class, 'kpiChainThree'])->name('kpi-chain-three.create');
-Route::POST('kpi-chain-three/save', [KpiChildTwoController::class, 'kpiChainThreeStore'])->name('kpi-chain-three.store');
-Route::DELETE('kpi-chain-three-remove/{kpiTwo}/{childthree}', [KpiChildTwoController::class, 'kpiChainThreeRemove'])->name('kpi-chain-three.remove');
+Route::get('kpi-chain-two/{id}', [KeyPeformanceIndicatorController::class, 'kpiChainTwo'])->name('kpi-chain-two.create');
+Route::POST('kpi-chain-two/save', [KeyPeformanceIndicatorController::class, 'kpiChainTwoStore'])->name('kpi-chain-two.store');
+Route::DELETE('kpi-chain-two-remove/{kpiOne}/{childtwo}', [KeyPeformanceIndicatorController::class, 'kpiChainTwoRemove'])->name('kpi-chain-two.remove');
+Route::get('kpi-chain-three/{id}', [KeyPeformanceIndicatorController::class, 'kpiChainThree'])->name('kpi-chain-three.create');
+Route::POST('kpi-chain-three/save', [KeyPeformanceIndicatorController::class, 'kpiChainThreeStore'])->name('kpi-chain-three.store');
+Route::DELETE('kpi-chain-three-remove/{kpiTwo}/{childthree}', [KeyPeformanceIndicatorController::class, 'kpiChainThreeRemove'])->name('kpi-chain-three.remove');
 
 // Route::get('home', [HomeController::class, 'home'])->name('home');
 Route::get('kpi_chain/{id}', [KeyPeformanceIndicatorController::class, 'kpiChain'])->name('kpi-Chain');
@@ -168,7 +168,7 @@ Route::prefix('/')
         Route::GET('select-suitable-kpi', [SuitableKpiController::class, 'selectOfficeSuitableKpi'])->name('select-suitable-kpi');
 
         Route::POST('suitable-kpi/save', [SuitableKpiController::class, 'kpiChainSave'])->name('kpi-Chain-sae');
-        Route::DELETE('kpi_chain_remove/{kpi}/{childone}', [SuitableKpiController::class, 'kpiChainRemove'])->name('kpi-Chain-remove');
+        // Route::DELETE('kpi_chain_remove/{kpi}/{childone}', [SuitableKpiController::class, 'kpiChainRemove'])->name('kpi-Chain-remove');
 
         Route::GET('/get-objectives/{goal}', [PlanAccomplishmentController::class, 'getAllObjectives'])->name('get-objectives');
         Route::POST('/plan-save', [PlanAccomplishmentController::class, 'savePlan'])->name('plan.save');

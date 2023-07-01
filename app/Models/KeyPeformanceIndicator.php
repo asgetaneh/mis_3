@@ -66,4 +66,16 @@ class KeyPeformanceIndicator extends Model
     {
         return $this->belongsToMany(KpiChildOne::class);
     }
+
+    public function kpiChildTwos()
+    {
+        return $this->belongsToMany(KpiChildTwo::class);
+    }
+    public function kpiChildThrees()
+    {
+        return $this->belongsToMany(KpiChildThree::class); // changed from hasMany to belongsToMany
+    }
+
+
+    
 }

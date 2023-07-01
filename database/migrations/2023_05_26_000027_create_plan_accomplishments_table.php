@@ -18,9 +18,9 @@ return new class extends Migration {
             $table->double('accom_value')->default(0);
             $table->tinyInteger('plan_status')->default(0);
             $table->tinyInteger('accom_status')->default(0);
-            $table->unsignedBigInteger('kpi_child_one_id')->default(0);
-            $table->unsignedBigInteger('kpi_child_two_id')->default(0);
-            $table->unsignedBigInteger('kpi_child_three_id')->default(0);
+            $table->unsignedBigInteger('kpi_child_one_id') ->nullable();
+            $table->unsignedBigInteger('kpi_child_two_id') ->nullable();
+            $table->unsignedBigInteger('kpi_child_three_id') ->nullable();
             $table->unsignedBigInteger('office_id');
 
             $table->timestamps();

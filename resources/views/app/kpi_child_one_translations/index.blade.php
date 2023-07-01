@@ -85,16 +85,6 @@
                                 >
                                     @can('update', $kpiChildOneTranslation)
                                     <a
-                                        href="{{ route('kpi-chain-two.create',$kpiChildOneTranslation->kpiChildOne) }}"
-                                    >
-                                        <button
-                                            type="button"
-                                            class="btn btn-light"
-                                        >
-                                            <i class="icon ion-md-add"></i>
-                                        </button>
-                                    </a>
-                                    <a
                                         href="{{ route('kpi-child-one-translations.edit', $kpiChildOneTranslation) }}"
                                     >
                                         <button

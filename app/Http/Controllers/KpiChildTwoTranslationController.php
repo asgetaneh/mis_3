@@ -22,8 +22,7 @@ class KpiChildTwoTranslationController extends Controller
         $search = $request->get('search', '');
 
         $kpiChildTwoTranslations = KpiChildTwoTranslation::search($search)
-            ->latest()
-            ->paginate(5)
+             ->paginate(15)
             ->withQueryString();
 
         return view(

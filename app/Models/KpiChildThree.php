@@ -11,7 +11,7 @@ class KpiChildThree extends Model
     use HasFactory;
     use Searchable;
 
-    protected $fillable = ['kpi_child_two_id'];
+    protected $fillable = ['key_peformance_indicator_id'];
 
     protected $searchableFields = ['*'];
 
@@ -25,9 +25,9 @@ class KpiChildThree extends Model
         );
     }
 
-    public function kpiChildTwo()
+    public function kpi()
     {
-        return $this->belongsTo(KpiChildTwo::class);
+        return $this->belongsTo(KeyPeformanceIndicator::class);
     }
 
     public function planAccomplishments()

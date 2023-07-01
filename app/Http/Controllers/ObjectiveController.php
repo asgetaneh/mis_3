@@ -29,7 +29,7 @@ class ObjectiveController extends Controller
 
         $objective_ts = ObjectiveTranslation::search($search)
             ->latest()
-            ->paginate(5)
+            ->paginate(15)
             ->withQueryString();
 
         return view('app.objectives.index', compact('objective_ts', 'search'));

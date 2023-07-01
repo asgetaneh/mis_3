@@ -12,9 +12,9 @@ return new class extends Migration {
     {
         Schema::table('plan_accomplishments', function (Blueprint $table) {
             $table
-                ->foreign('suitable_kpi_id')
+                ->foreign('kpi_id')
                 ->references('id')
-                ->on('suitable_kpis')
+                ->on('key_peformance_indicators')
                 ->onUpdate('CASCADE')
                 ->onDelete('CASCADE');
 

@@ -161,7 +161,27 @@
                                             type="button"
                                             class="btn btn-light"
                                         >
-                                            <i class="icon ion-md-add"></i>
+                                            <i class="icon ion-md-add">One</i>
+                                        </button>
+                                    </a>
+                                    <a
+                                        href="{{ route('kpi-chain-two.create',$keyPeformanceIndicator_t->keyPeformanceIndicator) }}"
+                                    >
+                                        <button
+                                            type="button"
+                                            class="btn btn-light"
+                                        >
+                                            <i class="icon ion-md-add">Two</i>
+                                        </button>
+                                    </a>
+                                    <a
+                                        href="{{ route('kpi-chain-three.create',$keyPeformanceIndicator_t->keyPeformanceIndicator) }}"
+                                    >
+                                        <button
+                                            type="button"
+                                            class="btn btn-light"
+                                        >
+                                            <i class="icon ion-md-add">Three</i>
                                         </button>
                                     </a>
                                     <a

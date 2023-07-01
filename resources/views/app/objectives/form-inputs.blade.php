@@ -27,8 +27,8 @@
     </x-inputs.group>
 
      @foreach($languages as $key => $lang)
-      
-            
+
+
     <x-inputs.group class="col-sm-12">
         <x-inputs.text
             name="{{'name'.$lang->locale}}"
@@ -43,7 +43,7 @@
         <x-inputs.text
             name="{{'output'.$lang->locale}}"
             label="{{'Output in '.$lang->name}}"
-             maxlength="255"
+             maxlength=""
             placeholder="{{'output in '.$lang->name}}"
             required
         ></x-inputs.text>
@@ -53,7 +53,7 @@
         <x-inputs.text
             name="{{'outcome'.$lang->locale}}"
             label="{{'Outcome in '.$lang->name}}"
-             maxlength="255"
+             maxlength=""
             placeholder="{{'outcome in '.$lang->name}}"
             required
         ></x-inputs.text>
@@ -63,7 +63,7 @@
         <x-inputs.textarea
             name="{{'description'.$lang->locale}}"
             label="{{'Description in '.$lang->name}}"
-            maxlength="255"
+            maxlength=""
             required>
               </x-inputs.textarea
         >

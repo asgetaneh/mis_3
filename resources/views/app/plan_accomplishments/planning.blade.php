@@ -170,111 +170,85 @@
 
                                         {{-- If KPI has Child ones (UG, PG) --}}
                                         @if (!$kpi->kpiChildOnes->isEmpty())
-
-                                       {{-- <table class="table table-bordered">
-                                                    <!-- <tr id="child-ones"> -->
-                                                          @foreach ($kpi->kpiChildOnes as $one)
-                                                            <tr>
-                                                                <th rowspan="6" >{{ $one->kpiChildOneTranslations[0]->name }}
-                                                                </th>
-                                                                <th>
-                                                                    @foreach ($one->kpiChildTwos as $kpiTwo)
-                                                                    <tr>
-                                                                    <th  rowspan="2" >{{ $kpiTwo->kpiChildTwoTranslations[0]->name }}
-                                                                    </th>
-                                                                    <th>
-                                                                         @foreach ($kpiTwo->kpiChildThrees as $three)
-                                                                            <tr>
-                                                                            <th >{{ $three->kpiChildThreeTranslations[0]->name }}
-                                                                            </th>
-                                                                            </tr>
-                                                                            @endforeach
-                                                                    </th>
-                                                                    </tr>
-                                                                    @endforeach
-                                                                </th>
-                                                            </tr>
-                                                         @endforeach
-                                             </table>
                                             <table class="table table-bordered">
-                                        <!-- <tr id="child-ones"> -->
-                                                @foreach ($kpi->kpiChildOnes as $one)
-                                                    @foreach ($one->kpiChildTwos as $kpiTwo)
-                                                        @foreach ($kpiTwo->kpiChildThrees as $three)
+                                             <thead>
+                                            @if (!$kpi->kpiChildTwos->isEmpty())
+                                                @if (!$kpi->kpiChildThrees->isEmpty())
+                                                        <!-- <tr id="child-ones"> -->
                                                         <tr>
-                                                        <th collspan="6">{{ $one->kpiChildOneTranslations[0]->name }}
-                                                        </th>
-                                                        <th >{{ $kpiTwo->kpiChildTwoTranslations[0]->name }}
-                                                        </th>
-                                                        <th >{{ $three->kpiChildThreeTranslations[0]->name }}
-                                                        </th>
-                                                        </tr>
-                                                        @endforeach
-                                                    @endforeach
-                                                @endforeach
-                                             </table>--}}
-
-
-                                            <table class="table table-bordered">
-
-                                                <thead>
-                                                    <!-- <tr id="child-ones"> -->
-                                                    <tr>
-                                                        <th rowspan="2"></th>
-                                                        @foreach ($kpi->kpiChildOnes as $one)
-                                                            <th colspan="{{ $one->kpiChildTwos ->count() }}" >{{ $one->kpiChildOneTranslations[0]->name }}
-                                                            </th>
-                                                         @endforeach
-                                                    </tr>
-                                                    <tr>
-                                                         @foreach ($kpi->kpiChildOnes as $one)
-                                                         @if($one->kpiChildTwos ->count()> 0)
-                                                              @foreach ($one->kpiChildTwos as $kpiTwo)
-                                                                
-                                                                <th  >{{ $kpiTwo->kpiChildTwoTranslations[0]->name }}
+                                                            <th rowspan="2"></th>
+                                                            @foreach ($kpi->kpiChildOnes as $one)
+                                                                <th colspan="{{ $kpi->kpiChildThrees ->count() }}" >{{ $one->kpiChildOneTranslations[0]->name }}
                                                                 </th>
-                                                             @endforeach
-                                                             @else
-                                                                    <th  >{{ "-" }}</th>
-                                                                @endif
-                                                        @endforeach
-                                                    </tr>
-                                                    {{-- get count of level 3--}}
-                                                    @foreach ($kpi->kpiChildOnes as $one)
-                                                       @php $count3 =0 @endphp
-                                                        @foreach ($one->kpiChildTwos as $kpiTwo)
-                                                            @if($kpiTwo->kpiChildThrees->count() > $count3)
-                                                                @php
-                                                                 $count3 = $kpiTwo->kpiChildThrees->count();
-                                                                @endphp
-                                                            @endif
-                                                         @endforeach
-                                                    @endforeach
-
-                                                    @for($i =1; $i<= $count3; $i++)
+                                                            @endforeach
+                                                        </tr>
+                                                        <tr>
+                                                            @foreach ($kpi->kpiChildOnes as $one)
+                                                                @foreach ($kpi->kpiChildThrees as $kpiThree)
+                                                                    <th  >{{ $kpiThree->kpiChildThreeTranslations[0]->name }}
+                                                                    </th>
+                                                                @endforeach
+                                                            @endforeach
+                                                        </tr>
+                                                        
+                                                            @foreach ($kpi->kpiChildTwos as $two)
+                                                            <tr>
+                                                                    <th>
+                                                                    {{ $two->kpiChildTwoTranslations[0]->name }}
+                                                                    </th>
+                                                                    @foreach ($kpi->kpiChildOnes as $one)
+                                                                    @foreach ($kpi->kpiChildThrees as $kpiThree)
+                                                                    <td>
+                                                                    <input name="{{$kpi->id}}{{$one->id }}{{$two->id }}{{$kpiThree->id }}" class="form-control" type="number" required>
+                                                                    </td>
+                                                                @endforeach
+                                                            @endforeach
+                                                            </tr>
+                                                            @endforeach  
+                                                  {{-- KPI has  child one and child two --}}
+                                                @else
                                                      <tr>
-                                                        @if($i==1)
-                                                         <th  >Male </th>
-                                                         @else
-                                                          <th  >Female </th>
-                                                         @endif
+                                                      <th>#</th>
                                                          @foreach ($kpi->kpiChildOnes as $one)
-                                                            @if($one->kpiChildTwos ->count()> 0)
-                                                              @foreach ($one->kpiChildTwos as $kpiTwo)
-                                                              
-                                                               <td><input name="{{$kpi->id.$one->id.$kpiTwo->id.$i}}" class="form-control" type="number" required></td>
-                                                              @endforeach
-                                                              @else
-                                                                <td><input name="{{$kpi->id.$one->id.$i}}" class="form-control" type="number" required></td>
-                                                                @endif
+                                                        <th>
+                                                        {{ $one->kpiChildOneTranslations[0]->name }}
+                                                        </th>
                                                         @endforeach
                                                     </tr>
-                                                    @endfor
-                                                </thead>
-
-                                            </table>
-
-                                            {{-- KPI has no child one, which means just only plain input --}}
+                                                   
+                                                        @foreach ($kpi->kpiChildTwos as $two)
+                                                         <tr>
+                                                        <th>
+                                                        {{ $two->kpiChildTwoTranslations[0]->name }}
+                                                        </th>
+                                                            @foreach ($kpi->kpiChildOnes as $one)
+                                                                <td>
+                                                            <input name="{{$kpi->id}}{{$one->id }}{{$two->id }}" class="form-control" type="number" required>
+                                                            </td>
+                                                          @endforeach
+                                                    </tr>
+                                                     @endforeach
+                                                @endif
+                                            {{-- KPI has  child one only --}}
+                                            @else
+                                                 <tr>
+                                                     @foreach ($kpi->kpiChildOnes as $one)
+                                                    <th>
+                                                    {{ $one->kpiChildOneTranslations[0]->name }}
+                                                    </th>
+                                                    @endforeach
+                                                </tr>
+                                                <tr>
+                                                     @foreach ($kpi->kpiChildOnes as $one)
+                                                    <td>
+                                                    <input name="{{$kpi->id}}{{$one->id }}" class="form-control" type="number" required>
+                                                    </td>
+                                                    @endforeach
+                                                </tr>
+                                            @endif
+                                        </thead>
+                                        </table>
+                                        {{-- KPI has no child one, which means just only plain input --}}
                                         @else
                                             <p class="mb-3">
                                                 <input class="form-control" type="number" placeholder="Enter KPI value"
@@ -282,7 +256,7 @@
                                             </p>
                                         @endif
 
-                                     {{--   <textarea name="desc{{ $kpi->id}}" style="height: 100px;" class="form-control" name="" id="" placeholder="Narration here" required></textarea>--}}
+                                      <textarea name="desc{{ $kpi->id}}" style="height: 100px;" class="form-control" name="" id="" placeholder="Narration here" required></textarea>
 
                                     </div>
 

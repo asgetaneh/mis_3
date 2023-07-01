@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
     <div class="searchbar mt-0 mb-4">
         <div class="row">
             <div class="col-md-6">
@@ -43,10 +43,11 @@
                 <h4 class="card-title">@lang('crud.strategies.index_title')</h4>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-borderless table-hover">
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th class="text-left">
                                 Name
                             </th>
@@ -59,9 +60,14 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $count = 1;
+                        @endphp
+
                         @forelse($strategy_ts as $strategy_t)
                         @if(app()->getLocale() ==$strategy_t->locale)
                         <tr>
+                            <td>{{ $count++ }}</td>
                             <td>
                                 {{ $strategy_t->name ?? '-' }}
                             </td>
@@ -87,7 +93,7 @@
                                     </a>
                                     @endcan @can('view', $strategy_t)
                                     <a
-                                        href="{{ route('strategies.show', $strategy_t) }}"
+                                        href="{{ route('strategies.show', $strategy_t->translation_id) }}"
                                     >
                                         <button
                                             type="button"
@@ -98,7 +104,7 @@
                                     </a>
                                     @endcan @can('delete', $strategy_t)
                                     <form
-                                        action="{{ route('strategies.destroy', $strategy_t) }}"
+                                        action="{{ route('strategies.destroy', $strategy_t->translation_id) }}"
                                         method="POST"
                                         onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                     >
@@ -123,12 +129,10 @@
                         </tr>
                         @endforelse
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="4">{!! $strategy_ts->render() !!}</td>
-                        </tr>
-                    </tfoot>
                 </table>
+                <div class="float-right">
+                    {!! $strategy_ts->render() !!}
+                </div>
             </div>
         </div>
     </div>

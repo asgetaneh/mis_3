@@ -26,12 +26,6 @@ class KpiChildOne extends Model
     {
         return $this->hasMany(KpiChildOneTranslation::class, 'kpiChildOne_id');
     }
-
-    public function kpiChildTwos()
-    {
-        return $this->belongsToMany(KpiChildTwo::class);
-    }
-
     public function planAccomplishments()
     {
         return $this->hasMany(PlanAccomplishment::class);

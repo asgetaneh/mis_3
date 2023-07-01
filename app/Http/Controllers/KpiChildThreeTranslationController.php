@@ -24,7 +24,7 @@ class KpiChildThreeTranslationController extends Controller
 
         $kpiChildThreeTranslations = KpiChildThreeTranslation::search($search)
             ->latest()
-            ->paginate(5)
+            ->paginate(15)
             ->withQueryString();
 
         return view(
