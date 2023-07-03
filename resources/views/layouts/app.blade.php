@@ -65,9 +65,26 @@
 
             @include('layouts.sidebar')
 
-            <main class="content-wrapper p-5">
+            <main class="content-wrapper p-4">
                 @yield('content')
             </main>
+
+            <footer class="main-footer">
+                <strong>SMIS Application &copy;
+                    <script>
+                        document.write(new Date().getFullYear());
+                    </script>
+                    <a href="https://ju.edu.et" target="_blank">JU
+                        University</a>
+                    .</strong>
+                All rights reserved.
+                <div class="float-right d-none d-sm-inline-block">
+                    <b>Version</b>
+                    3.0
+                </div>
+
+            </footer>
+
         </div>
 
         @stack('modals')

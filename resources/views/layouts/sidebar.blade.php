@@ -1,14 +1,15 @@
 <!-- Main Sidebar Container -->
-<aside class="main-sidebar sidebar-light-primary elevation-4">
+<aside class="main-sidebar sidebar-light-primary elevation-1">
     <!-- Brand Logo -->
     <a href="{{ url('/') }}" class="brand-link" style="background: #3074a4; color: white;">
-        <img src="https://vemto.app/favicon.png" alt="Vemto Logo" class="brand-image bg-white img-circle">
-        <span class="brand-text font-weight-light">JU MIS</span>
+        <img src="{{ asset('images/logo.png') }}" alt="Vemto Logo" class="brand-image">
+        <span class="brand-text">JU MIS</span>
     </a>
 
     <!-- Sidebar -->
     <div class="sidebar">
 
+        <hr>
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu">
@@ -16,7 +17,7 @@
                 @auth
                 <li class="nav-item">
                     <a href="{{ route('home') }}" class="nav-link">
-                        <i class="nav-icon icon ion-md-pulse"></i>
+                        <i class="nav-icon  fas fa-tachometer-alt"></i>
                         <p>
                             Dashboard
                         </p>
@@ -27,10 +28,10 @@
 
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon icon ion-md-apps"></i>
+                        <i class="nav-icon fas fa-sitemap"></i>
                         <p>
                             EMIS
-                            <i class="nav-icon right icon ion-md-arrow-round-back"></i>
+                            <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
@@ -39,10 +40,10 @@
                                 <i class="nav-icon icon ion-md-radio-button-off"></i>
                                 <p>
                                     Setting
-                                    <i class="nav-icon right icon ion-md-arrow-round-back"></i>
+                                    <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
-                            
+
                             <ul class="nav nav-treeview">
                                     @can('view-any', App\Models\User::class)
                                     <li class="nav-item">
@@ -58,23 +59,23 @@
                 </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon icon ion-md-apps"></i>
+                        <i class="nav-icon fas fa-chart-bar"></i>
                         <p>
                             SMIS
-                            <i class="nav-icon right icon ion-md-arrow-round-back"></i>
+                            <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
 
                     <ul class="nav nav-treeview">
                             <li class="nav-item">
                             <a href="#" class="nav-link">
-                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                <i class="nav-icon fas fa-wrench"></i>
                                 <p>
                                     Setting
-                                    <i class="nav-icon right icon ion-md-arrow-round-back"></i>
+                                    <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
-                            
+
                             <ul class="nav nav-treeview">
                                  @can('view-any', App\Models\Perspective::class)
                             <li class="nav-item">
@@ -91,8 +92,8 @@
                                         <p>Goals</p>
                                     </a>
                                 </li>
-                                @endcan  
-                                 
+                                @endcan
+
                             @can('view-any', App\Models\Objective::class)
                             <li class="nav-item">
                                 <a href="{{ route('objectives.index') }}" class="nav-link">
@@ -141,8 +142,8 @@
                                 </a>
                             </li>
                             @endcan
-                           
-                            
+
+
                             @can('view-any', App\Models\Office::class)
                             <li class="nav-item">
                                 <a href="{{ route('office_translations.index') }}" class="nav-link">
@@ -151,7 +152,7 @@
                                 </a>
                             </li>
                             @endcan
-                           
+
                             @can('view-any', App\Models\PlaningYear::class)
                             <li class="nav-item">
                                 <a href="{{ route('planing-years.index') }}" class="nav-link">
@@ -176,7 +177,7 @@
                                 </a>
                             </li>
                             @endcan
-                           {{-- 
+                           {{--
                             @can('view-any', App\Models\SuitableKpi::class)
                             <li class="nav-item">
                                 <a href="{{ route('suitable-kpis.index') }}" class="nav-link">
@@ -193,8 +194,8 @@
                                 </a>
                             </li>
                             @endcan--}}
-                             
-                            @can('view-any', App\Models\Language::class) 
+
+                            @can('view-any', App\Models\Language::class)
                             <li class="nav-item">
                                 <a href="{{ route('languages.index') }}" class="nav-link">
                                     <i class="nav-icon icon ion-md-radio-button-off"></i>
@@ -207,13 +208,13 @@
 
                         <li class="nav-item">
                             <a href="#" class="nav-link">
-                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                <i class="far fa-credit-card  nav-icon"></i>
                                 <p>
                                     Plan
-                                    <i class="nav-icon right icon ion-md-arrow-round-back"></i>
+                                    <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
-                            
+
                             <ul class="nav nav-treeview">
                         {{--    @can('view-any', App\Models\StrategyTranslation::class)
                             <li class="nav-item">
@@ -247,13 +248,13 @@
                         </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
-                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                <i class="fa fa-tasks nav-icon"></i>
                                 <p>
                                     Report
-                                    <i class="nav-icon right icon ion-md-arrow-round-back"></i>
+                                    <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
-                            
+
                             <ul class="nav nav-treeview">
                             @can('view-any', App\Models\StrategyTranslation::class)
                             <li class="nav-item">
@@ -277,16 +278,16 @@
 
 
                     </ul>
-                </li> 
+                </li>
 
-                @if (Auth::user()->can('view-any', Spatie\Permission\Models\Role::class) || 
+                @if (Auth::user()->can('view-any', Spatie\Permission\Models\Role::class) ||
                     Auth::user()->can('view-any', Spatie\Permission\Models\Permission::class))
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon icon ion-md-key"></i>
+                        <i class="nav-icon fas fa-key"></i>
                         <p>
                             Access Management
-                            <i class="nav-icon right icon ion-md-arrow-round-back"></i>
+                            <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
@@ -319,13 +320,6 @@
                 </li>
                 @endif
                 @endauth
-
-                <li class="nav-item">
-                    <a href="https://adminlte.io/docs/3.1//index.html" target="_blank" class="nav-link">
-                        <i class="nav-icon icon ion-md-help-circle-outline"></i>
-                        <p>Docs</p>
-                    </a>
-                </li>
 
                 @auth
                 <li class="nav-item">
