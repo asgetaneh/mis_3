@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Office;
+use App\Models\Language;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use App\Models\OfficeTranslation;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\OfficeTranslationStoreRequest;
 use App\Http\Requests\OfficeTranslationUpdateRequest;
-use App\Models\Language;
 
 
 class OfficeTranslationController extends Controller
@@ -65,14 +67,14 @@ class OfficeTranslationController extends Controller
             if(isset($_POST['parent_name'])){
                 $office->parent_office_id = $data['parent_name'];
             }
-            
+
             $office->created_at= new \DateTime();
             $office->updated_at =new \DateTime();
             $office->save();
              foreach ($language as $key => $value) {
                 // code...
                 $office_translation = new OfficeTranslation;
-                 
+
                 $office_translation ->translation_id=$office->id;
                 $office_translation ->name = $data['name'.$value->locale];
                  $office_translation ->locale = $value->locale;
@@ -82,7 +84,7 @@ class OfficeTranslationController extends Controller
          return redirect()
             ->route('office_translations.index', $office_translation)
             ->withSuccess(__('crud.common.created'));
-        } catch (Exception $e) { 
+        } catch (Exception $e) {
             return redirect('app.office_translations/new')->withErrors(['errors' => $e]);
             }
         $offices = officeTranslation::all();
@@ -154,4 +156,37 @@ class OfficeTranslationController extends Controller
             ->route('office-translations.index')
             ->withSuccess(__('crud.common.removed'));
     }
+
+    public function assignIndex(){
+        $offices = OfficeTranslation::all();
+        $users = User::all();
+
+        return view('app.office_translations.assign', compact('offices', 'users'));
+    }
+
+    public function assignStore(Request $request){
+        $data = $request->all();
+
+        $userExists = DB::select("SELECT * FROM manager WHERE user_id = :id", ['id' => $data['user']]);
+        $userExists = $userExists ? User::where('id', $userExists[0]->user_id)->first() : '';
+
+        if($userExists){
+            return redirect()->back()->with('error', 'User '.$userExists->name.' has already been assigned');
+        }
+
+        $store = DB::insert('insert into manager (user_id, office_id) values (?, ?)', [$data['user'], $data['office']]);
+
+        return redirect()
+        ->route('office-translations.index')
+        ->withSuccess(__('crud.common.assigned'));
+    }
+
+    public function removeManager(Request $request, $id){
+        $user = DB::delete("delete from manager where user_id = :id", ['id' => $id]);
+
+        return redirect()
+        ->route('office-translations.index')
+        ->withSuccess(__('crud.common.revoked'));
+    }
+
 }

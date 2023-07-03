@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
     <div class="searchbar mt-0 mb-4">
         <div class="row">
             <div class="col-md-6">
@@ -43,10 +43,13 @@
                 <h4 class="card-title">
                     @lang('crud.offices.index_title')
                 </h4>
+                <a href="{{ route('office-assign.index') }}" class="btn btn-outline-success">
+                    Assign Manager
+                </a>
             </div>
 
             <div class="table-responsive">
-                <table class="table table-borderless table-hover">
+                <table class="table table-bordered table-hover mt-3">
                     <thead>
                         <tr>
                             <th class="text-left">
@@ -62,6 +65,9 @@
                             <th class="text-left">
                                 @lang('crud.office_translations.inputs.translation_id')
                             </th>
+                            <th>
+                                Manager
+                            </th>
                             <th class="text-center">
                                 @lang('crud.common.actions')
                             </th>
@@ -74,7 +80,7 @@
                        @php $count = $count+1;@endphp
                         <tr>
                             <td>
-                              {{  $count }}  
+                              {{  $count }}
                             </td>
                             <td>{{ $officeTranslation->name ?? '-' }}</td>
                              <td>
@@ -83,7 +89,17 @@
                             <td>
                                 {{ $officeTranslation->office->office->officeTranslations[0]->name ?? '-' }}
                             </td>
-                            
+
+                            <td>
+                                {!! $officeTranslation->office->users[0]->name ?? '<span class="badge badge-secondary">Not assigned</span>' !!}
+                                @if ($officeTranslation->office->users->count() > 0)
+                                    <form action="{{ route('office-manager.remove', $officeTranslation->office->users[0]->id) }}" class="d-inline" method="POST">
+                                        @csrf
+                                        <button class="btn btn-sm btn-danger ml-3">Revoke</button>
+                                    </form>
+                                @endif
+                            </td>
+
                             <td class="text-center" style="width: 134px;">
                                 <div
                                     role="group"

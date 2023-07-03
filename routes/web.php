@@ -134,6 +134,9 @@ Route::prefix('/')
             'office-translations',
             OfficeTranslationController::class
         );
+        Route::get('/office/assign', [OfficeTranslationController::class, 'assignIndex'])->name('office-assign.index');
+        Route::post('/office/assign/store', [OfficeTranslationController::class, 'assignStore'])->name('office-assign.store');
+        Route::post('/office/assign/remove/{id}', [OfficeTranslationController::class, 'removeManager'])->name('office-manager.remove');
         Route::resource(
             'perspective-translations',
             PerspectiveTranslationController::class

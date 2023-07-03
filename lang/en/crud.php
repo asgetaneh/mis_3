@@ -20,6 +20,8 @@ return [
         'created' => 'Successfully created',
         'saved' => 'Saved successfully',
         'removed' => 'Successfully removed',
+        'assigned' => 'Successfully assigned',
+        'revoked' => 'Successfully revoked',
     ],
 
     'users' => [
