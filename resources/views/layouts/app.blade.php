@@ -74,7 +74,7 @@
                     <script>
                         document.write(new Date().getFullYear());
                     </script>
-                    <a href="https://ju.edu.et" target="_blank">JU
+                    <a href="https://ju.edu.et" target="_blank">Jimma
                         University</a>
                     .</strong>
                 All rights reserved.
