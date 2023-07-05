@@ -237,7 +237,7 @@
                                                              @php 
                                                             $plan12 = getSavedPlanIndividualOneTwo($planning_year[0]->id,$kpi->id,$period->id, $one->id, $two->id,auth()->user()->offices[0]->id);
                                                              @endphp
-                                                            @if($plan!=0)
+                                                            @if($plan12!=0)
                                                                 <td>
                                                                 <input type ="hidden" name="type" value="yes">
                                                                 <input name="{{$kpi->id}}{{$period->id }}{{$one->id }}{{$two->id }}" class="form-control" value ="{{$plan12}}" type="number" required>
