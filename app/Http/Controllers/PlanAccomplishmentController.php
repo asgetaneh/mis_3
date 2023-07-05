@@ -235,7 +235,7 @@ class PlanAccomplishmentController extends Controller
        //dd($goal);
        $objectives = Objective::where('goal_id', $goalId)->get();
        $reportingTypes = ReportingPeriodType::all();
-       
+       $planning_year = PlaningYear::where('is_active',true)->get(); 
        $user = auth()->user()->id;
        $getuser = User::find($user);
        $user_offices = $getuser->offices[0]->id;
@@ -255,6 +255,7 @@ class PlanAccomplishmentController extends Controller
        return view('app.plan_accomplishments.planning', [
            'allData' => $objectives,
            'kpis' => $kpis,
+            'planning_year' => $planning_year,
            'user_offices' => $user_offices,
            'reportingTypes' => $reportingTypes,
        ]);
@@ -266,31 +267,30 @@ class PlanAccomplishmentController extends Controller
        $getuser = User::find($user);
        $user_offices = $getuser->offices[0]->id;
        $getoffice = Office::find($user_offices);
-        //dd($kpi);
+         $submit = "create";
+        $planning = PlaningYear::where('is_active',true)->get(); 
          foreach ($kpi as $key => $value) {
             $str_key= (string)$key ;
             $length =  Str::length($str_key);
-            
-              if($str_key[0]!='_'){
-                //echo $key.'--'.$value."<br/>";
-                if($str_key[0]!='d'){
+            dump($value);
+              if($str_key!='_token'){
+                if($value=="yes"){ $submit = "update";}
+                // first time planning                
+                if($submit == "create"){//dd($submit);
+                if($str_key[0]!='d'){ 
                     $plan_accom = new PlanAccomplishment;
                     $plan_accom->kpi_id= $str_key[0];
-                    $kpi = KeyPeformanceIndicator::find( $plan_accom->kpi_id);
-                    $report_period_type = $kpi->reportingPeriodType->id;
-                    // get current date
-                   /// $Date = Carbon::now();
-                    //$ethipic = new Et_date($Date);
-                    //$ethiopian_date = \Andegna\DateTimeFactory::now();
-                    $planning = PlaningYear::where('is_active',true)->get(); 
+                    $quarter = $str_key[1];
+                    $plan_accom->reporting_period_id = $str_key[1];
 
-                    $report_period = $this->getReportingPeriod($report_period_type);                 
-                   if($length > 1){
-                        $plan_accom->kpi_child_one_id= $str_key[1];
-                        if($length > 2){
-                             $plan_accom->kpi_child_two_id= $str_key[2];
-                             if($length > 3){
-                                $plan_accom->kpi_child_three_id= $str_key[3];
+                    $getkpi = KeyPeformanceIndicator::find( $plan_accom->kpi_id);
+                    $report_period_type = $getkpi->reportingPeriodType->id;    
+                   if($length > 2){
+                        $plan_accom->kpi_child_one_id= $str_key[2];
+                        if($length > 3){
+                             $plan_accom->kpi_child_two_id= $str_key[3];
+                             if($length > 4){
+                                $plan_accom->kpi_child_three_id= $str_key[4];
                             }
                         }
                     }
@@ -300,27 +300,67 @@ class PlanAccomplishmentController extends Controller
                     $plan_accom->plan_status=0;
                     $plan_accom->accom_status=0;
                      $plan_accom->planning_year_id=$planning[0]->id;
-                    $plan_accom->reporting_period_id=$report_period[0]->id;
-                 $plan_accom->save();
+                  $plan_accom->save();
                 $kpi_match_for_naration = $str_key[0];
                 }
-                else{//dump($value);
+                else{ //dump($value);
                    $naration =new ReportNarration;
                    $naration->plan_naration=$value;
                     $naration->key_peformance_indicator_id=$str_key[4];
                     $naration->office_id=$user_offices;
-                    $naration->reporting_period_id=$report_period[0]->id;
+                   // $naration->reporting_period_id=$report_period[0]->id;
                     $naration->planing_year_id=$planning[0]->id;
                     $naration->save();
-                    echo "here is ".$str_key[4]."<br/>";
+                 }
                 }
-                
+                else{
+                    if($key!="type"){
+                       // $this->updatePlan($key,$str_key,$length);
+                        if($str_key[0]!='d'){
+                            if($length > 2){
+                            $kpi_child_one_id= $str_key[2];
+                                if($length > 3){
+                                    $kpi_child_two_id= $str_key[3];
+                                    if($length > 4){
+                                        $kpi_child_three_id= $str_key[4];
+                                    }
+                                    else{$kpi_child_three_id= NULL;  }
+                                }
+                                 else{
+                                    $kpi_child_two_id= NULL;
+                                    $kpi_child_three_id= NULL;
+                                }
+                            }
+                            else{
+                                 $kpi_child_one_id= NULL;
+                                $kpi_child_two_id= NULL;
+                                $kpi_child_three_id= NULL;
+                            }
+                        $updated = tap(DB::table('plan_accomplishments')
+                         ->where('planning_year_id' , '=', $planning[0]->id)
+                        ->where('office_id' , '=', $user_offices)
+                        ->where('kpi_id' , '=', $str_key[0])
+                        ->where('reporting_period_id' , '=', $str_key[1])
+                         ->where('kpi_child_one_id' , '=', $kpi_child_one_id)
+                          ->where('kpi_child_two_id' , '=', $kpi_child_two_id)
+                           ->where('kpi_child_three_id' , '=',$kpi_child_three_id))
+                            ->update(['plan_value' => $value])
+                            ->first();
+                    }
+                    else{ //dd($value);
+                         $updated2 = tap(DB::table('report_narrations')
+                         ->where('planing_year_id' , '=', $planning[0]->id)->where('office_id' , '=', $user_offices)->where('key_peformance_indicator_id' , '=', $str_key[4]))
+                            ->update(['plan_naration' => $value])
+                            ->first();
+                    }
+                }                
               }
             // echo $length1.'->'.$i[0].'->'.$i[1].'->'.$i[2].'->'. "->".$value."<br/>";
             # code...
-         }//dd("wait");
+         }
+         } //dd("end");
         $search = $request->get('search', '');
-          $planAccomplishments = PlanAccomplishment::where('office_id' , '=', $user_offices)->where('reporting_period_id' , '=', '1')  
+          $planAccomplishments = PlanAccomplishment::where('office_id' , '=', $user_offices)->where('planning_year_id' , '=', $planning[0]->id)  
 
             ->latest()
             ->paginate(15)
@@ -334,6 +374,9 @@ class PlanAccomplishmentController extends Controller
             compact('planAccomplishments', 'search')
         );
          
+   }
+   public function updatePlan(){
+
    }
    public function viewPlanAccomplishment(Request $request){
         $search = $request->get('search', '');

@@ -155,10 +155,11 @@
 
                                 {{-- @if ($data) --}}
                                 @forelse($data->KeyPeformanceIndicators as $kpi)
+                                @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)  
                                     <div class="card collapsed-card p-2">
                                         <div class="card-header">
                                             <h3 class="card-title">KPI: {{ $kpi->KeyPeformanceIndicatorTs[0]->name }} (Reporting:{{$kpi->reportingPeriodType->reportingPeriodTypeTs[0]->name }})
-                                            (which period?)
+                                            ({{$period->reportingPeriodTs[0]->name}})
                                               {{--  getReportingPeriod($kpi->reportingPeriodType->id,$date)--}}
                                             </h3>
                                             <div class="card-tools">
@@ -198,9 +199,20 @@
                                                                     </th>
                                                                     @foreach ($kpi->kpiChildOnes as $one)
                                                                     @foreach ($kpi->kpiChildThrees as $kpiThree)
+                                                                     @php 
+                                                                     $plan = getSavedPlanIndividualOneTwoThree($planning_year[0]->id,$kpi->id,$period->id, $one->id, $two->id,$kpiThree->id,auth()->user()->offices[0]->id);
+                                                                    @endphp
+                                                                    @if($plan)
                                                                     <td>
-                                                                    <input name="{{$kpi->id}}{{$one->id }}{{$two->id }}{{$kpiThree->id }}" class="form-control" type="number" required>
+                                                                    <input type ="hidden" name="type" value="yes">
+                                                                    <input name="{{$kpi->id}}{{$period->id }}{{$one->id }}{{$two->id }}{{$kpiThree->id }}"  value = "{{$plan}}" class="form-control" type="number" required>
                                                                     </td>
+                                                                    @else
+                                                                     <td>
+                                                                    <input name="{{$kpi->id}}{{$period->id }}{{$one->id }}{{$two->id }}{{$kpiThree->id }}"  class="form-control" type="number" required>
+                                                                    </td>
+                                                                    @endif
+                                                                   
                                                                 @endforeach
                                                             @endforeach
                                                             </tr>
@@ -222,9 +234,19 @@
                                                         {{ $two->kpiChildTwoTranslations[0]->name }}
                                                         </th>
                                                             @foreach ($kpi->kpiChildOnes as $one)
+                                                             @php 
+                                                            $plan12 = getSavedPlanIndividualOneTwo($planning_year[0]->id,$kpi->id,$period->id, $one->id, $two->id,auth()->user()->offices[0]->id);
+                                                             @endphp
+                                                            @if($plan!=0)
                                                                 <td>
-                                                            <input name="{{$kpi->id}}{{$one->id }}{{$two->id }}" class="form-control" type="number" required>
+                                                                <input type ="hidden" name="type" value="yes">
+                                                                <input name="{{$kpi->id}}{{$period->id }}{{$one->id }}{{$two->id }}" class="form-control" value ="{{$plan12}}" type="number" required>
                                                             </td>
+                                                            @else
+                                                            <td>
+                                                                <input name="{{$kpi->id}}{{$period->id }}{{$one->id }}{{$two->id }}" class="form-control"  type="number" required>
+                                                            </td>
+                                                            @endif
                                                           @endforeach
                                                     </tr>
                                                      @endforeach
@@ -240,9 +262,19 @@
                                                 </tr>
                                                 <tr>
                                                      @foreach ($kpi->kpiChildOnes as $one)
+                                                       @php 
+                                                        $plan1 = getSavedPlanIndividualOne($planning_year[0]->id,$kpi->id,$period->id, $one->id, auth()->user()->offices[0]->id);
+                                                        @endphp
+                                                        @if($plan)
+                                                            <td>
+                                                            <input type ="hidden" name="type" value="yes">
+                                                            <input name="{{$kpi->id}}{{$period->id }}{{$one->id }}" class="form-control" value ="{{$plan1}}" type="number" required>
+                                                        </td>
+                                                        @else
                                                     <td>
-                                                    <input name="{{$kpi->id}}{{$one->id }}" class="form-control" type="number" required>
+                                                    <input name="{{$kpi->id}}{{$period->id }}{{$one->id }}" class="form-control" type="number" required>
                                                     </td>
+                                                    @endif
                                                     @endforeach
                                                 </tr>
                                             @endif
@@ -251,17 +283,35 @@
                                         {{-- KPI has no child one, which means just only plain input --}}
                                         @else
                                             <p class="mb-3">
+                                            @php 
+                                            $plan = getSavedPlanIndividual($planning_year[0]->id,$kpi->id,$period->id, auth()->user()->offices[0]->id);
+                                            @endphp
+                                            @if($plan)
+                                                <input type ="hidden" name="type" value="yes">
+                                                <input name="{{$kpi->id}}{{$period->id }}" class="form-control" value ="{{$plan}}" type="number" required>
+                                            @else
                                                 <input class="form-control" type="number" placeholder="Enter KPI value"
-                                                    name="{{ $kpi->id}}" required>
+                                                    name="{{ $kpi->id}}{{$period->id }}" required>
+                                            @endif
                                             </p>
                                         @endif
 
-                                      <textarea name="desc{{ $kpi->id}}" style="height: 100px;" class="form-control" name="" id="" placeholder="Narration here" required></textarea>
-
+                                    
                                     </div>
 
                                     </div>
-
+                                 @empty
+                                <h4>No reporting period type for kPI !</h4>
+                                @endforelse
+                                 @php 
+                                    $plan_naration = getSavedPlanNaration($planning_year[0]->id,$kpi->id , auth()->user()->offices[0]->id);
+                                    @endphp
+                                    @if($plan_naration)
+                                    <input type ="hidden" name="type" value="yes">
+                                     <textarea name="desc{{ $kpi->id}}" style="height: 100px;" class="form-control" name="" id="" placeholder="Narration here" required>{{$plan_naration}}</textarea> 
+                                    @else
+                                    <textarea name="desc{{ $kpi->id}}" style="height: 100px;" class="form-control" name="" id="" placeholder="Narration here" required></textarea>
+                                     @endif
                                 @empty
                                     <h4>No KPI registered for this Goal and Objective!</h4>
                                 @endforelse

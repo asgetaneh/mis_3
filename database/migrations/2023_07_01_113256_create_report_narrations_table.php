@@ -30,7 +30,7 @@ return new class extends Migration
                 ->on('offices')
                 ->onUpdate('CASCADE')
                 ->onDelete('CASCADE');
-            $table->unsignedBigInteger('reporting_period_id');
+            $table->unsignedBigInteger('reporting_period_id')->nullable();
             $table
                 ->foreign('reporting_period_id')
                 ->references('id')
