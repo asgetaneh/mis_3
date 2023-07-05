@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
     <div class="searchbar mt-0 mb-4">
         <div class="row">
             <div class="col-md-6">
@@ -46,7 +46,7 @@
             </div>
 
             <div class="table-responsive">
-                <table class="table table-borderless table-hover">
+                <table class="table table-bordered table-hover mt-3">
                     <thead>
                         <tr>
                             <th class="text-left">
@@ -61,12 +61,9 @@
                             <th class="text-left">
                                 Outcome
                             </th>
-                            <th class="text-left">
-                                Objective
-                            </th>
-                            <th class="text-left">
+                            {{-- <th class="text-left">
                                 Strategy
-                            </th>
+                            </th> --}}
                             <th class="text-left">
                                 Reporting Period Type
                             </th>
@@ -86,6 +83,37 @@
                                 {{
                                 $keyPeformanceIndicator_t->name
                                 ?? '-' }}
+
+                                <div class="bg-light mt-2 p-2">
+
+                                    @forelse($keyPeformanceIndicator_t->keyPeformanceIndicator->objective->goal->goalTranslations as $key => $goal)
+                                        @if(app()->getLocale() == $goal->locale)
+                                            <p class="text-primary d-inline"><span class="text-secondary">Goal:</span> {{ $goal->name }}</p>
+                                            <br>
+                                        @endif
+                                    @empty
+                                        <p>-</p>
+                                    @endforelse
+
+                                    @forelse($keyPeformanceIndicator_t->keyPeformanceIndicator->objective->objectiveTranslations as $key => $objective)
+                                        @if(app()->getLocale() == $objective->locale)
+                                            <p class="text-primary d-inline"><span class="text-secondary">Objective:</span> {{ $objective->name }}</p>
+                                            <br>
+                                        @endif
+                                    @empty
+                                        <p>-</p>
+                                    @endforelse
+
+                                    @forelse($keyPeformanceIndicator_t->keyPeformanceIndicator->strategy->strategyTranslations as $key => $strategy)
+                                        @if(app()->getLocale() == $strategy->locale)
+                                            <p class="text-primary d-inline"><span class="text-secondary">Strategy:</span> {{ $strategy->name }}</p>
+                                        @endif
+                                    @empty
+                                        <p>-</p>
+                                    @endforelse
+
+                                </div>
+
                             </td>
                             <td>
                                 {{
@@ -102,15 +130,6 @@
                                 $keyPeformanceIndicator_t->out_come
                                 ?? '-' }}
                             </td>
-                            @php
-                            
-                                $objective = '';
-                                foreach ($keyPeformanceIndicator_t->keyPeformanceIndicator->objective->objectiveTranslations as $key => $value) {
-                                    if (app()->getLocale() == $value->locale){
-                                        $objective = $value->name;
-                                    }
-                                }
-                            @endphp
 
                             @php
                                 $strategy = '';
@@ -130,15 +149,11 @@
                                 }
                             @endphp
 
-                            <td>
-                                {{
-                                $objective ?? '-' }}
-                            </td>
-                            <td>
+                            {{-- <td>
                                 {{
                                 $strategy
                                 ?? '-' }}
-                            </td>
+                            </td> --}}
                             <td>
                                 {{
                                 $reportingPeriodType
@@ -149,10 +164,8 @@
                             </td>
                             <td class="text-center" style="width: 134px;">
                                 <div
-                                    role="group"
-                                    aria-label="Row Actions"
-                                    class="btn-group"
                                 >
+                                <div class="d-flex">
                                     @can('update', $keyPeformanceIndicator_t)
                                     <a
                                         href="{{ route('kpi-Chain',$keyPeformanceIndicator_t->keyPeformanceIndicator) }}"
@@ -184,6 +197,12 @@
                                             <i class="icon ion-md-add">Three</i>
                                         </button>
                                     </a>
+
+                                    @endcan
+                                </div>
+
+                                <div class="d-flex mt-2">
+                                    @can('update', $keyPeformanceIndicator_t)
                                     <a
                                         href="{{ route('key-peformance-indicators.edit', $keyPeformanceIndicator_t) }}"
                                     >
@@ -222,6 +241,7 @@
                                         </button>
                                     </form>
                                     @endcan
+                                </div>
                                 </div>
                             </td>
                         </tr>

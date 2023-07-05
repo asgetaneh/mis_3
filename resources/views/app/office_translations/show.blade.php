@@ -31,6 +31,20 @@
                     </h5>
                     <span>{{ $officeTranslation->description ?? '-' }}</span>
                 </div>
+
+                <div class="mb-4">
+                    <h5>
+                        Manager
+                    </h5>
+                    {!! $officeTranslation->office->users[0]->name ?? '-' !!}
+                    {{-- @if ($officeTranslation->office->users->count() > 0)
+                        <form action="{{ route('office-manager.remove', $officeTranslation->office->users[0]->id) }}" class="d-inline" method="POST">
+                            @csrf
+                            <button class="btn btn-sm btn-danger ml-3">Revoke</button>
+                        </form>
+                    @endif --}}
+                </div>
+
             </div>
 
             <div class="mt-4">

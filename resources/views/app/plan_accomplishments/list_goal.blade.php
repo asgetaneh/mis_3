@@ -15,13 +15,13 @@
 
                         @forelse($kpis['goal'] as $goal)
                         <tr>
-                            <td>
-                                 <a class="btn btn-white" href='{{ url("/get-objectives/{$goal->id}") }}' role="button" aria-expanded="false" aria-controls="collapseExample">
+                            {{-- <td> --}}
+                                 <a class="border btn btn-light btn-block text-left {{ Request::is('smis/plan/get-objectives/'.$goal->id) ? 'bg-primary' : '' }}" href="{{ route('get-objectives', $goal->id) }}" role="button" aria-expanded="false" aria-controls="collapseExample">
                                 {{
                                 optional($goal->goalTranslations[0])->name
                                 ?? '-' }}
                             </a>
-                            </td>
+                            {{-- </td> --}}
 
 
                         </tr>

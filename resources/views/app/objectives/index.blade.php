@@ -78,7 +78,31 @@
 
                         <tr>
                             <td>{{ $count++ }}</td>
-                            <td>{{ $objective_t->name ?? '-' }}</td>
+                            <td>
+                                {{ $objective_t->name ?? '-' }}
+
+                                <div class="bg-light mt-2 p-2">
+
+                                    @forelse($objective_t->objective->goal->goalTranslations as $key => $goal)
+                                        @if(app()->getLocale() == $goal->locale)
+                                            <p class="text-primary d-inline"><span class="text-secondary">Goal:</span> {{ $goal->name }}</p>
+                                            <br>
+                                        @endif
+                                    @empty
+                                        <p>-</p>
+                                    @endforelse
+
+                                    @forelse($objective_t->objective->perspective->perspectiveTranslations as $key => $perspective)
+                                        @if(app()->getLocale() == $perspective->locale)
+                                            <p class="text-primary d-inline"><span class="text-secondary">Perspective:</span> {{ $perspective->name }}</p>
+                                        @endif
+                                    @empty
+                                        <p>-</p>
+                                    @endforelse
+
+                                </div>
+
+                            </td>
                             <td>
                                 {{ $objective_t->description ?? '-'
                                 }}
