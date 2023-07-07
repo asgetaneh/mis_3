@@ -78,12 +78,14 @@ class PerspectiveController extends Controller
                 // code...
                 $perspective_translation = new PerspectiveTranslation;
                 $perspective_translation ->translation_id=$perspective->id;
-                $perspective_translation ->name = $data['name'.$value->locale];
+                $perspective_translation ->name = $data['name_'.$value->locale];
                  $perspective_translation ->locale = $value->locale;
-                $perspective_translation ->description = $data['description'.$value->locale];
+                $perspective_translation ->description = $data['description_'.$value->locale];
                 $perspective_translation->save();
          }
-         return redirect('perspectives')->with('status', "Insert successfully");
+         return redirect()
+         ->route('perspectives.index', $perspective)
+         ->withSuccess(__('crud.common.created'));
         } catch (Exception $e) {
             return redirect('perspective-new')->withErrors(['errors' => $e]);
             }
