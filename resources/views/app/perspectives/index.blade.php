@@ -83,7 +83,7 @@
                                 >
                                     @can('update', $perspective_t)
                                     <a
-                                        href="{{ route('perspectives.edit', $perspective_t) }}"
+                                        href="{{ route('perspectives.edit', $perspective_t->translation_id) }}"
                                     >
                                         <button
                                             type="button"
