@@ -28,6 +28,10 @@ class PlanAccomplishment extends Model
     {
         return $this->belongsTo(KeyPeformanceIndicator::class);
     }
+    public function office()
+    {
+        return $this->belongsTo(Office::class);
+    }
 
     public function reportingPeriod()
     {
@@ -36,6 +40,18 @@ class PlanAccomplishment extends Model
      public function planningYear()
     {
         return $this->belongsTo(PlaningYear::class);
+    }
+    public function getOfficeFromKpiAndOfficeList($kpi,$off_list) {//dump($off_list);
+        $offices = Office::select('offices.*')
+                      ->join('kpi_office', 'offices.id', '=', 'kpi_office.office_id')
+                     ->join('key_peformance_indicators', 'key_peformance_indicators.id', '=', 'kpi_office.kpi_id')
+                      ->whereIn('office_id', $off_list)
+                      ->where('kpi_id' , '=', $kpi->id)
+                     ->get();
+            return $offices;
+        
+
+        
     }
     public function planIndividual($kkp,$one,$two,$three,$office){
         $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id' , '=', $office)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_two_id' , '=', $two)->where('kpi_child_three_id' , '=', $three)->get();
@@ -60,6 +76,8 @@ class PlanAccomplishment extends Model
     }
     public function planSum($kkp,$office){
         $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id' , '=', $office)->where('kpi_id' , '=', $kkp)->get();
-       return $planAccomplishments;
-    }
+        foreach ($planAccomplishments as $key => $planAccomplishment) {
+           return $planAccomplishment->plan_value;
+        }
+     }
 }

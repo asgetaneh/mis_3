@@ -232,13 +232,23 @@ class PlanAccomplishmentController extends Controller
    public function getAllObjectives($goalId)
    {
        $goal = Goal::find($goalId);
-       //dd($goal);
-       $objectives = Objective::where('goal_id', $goalId)->get();
-       $reportingTypes = ReportingPeriodType::all();
-       $planning_year = PlaningYear::where('is_active',true)->get(); 
        $user = auth()->user()->id;
        $getuser = User::find($user);
        $user_offices = $getuser->offices[0]->id;
+
+       $objectives = Objective::select('objectives.*')
+                     ->join('key_peformance_indicators', 'key_peformance_indicators.objective_id', '=', 'objectives.id')
+                     ->join('kpi_office', 'key_peformance_indicators.id', '=', 'kpi_office.kpi_id')
+                     ->join('offices', 'offices.id', '=', 'kpi_office.office_id')
+                      
+                     ->join('goals', 'objectives.goal_id', '=', 'goals.id')
+                     ->where('offices.id' , '=', $user_offices)
+                    ->where('goals.id' , '=', $goal->id)
+                    ->get();
+                    $objectives = $objectives->unique();
+       $reportingTypes = ReportingPeriodType::all();
+       $planning_year = PlaningYear::where('is_active',true)->get(); 
+       
        $getoffice = Office::find($user_offices);
         $kpis = ['kpi' => [],'goal' => $goal, 'offwithkpi' => $getoffice];
         //dd($getoffice->keyPeformanceIndicators);
@@ -253,7 +263,7 @@ class PlanAccomplishmentController extends Controller
        }
 
        return view('app.plan_accomplishments.planning', [
-           'allData' => $objectives,
+           'objectives' => $objectives,
            'kpis' => $kpis,
             'planning_year' => $planning_year,
            'user_offices' => $user_offices,
@@ -379,18 +389,43 @@ class PlanAccomplishmentController extends Controller
 
    }
    public function viewPlanAccomplishment(Request $request){
-        $search = $request->get('search', '');
-       $office = auth()->user()->offices[0]->id;
-        $planAccomplishments = PlanAccomplishment::where('office_id' , '=', $office)->where('reporting_period_id' , '=', '1') 
+       $search = $request->get('search', '');
+       $office = auth()->user()->offices[0]->id;//dd($office) ;
+        $obj_office =Office::find($office);
+        $all_child_and_subchild = office_all_childs_ids($obj_office);
+        $all_office_list = array_merge( $all_child_and_subchild,array($office));
+          DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
+        //re-enable ONLY_FULL_GROUP_BY
+        //DB::statement("SET sql_mode=(SELECT CONCAT(@@sql_mode, ',ONLY_FULL_GROUP_BY'));");
+        
+         $planAccomplishment_all = DB::table('plan_accomplishments')
+             ->whereIn('office_id', $all_office_list)->groupBy('kpi_id')
+              ->sum('plan_accomplishments.plan_value');
+
+        $kpii = KeyPeformanceIndicator::select('key_peformance_indicators.*')
+                      ->join('kpi_office', 'key_peformance_indicators.id', '=', 'kpi_office.kpi_id')
+                     ->join('offices', 'offices.id', '=', 'kpi_office.office_id')
+                      ->whereIn('office_id', $all_office_list)
+                     ->get();
+                     foreach ($kpii as $key => $value) {
+                       //dd($value->planacc);
+                     }
+                
+        // $kpii = DB::table(' key_peformance_indicators')
+        //      ->select('*', DB::raw('SUM(plan_value) AS sum'))->whereIn('office_id', $all_office_list)->groupBy('office_id')
+        //     ->get(); 
+ 
+       $planAccomplishments = PlanAccomplishment::whereIn('office_id', $all_office_list)->select('*', DB::raw('SUM(plan_value) AS sum'))->groupBy('kpi_id')
             ->latest()
-            ->paginate(9999999999999)
-            ->withQueryString();
+            ->paginate(9999999)
+            ->withQueryString(); //dd($planAccomplishments);
         return view(
             'app.plan_accomplishments.view-planning',
-            compact('planAccomplishments', 'search')
+            compact('planAccomplishments', 'planAccomplishment_all','all_office_list','search')
         );
 
    }
+   
    public function getReportingPeriod($report_period_type){
         $report_period_list = ReportingPeriod::all();
         $date = new \DateTime() ;

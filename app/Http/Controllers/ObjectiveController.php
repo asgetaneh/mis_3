@@ -81,6 +81,8 @@ class ObjectiveController extends Controller
             $objective->goal_id= $data['goal_id'];
             $objective->perspective_id= $data['perspective_id'];
             $objective->weight= $data['weight'];
+            $objective->is_active= true;
+            $objective->objective_number= 1;
             $objective->save();
             // $objective->created_at= new \DateTime();
             // $objective->updated_at =new \DateTime();

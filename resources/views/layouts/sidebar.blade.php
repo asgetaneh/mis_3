@@ -227,15 +227,7 @@
                                 </a>
 
                                 <ul class="nav nav-treeview">
-                                    {{--    @can('view-any', App\Models\StrategyTranslation::class)
-                            <li class="nav-item">
-                                <a href="{{ route('suitable-kpis.create') }}" class="nav-link">
-                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                    <p>Cascade</p>
-                                </a>
-                            </li>
-                            @endcan --}}
-                                    @can('view-any', App\Models\Language::class)
+                                    @can('view-any', App\Models\PlanAccomplishment::class)
                                         <li class="nav-item">
                                             @if (Auth::user() != [])
                                                 <a href="{{ route('plan-accomplishment', Auth::user()->id) }}"
@@ -246,7 +238,7 @@
                                             @endif
                                         </li>
                                     @endcan
-                                    @can('view-any', App\Models\Language::class)
+                                    @can('view-any', App\Models\PlanAccomplishment::class)
                                         <li class="nav-item">
                                             <a href="{{ route('view-plan-accomplishment') }}" class="nav-link {{ Request::is('smis/plan/view-plan-accomplishment/*') || Request::is('smis/plan/view-plan-accomplishment') ? 'active' : '' }}">
                                                 <i class="nav-icon icon ion-md-radio-button-off"></i>

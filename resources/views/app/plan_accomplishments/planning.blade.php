@@ -72,18 +72,17 @@
         <div class="col-md-10">
             <div class="col-12">
                 <div class="card card-primary card-outline card-outline-tabs fillable-objective">
-                    {{-- @dd($allData) --}}
+                    {{-- @dd($objectives) --}}
                     <div class="card-header p-0 border-bottom-0 objectives-list-tab">
                         <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
-                            @forelse ($allData as $data)
-                                {{-- @dd($data->objectiveTranslations) --}}
+                            @forelse ($objectives as $objective)
+                                {{-- @dd($objective->objectiveTranslations) --}}
 
-
-
-                                {{-- @forelse($data as $kpi) --}}
+ 
+                                {{-- @forelse($objective as $kpi) --}}
                                 {{-- @dd($kpi->objective->objectiveTranslations) --}}
 
-                                @forelse($data->objectiveTranslations as $obj_ts)
+                                @forelse($objective->objectiveTranslations as $obj_ts)
                                     @if (app()->getLocale() == $obj_ts->locale)
                                         @if ($isIterated)
                                             <li class="nav-item">
@@ -135,16 +134,16 @@
                         {{-- <button class="btn" onclick="expandAll()"><h5><i class="fas fa-plus"></i> Expand All</h5></button> --}}
                         <div class="tab-content" id="custom-tabs-four-tabContent">
 
-                            @forelse($allData as $data)
-                                {{-- @dd($data) --}}
-                                {{-- @forelse($data as $kpi) --}}
+                            @forelse($objectives as $objective)
+                                {{-- @dd($objective) --}}
+                                {{-- @forelse($objective as $kpi) --}}
 
                                 @if ($isContented)
-                                    <div class="tab-pane fade" id="{{ 'objective-' . $data->id }}" role="tabpanel"
-                                        aria-labelledby="{{ $data->id . '-tab' }}">
+                                    <div class="tab-pane fade" id="{{ 'objective-' . $objective->id }}" role="tabpanel"
+                                        aria-labelledby="{{ $objective->id . '-tab' }}">
                                     @else
-                                        <div class="tab-pane fade active show" id="{{ 'objective-' . $data->id }}"
-                                            role="tabpanel" aria-labelledby="{{ $data->id . '-tab' }}">
+                                        <div class="tab-pane fade active show" id="{{ 'objective-' . $objective->id }}"
+                                            role="tabpanel" aria-labelledby="{{ $objective->id . '-tab' }}">
                                             @php
                                                 $isContented = true;
                                             @endphp
@@ -153,8 +152,11 @@
                                 <form action="{{ route('plan.save') }}" method="POST">
                                     @csrf
 
-                                {{-- @if ($data) --}}
-                                @forelse($data->KeyPeformanceIndicators as $kpi)
+                                {{-- @if ($objective) --}}
+                                @php
+                               $KeyPeformanceIndicators = getKeyperormanceIndicators($objective,$user_offices);
+                                @endphp
+                                @forelse($KeyPeformanceIndicators as $kpi)
                                 @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)  
                                     <div class="card collapsed-card p-2">
                                         <div class="card-header">
@@ -265,7 +267,7 @@
                                                        @php 
                                                         $plan1 = getSavedPlanIndividualOne($planning_year[0]->id,$kpi->id,$period->id, $one->id, auth()->user()->offices[0]->id);
                                                         @endphp
-                                                        @if($plan)
+                                                        @if($plan1)
                                                             <td>
                                                             <input type ="hidden" name="type" value="yes">
                                                             <input name="{{$kpi->id}}{{$period->id }}{{$one->id }}" class="form-control" value ="{{$plan1}}" type="number" required>

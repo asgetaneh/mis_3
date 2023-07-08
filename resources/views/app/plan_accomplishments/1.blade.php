@@ -1,7 +1,11 @@
 @extends('layout.default')
 
 @section('content')
-
+ @forelse($all_child as $planAcc)  
+ @dd( $planAcc)
+  @empty
+    <h4>No KPI name!</h4>
+@endforelse
 <div class="container">
 
     <div class="row justify-content-center">

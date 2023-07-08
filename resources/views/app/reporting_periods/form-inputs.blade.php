@@ -54,7 +54,7 @@
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Reporting Period Type</option>
             @foreach($reportingPeriodTypes as $value => $label)
                 @if(app()->getLocale() ==$label->locale)
-                    <option value="{{ $label->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
+                    <option value="{{ $label->reporting_period_type_id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
                 @endif
             @endforeach
         </x-inputs.select>

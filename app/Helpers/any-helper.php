@@ -4,7 +4,7 @@
   use App\Models\ReportingPeriod;
   use App\Models\PlanAccomplishment;
   use App\Models\ReportNarration;
-
+ use App\Models\KeyPeformanceIndicator;
 
 
 
@@ -60,4 +60,28 @@ if (! function_exists('gettrans')) {
  
         return $reservations;
     }
+    function getKeyperormanceIndicators($objective, $office){
+         $KeyPeformanceIndicators = KeyPeformanceIndicator::select('key_peformance_indicators.*')
+                     ->join('kpi_office', 'key_peformance_indicators.id', '=', 'kpi_office.kpi_id')
+                     ->join('offices', 'offices.id', '=', 'kpi_office.office_id')
+                      
+                     ->join('objectives', 'key_peformance_indicators.objective_id', '=', 'objectives.id')
+                     ->where('offices.id' , '=', $office)
+                    ->where('objective_id' , '=', $objective->id)
+                    ->get();
+
+             return $KeyPeformanceIndicators;
+
+    }
+    function office_all_childs_ids(App\Models\Office $office)
+        {
+            $all_ids = [];
+            if ($office->offices->count() > 0) {
+                foreach ($office->offices as $child) {
+                    $all_ids[] = $child->id;
+                    $all_ids=array_merge($all_ids,is_array(office_all_childs_ids($child))?office_all_childs_ids($child):[] );
+                }
+            }
+            return $all_ids;
+        }
 }

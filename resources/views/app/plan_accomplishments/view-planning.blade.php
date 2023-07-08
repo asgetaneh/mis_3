@@ -23,18 +23,24 @@
                         <div class="tab-content" id="custom-tabs-four-tabContent">
                             @php $kpi_repeat[0] ='0'; $c = 1; @endphp
                             @forelse($planAccomplishments as $planAcc)  
+                                 @php
+                               $offices = $planAcc->getOfficeFromKpiAndOfficeList($planAcc->Kpi,$all_office_list);
+                                @endphp  
                                   @if(!in_array($planAcc->Kpi->id, $kpi_repeat))
                                     <div class="card collapsed-card p-2">
                                         <div class="card-header">
-                                            <h3 class="card-title">KPI: 
+                                            <h3 class="card-title" > 
                                             @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
                                                   @if(app()->getLocale() == $kpiT->locale) 
-                                                        {{$kpiT->name}}
-                                                         @if ($planAcc->Kpi->kpiChildOnes->isEmpty())
-                                                           ({{"Plan: "}} {{$planAcc->plan_value}})
-                                                           @else
-                                                           <p id ="{{$planAcc->Kpi->id}}"></p>
-                                                         @endif
+                                                    <div class ="row" style ="background:#CDCDCDCD;width:100%">
+                                                    <div class ="col-md-6">
+                                                        KPI: {{$kpiT->name}}
+                                                    </div>
+                                                    <div class ="col-md-6">
+                                                        <input name="sum" class="form-control"  type="number" value="{{$planAcc->sum}}"> 
+                                                    </div>
+                                                    </div>
+                                                    
                                                 @endif
                                             @empty
                                                 <h4>No KPI name!</h4>
@@ -47,15 +53,24 @@
                                         </div>
                                         <div class="card-body" style="display: none;">
                                         {{-- If KPI has Child ones (UG, PG) --}}
+                                         @forelse($offices  as $office)
                                         @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
-                                            <table class="table table-bordered">
+                                             <table class="table table-bordered">
                                              <thead>
                                             @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
                                                 @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
                                                         <!-- <tr id="child-ones"> -->
                                                         <tr>
+                                                            <th colspan="{{ $planAcc->Kpi->kpiChildThrees ->count() }}*{{ $planAcc->Kpi->kpiChildOnes ->count()}} ">
+                                                            <u>
+                                                            Offices: {{$office->officeTranslations[0]->name}}
+                                                            </u>
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
                                                             <th rowspan="2">#</th>
                                                             @foreach ($planAcc->Kpi->kpiChildOnes as $one)
+                                                            
                                                                 <th colspan="{{ $planAcc->Kpi->kpiChildThrees ->count() }}" >{{ $one->kpiChildOneTranslations[0]->name }}
                                                                 </th>
                                                             @endforeach
@@ -78,9 +93,9 @@
                                                                     @foreach ($planAcc->Kpi->kpiChildThrees as $kpiThree)
                                                                     <td>
                                                                     @php 
-                                                                    $plan = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,auth()->user()->offices[0]->id);
+                                                                    $plan123 = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,$office->id);
                                                                     @endphp
-                                                                    {{$plan}}
+                                                                    {{$plan123}}
                                                                     </td>
                                                                 @endforeach
                                                             @endforeach
@@ -89,6 +104,13 @@
                                                   {{-- KPI has  child one and child two --}}
                                                 @else
                                                      <tr>
+                                                     <tr>
+                                                        <th colspan="{{ $planAcc->Kpi->kpiChildOnes ->count()}} ">
+                                                        <u>
+                                                        Offices: {{$office->officeTranslations[0]->name}}
+                                                        </u>
+                                                        </th>
+                                                    </tr>
                                                       <th>#</th>
                                                          @foreach ($planAcc->Kpi->kpiChildOnes as $one)
                                                         <th>
@@ -106,7 +128,7 @@
                                                                 <td> 
                                                                 @php 
                                                                     $planOneTwo
-                                                                     = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id,auth()->user()->offices[0]->id);
+                                                                     = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id,$office->id);
                                                                     @endphp
                                                                     {{$planOneTwo}}
                                                             </td>
@@ -116,6 +138,13 @@
                                                 @endif
                                             {{-- KPI has  child one only --}}
                                             @else
+                                                <tr>
+                                                    <th colspan="{{ $planAcc->Kpi->kpiChildOnes ->count()}} ">
+                                                    <u>
+                                                    Offices: {{$office->officeTranslations[0]->name}}
+                                                    </u>
+                                                    </th>
+                                                </tr>
                                                  <tr>
                                                      @foreach ($planAcc->Kpi->kpiChildOnes as $one)
                                                     <th>
@@ -128,7 +157,7 @@
                                                     <td>
                                                       @php 
                                                         $planOne
-                                                            = $planAcc->planOne($planAcc->Kpi->id, $one->id,auth()->user()->offices[0]->id);
+                                                            = $planAcc->planOne($planAcc->Kpi->id, $one->id,$office->id);
                                                         @endphp
                                                         {{$planOne}}
                                                     </td>
@@ -139,13 +168,27 @@
                                         </table>
                                         {{-- KPI has no child one, which means just only plain input --}}
                                         @else
-                                            <p class="mb-3">
-                                                {{$planAcc->plan_value}}
+                                            <p>
+                                            <table class="table table bordered">
+                                                <tr>
+                                                <th>Offices: {{$office->officeTranslations[0]->name}}
+                                                </th>
+                                                @php 
+                                                    $planOfOfficePlan
+                                                        = $planAcc->planSum($planAcc->Kpi->id,$office->id);
+                                                    @endphp
+                                                <th> <input name="sum"    type="number" value="{{$planOfOfficePlan}}"> 
+                                                </th>
+                                            </tr>
+                                            </table>  
                                             </p>
                                         @endif
+                                        @empty
+                                            <h4>No offices!</h4>
+                                        @endforelse
                                     </div>
                                     </div>
-
+                                
                                 @php  
                                     $kpi_repeat[$c] =$planAcc->Kpi->id; 
                                     $c++;

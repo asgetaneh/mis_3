@@ -72,7 +72,7 @@ class StrategyController extends Controller
             $strategy = new Strategy;
             $strategy->updated_by_id= auth()->user()->id;
             $strategy->created_by_id= auth()->user()->id;
-            $strategy->objective_id= $data['objective_id'];
+            $strategy->objective_id= $data['objective_id']; 
             $strategy->save();
             // $strategy->created_at= new \DateTime();
             // $strategy->updated_at =new \DateTime();
