@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container-fluid">
+    <div class="container">
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">
-                    <a href="{{ route('kpi-child-one-translations.index') }}" class="mr-4"><i
+                    <a href="{{ route('key-peformance-indicators.index') }}" class="mr-4"><i
                             class="icon ion-md-arrow-back"></i></a>
                     Add sub chain three for Key performance indicator child ({{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->name }})
                 </h4>
@@ -14,7 +14,7 @@
                     @include('app.key_peformance_indicators.three_chain_form_inputs')
 
                     <div class="mt-4">
-                        <a href="{{ route('kpi-child-one-translations.index') }}" class="btn btn-light">
+                        <a href="{{ route('key-peformance-indicators.index') }}" class="btn btn-light">
                             <i class="icon ion-md-return-left text-primary"></i>
                             @lang('crud.common.back')
                         </a>

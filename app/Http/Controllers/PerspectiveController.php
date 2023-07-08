@@ -78,12 +78,14 @@ class PerspectiveController extends Controller
                 // code...
                 $perspective_translation = new PerspectiveTranslation;
                 $perspective_translation ->translation_id=$perspective->id;
-                $perspective_translation ->name = $data['name'.$value->locale];
+                $perspective_translation ->name = $data['name_'.$value->locale];
                  $perspective_translation ->locale = $value->locale;
-                $perspective_translation ->description = $data['description'.$value->locale];
+                $perspective_translation ->description = $data['description_'.$value->locale];
                 $perspective_translation->save();
          }
-         return redirect('perspectives')->with('status', "Insert successfully");
+         return redirect()
+         ->route('perspectives.index', $perspective)
+         ->withSuccess(__('crud.common.created'));
         } catch (Exception $e) {
             return redirect('perspective-new')->withErrors(['errors' => $e]);
             }
@@ -111,11 +113,17 @@ class PerspectiveController extends Controller
     {
         $this->authorize('update', $perspective);
 
-        $users = User::pluck('name', 'id');
+        $search = $request->get('search', '');
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
+        $perspectiveTranslations = $perspective->perspectiveTranslations->groupBy('locale');
 
         return view(
             'app.perspectives.edit',
-            compact('perspective', 'users', 'users')
+            compact('perspective', 'perspectiveTranslations', 'languages')
         );
     }
 
@@ -123,18 +131,34 @@ class PerspectiveController extends Controller
      * Update the specified resource in storage.
      */
     public function update(
-        PerspectiveUpdateRequest $request,
+        Request $request,
         Perspective $perspective
     ): RedirectResponse {
         $this->authorize('update', $perspective);
+        $perspective->update([
+            'updated_at' => new \DateTime(),
+            'updated_by_id' => auth()->user()->id,
+            // 'created_by_id' => $goal->created_by_id || '',
+        ]);
 
-        $validated = $request->validated();
+        foreach ($request->except('_token', '_method') as $key => $value) {
 
-        $perspective->update($validated);
+            $locale = str_replace(['name_', 'description_'], '', $key);
+
+            $perspectiveTranslation = $perspective->perspectiveTranslations->where('locale', $locale)->first();
+
+            $column = str_replace('_'.$locale, '', $key);
+
+            if ($perspectiveTranslation) {
+                $perspectiveTranslation->update([
+                    $column => $value
+                ]);
+            }
+        }
 
         return redirect()
-            ->route('perspectives.edit', $perspective)
-            ->withSuccess(__('crud.common.saved'));
+            ->route('perspectives.index', $perspective)
+            ->withSuccess(__('crud.common.updated'));
     }
 
     /**

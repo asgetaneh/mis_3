@@ -18,6 +18,7 @@ return [
         'are_you_sure' => 'Are you sure?',
         'no_items_found' => 'No items found',
         'created' => 'Successfully created',
+        'updated' => 'Successfully updated',
         'saved' => 'Saved successfully',
         'removed' => 'Successfully removed',
         'assigned' => 'Successfully assigned',

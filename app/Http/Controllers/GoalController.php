@@ -70,22 +70,22 @@ class GoalController extends Controller
                 // code...
                 $goal_translation = new GoalTranslation;
                 $goal_translation ->translation_id=$goal->id;
-                $goal_translation ->name = $data['name'.$value->locale];
-                $goal_translation ->out_put = $data['output'.$value->locale];
-                $goal_translation ->out_come = $data['outcome'.$value->locale];
+                $goal_translation ->name = $data['name_'.$value->locale];
+                $goal_translation ->out_put = $data['out_put_'.$value->locale];
+                $goal_translation ->out_come = $data['out_come_'.$value->locale];
                 $goal_translation ->locale = $value->locale;
-                $goal_translation ->description = $data['description'.$value->locale];
+                $goal_translation ->description = $data['description_'.$value->locale];
                 $goal_translation->save();
          }
          return redirect()
             ->route('goals.index', $goal)
             ->withSuccess(__('crud.common.created'));
-        } catch (Exception $e) { 
+        } catch (Exception $e) {
             return redirect('goal/new')->withErrors(['errors' => $e]);
             }
         $goals = GoalTranslation::all();
         return view('goal.index',['goals', $goals]);
-        
+
     }
 
     /**
@@ -105,25 +105,51 @@ class GoalController extends Controller
     {
         $this->authorize('update', $goal);
 
-        return view('app.goals.edit', compact('goal'));
+        $search = $request->get('search', '');
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
+        $goalTranslations = $goal->goalTranslations->groupBy('locale');
+        // dd($goalTranslations);
+
+        return view('app.goals.edit', compact('goal', 'languages', 'goalTranslations'));
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(
-        GoalUpdateRequest $request,
+        Request $request,
         Goal $goal
     ): RedirectResponse {
         $this->authorize('update', $goal);
 
-        $validated = $request->validated();
+        $goal->update([
+            'updated_at' => new \DateTime(),
+            'updated_by' => auth()->user()->id,
+            // 'created_by_id' => $goal->created_by_id || '',
+        ]);
 
-        $goal->update($validated);
+        foreach ($request->except('_token', '_method') as $key => $value) {
+
+            $locale = str_replace(['name_', 'description_', 'out_put_', 'out_come_'], '', $key);
+
+            $goalTranslation = $goal->goalTranslations->where('locale', $locale)->first();
+
+            $column = str_replace('_'.$locale, '', $key);
+
+            if ($goalTranslation) {
+                $goalTranslation->update([
+                    $column => $value
+                ]);
+            }
+        }
 
         return redirect()
-            ->route('goals.edit', $goal)
-            ->withSuccess(__('crud.common.saved'));
+            ->route('goals.index', $goal)
+            ->withSuccess(__('crud.common.updated'));
     }
 
     /**

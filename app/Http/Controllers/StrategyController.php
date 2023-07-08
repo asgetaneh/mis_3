@@ -81,9 +81,9 @@ class StrategyController extends Controller
                 // code...
                 $strategy_translation = new StrategyTranslation;
                 $strategy_translation ->translation_id=$strategy->id;
-                $strategy_translation ->name = $data['name'.$value->locale];
+                $strategy_translation ->name = $data['name_'.$value->locale];
                 $strategy_translation ->locale = $value->locale;
-                $strategy_translation ->discription = $data['description'.$value->locale];
+                $strategy_translation ->discription = $data['discription_'.$value->locale];
                 $strategy_translation->save();
          }
 
@@ -116,12 +116,20 @@ class StrategyController extends Controller
     {
         $this->authorize('update', $strategy);
 
-        $objectives = Objective::pluck('id', 'id');
+        $objectives = ObjectiveTranslation::all();
         $users = User::pluck('name', 'id');
+
+        $search = $request->get('search', '');
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
+        $strategyTranslations = $strategy->strategyTranslations->groupBy('locale');
 
         return view(
             'app.strategies.edit',
-            compact('strategy', 'objectives', 'users', 'users')
+            compact('strategy', 'objectives', 'users', 'languages', 'strategyTranslations')
         );
     }
 
@@ -129,18 +137,37 @@ class StrategyController extends Controller
      * Update the specified resource in storage.
      */
     public function update(
-        StrategyUpdateRequest $request,
+        Request $request,
         Strategy $strategy
     ): RedirectResponse {
         $this->authorize('update', $strategy);
 
-        $validated = $request->validated();
+        $strategy->update([
+            'objective_id' => $request->objective_id,
+            'updated_at' => new \DateTime(),
+            'updated_by_id' => auth()->user()->id,
+            // 'created_by_id' => $goal->created_by_id || '',
+        ]);
 
-        $strategy->update($validated);
+        foreach ($request->except('_token', '_method', 'objective_id') as $key => $value) {
+
+            $locale = str_replace(['name_', 'discription_'], '', $key);
+
+            $strategyTranslation = $strategy->strategyTranslations->where('locale', $locale)->first();
+
+            $column = str_replace('_'.$locale, '', $key);
+
+            if ($strategyTranslation) {
+                $strategyTranslation->update([
+                    $column => $value
+                ]);
+            }
+        }
 
         return redirect()
-            ->route('strategies.edit', $strategy)
-            ->withSuccess(__('crud.common.saved'));
+            ->route('strategies.index', $strategy)
+            ->withSuccess(__('crud.common.updated'));
+
     }
 
     /**

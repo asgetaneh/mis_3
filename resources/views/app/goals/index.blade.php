@@ -81,7 +81,7 @@
                                     class="btn-group"
                                 >
                                     @can('update', $goal_t)
-                                    <a href="{{ route('goals.edit', $goal_t) }}">
+                                    <a href="{{ route('goals.edit', $goal_t->translation_id) }}">
                                         <button
                                             type="button"
                                             class="btn btn-light"

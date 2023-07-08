@@ -204,7 +204,7 @@
                                 <div class="d-flex mt-2">
                                     @can('update', $keyPeformanceIndicator_t)
                                     <a
-                                        href="{{ route('key-peformance-indicators.edit', $keyPeformanceIndicator_t) }}"
+                                        href="{{ route('key-peformance-indicators.edit', $keyPeformanceIndicator_t->translation_id) }}"
                                     >
                                         <button
                                             type="button"
@@ -216,7 +216,7 @@
                                     @endcan @can('view',
                                     $keyPeformanceIndicator_t)
                                     <a
-                                        href="{{ route('key-peformance-indicators.show', $keyPeformanceIndicator_t) }}"
+                                        href="{{ route('key-peformance-indicators.show', $keyPeformanceIndicator_t->translation_id) }}"
                                     >
                                         <button
                                             type="button"
@@ -228,7 +228,7 @@
                                     @endcan @can('delete',
                                     $keyPeformanceIndicator_t)
                                     <form
-                                        action="{{ route('key-peformance-indicators.destroy', $keyPeformanceIndicator_t) }}"
+                                        action="{{ route('key-peformance-indicators.destroy', $keyPeformanceIndicator_t->translation_id) }}"
                                         method="POST"
                                         onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                     >

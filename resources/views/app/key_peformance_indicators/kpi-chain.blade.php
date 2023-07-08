@@ -12,10 +12,11 @@
     <x-inputs.group class="col-sm-12">
      <input type="hidden" value="{{ $keyPeformanceIndicator->id }}" name="keyPeformanceIndicator">
 
-        <x-inputs.select class="select2 {{ $errors->has('locations') ? 'is-invalid' : '' }}" name="kpi_one_child[]" id="locations" multiple>
+        <x-inputs.select class="select2 {{ $errors->has('locations') ? 'is-invalid' : '' }}" data-placeholder="Select disaggregation level one" name="kpi_one_child[]" id="locations" multiple>
                     @foreach($KpiChildOne as $key => $value)
-                        <option value="{{ $value->id }}" {{ in_array($key, old('locations', [])) ? 'selected' : '' }}>{{ $value-> kpiChildOneTranslations[0]->name }}</option>
-
+                    @if(app()->getLocale() == $value->locale)
+                        <option value="{{ $value->kpiChildOne_id }}" {{ in_array($key, old('locations', [])) ? 'selected' : '' }}>{{ $value->name }}</option>
+                    @endif
                     @endforeach
         </x-inputs.select>
 

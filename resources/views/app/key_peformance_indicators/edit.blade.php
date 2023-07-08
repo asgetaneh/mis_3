@@ -18,7 +18,7 @@
                 action="{{ route('key-peformance-indicators.update', $keyPeformanceIndicator) }}"
                 class="mt-4"
             >
-                @include('app.key_peformance_indicators.form-inputs')
+                @include('app.key_peformance_indicators.form-inputs-edit')
 
                 <div class="mt-4">
                     <a
@@ -47,3 +47,13 @@
     </div>
 </div>
 @endsection
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+
+        $('.select2').select2();
+
+    });
+</script>

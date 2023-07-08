@@ -122,7 +122,7 @@
                                 >
                                     @can('update', $objective_t)
                                     <a
-                                        href="{{ route('objectives.edit', $objective_t) }}"
+                                        href="{{ route('objectives.edit', $objective_t->translation_id) }}"
                                     >
                                         <button
                                             type="button"

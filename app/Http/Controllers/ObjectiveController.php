@@ -91,11 +91,11 @@ class ObjectiveController extends Controller
                 // code...
                 $objective_translation = new ObjectiveTranslation;
                 $objective_translation ->translation_id=$objective->id;
-                $objective_translation ->name = $data['name'.$value->locale];
-                $objective_translation ->out_put = $data['output'.$value->locale];
-                $objective_translation ->out_come = $data['outcome'.$value->locale];
+                $objective_translation ->name = $data['name_'.$value->locale];
+                $objective_translation ->out_put = $data['out_put_'.$value->locale];
+                $objective_translation ->out_come = $data['out_come_'.$value->locale];
                 $objective_translation ->locale = $value->locale; // add locale in migration later
-                $objective_translation ->description = $data['description'.$value->locale];
+                $objective_translation ->description = $data['description_'.$value->locale];
                 $objective_translation->save();
          }
          return redirect()
@@ -127,13 +127,21 @@ class ObjectiveController extends Controller
     {
         $this->authorize('update', $objective);
 
-        $goals = Goal::pluck('id', 'id');
-        $perspectives = Perspective::pluck('id', 'id');
+        $search = $request->get('search', '');
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
+        $objectiveTranslations = $objective->objectiveTranslations->groupBy('locale');
+
+        $goals = GoalTranslation::all();
+        $perspectives = PerspectiveTranslation::all();
         $users = User::pluck('name', 'id');
 
         return view(
             'app.objectives.edit',
-            compact('objective', 'goals', 'perspectives', 'users', 'users')
+            compact('objective', 'objectiveTranslations', 'goals', 'perspectives', 'users', 'languages')
         );
     }
 
@@ -141,18 +149,39 @@ class ObjectiveController extends Controller
      * Update the specified resource in storage.
      */
     public function update(
-        ObjectiveUpdateRequest $request,
+        Request $request,
         Objective $objective
     ): RedirectResponse {
         $this->authorize('update', $objective);
 
-        $validated = $request->validated();
+        $objective->update([
+            'goal_id' => $request->goal_id,
+            'perspective_id' => $request->perspective_id,
+            'weight' => $request->weight,
+            'updated_at' => new \DateTime(),
+            'updated_by_id' => auth()->user()->id,
+            // 'created_by_id' => $goal->created_by_id || '',
+        ]);
 
-        $objective->update($validated);
+        foreach ($request->except('_token', '_method', 'goal_id', 'perspective_id', 'weight') as $key => $value) {
+
+            $locale = str_replace(['name_', 'description_', 'out_put_', 'out_come_'], '', $key);
+
+            $objectiveTranslation = $objective->objectiveTranslations->where('locale', $locale)->first();
+
+            $column = str_replace('_'.$locale, '', $key);
+
+            if ($objectiveTranslation) {
+                $objectiveTranslation->update([
+                    $column => $value
+                ]);
+            }
+        }
 
         return redirect()
-            ->route('objectives.edit', $objective)
-            ->withSuccess(__('crud.common.saved'));
+            ->route('objectives.index', $objective)
+            ->withSuccess(__('crud.common.updated'));
+
     }
 
     /**
