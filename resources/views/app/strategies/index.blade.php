@@ -82,7 +82,7 @@
                                 >
                                     @can('update', $strategy_t)
                                     <a
-                                        href="{{ route('strategies.edit', $strategy_t) }}"
+                                        href="{{ route('strategies.edit', $strategy_t->translation_id) }}"
                                     >
                                         <button
                                             type="button"

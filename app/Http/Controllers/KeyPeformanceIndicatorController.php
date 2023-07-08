@@ -43,7 +43,7 @@ class KeyPeformanceIndicatorController extends Controller
             ->latest()
             ->paginate(15)
             ->withQueryString();
-           
+
         $kpiChildOneTranslations = KpiChildOneTranslation::search($search)
              ->latest()
             ->paginate(15)
@@ -121,11 +121,11 @@ class KeyPeformanceIndicatorController extends Controller
                 // code...
                 $kpi_translation = new KeyPeformanceIndicatorT;
                 $kpi_translation ->translation_id=$keyPeformanceIndicator->id;
-                $kpi_translation ->name = $data['name'.$value->locale];
+                $kpi_translation ->name = $data['name_'.$value->locale];
                 $kpi_translation ->locale = $value->locale;
-                $kpi_translation ->description = $data['description'.$value->locale];
-                $kpi_translation ->out_put = $data['output'.$value->locale];
-                $kpi_translation ->out_come = $data['outcome'.$value->locale];
+                $kpi_translation ->description = $data['description_'.$value->locale];
+                $kpi_translation ->out_put = $data['out_put_'.$value->locale];
+                $kpi_translation ->out_come = $data['out_come_'.$value->locale];
                 $kpi_translation->save();
          }
 
@@ -166,10 +166,21 @@ class KeyPeformanceIndicatorController extends Controller
     ): View {
         $this->authorize('update', $keyPeformanceIndicator);
 
-        $objectives = Objective::pluck('id', 'id');
-        $strategies = Strategy::pluck('id', 'id');
+        $search = $request->get('search', '');
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
+        $kpiTranslations = $keyPeformanceIndicator->keyPeformanceIndicatorTs->groupBy('locale');
+        // dd($kpiTranslations);
+
+        $objectives = ObjectiveTranslation::all();
+        $strategies = StrategyTranslation::all();
+        $offices = OfficeTranslation::all();
         $users = User::pluck('name', 'id');
-        $reportingPeriodTypes = ReportingPeriodType::pluck('id', 'id');
+        $reportingPeriodTypes = ReportingPeriodTypeT::all();
+        $selectedOffices = $keyPeformanceIndicator->offices;
 
         return view(
             'app.key_peformance_indicators.edit',
@@ -178,7 +189,11 @@ class KeyPeformanceIndicatorController extends Controller
                 'objectives',
                 'strategies',
                 'users',
-                'reportingPeriodTypes'
+                'reportingPeriodTypes',
+                'kpiTranslations',
+                'offices',
+                'languages',
+                'selectedOffices'
             )
         );
     }
@@ -187,18 +202,42 @@ class KeyPeformanceIndicatorController extends Controller
      * Update the specified resource in storage.
      */
     public function update(
-        KeyPeformanceIndicatorUpdateRequest $request,
+        Request $request,
         KeyPeformanceIndicator $keyPeformanceIndicator
     ): RedirectResponse {
         $this->authorize('update', $keyPeformanceIndicator);
 
-        $validated = $request->validated();
+        $offices = $request->input('offices');
+        $keyPeformanceIndicator->offices()->sync($offices);
 
-        $keyPeformanceIndicator->update($validated);
+        $keyPeformanceIndicator->update([
+            'objective_id' => $request->objective_id,
+            'strategy_id' => $request->strategy_id,
+            'reporting_period_type_id' => $request->reporting_period_type_id,
+            'weight' => $request->weight,
+            'updated_at' => new \DateTime(),
+            // 'updated_by_id' => auth()->user()->id,
+            // 'created_by_id' => $goal->created_by_id || '',
+        ]);
+
+        foreach ($request->except('_token', '_method', 'objective_id', 'strategy_id', 'reporting_period_type_id', 'weight', 'offices') as $key => $value) {
+
+            $locale = str_replace(['name_', 'description_', 'out_put_', 'out_come_'], '', $key);
+
+            $kpiTranslation = $keyPeformanceIndicator->keyPeformanceIndicatorTs->where('locale', $locale)->first();
+
+            $column = str_replace('_'.$locale, '', $key);
+
+            if ($kpiTranslation) {
+                $kpiTranslation->update([
+                    $column => $value
+                ]);
+            }
+        }
 
         return redirect()
-            ->route('key-peformance-indicators.edit', $keyPeformanceIndicator)
-            ->withSuccess(__('crud.common.saved'));
+            ->route('key-peformance-indicators.index', $keyPeformanceIndicator)
+            ->withSuccess(__('crud.common.updated'));
     }
 
     /**

@@ -8,7 +8,7 @@
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Objective</option>
             @foreach($objectives as $value => $label)
                 @if(app()->getLocale() ==$label->locale)
-                    <option value="{{ $label->translation_id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
+                    <option value="{{ $label->translation_id }}" {{ $selected == $label->translation_id ? 'selected' : '' }} >{{ $label->name }}</option>
                 @endif
             @endforeach
         </x-inputs.select>
@@ -37,9 +37,10 @@
 
     <x-inputs.group class="col-sm-12">
         <x-inputs.text
-            name="{{'name'.$lang->locale}}"
+            name="{{'name_'.$lang->locale}}"
             label="{{'Name in '.$lang->name}}"
-             maxlength="255"
+            maxlength="255"
+            value="{{ $strategyTranslations[$lang->locale][0]->name ?? '' }}"
             placeholder="{{'name in '.$lang->name}}"
             required
         ></x-inputs.text>
@@ -47,10 +48,10 @@
 
     <x-inputs.group class="col-sm-12">
         <x-inputs.textarea
-            name="{{'description'.$lang->locale}}"
+            name="{{'discription_'.$lang->locale}}"
             label="{{'Description in '.$lang->name}}"
             maxlength=""
-            required>
+            required>{{ $strategyTranslations[$lang->locale][0]->discription ?? '' }}
               </x-inputs.textarea
         >
     </x-inputs.group>

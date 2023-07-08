@@ -5,7 +5,7 @@
     <x-inputs.group class="col-sm-12">
         <x-inputs.select name="objective_id" label="Objective" required>
             @php $selected = old('objective_id', ($editing ? $keyPeformanceIndicator->objective_id : '')) @endphp
-            <option disabled {{ empty($selected) ? 'selected' : '' }} value="">Please select the Objective</option>
+            <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Objective</option>
             @foreach($objectives as $value => $label)
                 @if(app()->getLocale() == $label->locale)
                     <option value="{{ $label->objective->id }}" {{ $selected == $label->translation_id ? 'selected' : '' }} >{{ $label->name }}</option>
@@ -17,7 +17,7 @@
     <x-inputs.group class="col-sm-12">
         <x-inputs.select name="strategy_id" label="Strategy" required>
             @php $selected = old('strategy_id', ($editing ? $keyPeformanceIndicator->strategy_id : '')) @endphp
-            <option disabled {{ empty($selected) ? 'selected' : '' }} value="">Please select the Strategy</option>
+            <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Strategy</option>
             @foreach($strategies as $value => $label)
                 @if(app()->getLocale() == $label->locale)
                     <option value="{{ $label->strategy->id }}" {{ $selected == $label->translation_id ? 'selected' : '' }} >{{ $label->name }}</option>
@@ -28,12 +28,14 @@
 
     <x-inputs.group class="col-sm-12">
         <x-inputs.select class="offices select2" multiple="multiple" data-placeholder="Select office" name="offices[]" label="Office" required>
-            {{-- @dd($keyPeformanceIndicator->offices) --}}
-            @php $selected = old('office_id', ($editing ? $keyPeformanceIndicator->offices[0]->id : '')) @endphp
+            {{-- @php $selected = old('office_id', ($editing ? $keyPeformanceIndicator->offices[0]->id : '')) @endphp --}}
             {{-- <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Office</option> --}}
             @foreach($offices as $value => $label)
                 @if(app()->getLocale() == $label->locale)
-                    <option value="{{ $label->translation_id }}" {{ $selected == $label->translation_id ? 'selected' : '' }} >{{ $label->name }}</option>
+                    <option value="{{ $label->translation_id }}"
+                        @if(in_array($label->translation_id, $selectedOffices->pluck('id')->toArray())) selected @endif>
+                        {{ $label->name }}
+                    </option>
                 @endif
             @endforeach
         </x-inputs.select>
@@ -73,7 +75,7 @@
             required
         >
             @php $selected = old('reporting_period_type_id', ($editing ? $keyPeformanceIndicator->reporting_period_type_id : '')) @endphp
-            <option disabled {{ empty($selected) ? 'selected' : '' }} value="">Please select the Reporting Period Type</option>
+            <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Reporting Period Type</option>
             @foreach($reportingPeriodTypes as $value => $label)
                 @if(app()->getLocale() == $label->locale)
                     <option value="{{ $label->reporting_period_type_id }}" {{ $selected == $label->reporting_period_type_id ? 'selected' : '' }} >{{ $label->name }}</option>
