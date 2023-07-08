@@ -263,7 +263,7 @@ class KeyPeformanceIndicatorController extends Controller
             array_push($kpiChildOneList, $ones->id);
         }
 
-        $KpiChildOne = KpiChildOne::whereNotIn('id', $kpiChildOneList)->get();
+        $KpiChildOne = KpiChildOneTranslation::whereNotIn('kpiChildOne_id', $kpiChildOneList)->get();
         $child_one_adds = $keyPeformanceIndicator->kpiChildOnes;
 
          return view(
@@ -277,7 +277,7 @@ class KeyPeformanceIndicatorController extends Controller
     }
     public function kpiChainSave(
         Request $request
-    ): View {
+    ) {
         $data = $request->input();
         $keyPeformanceIndicator = $data['keyPeformanceIndicator'];
         $chaild_one_lists = $data['kpi_one_child'];
@@ -292,15 +292,14 @@ class KeyPeformanceIndicatorController extends Controller
         }
          $KpiChildOne = KpiChildOne::whereNotIn('id', $kpiChildOneList)->get();
         $child_one_adds = $keyPeformanceIndicator->kpiChildOnes;
-             return view(
-            'app.key_peformance_indicators.chain',
-            compact(
-                'keyPeformanceIndicator',
-                'KpiChildOne',
-                 'child_one_adds'
-            )
-        );
-            return redirect()->route('kpi-Chain', [$keyPeformanceIndicator]);
+        //      return view(
+        //     'app.key_peformance_indicators.chain',
+        //     compact(
+        //         'keyPeformanceIndicator',
+        //         'KpiChildOne',
+        //          'child_one_adds'
+        //     )
+        // );
 
              return redirect()->back()->with(
             [
@@ -312,23 +311,39 @@ class KeyPeformanceIndicatorController extends Controller
     }
      public function kpiChainRemove($kpi, $child_one,
         Request $request
-    ): View {
+    ) {
         $keyPeformanceIndicator = KeyPeformanceIndicator::find($kpi);
 
-        $keyPeformanceIndicator->find($kpi)->kpiChildOnes()->detach();
+        $kpiChildOneList = [];
+        foreach ($keyPeformanceIndicator->kpiChildOnes as $ones){
+            array_push($kpiChildOneList, $ones->id);
+        }
+
+        // $keyPeformanceIndicator->find($kpi)->kpiChildOnes()->detach();
+        $keyPeformanceIndicator->find($kpi)->kpiChildOnes()->detach($child_one);
 
        $KpiChildOne = KpiChildOne::all();
         $keyPeformanceIndicator = KeyPeformanceIndicator::find($kpi);
+        $KpiChildOne = KpiChildOneTranslation::whereNotIn('kpiChildOne_id', $kpiChildOneList)->get();
 
         $child_one_adds = $keyPeformanceIndicator->kpiChildOnes;
 
-         return view(
-            'app.key_peformance_indicators.chain',
-            compact(
-                'keyPeformanceIndicator',
-                'KpiChildOne',
-                 'child_one_adds'
-            )
+        //  return view(
+        //     'app.key_peformance_indicators.chain',
+        //     compact(
+        //         'keyPeformanceIndicator',
+        //         'KpiChildOne',
+        //          'child_one_adds'
+        //     )
+        // );
+
+        return redirect()->back()->with(
+            [
+                'keyPeformanceIndicator' => $keyPeformanceIndicator,
+                'KpiChildOne' => $KpiChildOne,
+                'child_one_adds' => $child_one_adds
+            ]
+
         );
 
     }
