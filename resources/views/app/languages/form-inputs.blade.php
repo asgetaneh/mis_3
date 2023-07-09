@@ -18,6 +18,7 @@
             label="Description"
             maxlength="255"
             required
+            placeholder="Description"
             >{{ old('description', ($editing ? $language->description : ''))
             }}</x-inputs.textarea
         >
@@ -34,7 +35,7 @@
         ></x-inputs.text>
     </x-inputs.group>
 
-    <x-inputs.group class="col-sm-12">
+    {{-- <x-inputs.group class="col-sm-12">
         <x-inputs.select name="created_by_id" label="User" required>
             @php $selected = old('created_by_id', ($editing ? $language->created_by_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the User</option>
@@ -42,5 +43,5 @@
             <option value="{{ $value }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label }}</option>
             @endforeach
         </x-inputs.select>
-    </x-inputs.group>
+    </x-inputs.group> --}}
 </div>

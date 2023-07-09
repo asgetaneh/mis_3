@@ -4,6 +4,14 @@
 <div class="container">
     <div class="card">
         <div class="card-body">
+            <h4 class="card-title">
+                <a
+                    href="{{ route('key-peformance-indicators.index') }}"
+                    class="mr-4"
+                    ><i class="icon ion-md-arrow-back"></i
+                ></a>
+                Add sub chain for Key performance indicator({{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->name}})
+            </h4>
             <x-form
                 method="POST"
                 action="{{ route('kpi-Chain-save') }}"
@@ -32,9 +40,11 @@
                            <h4 class="card-title"><u>
                              Added sub chain for Key performance indicator({{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->name}})</u>
                              </h4>
-                        <table class="table table-borderless table-hover">
+                             <div class="p-3"></div>
+                        <table class="table table-bordered table-hover">
                             <thead>
                                 <tr>
+                                    <th>#</th>
                                     <th class="text-left">
                                         Name
                                     </th>
@@ -47,8 +57,12 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @php
+                                    $count = 1;
+                                @endphp
                                 @forelse($child_one_adds as $child_one_add)
                                      <tr>
+                                        <td>{{ $count++ }}</td>
                                     <td>
                                         {{
                                         $child_one_add->kpiChildOneTranslations[0]->name
@@ -80,7 +94,7 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="">
+                                    <td colspan="4">
                                         @lang('crud.common.no_items_found')
                                     </td>
                                 </tr>

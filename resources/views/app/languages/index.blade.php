@@ -44,9 +44,10 @@
             </div>
 
             <div class="table-responsive">
-                <table class="table table-borderless table-hover">
+                <table class="table table-bordered mt-3 table-hover">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th class="text-left">
                                 @lang('crud.languages.inputs.name')
                             </th>
@@ -56,9 +57,9 @@
                             <th class="text-left">
                                 @lang('crud.languages.inputs.locale')
                             </th>
-                            <th class="text-left">
+                            {{-- <th class="text-left">
                                 @lang('crud.languages.inputs.created_by_id')
-                            </th>
+                            </th> --}}
                             <th class="text-center">
                                 @lang('crud.common.actions')
                             </th>
@@ -67,12 +68,13 @@
                     <tbody>
                         @forelse($languages as $language)
                         <tr>
+                            <td>{{ $loop->iteration }}</td>
                             <td>{{ $language->name ?? '-' }}</td>
                             <td>{{ $language->description ?? '-' }}</td>
                             <td>{{ $language->locale ?? '-' }}</td>
-                            <td>
+                            {{-- <td>
                                 {{ optional($language->user)->name ?? '-' }}
-                            </td>
+                            </td> --}}
                             <td class="text-center" style="width: 134px;">
                                 <div
                                     role="group"
@@ -127,12 +129,10 @@
                         </tr>
                         @endforelse
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="5">{!! $languages->render() !!}</td>
-                        </tr>
-                    </tfoot>
                 </table>
+                <div class="float-right">
+                    {!! $languages->render() !!}
+                </div>
             </div>
         </div>
     </div>

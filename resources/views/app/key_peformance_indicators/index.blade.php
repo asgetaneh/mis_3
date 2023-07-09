@@ -49,6 +49,7 @@
                 <table class="table table-bordered table-hover mt-3">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th class="text-left">
                                 Name
                             </th>
@@ -76,9 +77,13 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $count = 1;
+                        @endphp
                         @forelse($keyPeformanceIndicator_ts as $keyPeformanceIndicator_t)
                         @if(app()->getLocale() == $keyPeformanceIndicator_t->locale)
                         <tr>
+                            <td>{{ $count++ }}</td>
                             <td>
                                 {{
                                 $keyPeformanceIndicator_t->name
@@ -248,20 +253,16 @@
                         @endif
                         @empty
                         <tr>
-                            <td colspan="6">
+                            <td colspan="7">
                                 @lang('crud.common.no_items_found')
                             </td>
                         </tr>
                         @endforelse
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="6">
-                                {!! $keyPeformanceIndicator_ts->render() !!}
-                            </td>
-                        </tr>
-                    </tfoot>
                 </table>
+                <div class="float-right">
+                    {!! $keyPeformanceIndicator_ts->render() !!}
+                </div>
             </div>
         </div>
     </div>

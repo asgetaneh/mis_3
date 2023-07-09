@@ -119,7 +119,7 @@
                        @endif
                         @empty
                         <tr>
-                            <td colspan="3">
+                            <td colspan="6">
                                 @lang('crud.common.no_items_found')
                             </td>
                         </tr>

@@ -4,7 +4,7 @@
     <x-inputs.group class="col-sm-12">
         <x-inputs.select name="goal_id" label="Goal" required>
             @php $selected = old('goal_id', ($editing ? $objective->goal_id : '')) @endphp
-            <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Goal</option>
+            <option disabled {{ empty($selected) ? 'selected' : '' }} value="">Please select the Goal</option>
 
             @foreach($goals as $value => $label)
              @if(app()->getLocale() == $label->locale)
@@ -17,7 +17,7 @@
     <x-inputs.group class="col-sm-12">
         <x-inputs.select name="perspective_id" label="Perspective" required>
             @php $selected = old('perspective_id', ($editing ? $objective->perspective_id : '')) @endphp
-            <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Perspective</option>
+            <option disabled {{ empty($selected) ? 'selected' : '' }} value="">Please select the Perspective</option>
             @foreach($perspectives as $value => $label)
             @if(app()->getLocale() ==$label->locale)
             <option value="{{ $label->translation_id }}" {{ $selected == $label->translation_id ? 'selected' : '' }} >{{ $label->name }}</option>
@@ -68,6 +68,7 @@
             name="{{'description_'.$lang->locale}}"
             label="{{'Description in '.$lang->name}}"
             maxlength=""
+            placeholder="Description"
             required>{{ $objectiveTranslations[$lang->locale][0]->description ?? '' }}
               </x-inputs.textarea
         >

@@ -72,10 +72,10 @@ class User extends Authenticatable
         return $this->hasMany(Office::class, 'holder_id');
     }
 
-    public function languages()
-    {
-        return $this->hasMany(Language::class, 'created_by_id');
-    }
+    // public function languages()
+    // {
+    //     return $this->hasMany(Language::class, 'created_by_id');
+    // }
 
     public function offices()
     {

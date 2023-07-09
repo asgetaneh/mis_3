@@ -53,7 +53,7 @@ class LanguageController extends Controller
         $language = Language::create($validated);
 
         return redirect()
-            ->route('languages.edit', $language)
+            ->route('languages.index', $language)
             ->withSuccess(__('crud.common.created'));
     }
 
@@ -93,8 +93,8 @@ class LanguageController extends Controller
         $language->update($validated);
 
         return redirect()
-            ->route('languages.edit', $language)
-            ->withSuccess(__('crud.common.saved'));
+            ->route('languages.index', $language)
+            ->withSuccess(__('crud.common.updated'));
     }
 
     /**

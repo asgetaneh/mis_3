@@ -24,10 +24,10 @@
                     <h5>@lang('crud.languages.inputs.locale')</h5>
                     <span>{{ $language->locale ?? '-' }}</span>
                 </div>
-                <div class="mb-4">
+                {{-- <div class="mb-4">
                     <h5>@lang('crud.languages.inputs.created_by_id')</h5>
                     <span>{{ optional($language->user)->name ?? '-' }}</span>
-                </div>
+                </div> --}}
             </div>
 
             <div class="mt-4">
