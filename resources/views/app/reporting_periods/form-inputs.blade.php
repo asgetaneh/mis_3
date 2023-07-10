@@ -3,13 +3,13 @@
 <div class="row">
      @foreach ($languages as $key => $lang)
         <x-inputs.group class="col-sm-12">
-            <x-inputs.text name="{{ 'name' . $lang->locale }}" label="{{ 'Name in ' . $lang->name }}" maxlength="255"
+            <x-inputs.text name="{{ 'name_' . $lang->locale }}" label="{{ 'Name in ' . $lang->name }}" maxlength="255" value="{{ $periodTranslations[$lang->locale][0]->name ?? '' }}"
                 placeholder="{{ 'name in ' . $lang->name }}" required></x-inputs.text>
         </x-inputs.group>
 
         <x-inputs.group class="col-sm-12">
-            <x-inputs.textarea name="{{ 'description' . $lang->locale }}" label="{{ 'Description in ' . $lang->name }}"
-                maxlength="255" required>
+            <x-inputs.textarea name="{{ 'description_' . $lang->locale }}" label="{{ 'Description in ' . $lang->name }}"
+                maxlength="" placeholder="Description" required>{{ $periodTranslations[$lang->locale][0]->description ?? '' }}
             </x-inputs.textarea>
         </x-inputs.group>
     @endforeach
@@ -51,15 +51,15 @@
             required
         >
             @php $selected = old('reporting_period_type_id', ($editing ? $reportingPeriod->reporting_period_type_id : '')) @endphp
-            <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Reporting Period Type</option>
+            <option disabled {{ empty($selected) ? 'selected' : '' }} value="">Please select the Reporting Period Type</option>
             @foreach($reportingPeriodTypes as $value => $label)
                 @if(app()->getLocale() ==$label->locale)
-                    <option value="{{ $label->reporting_period_type_id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->name }}</option>
+                    <option value="{{ $label->reporting_period_type_id }}" {{ $selected == $label->reporting_period_type_id ? 'selected' : '' }} >{{ $label->name }}</option>
                 @endif
             @endforeach
         </x-inputs.select>
     </x-inputs.group>
 
-   
+
 
 </div>

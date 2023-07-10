@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
     <div class="searchbar mt-0 mb-4">
         <div class="row">
             <div class="col-md-6">
@@ -46,9 +46,10 @@
             </div>
 
             <div class="table-responsive">
-                <table class="table table-borderless table-hover">
+                <table class="table table-bordered mt-3 table-hover">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th class="text-left">
                                Name
                             </th>
@@ -67,9 +68,13 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $count = 1;
+                        @endphp
                         @forelse($reportingPeriodTS as $reporting_period_t)
                         @if(app()->getLocale() == $reporting_period_t->locale)
                         <tr>
+                            <td>{{ $count++ }}</td>
                              <td>{{ $reporting_period_t->name ?? '-' }}
                             </td>
                             <td>{{ $reporting_period_t->reportingPeriod->start_date ?? '-' }}
@@ -98,7 +103,7 @@
                                 >
                                     @can('update', $reporting_period_t)
                                     <a
-                                        href="{{ route('reporting-periods.edit', $reporting_period_t) }}"
+                                        href="{{ route('reporting-periods.edit', $reporting_period_t->reporting_period_id) }}"
                                     >
                                         <button
                                             type="button"
@@ -109,7 +114,7 @@
                                     </a>
                                     @endcan @can('view', $reporting_period_t)
                                     <a
-                                        href="{{ route('reporting-periods.show', $reporting_period_t) }}"
+                                        href="{{ route('reporting-periods.show', $reporting_period_t->reporting_period_id) }}"
                                     >
                                         <button
                                             type="button"
@@ -120,7 +125,7 @@
                                     </a>
                                     @endcan @can('delete', $reporting_period_t)
                                     <form
-                                        action="{{ route('reporting-periods.destroy', $reporting_period_t) }}"
+                                        action="{{ route('reporting-periods.destroy', $reporting_period_t->reporting_period_id) }}"
                                         method="POST"
                                         onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                     >
@@ -145,14 +150,10 @@
                         </tr>
                         @endforelse
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="5">
-                                {!! $reportingPeriodTS->render() !!}
-                            </td>
-                        </tr>
-                    </tfoot>
                 </table>
+                <div class="float-right">
+                    {!! $reportingPeriodTS->render() !!}
+                </div>
             </div>
         </div>
     </div>
