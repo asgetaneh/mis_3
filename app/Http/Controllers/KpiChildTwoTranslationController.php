@@ -67,16 +67,16 @@ class KpiChildTwoTranslationController extends Controller
              foreach ($language as $key => $value) {
                  $kpi_child_two_translation = new KpiChildTwoTranslation;
                 $kpi_child_two_translation ->kpi_child_two_id=$KpiChildTwo->id;
-                $kpi_child_two_translation ->name = $data['name'.$value->locale];
+                $kpi_child_two_translation ->name = $data['name_'.$value->locale];
                  $kpi_child_two_translation ->locale = $value->locale;
-                $kpi_child_two_translation ->description = $data['description'.$value->locale];
+                $kpi_child_two_translation ->description = $data['description_'.$value->locale];
                 $kpi_child_two_translation->save();
          }
          $kpiChildTwoTranslation = KpiChildTwoTranslation::all();
          return redirect()
             ->route('kpi-child-two-translations.index')
             ->withSuccess(__('crud.common.created'));
-        } catch (Exception $e) { 
+        } catch (Exception $e) {
             return redirect('kpi-child-two-translations/new')->withErrors(['errors' => $e]);
             }
         $kpiChildTwoTranslation = KpiChildTwoTranslation::all();
@@ -109,9 +109,17 @@ class KpiChildTwoTranslationController extends Controller
 
         $kpiChildTwos = KpiChildTwo::pluck('id', 'id');
 
+        $search = $request->get('search', '');
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
+        $childTwoTranslations = $kpiChildTwoTranslation->kpiChildTwo->kpiChildTwoTranslations->groupBy('locale');
+
         return view(
             'app.kpi_child_two_translations.edit',
-            compact('kpiChildTwoTranslation', 'kpiChildTwos')
+            compact('kpiChildTwoTranslation', 'kpiChildTwos', 'childTwoTranslations', 'languages')
         );
     }
 
@@ -119,18 +127,29 @@ class KpiChildTwoTranslationController extends Controller
      * Update the specified resource in storage.
      */
     public function update(
-        KpiChildTwoTranslationUpdateRequest $request,
+        Request $request,
         KpiChildTwoTranslation $kpiChildTwoTranslation
     ): RedirectResponse {
         $this->authorize('update', $kpiChildTwoTranslation);
 
-        $validated = $request->validated();
+        foreach ($request->except('_token', '_method') as $key => $value) {
 
-        $kpiChildTwoTranslation->update($validated);
+            $locale = str_replace(['name_', 'description_'], '', $key);
+
+            $childTwoTranslation = $kpiChildTwoTranslation->kpiChildTwo->kpiChildTwoTranslations->where('locale', $locale)->first();
+
+            $column = str_replace('_'.$locale, '', $key);
+
+            if ($childTwoTranslation) {
+                $childTwoTranslation->update([
+                    $column => $value
+                ]);
+            }
+        }
 
         return redirect()
-            ->route('kpi-child-two-translations.edit', $kpiChildTwoTranslation)
-            ->withSuccess(__('crud.common.saved'));
+            ->route('kpi-child-two-translations.index', $kpiChildTwoTranslation)
+            ->withSuccess(__('crud.common.updated'));
     }
 
     /**
@@ -142,7 +161,7 @@ class KpiChildTwoTranslationController extends Controller
     ): RedirectResponse {
         $this->authorize('delete', $kpiChildTwoTranslation);
 
-        $kpiChildTwoTranslation->delete();
+        $kpiChildTwoTranslation->kpiChildTwo->delete();
 
         return redirect()
             ->route('kpi-child-two-translations.index')

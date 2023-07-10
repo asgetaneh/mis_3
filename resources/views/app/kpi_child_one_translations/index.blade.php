@@ -41,16 +41,16 @@
         <div class="card-body">
             <div style="display: flex; justify-content: space-between;">
                 <h4 class="card-title">
-                   Initiative Level one
+                Disaggregation One List
                 </h4>
             </div>
 
             <div class="table-responsive">
-                <table class="table table-borderless table-hover">
+                <table class="table table-bordered mt-3 table-hover">
                     <thead>
                         <tr>
                             <th class="text-left">
-                                ID
+                                #
                             </th>
                             <th class="text-left">
                                Name
@@ -64,14 +64,13 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $count = 1;
+                        @endphp
                         @forelse($kpiChildOneTranslations as $kpiChildOneTranslation)
                         @if(app()->getLocale() ==$kpiChildOneTranslation->locale)
                         <tr>
-                            <td>
-                                {{
-                                optional($kpiChildOneTranslation->kpiChildOne)->id
-                                ?? '-' }}
-                            </td>
+                            <td>{{ $count++ }}</td>
                             <td>{{ $kpiChildOneTranslation->name ?? '-' }}</td>
                             <td>
                                 {{ $kpiChildOneTranslation->description ?? '-'
@@ -134,14 +133,10 @@
                         </tr>
                         @endforelse
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="4">
-                                {!! $kpiChildOneTranslations->render() !!}
-                            </td>
-                        </tr>
-                    </tfoot>
                 </table>
+                <div class="float-right">
+                    {!! $kpiChildOneTranslations->render() !!}
+                </div>
             </div>
         </div>
     </div>

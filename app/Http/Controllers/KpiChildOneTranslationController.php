@@ -13,7 +13,7 @@ use App\Http\Requests\KpiChildOneTranslationUpdateRequest;
 
 class KpiChildOneTranslationController extends Controller
 {
-   
+
     public function add(Request $request,$id=null): View
     {
         $this->authorize('view-any', KpiChildOneTranslation::class);
@@ -103,16 +103,16 @@ class KpiChildOneTranslationController extends Controller
              foreach ($language as $key => $value) {
                  $kpi_child_one_translation = new KpiChildOneTranslation;
                 $kpi_child_one_translation ->kpiChildOne_id=$KpiChildOne->id;
-                $kpi_child_one_translation ->name = $data['name'.$value->locale];
+                $kpi_child_one_translation ->name = $data['name_'.$value->locale];
                  $kpi_child_one_translation ->locale = $value->locale;
-                $kpi_child_one_translation ->description = $data['description'.$value->locale];
+                $kpi_child_one_translation ->description = $data['description_'.$value->locale];
                 $kpi_child_one_translation->save();
          }
          $kpiChildOneTranslations = KpiChildOneTranslation::all();
          return redirect()
             ->route('kpi-child-one-translations.index')
             ->withSuccess(__('crud.common.created'));
-        } catch (Exception $e) { 
+        } catch (Exception $e) {
             return redirect('kpi-child-one-translations/new')->withErrors(['errors' => $e]);
             }
         $kpiChildOneTranslations = KpiChildOneTranslation::all();
@@ -142,12 +142,19 @@ class KpiChildOneTranslationController extends Controller
         KpiChildOneTranslation $kpiChildOneTranslation
     ): View {
         $this->authorize('update', $kpiChildOneTranslation);
-
         $kpiChildOnes = KpiChildOne::pluck('id', 'id');
+
+        $search = $request->get('search', '');
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
+        $childOneTranslations = $kpiChildOneTranslation->kpiChildOne->kpiChildOneTranslations->groupBy('locale');
 
         return view(
             'app.kpi_child_one_translations.edit',
-            compact('kpiChildOneTranslation', 'kpiChildOnes')
+            compact('kpiChildOneTranslation', 'kpiChildOnes', 'childOneTranslations', 'languages')
         );
     }
 
@@ -155,18 +162,29 @@ class KpiChildOneTranslationController extends Controller
      * Update the specified resource in storage.
      */
     public function update(
-        KpiChildOneTranslationUpdateRequest $request,
+        Request $request,
         KpiChildOneTranslation $kpiChildOneTranslation
     ): RedirectResponse {
         $this->authorize('update', $kpiChildOneTranslation);
 
-        $validated = $request->validated();
+        foreach ($request->except('_token', '_method') as $key => $value) {
 
-        $kpiChildOneTranslation->update($validated);
+            $locale = str_replace(['name_', 'description_'], '', $key);
+
+            $childOneTranslation = $kpiChildOneTranslation->kpiChildOne->kpiChildOneTranslations->where('locale', $locale)->first();
+
+            $column = str_replace('_'.$locale, '', $key);
+
+            if ($childOneTranslation) {
+                $childOneTranslation->update([
+                    $column => $value
+                ]);
+            }
+        }
 
         return redirect()
-            ->route('kpi-child-one-translations.edit', $kpiChildOneTranslation)
-            ->withSuccess(__('crud.common.saved'));
+            ->route('kpi-child-one-translations.index', $kpiChildOneTranslation)
+            ->withSuccess(__('crud.common.updated'));
     }
 
     /**
@@ -177,8 +195,7 @@ class KpiChildOneTranslationController extends Controller
         KpiChildOneTranslation $kpiChildOneTranslation
     ): RedirectResponse {
         $this->authorize('delete', $kpiChildOneTranslation);
-
-        $kpiChildOneTranslation->delete();
+        $kpiChildOneTranslation->kpiChildOne->delete();
 
         return redirect()
             ->route('kpi-child-one-translations.index')
