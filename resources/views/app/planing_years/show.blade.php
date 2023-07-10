@@ -11,7 +11,33 @@
                 @lang('crud.planing_years.show_title')
             </h4>
 
-            <div class="mt-4"></div>
+            <div class="mt-4">
+                <div class="mb-4">
+                    <h5>
+                        Name
+                    </h5>
+                    @forelse($planingYear->planingYearTranslations as $key => $planing)
+                            @if (app()->getLocale() == $planing->locale)
+                                <p class="">{{ $planing->name ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>-</p>
+                        @endforelse
+                </div>
+                <hr>
+                <div class="mb-4">
+                    <h5>
+                        Description
+                    </h5>
+                    @forelse($planingYear->planingYearTranslations as $key => $planing)
+                            @if (app()->getLocale() == $planing->locale)
+                                <p class="">{{ $planing->description ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>-</p>
+                        @endforelse
+                </div>
+            </div>
 
             <div class="mt-4">
                 <a
