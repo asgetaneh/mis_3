@@ -76,12 +76,14 @@ class PlaningYearController extends Controller
                 // code...
                 $planning_year_translation = new PlaningYearTranslation();
                 $planning_year_translation->planing_year_id=$planningYear->id;
-                $planning_year_translation->name = $data['name'.$value->locale];
+                $planning_year_translation->name = $data['name_'.$value->locale];
                 $planning_year_translation->locale = $value->locale;
-                $planning_year_translation->description = $data['description'.$value->locale];
+                $planning_year_translation->description = $data['description_'.$value->locale];
                 $planning_year_translation->save();
          }
-         return redirect('planing-years')->with('status', "Insert successfully");
+         return redirect()
+         ->route('planing-years.index')
+         ->withSuccess(__('crud.common.created'));
         } catch (Exception $e) {
             return redirect('planing-years/create')->withErrors(['errors' => $e]);
             }
@@ -108,25 +110,48 @@ class PlaningYearController extends Controller
     {
         $this->authorize('update', $planingYear);
 
-        return view('app.planing_years.edit', compact('planingYear'));
+        $search = $request->get('search', '');
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
+        $planingTranslations = $planingYear->planingYearTranslations->groupBy('locale');
+
+        return view('app.planing_years.edit', compact('planingYear', 'languages', 'planingTranslations'));
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(
-        PlaningYearUpdateRequest $request,
+        Request $request,
         PlaningYear $planingYear
     ): RedirectResponse {
         $this->authorize('update', $planingYear);
 
-        $validated = $request->validated();
+        // $planingYear->update([
+        //     'updated_at' => new \DateTime() ,
+        // ]);
 
-        $planingYear->update($validated);
+        foreach ($request->except('_token', '_method') as $key => $value) {
+
+            $locale = str_replace(['name_', 'description_'], '', $key);
+
+            $planingTranslations = $planingYear->planingYearTranslations->where('locale', $locale)->first();
+
+            $column = str_replace('_'.$locale, '', $key);
+
+            if ($planingTranslations) {
+                $planingTranslations->update([
+                    $column => $value
+                ]);
+            }
+        }
 
         return redirect()
-            ->route('planing-years.edit', $planingYear)
-            ->withSuccess(__('crud.common.saved'));
+            ->route('planing-years.index', $planingYear)
+            ->withSuccess(__('crud.common.updated'));
     }
 
     /**

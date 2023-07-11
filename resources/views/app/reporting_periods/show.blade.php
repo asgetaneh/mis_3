@@ -14,29 +14,49 @@
             <div class="mt-4">
                 <div class="mb-4">
                     <h5>
-                        @lang('crud.reporting_periods.inputs.planing_year_id')
+                        Name
                     </h5>
-                    <span
-                        >{{ optional($reportingPeriod->planingYear)->id ?? '-'
-                        }}</span
-                    >
+                    @forelse($reportingPeriod->reportingPeriodTs as $key => $period)
+                            @if (app()->getLocale() == $period->locale)
+                                <p class="">{{ $period->name ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>-</p>
+                        @endforelse
                 </div>
+                <hr>
+                <div class="mb-4">
+                    <h5>Description</h5>
+                    @forelse($reportingPeriod->reportingPeriodTs as $key => $period)
+                            @if (app()->getLocale() == $period->locale)
+                                <p class="">{{ $period->description ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>-</p>
+                        @endforelse
+                </div>
+                <hr>
                 <div class="mb-4">
                     <h5>@lang('crud.reporting_periods.inputs.start_date')</h5>
                     <span>{{ $reportingPeriod->start_date ?? '-' }}</span>
                 </div>
+                <hr>
                 <div class="mb-4">
                     <h5>@lang('crud.reporting_periods.inputs.end_date')</h5>
                     <span>{{ $reportingPeriod->end_date ?? '-' }}</span>
                 </div>
+                <hr>
                 <div class="mb-4">
                     <h5>
                         @lang('crud.reporting_periods.inputs.reporting_period_type_id')
                     </h5>
-                    <span
-                        >{{ optional($reportingPeriod->reportingPeriodType)->id
-                        ?? '-' }}</span
-                    >
+                    @forelse($reportingPeriod->reportingPeriodType->reportingPeriodTypeTs as $key => $reportType)
+                            @if (app()->getLocale() == $reportType->locale)
+                                <p class="">{{ $reportType->name ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>-</p>
+                        @endforelse
                 </div>
             </div>
 

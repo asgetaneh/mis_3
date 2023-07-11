@@ -74,9 +74,9 @@ class ReportingPeriodTypeController extends Controller
                 // code...
                 $reportingPeriodTypeTS = new ReportingPeriodTypeT;
                 $reportingPeriodTypeTS ->reporting_period_type_id=$reportingPeriodType->id;
-                $reportingPeriodTypeTS ->name = $data['name'.$value->locale];
+                $reportingPeriodTypeTS ->name = $data['name_'.$value->locale];
                 $reportingPeriodTypeTS ->locale = $value->locale;
-                $reportingPeriodTypeTS ->description = $data['description'.$value->locale];
+                $reportingPeriodTypeTS ->description = $data['description_'.$value->locale];
                 $reportingPeriodTypeTS->save();
          }
          return redirect()
@@ -115,9 +115,17 @@ class ReportingPeriodTypeController extends Controller
     ): View {
         $this->authorize('update', $reportingPeriodType);
 
+        $search = $request->get('search', '');
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
+        $reportingTypeTranslations = $reportingPeriodType->reportingPeriodTypeTs->groupBy('locale');
+
         return view(
             'app.reporting_period_types.edit',
-            compact('reportingPeriodType')
+            compact('reportingPeriodType', 'reportingTypeTranslations', 'languages')
         );
     }
 
@@ -125,18 +133,29 @@ class ReportingPeriodTypeController extends Controller
      * Update the specified resource in storage.
      */
     public function update(
-        ReportingPeriodTypeUpdateRequest $request,
+        Request $request,
         ReportingPeriodType $reportingPeriodType
     ): RedirectResponse {
         $this->authorize('update', $reportingPeriodType);
 
-        $validated = $request->validated();
+        foreach ($request->except('_token', '_method') as $key => $value) {
 
-        $reportingPeriodType->update($validated);
+            $locale = str_replace(['name_', 'description_'], '', $key);
+
+            $reportingTypeTranslation = $reportingPeriodType->reportingPeriodTypeTs->where('locale', $locale)->first();
+
+            $column = str_replace('_'.$locale, '', $key);
+
+            if ($reportingTypeTranslation) {
+                $reportingTypeTranslation->update([
+                    $column => $value
+                ]);
+            }
+        }
 
         return redirect()
-            ->route('reporting-period-types.edit', $reportingPeriodType)
-            ->withSuccess(__('crud.common.saved'));
+            ->route('reporting-period-types.index', $reportingPeriodType)
+            ->withSuccess(__('crud.common.updated'));
     }
 
     /**

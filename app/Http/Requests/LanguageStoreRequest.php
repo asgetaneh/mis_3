@@ -23,7 +23,7 @@ class LanguageStoreRequest extends FormRequest
             'name' => ['required', 'max:255', 'string'],
             'description' => ['required', 'max:255', 'string'],
             'locale' => ['required', 'max:8', 'string'],
-            'created_by_id' => ['required', 'exists:users,id'],
+            // 'created_by_id' => ['required', 'exists:users,id'],
         ];
     }
 }

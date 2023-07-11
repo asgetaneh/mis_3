@@ -10,34 +10,34 @@
                     class="mr-4"
                     ><i class="icon ion-md-arrow-back"></i
                 ></a>
-                @lang('crud.kpi_child_three_translations.show_title')
+                Show Disaggregation Three
             </h4>
 
             <div class="mt-4">
                 <div class="mb-4">
                     <h5>
-                        @lang('crud.kpi_child_three_translations.inputs.name')
+                        Name
                     </h5>
-                    <span>{{ $kpiChildThreeTranslation->name ?? '-' }}</span>
+                    @forelse($kpiChildThreeTranslation->kpiChildThree->kpiChildThreeTranslations as $key => $three)
+                    @if (app()->getLocale() == $three->locale)
+                        <p class="">{{ $three->name ?? '-' }}</p>
+                    @endif
+                @empty
+                    <p>-</p>
+                @endforelse
                 </div>
+                <hr>
                 <div class="mb-4">
                     <h5>
-                        @lang('crud.kpi_child_three_translations.inputs.description')
+                        Description
                     </h5>
-                    <span
-                        >{{ $kpiChildThreeTranslation->description ?? '-'
-                        }}</span
-                    >
-                </div>
-                <div class="mb-4">
-                    <h5>
-                        @lang('crud.kpi_child_three_translations.inputs.kpiChildThree_id')
-                    </h5>
-                    <span
-                        >{{
-                        optional($kpiChildThreeTranslation->kpiChildThree)->id
-                        ?? '-' }}</span
-                    >
+                    @forelse($kpiChildThreeTranslation->kpiChildThree->kpiChildThreeTranslations as $key => $three)
+                    @if (app()->getLocale() == $three->locale)
+                        <p class="">{{ $three->description ?? '-' }}</p>
+                    @endif
+                @empty
+                    <p>-</p>
+                @endforelse
                 </div>
             </div>
 

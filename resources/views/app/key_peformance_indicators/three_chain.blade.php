@@ -25,15 +25,16 @@
                         </button>
                     </div>
                 </x-form>
-
-                {{-- below code to be worked later --}}
+                <br>
                 <div class="table-responsive">
                     <h4 class="card-title"><u>
                         Add sub chain for Key performance indicator child ({{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->name }})</u>
                     </h4>
-                    <table class="table table-borderless table-hover">
+                    <div class="p-3"></div>
+                    <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th class="text-left">
                                     Name
                                 </th>
@@ -46,8 +47,12 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                                $count = 1;
+                            @endphp
                             @forelse($childThreeAdds as $childThreeAdd)
                                 <tr>
+                                    <td>{{ $count++ }}</td>
                                     <td>
                                         {{ $childThreeAdd->kpiChildThreeTranslations[0]->name ?? '-' }}
                                     </td>
@@ -70,7 +75,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="">
+                                    <td colspan="4">
                                         @lang('crud.common.no_items_found')
                                     </td>
                                 </tr>

@@ -1,14 +1,6 @@
 @php $editing = isset($keyPeformanceIndicator) @endphp
 
 <div class="row">
-    <h4 class="card-title">
-        <a
-            href="{{ route('key-peformance-indicators.index') }}"
-            class="mr-4"
-            ><i class="icon ion-md-arrow-back"></i
-        ></a>
-        Add sub chain for Key performance indicator({{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->name}})
-    </h4>
     <x-inputs.group class="col-sm-12">
      <input type="hidden" value="{{ $keyPeformanceIndicator->id }}" name="keyPeformanceIndicator">
 

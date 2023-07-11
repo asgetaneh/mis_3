@@ -105,8 +105,8 @@ class ReportingPeriodController extends Controller
                 // code...
                 $reportingPeriodTranslation = new ReportingPeriodT;
                 $reportingPeriodTranslation->reporting_period_id=$reportingPeriod->id;
-                $reportingPeriodTranslation->name = $data['name'.$value->locale];
-                $reportingPeriodTranslation->description = $data['description'.$value->locale];
+                $reportingPeriodTranslation->name = $data['name_'.$value->locale];
+                $reportingPeriodTranslation->description = $data['description_'.$value->locale];
                 $reportingPeriodTranslation->locale = $value->locale;
                 $reportingPeriodTranslation->save();
          }
@@ -145,11 +145,18 @@ class ReportingPeriodController extends Controller
         $this->authorize('update', $reportingPeriod);
 
         $planingYears = PlaningYear::pluck('id', 'id');
-        $reportingPeriodTypes = ReportingPeriodType::pluck('id', 'id');
+        $reportingPeriodTypes = ReportingPeriodTypeT::all();
+        $search = $request->get('search', '');
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
+        $periodTranslations = $reportingPeriod->reportingPeriodTs->groupBy('locale');
 
         return view(
             'app.reporting_periods.edit',
-            compact('reportingPeriod', 'planingYears', 'reportingPeriodTypes')
+            compact('reportingPeriod', 'planingYears', 'reportingPeriodTypes', 'languages', 'periodTranslations')
         );
     }
 
@@ -157,18 +164,65 @@ class ReportingPeriodController extends Controller
      * Update the specified resource in storage.
      */
     public function update(
-        ReportingPeriodUpdateRequest $request,
+        Request $request,
         ReportingPeriod $reportingPeriod
     ): RedirectResponse {
         $this->authorize('update', $reportingPeriod);
 
-        $validated = $request->validated();
+        $data = $request->input();
 
-        $reportingPeriod->update($validated);
+        $startDate = $data['start_date'];
+        $endDate = $data['end_date'];
+
+        if(str_contains($startDate, '-')){
+
+        }else{
+            $startDate = explode('/', $startDate);
+            $startDate = DateTimeFactory::of($startDate[2], $startDate[1], $startDate[0]);
+            $startDate = $startDate->format('Y-m-d');
+
+            $reportingPeriod->update([
+                'start_date' => $startDate,
+            ]);
+        }
+
+        if(str_contains($endDate, '-')){
+
+        }else{
+            $endDate = explode('/', $data['end_date']);
+            $endDate = DateTimeFactory::of($endDate[2], $endDate[1], $endDate[0]);
+            $endDate = $endDate->format('Y-m-d');
+
+            $reportingPeriod->update([
+                'end_date' => $endDate,
+            ]);
+        }
+
+        $reportingPeriod->update([
+            // 'start_date' => $startDate,
+            // 'end_date' => $endDate,
+            'reporting_period_type_id' => $request->reporting_period_type_id,
+            'updated_at' => new \DateTime(),
+        ]);
+
+        foreach ($request->except('_token', '_method', 'start_date', 'end_date', 'reporting_period_type_id') as $key => $value) {
+
+            $locale = str_replace(['name_', 'description_'], '', $key);
+
+            $periodTranslation = $reportingPeriod->reportingPeriodTs->where('locale', $locale)->first();
+
+            $column = str_replace('_'.$locale, '', $key);
+
+            if ($periodTranslation) {
+                $periodTranslation->update([
+                    $column => $value
+                ]);
+            }
+        }
 
         return redirect()
-            ->route('reporting-periods.edit', $reportingPeriod)
-            ->withSuccess(__('crud.common.saved'));
+            ->route('reporting-periods.index', $reportingPeriod)
+            ->withSuccess(__('crud.common.updated'));
     }
 
     /**

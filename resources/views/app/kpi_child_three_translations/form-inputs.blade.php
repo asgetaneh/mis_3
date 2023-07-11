@@ -4,23 +4,23 @@
     @foreach($languages as $key => $lang)
         <x-inputs.group class="col-sm-12">
             <x-inputs.text
-                name="{{'name'.$lang->locale}}"
+                name="{{'name_'.$lang->locale}}"
                 label="{{'Name in '.$lang->name}}"
                 maxlength="255"
                 placeholder="{{'name in '.$lang->name}}"
                 required
-                :value="old('name', ($editing ? $kpiChildThreeTranslation->name : ''))"
+                value="{{ $childThreeTranslations[$lang->locale][0]->name ?? '' }}"
             ></x-inputs.text>
         </x-inputs.group>
 
         <x-inputs.group class="col-sm-12">
             <x-inputs.textarea
-                name="{{'description'.$lang->locale}}"
+                name="{{'description_'.$lang->locale}}"
                 label="{{'Description in '.$lang->name}}"
-                maxlength="255"
+                maxlength=""
+                placeholder="Description"
                 required
-                >{{ old('description', ($editing ?
-                $kpiChildThreeTranslation->description : '')) }}</x-inputs.textarea
+                >{{ $childThreeTranslations[$lang->locale][0]->description ?? '' }}</x-inputs.textarea
             >
         </x-inputs.group>
     @endforeach

@@ -13,7 +13,33 @@
                 @lang('crud.reporting_period_types.show_title')
             </h4>
 
-            <div class="mt-4"></div>
+            <div class="mt-4">
+                <div class="mb-4">
+                    <h5>Name</h5>
+                    @forelse($reportingPeriodType->reportingPeriodTypeTs as $key => $reportingPeriod)
+                        @if (app()->getLocale() == $reportingPeriod->locale)
+                            <p class="">{{ $reportingPeriod->name ?? '-' }}</p>
+                        @endif
+                    @empty
+                        <p>-</p>
+                    @endforelse
+                </div>
+                <hr>
+                <div class="mb-4">
+                    <h5>Description</h5>
+                    @forelse($reportingPeriodType->reportingPeriodTypeTs as $key => $reportingPeriod)
+                        @if (app()->getLocale() == $reportingPeriod->locale)
+                            <p class="">{{ $reportingPeriod->description ?? '-' }}</p>
+                        @endif
+                    @empty
+                        <p>-</p>
+                    @endforelse
+                </div>
+                {{-- <div class="mb-4">
+                    <h5>@lang('crud.languages.inputs.created_by_id')</h5>
+                    <span>{{ optional($language->user)->name ?? '-' }}</span>
+                </div> --}}
+            </div>
 
             <div class="mt-4">
                 <a

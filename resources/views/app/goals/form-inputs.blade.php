@@ -82,6 +82,7 @@
                 name="{{'description_'.$lang->locale}}"
                 label="{{'Description in '.$lang->name}}"
                 maxlength=""
+                placeholder="Description"
                 required>{{ $goalTranslations[$lang->locale][0]->description ?? '' }}
                   </x-inputs.textarea
             >

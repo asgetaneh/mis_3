@@ -10,32 +10,34 @@
                     class="mr-4"
                     ><i class="icon ion-md-arrow-back"></i
                 ></a>
-                @lang('crud.kpi_child_two_translations.show_title')
+                Show Disaggregation Two
             </h4>
 
             <div class="mt-4">
                 <div class="mb-4">
                     <h5>
-                        @lang('crud.kpi_child_two_translations.inputs.name')
+                        Name
                     </h5>
-                    <span>{{ $kpiChildTwoTranslation->name ?? '-' }}</span>
+                    @forelse($kpiChildTwoTranslation->kpiChildTwo->kpiChildTwoTranslations as $key => $two)
+                    @if (app()->getLocale() == $two->locale)
+                        <p class="">{{ $two->name ?? '-' }}</p>
+                    @endif
+                @empty
+                    <p>-</p>
+                @endforelse
                 </div>
+                <hr>
                 <div class="mb-4">
                     <h5>
-                        @lang('crud.kpi_child_two_translations.inputs.description')
+                        Description
                     </h5>
-                    <span
-                        >{{ $kpiChildTwoTranslation->description ?? '-' }}</span
-                    >
-                </div>
-                <div class="mb-4">
-                    <h5>
-                        @lang('crud.kpi_child_two_translations.inputs.kpi_child_two_id')
-                    </h5>
-                    <span
-                        >{{ optional($kpiChildTwoTranslation->kpiChildTwo)->id
-                        ?? '-' }}</span
-                    >
+                    @forelse($kpiChildTwoTranslation->kpiChildTwo->kpiChildTwoTranslations as $key => $two)
+                    @if (app()->getLocale() == $two->locale)
+                        <p class="">{{ $two->description ?? '-' }}</p>
+                    @endif
+                @empty
+                    <p>-</p>
+                @endforelse
                 </div>
             </div>
 

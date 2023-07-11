@@ -74,9 +74,9 @@ class KpiChildThreeTranslationController extends Controller
                 // code...
                 $kpiChildThreeTranslation = new KpiChildThreeTranslation;
                 $kpiChildThreeTranslation->kpiChildThree_id=$kpiChildThree->id;
-                $kpiChildThreeTranslation->name = $data['name'.$value->locale];
+                $kpiChildThreeTranslation->name = $data['name_'.$value->locale];
                 $kpiChildThreeTranslation->locale = $value->locale;
-                $kpiChildThreeTranslation->description = $data['description'.$value->locale];
+                $kpiChildThreeTranslation->description = $data['description_'.$value->locale];
                 $kpiChildThreeTranslation->save();
          }
          return redirect()
@@ -113,9 +113,17 @@ class KpiChildThreeTranslationController extends Controller
 
         $kpiChildThrees = KpiChildThree::pluck('id', 'id');
 
+        $search = $request->get('search', '');
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
+        $childThreeTranslations = $kpiChildThreeTranslation->kpiChildThree->kpiChildThreeTranslations->groupBy('locale');
+
         return view(
             'app.kpi_child_three_translations.edit',
-            compact('kpiChildThreeTranslation', 'kpiChildThrees')
+            compact('kpiChildThreeTranslation', 'kpiChildThrees', 'childThreeTranslations', 'languages')
         );
     }
 
@@ -123,21 +131,29 @@ class KpiChildThreeTranslationController extends Controller
      * Update the specified resource in storage.
      */
     public function update(
-        KpiChildThreeTranslationUpdateRequest $request,
+        Request $request,
         KpiChildThreeTranslation $kpiChildThreeTranslation
     ): RedirectResponse {
         $this->authorize('update', $kpiChildThreeTranslation);
 
-        $validated = $request->validated();
+        foreach ($request->except('_token', '_method') as $key => $value) {
 
-        $kpiChildThreeTranslation->update($validated);
+            $locale = str_replace(['name_', 'description_'], '', $key);
+
+            $childThreeTranslation = $kpiChildThreeTranslation->kpiChildThree->kpiChildThreeTranslations->where('locale', $locale)->first();
+
+            $column = str_replace('_'.$locale, '', $key);
+
+            if ($childThreeTranslation) {
+                $childThreeTranslation->update([
+                    $column => $value
+                ]);
+            }
+        }
 
         return redirect()
-            ->route(
-                'kpi-child-three-translations.edit',
-                $kpiChildThreeTranslation
-            )
-            ->withSuccess(__('crud.common.saved'));
+            ->route('kpi-child-three-translations.index', $kpiChildThreeTranslation)
+            ->withSuccess(__('crud.common.updated'));
     }
 
     /**
@@ -149,7 +165,7 @@ class KpiChildThreeTranslationController extends Controller
     ): RedirectResponse {
         $this->authorize('delete', $kpiChildThreeTranslation);
 
-        $kpiChildThreeTranslation->delete();
+        $kpiChildThreeTranslation->kpiChildThree->delete();
 
         return redirect()
             ->route('kpi-child-three-translations.index')

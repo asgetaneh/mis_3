@@ -41,14 +41,15 @@
         <div class="card-body">
             <div style="display: flex; justify-content: space-between;">
                 <h4 class="card-title">
-                    KPI Child Three Translation
+                    Disaggregation Three List
                 </h4>
             </div>
 
             <div class="table-responsive">
-                <table class="table table-borderless table-hover">
+                <table class="table table-bordered mt-3 table-hover">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th class="text-left">
                                 Name
                             </th>
@@ -64,9 +65,13 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $count = 1;
+                        @endphp
                         @forelse($kpiChildThreeTranslations as $kpiChildThreeTranslation)
                         @if(app()->getLocale() == $kpiChildThreeTranslation->locale)
                         <tr>
+                            <td>{{ $count++ }}</td>
                             <td>
                                 {{ $kpiChildThreeTranslation->name ?? '-' }}
                             </td>
@@ -136,14 +141,10 @@
                         </tr>
                         @endforelse
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="4">
-                                {!! $kpiChildThreeTranslations->render() !!}
-                            </td>
-                        </tr>
-                    </tfoot>
                 </table>
+                <div class="float-right">
+                    {!! $kpiChildThreeTranslations->render() !!}
+                </div>
             </div>
         </div>
     </div>

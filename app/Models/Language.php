@@ -11,12 +11,12 @@ class Language extends Model
     use HasFactory;
     use Searchable;
 
-    protected $fillable = ['name', 'description', 'locale', 'created_by_id'];
+    protected $fillable = ['name', 'description', 'locale'];
 
     protected $searchableFields = ['*'];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'created_by_id');
-    }
+    // public function user()
+    // {
+    //     return $this->belongsTo(User::class, 'created_by_id');
+    // }
 }

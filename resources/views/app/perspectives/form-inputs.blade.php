@@ -19,6 +19,7 @@
             label="{{'Description in '.$lang->name}}"
             maxlength=""
             value=""
+            placeholder="Description"
             required>{{ $perspectiveTranslations[$lang->locale][0]->description ?? '' }}
               </x-inputs.textarea
         >
