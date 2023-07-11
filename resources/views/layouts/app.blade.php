@@ -20,6 +20,7 @@
         <script src="{{ asset('assets/dist/js/alpine.min.js') }}"></script>
         <link rel="stylesheet" href="{{ asset('assets/plugins/select2/css/select2.min.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/plugins/fontawesome-free/css/all.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/plugins/summernote/summernote-bs4.min.css') }}">
 
         <!-- Fonts -->
         <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -98,6 +99,7 @@
         <script src="{{ asset('assets/dist/js/notyf.min.js') }}"></script>
         <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
         <script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
+        <script src="{{ asset('assets/plugins/summernote/summernote-bs4.min.js') }}"></script>
         {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script> --}}
 
         {{-- Calender Scripts --}}

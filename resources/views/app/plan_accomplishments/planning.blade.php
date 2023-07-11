@@ -78,7 +78,7 @@
                             @forelse ($objectives as $objective)
                                 {{-- @dd($objective->objectiveTranslations) --}}
 
- 
+
                                 {{-- @forelse($objective as $kpi) --}}
                                 {{-- @dd($kpi->objective->objectiveTranslations) --}}
 
@@ -157,7 +157,7 @@
                                $KeyPeformanceIndicators = getKeyperormanceIndicators($objective,$user_offices);
                                 @endphp
                                 @forelse($KeyPeformanceIndicators as $kpi)
-                                @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)  
+                                @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
                                     <div class="card collapsed-card p-2">
                                         <div class="card-header">
                                             <h3 class="card-title">KPI: {{ $kpi->KeyPeformanceIndicatorTs[0]->name }} (Reporting:{{$kpi->reportingPeriodType->reportingPeriodTypeTs[0]->name }})
@@ -201,7 +201,7 @@
                                                                     </th>
                                                                     @foreach ($kpi->kpiChildOnes as $one)
                                                                     @foreach ($kpi->kpiChildThrees as $kpiThree)
-                                                                     @php 
+                                                                     @php
                                                                      $plan = getSavedPlanIndividualOneTwoThree($planning_year[0]->id,$kpi->id,$period->id, $one->id, $two->id,$kpiThree->id,auth()->user()->offices[0]->id);
                                                                     @endphp
                                                                     @if($plan)
@@ -214,7 +214,7 @@
                                                                     <input name="{{$kpi->id}}{{$period->id }}{{$one->id }}{{$two->id }}{{$kpiThree->id }}"  class="form-control" type="number" required>
                                                                     </td>
                                                                     @endif
-                                                                   
+
                                                                 @endforeach
                                                             @endforeach
                                                             </tr>
@@ -236,7 +236,7 @@
                                                         {{ $two->kpiChildTwoTranslations[0]->name }}
                                                         </th>
                                                             @foreach ($kpi->kpiChildOnes as $one)
-                                                             @php 
+                                                             @php
                                                             $plan12 = getSavedPlanIndividualOneTwo($planning_year[0]->id,$kpi->id,$period->id, $one->id, $two->id,auth()->user()->offices[0]->id);
                                                              @endphp
                                                             @if($plan12!=0)
@@ -264,7 +264,7 @@
                                                 </tr>
                                                 <tr>
                                                      @foreach ($kpi->kpiChildOnes as $one)
-                                                       @php 
+                                                       @php
                                                         $plan1 = getSavedPlanIndividualOne($planning_year[0]->id,$kpi->id,$period->id, $one->id, auth()->user()->offices[0]->id);
                                                         @endphp
                                                         @if($plan1)
@@ -285,7 +285,7 @@
                                         {{-- KPI has no child one, which means just only plain input --}}
                                         @else
                                             <p class="mb-3">
-                                            @php 
+                                            @php
                                             $plan = getSavedPlanIndividual($planning_year[0]->id,$kpi->id,$period->id, auth()->user()->offices[0]->id);
                                             @endphp
                                             @if($plan)
@@ -298,21 +298,21 @@
                                             </p>
                                         @endif
 
-                                    
+
                                     </div>
 
                                     </div>
                                  @empty
                                 <h4>No reporting period type for kPI !</h4>
                                 @endforelse
-                                 @php 
+                                 @php
                                     $plan_naration = getSavedPlanNaration($planning_year[0]->id,$kpi->id , auth()->user()->offices[0]->id);
                                     @endphp
                                     @if($plan_naration)
                                     <input type ="hidden" name="type" value="yes">
-                                     <textarea name="desc{{ $kpi->id}}" style="height: 100px;" class="form-control" name="" id="" placeholder="Narration here" required>{{$plan_naration}}</textarea> 
+                                     <textarea name="desc{{ $kpi->id}}" style="height: 100px;" class="form-control summernote" name="" id="" placeholder="Narration here" required>{!! $plan_naration !!}</textarea>
                                     @else
-                                    <textarea name="desc{{ $kpi->id}}" style="height: 100px;" class="form-control" name="" id="" placeholder="Narration here" required></textarea>
+                                    <textarea name="desc{{ $kpi->id}}" style="height: 100px;" class="form-control summernote" name="" id="" placeholder="Narration here" required></textarea>
                                      @endif
                                 @empty
                                     <h4>No KPI registered for this Goal and Objective!</h4>
@@ -339,7 +339,16 @@
     </div>
 
     <script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script> --}}
+    {{-- <script src="{{ asset('assets/plugins/summernote/summernote-bs4.min.js') }}"></script> --}}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.summernote').summernote({
+                height: 150
+            });
+            $('.dropdown-toggle').dropdown()
+        });
+    </script>
     {{-- <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script> --}}
 
     {{-- <script>
