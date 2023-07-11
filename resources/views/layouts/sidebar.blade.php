@@ -238,6 +238,13 @@
                                             @endif
                                         </li>
                                     @endcan
+
+                                    @php
+                                    $user = auth()->user();
+                                    $office = $user->offices[0]; 
+                                    $childAndHimOffKpi = $office->offices; 
+                                    @endphp
+                                    @if (!$office->offices->isEmpty())
                                     @can('view-any', App\Models\PlanAccomplishment::class)
                                         <li class="nav-item">
                                             <a href="{{ route('view-plan-accomplishment') }}" class="nav-link {{ Request::is('smis/plan/view-plan-accomplishment/*') || Request::is('smis/plan/view-plan-accomplishment') ? 'active' : '' }}">
@@ -246,6 +253,7 @@
                                             </a>
                                         </li>
                                     @endcan
+                                    @endif
                                 </ul>
                             </li>
                             <li class="nav-item">

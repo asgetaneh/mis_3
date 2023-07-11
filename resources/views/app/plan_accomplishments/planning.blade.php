@@ -169,8 +169,7 @@
                                                 </button>
                                             </div>
                                         </div>
-                                        <div class="card-body" style="display: none;">
-
+ 
                                         {{-- If KPI has Child ones (UG, PG) --}}
                                         @if (!$kpi->kpiChildOnes->isEmpty())
                                             <table class="table table-bordered">
@@ -207,11 +206,11 @@
                                                                     @if($plan)
                                                                     <td>
                                                                     <input type ="hidden" name="type" value="yes">
-                                                                    <input name="{{$kpi->id}}{{$period->id }}{{$one->id }}{{$two->id }}{{$kpiThree->id }}"  value = "{{$plan}}" class="form-control" type="number" required>
+                                                                    <input name="{{$kpi->id}}-{{$period->id }}{{$one->id }}-{{$two->id }}-{{$kpiThree->id }}-{{'update'}}"  value = "{{$plan}}" class="form-control" type="number" required>
                                                                     </td>
                                                                     @else
                                                                      <td>
-                                                                    <input name="{{$kpi->id}}{{$period->id }}{{$one->id }}{{$two->id }}{{$kpiThree->id }}"  class="form-control" type="number" required>
+                                                                    <input name="{{$kpi->id}}-{{$period->id }}-{{$one->id }}-{{$two->id }}-{{$kpiThree->id }}"  class="form-control" type="number" required>
                                                                     </td>
                                                                     @endif
                                                                    
@@ -242,11 +241,11 @@
                                                             @if($plan12!=0)
                                                                 <td>
                                                                 <input type ="hidden" name="type" value="yes">
-                                                                <input name="{{$kpi->id}}{{$period->id }}{{$one->id }}{{$two->id }}" class="form-control" value ="{{$plan12}}" type="number" required>
+                                                                <input name="{{$kpi->id}}-{{$period->id }}-{{$one->id }}-{{$two->id }}-{{'update'}}" class="form-control" value ="{{$plan12}}" type="number" required>
                                                             </td>
                                                             @else
                                                             <td>
-                                                                <input name="{{$kpi->id}}{{$period->id }}{{$one->id }}{{$two->id }}" class="form-control"  type="number" required>
+                                                                <input name="{{$kpi->id}}-{{$period->id }}-{{$one->id }}-{{$two->id }}" class="form-control"  type="number" required>
                                                             </td>
                                                             @endif
                                                           @endforeach
@@ -269,12 +268,12 @@
                                                         @endphp
                                                         @if($plan1)
                                                             <td>
-                                                            <input type ="hidden" name="type" value="yes">
-                                                            <input name="{{$kpi->id}}{{$period->id }}{{$one->id }}" class="form-control" value ="{{$plan1}}" type="number" required>
+                                                             <input type ="hidden" name="type" value="yes">
+                                                            <input name="{{$kpi->id}}-{{$period->id }}-{{$one->id }}-{{'update'}}" class="form-control" value ="{{$plan1}}" type="number" required>
                                                         </td>
                                                         @else
                                                     <td>
-                                                    <input name="{{$kpi->id}}{{$period->id }}{{$one->id }}" class="form-control" type="number" required>
+                                                    <input name="{{$kpi->id}}-{{$period->id }}-{{$one->id }}" class="form-control" type="number" required>
                                                     </td>
                                                     @endif
                                                     @endforeach
@@ -290,10 +289,10 @@
                                             @endphp
                                             @if($plan)
                                                 <input type ="hidden" name="type" value="yes">
-                                                <input name="{{$kpi->id}}{{$period->id }}" class="form-control" value ="{{$plan}}" type="number" required>
+                                                <input name="{{$kpi->id}}-{{$period->id }}-{{'update'}}" class="form-control" value ="{{$plan}}" type="number" required>
                                             @else
                                                 <input class="form-control" type="number" placeholder="Enter KPI value"
-                                                    name="{{ $kpi->id}}{{$period->id }}" required>
+                                                    name="{{ $kpi->id}}-{{$period->id }}" required>
                                             @endif
                                             </p>
                                         @endif

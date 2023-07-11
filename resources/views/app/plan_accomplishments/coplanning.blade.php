@@ -158,9 +158,7 @@
                                 @endphp
                                 @forelse($KeyPeformanceIndicators as $kpi)
                                 @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)  
-                                    <div class="card collapsed-card p-2">
-                                        <div class="card-header">
-                                            <h3 class="card-title">KPI: {{ $kpi->KeyPeformanceIndicatorTs[0]->name }} (Reporting:{{$kpi->reportingPeriodType->reportingPeriodTypeTs[0]->name }})
+                                             <h3 class="card-title">KPI: {{ $kpi->KeyPeformanceIndicatorTs[0]->name }} (Reporting:{{$kpi->reportingPeriodType->reportingPeriodTypeTs[0]->name }})
                                             ({{$period->reportingPeriodTs[0]->name}})
                                               {{--  getReportingPeriod($kpi->reportingPeriodType->id,$date)--}}
                                             </h3>
@@ -168,7 +166,6 @@
                                                 <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
                                                 </button>
                                             </div>
-                                        </div>
  
                                         {{-- If KPI has Child ones (UG, PG) --}}
                                         @if (!$kpi->kpiChildOnes->isEmpty())
@@ -298,10 +295,8 @@
                                         @endif
 
                                     
-                                    </div>
-
-                                    </div>
-                                 @empty
+ 
+                                  @empty
                                 <h4>No reporting period type for kPI !</h4>
                                 @endforelse
                                  @php 
