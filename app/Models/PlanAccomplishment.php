@@ -112,11 +112,13 @@ class PlanAccomplishment extends Model
          return $sumch1ch3_value;
     }
     public function planOne($kkp,$one,$office){
-        $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id' , '=', $office)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->get();
+         $sum1 =0;
+        $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id' , $office)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->get();
         foreach ($planAccomplishments as $key => $planAccomplishment) {
-            return $planAccomplishment->plan_value;
+            $sum1 =$sum1 +$planAccomplishment->plan_value;
+           
         }
-        
+         return $sum1;
     }
     public function planOneTwo($kkp,$one,$two,$office){
         $sum12 =0;
@@ -127,9 +129,11 @@ class PlanAccomplishment extends Model
         return $sum12;
     }
     public function planSum($kkp,$office){
-        $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id' , '=', $office)->where('kpi_id' , '=', $kkp)->get();
+        $sum =0;
+        $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id' , $office)->where('kpi_id' , '=', $kkp)->get();
         foreach ($planAccomplishments as $key => $planAccomplishment) {
-           return $planAccomplishment->plan_value;
+            $sum = $sum+$planAccomplishment->plan_value;
         }
+        return $sum;
      }
 }

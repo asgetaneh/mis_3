@@ -26,36 +26,36 @@
                         @csrf
                         <div class="mb-3 row">
                             <table class="table table-borderless table-hover">
-                        <tbody>
+                                <tbody>
 
-                            @forelse($kpis['goal'] as $goal)
-                            <tr>
-                                {{-- <td class="rounded "> --}}
-                                     <a class="border btn btn-light btn-block text-left {{ Request::is('smis/plan/get-objectives/'.$goal->id) ? 'bg-primary' : '' }}" href='{{ route('get-objectives', $goal->id) }}' role="button" aria-expanded="false" aria-controls="collapseExample">
-                                    {{
-                                    optional($goal->goalTranslations[0])->name
-                                    ?? '-' }}
-                                </a>
-                                {{-- </td> --}}
+                                    @forelse($kpis['goal'] as $goal)
+                                        <tr>
+                                            {{-- <td class="rounded "> --}}
+                                            <a class="border btn btn-light btn-block text-left {{ Request::is('smis/plan/get-objectives/' . $goal->id) ? 'bg-primary' : '' }}"
+                                                href='{{ route('get-objectives', $goal->id) }}' role="button"
+                                                aria-expanded="false" aria-controls="collapseExample">
+                                                {{ optional($goal->goalTranslations[0])->name ?? '-' }}
+                                            </a>
+                                            {{-- </td> --}}
 
 
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="7">
-                                    @lang('crud.common.no_items_found')
-                                </td>
-                            </tr>
-                            @endforelse
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="7">
+                                                @lang('crud.common.no_items_found')
+                                            </td>
+                                        </tr>
+                                    @endforelse
 
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="7">
-                                 </td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="7">
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
                         </div>
                     </form>
                 </div>
@@ -152,187 +152,224 @@
                                 <form action="{{ route('plan.save') }}" method="POST">
                                     @csrf
 
-                                {{-- @if ($objective) --}}
-                                @php
-                               $KeyPeformanceIndicators = getKeyperormanceIndicators($objective,$user_offices);
-                                @endphp
-                                @forelse($KeyPeformanceIndicators as $kpi)
-                                @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
-                                    <div class="card collapsed-card p-2">
-                                        <div class="card-header">
-                                            <h3 class="card-title">KPI: {{ $kpi->KeyPeformanceIndicatorTs[0]->name }} (Reporting:{{$kpi->reportingPeriodType->reportingPeriodTypeTs[0]->name }})
-                                            ({{$period->reportingPeriodTs[0]->name}})
-                                              {{--  getReportingPeriod($kpi->reportingPeriodType->id,$date)--}}
-                                            </h3>
-                                            <div class="card-tools">
-                                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
-                                                </button>
-                                            </div>
-                                        </div>
- 
-                                        {{-- If KPI has Child ones (UG, PG) --}}
-                                        @if (!$kpi->kpiChildOnes->isEmpty())
-                                            <table class="table table-bordered">
-                                             <thead>
-                                            @if (!$kpi->kpiChildTwos->isEmpty())
-                                                @if (!$kpi->kpiChildThrees->isEmpty())
-                                                        <!-- <tr id="child-ones"> -->
-                                                        <tr>
-                                                            <th rowspan="2"></th>
-                                                            @foreach ($kpi->kpiChildOnes as $one)
-                                                                <th colspan="{{ $kpi->kpiChildThrees ->count() }}" >{{ $one->kpiChildOneTranslations[0]->name }}
-                                                                </th>
-                                                            @endforeach
-                                                        </tr>
-                                                        <tr>
-                                                            @foreach ($kpi->kpiChildOnes as $one)
-                                                                @foreach ($kpi->kpiChildThrees as $kpiThree)
-                                                                    <th  >{{ $kpiThree->kpiChildThreeTranslations[0]->name }}
-                                                                    </th>
-                                                                @endforeach
-                                                            @endforeach
-                                                        </tr>
-
-                                                            @foreach ($kpi->kpiChildTwos as $two)
-                                                            <tr>
-                                                                    <th>
-                                                                    {{ $two->kpiChildTwoTranslations[0]->name }}
-                                                                    </th>
-                                                                    @foreach ($kpi->kpiChildOnes as $one)
-                                                                    @foreach ($kpi->kpiChildThrees as $kpiThree)
-                                                                     @php
-                                                                     $plan = getSavedPlanIndividualOneTwoThree($planning_year[0]->id,$kpi->id,$period->id, $one->id, $two->id,$kpiThree->id,auth()->user()->offices[0]->id);
-                                                                    @endphp
-                                                                    @if($plan)
-                                                                    <td>
-                                                                    <input type ="hidden" name="type" value="yes">
-                                                                    <input name="{{$kpi->id}}-{{$period->id }}{{$one->id }}-{{$two->id }}-{{$kpiThree->id }}-{{'update'}}"  value = "{{$plan}}" class="form-control" type="number" required>
-                                                                    </td>
-                                                                    @else
-                                                                     <td>
-                                                                    <input name="{{$kpi->id}}-{{$period->id }}-{{$one->id }}-{{$two->id }}-{{$kpiThree->id }}"  class="form-control" type="number" required>
-                                                                    </td>
-                                                                    @endif
-
-                                                                @endforeach
-                                                            @endforeach
-                                                            </tr>
-                                                            @endforeach
-                                                  {{-- KPI has  child one and child two --}}
-                                                @else
-                                                     <tr>
-                                                      <th>#</th>
-                                                         @foreach ($kpi->kpiChildOnes as $one)
-                                                        <th>
-                                                        {{ $one->kpiChildOneTranslations[0]->name }}
-                                                        </th>
-                                                        @endforeach
-                                                    </tr>
-
-                                                        @foreach ($kpi->kpiChildTwos as $two)
-                                                         <tr>
-                                                        <th>
-                                                        {{ $two->kpiChildTwoTranslations[0]->name }}
-                                                        </th>
-                                                            @foreach ($kpi->kpiChildOnes as $one)
-                                                             @php
-                                                            $plan12 = getSavedPlanIndividualOneTwo($planning_year[0]->id,$kpi->id,$period->id, $one->id, $two->id,auth()->user()->offices[0]->id);
-                                                             @endphp
-                                                            @if($plan12!=0)
-                                                                <td>
-                                                                <input type ="hidden" name="type" value="yes">
-                                                                <input name="{{$kpi->id}}-{{$period->id }}-{{$one->id }}-{{$two->id }}-{{'update'}}" class="form-control" value ="{{$plan12}}" type="number" required>
-                                                            </td>
-                                                            @else
-                                                            <td>
-                                                                <input name="{{$kpi->id}}-{{$period->id }}-{{$one->id }}-{{$two->id }}" class="form-control"  type="number" required>
-                                                            </td>
-                                                            @endif
-                                                          @endforeach
-                                                    </tr>
-                                                     @endforeach
-                                                @endif
-                                            {{-- KPI has  child one only --}}
-                                            @else
-                                                 <tr>
-                                                     @foreach ($kpi->kpiChildOnes as $one)
-                                                    <th>
-                                                    {{ $one->kpiChildOneTranslations[0]->name }}
-                                                    </th>
-                                                    @endforeach
-                                                </tr>
-                                                <tr>
-                                                     @foreach ($kpi->kpiChildOnes as $one)
-                                                       @php
-                                                        $plan1 = getSavedPlanIndividualOne($planning_year[0]->id,$kpi->id,$period->id, $one->id, auth()->user()->offices[0]->id);
-                                                        @endphp
-                                                        @if($plan1)
-                                                            <td>
-                                                             <input type ="hidden" name="type" value="yes">
-                                                            <input name="{{$kpi->id}}-{{$period->id }}-{{$one->id }}-{{'update'}}" class="form-control" value ="{{$plan1}}" type="number" required>
-                                                        </td>
-                                                        @else
-                                                    <td>
-                                                    <input name="{{$kpi->id}}-{{$period->id }}-{{$one->id }}" class="form-control" type="number" required>
-                                                    </td>
-                                                    @endif
-                                                    @endforeach
-                                                </tr>
-                                            @endif
-                                        </thead>
-                                        </table>
-                                        {{-- KPI has no child one, which means just only plain input --}}
-                                        @else
-                                            <p class="mb-3">
-                                            @php
-                                            $plan = getSavedPlanIndividual($planning_year[0]->id,$kpi->id,$period->id, auth()->user()->offices[0]->id);
-                                            @endphp
-                                            @if($plan)
-                                                <input type ="hidden" name="type" value="yes">
-                                                <input name="{{$kpi->id}}-{{$period->id }}-{{'update'}}" class="form-control" value ="{{$plan}}" type="number" required>
-                                            @else
-                                                <input class="form-control" type="number" placeholder="Enter KPI value"
-                                                    name="{{ $kpi->id}}-{{$period->id }}" required>
-                                            @endif
-                                            </p>
-                                        @endif
-
-
-                                    </div>
-
-                                    </div>
-                                 @empty
-                                <h4>No reporting period type for kPI !</h4>
-                                @endforelse
-                                 @php
-                                    $plan_naration = getSavedPlanNaration($planning_year[0]->id,$kpi->id , auth()->user()->offices[0]->id);
+                                    {{-- @if ($objective) --}}
+                                    @php
+                                        $KeyPeformanceIndicators = getKeyperormanceIndicators($objective, $user_offices);
                                     @endphp
-                                    @if($plan_naration)
-                                    <input type ="hidden" name="type" value="yes">
-                                     <textarea name="desc{{ $kpi->id}}" style="height: 100px;" class="form-control summernote" name="" id="" placeholder="Narration here" required>{!! $plan_naration !!}</textarea>
-                                    @else
-                                    <textarea name="desc{{ $kpi->id}}" style="height: 100px;" class="form-control summernote" name="" id="" placeholder="Narration here" required></textarea>
-                                     @endif
-                                @empty
-                                    <h4>No KPI registered for this Goal and Objective!</h4>
-                                @endforelse
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                                    @forelse($KeyPeformanceIndicators as $kpi)
+                                        @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
+                                            <div class="card collapsed-card p-2">
+                                                <div class="card-header">
+                                                    <h3 class="card-title">KPI:
+                                                        {{ $kpi->KeyPeformanceIndicatorTs[0]->name }}
+                                                        (Reporting:{{ $kpi->reportingPeriodType->reportingPeriodTypeTs[0]->name }})
+                                                        ({{ $period->reportingPeriodTs[0]->name }})
+                                                        {{--  getReportingPeriod($kpi->reportingPeriodType->id,$date) --}}
+                                                    </h3>
+                                                    <div class="card-tools">
+                                                        <button type="button" class="btn btn-tool"
+                                                            data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
 
-                            </form>
+                                                {{-- If KPI has Child ones (UG, PG) --}}
+                                                @if (!$kpi->kpiChildOnes->isEmpty())
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            @if (!$kpi->kpiChildTwos->isEmpty())
+                                                                @if (!$kpi->kpiChildThrees->isEmpty())
+                                                                    <!-- <tr id="child-ones"> -->
+                                                                    <tr>
+                                                                        <th rowspan="2"></th>
+                                                                        @foreach ($kpi->kpiChildOnes as $one)
+                                                                            <th
+                                                                                colspan="{{ $kpi->kpiChildThrees->count() }}">
+                                                                                {{ $one->kpiChildOneTranslations[0]->name }}
+                                                                            </th>
+                                                                        @endforeach
+                                                                    </tr>
+                                                                    <tr>
+                                                                        @foreach ($kpi->kpiChildOnes as $one)
+                                                                            @foreach ($kpi->kpiChildThrees as $kpiThree)
+                                                                                <th>{{ $kpiThree->kpiChildThreeTranslations[0]->name }}
+                                                                                </th>
+                                                                            @endforeach
+                                                                        @endforeach
+                                                                    </tr>
+
+                                                                    @foreach ($kpi->kpiChildTwos as $two)
+                                                                        <tr>
+                                                                            <th>
+                                                                                {{ $two->kpiChildTwoTranslations[0]->name }}
+                                                                            </th>
+                                                                            @foreach ($kpi->kpiChildOnes as $one)
+                                                                                @foreach ($kpi->kpiChildThrees as $kpiThree)
+                                                                                    @php
+                                                                                        $plan = getSavedPlanIndividualOneTwoThree($planning_year[0]->id, $kpi->id, $period->id, $one->id, $two->id, $kpiThree->id, auth()->user()->offices[0]->id);
+                                                                                    @endphp
+                                                                                    @if ($plan)
+                                                                                        <td>
+                                                                                            <input type="hidden"
+                                                                                                name="type"
+                                                                                                value="yes">
+                                                                                            <input
+                                                                                                name="{{ $kpi->id }}-{{ $period->id }}{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}-{{ 'update' }}"
+                                                                                                value="{{ $plan }}"
+                                                                                                class="form-control"
+                                                                                                type="number" required>
+                                                                                        </td>
+                                                                                    @else
+                                                                                        <td>
+                                                                                            <input
+                                                                                                name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
+                                                                                                class="form-control"
+                                                                                                type="number" required>
+                                                                                        </td>
+                                                                                    @endif
+                                                                                @endforeach
+                                                                            @endforeach
+                                                                        </tr>
+                                                                    @endforeach
+                                                                    {{-- KPI has  child one and child two --}}
+                                                                @else
+                                                                    <tr>
+                                                                        <th>#</th>
+                                                                        @foreach ($kpi->kpiChildOnes as $one)
+                                                                            <th>
+                                                                                {{ $one->kpiChildOneTranslations[0]->name }}
+                                                                            </th>
+                                                                        @endforeach
+                                                                    </tr>
+
+                                                                    @foreach ($kpi->kpiChildTwos as $two)
+                                                                        <tr>
+                                                                            <th>
+                                                                                {{ $two->kpiChildTwoTranslations[0]->name }}
+                                                                            </th>
+                                                                            @foreach ($kpi->kpiChildOnes as $one)
+                                                                                @php
+                                                                                    $plan12 = getSavedPlanIndividualOneTwo($planning_year[0]->id, $kpi->id, $period->id, $one->id, $two->id, auth()->user()->offices[0]->id);
+                                                                                @endphp
+                                                                                @if ($plan12 != 0)
+                                                                                    <td>
+                                                                                        <input type="hidden" name="type"
+                                                                                            value="yes">
+                                                                                        <input
+                                                                                            name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ 'update' }}"
+                                                                                            class="form-control"
+                                                                                            value="{{ $plan12 }}"
+                                                                                            type="number" required>
+                                                                                    </td>
+                                                                                @else
+                                                                                    <td>
+                                                                                        <input
+                                                                                            name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}"
+                                                                                            class="form-control"
+                                                                                            type="number" required>
+                                                                                    </td>
+                                                                                @endif
+                                                                            @endforeach
+                                                                        </tr>
+                                                                    @endforeach
+                                                                @endif
+                                                                {{-- KPI has  child one only --}}
+                                                            @else
+                                                                <tr>
+                                                                    @foreach ($kpi->kpiChildOnes as $one)
+                                                                        <th>
+                                                                            {{ $one->kpiChildOneTranslations[0]->name }}
+                                                                        </th>
+                                                                    @endforeach
+                                                                </tr>
+                                                                <tr>
+                                                                    @foreach ($kpi->kpiChildOnes as $one)
+                                                                        @php
+                                                                            $plan1 = getSavedPlanIndividualOne($planning_year[0]->id, $kpi->id, $period->id, $one->id, auth()->user()->offices[0]->id);
+                                                                        @endphp
+                                                                        @if ($plan1)
+                                                                            <td>
+                                                                                <input type="hidden" name="type"
+                                                                                    value="yes">
+                                                                                <input
+                                                                                    name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ 'update' }}"
+                                                                                    class="form-control"
+                                                                                    value="{{ $plan1 }}"
+                                                                                    type="number" required>
+                                                                            </td>
+                                                                        @else
+                                                                            <td>
+                                                                                <input
+                                                                                    name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}"
+                                                                                    class="form-control" type="number"
+                                                                                    required>
+                                                                            </td>
+                                                                        @endif
+                                                                    @endforeach
+                                                                </tr>
+                                                            @endif
+                                                        </thead>
+                                                    </table>
+                                                    {{-- KPI has no child one, which means just only plain input --}}
+                                                @else
+                                                    <p class="mb-3">
+                                                        @php
+                                                            $plan = getSavedPlanIndividual($planning_year[0]->id, $kpi->id, $period->id, auth()->user()->offices[0]->id);
+                                                        @endphp
+                                                        @if ($plan)
+                                                            <input type="hidden" name="type" value="yes">
+                                                            <input
+                                                                name="{{ $kpi->id }}-{{ $period->id }}-{{ 'update' }}"
+                                                                class="form-control" value="{{ $plan }}"
+                                                                type="number" required>
+                                                        @else
+                                                            <input class="form-control" type="number"
+                                                                placeholder="Enter KPI value"
+                                                                name="{{ $kpi->id }}-{{ $period->id }}" required>
+                                                        @endif
+                                                    </p>
+                                                @endif
+                                                @php
+                                                    $plan_naration = getSavedPlanNaration($planning_year[0]->id, $kpi->id, auth()->user()->offices[0]->id);
+                                                @endphp
+                                                @if ($plan_naration)
+                                                    <label for="summernote">Major Activities</label>
+                                                    <input type="hidden" name="type" value="yes">
+                                                    <textarea name="desc{{ $kpi->id }}" style="height: 100px;" class="form-control summernote" name=""
+                                                        id="summernote" placeholder="Narration here" required>{!! $plan_naration !!}</textarea>
+                                                @else
+                                                    <label for="summernote">Major Activities</label>
+                                                    <textarea name="desc{{ $kpi->id }}" style="height: 100px;" class="form-control summernote" name=""
+                                                        id="summernote" placeholder="Narration here" required></textarea>
+                                                @endif
+
+                                            </div>
+
                         </div>
-
                     @empty
-                        {{-- <p>ugyftrdy</p> --}}
+                        <h4>No reporting period type for kPI !</h4>
                         @endforelse
 
+                    @empty
+                        <h4>No KPI registered for this Goal and Objective!</h4>
+                        @endforelse
+                        <button type="submit" class="btn btn-primary">Submit</button>
 
-
+                        </form>
                     </div>
-                </div>
 
-                <!-- /.card -->
+                @empty
+                    {{-- <p>ugyftrdy</p> --}}
+                    @endforelse
+
+
+
+                </div>
             </div>
+
+            <!-- /.card -->
         </div>
+    </div>
     </div>
 
     </div>
@@ -342,7 +379,7 @@
     {{-- <script src="{{ asset('assets/plugins/summernote/summernote-bs4.min.js') }}"></script> --}}
     <script type="text/javascript">
         $(document).ready(function() {
-            $('.summernote').summernote({
+            $('#summernote').summernote({
                 height: 150
             });
             $('.dropdown-toggle').dropdown()
@@ -379,7 +416,7 @@
     </script> --}}
 
     <script>
-        function expandAll(){
+        function expandAll() {
 
         }
     </script>

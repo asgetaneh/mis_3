@@ -28,7 +28,7 @@
     <td>
         @php 
         $planOne
-            = $planAcc->planOne($planAcc->Kpi->id, $one->id,$office->id);
+            = $planAcc->planOne($planAcc->Kpi->id, $one->id,$childAndHimOffKpi_array);
         @endphp
         {{$planOne}}
     </td>
@@ -42,7 +42,7 @@
                 foreach ($planSumch2 as $key => $value) {
                     $planSumch2_array[$key] = $value->id;
                 } 
-                $planSumch2_array = array_merge( $planSumch2_array, array($office->id));
+                $planSumch2_array = array_merge($planSumch2_array, array($office->id));
 
                 $planSumch1Total = $planAcc->planIndividualChOneSum($planAcc->Kpi->id,  $planSumch2_array);
                 @endphp

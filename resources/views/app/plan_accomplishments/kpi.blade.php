@@ -6,8 +6,14 @@
       
         <td> 
             @php 
-                $planOfOfficePlan
-                = $planAcc->planSum($planAcc->Kpi->id,$office->id);
+                $childAndHimOffKpi_array =[];
+                $childAndHimOffKpi = $office->offices; 
+                foreach ($childAndHimOffKpi as $key => $value) {
+                    $childAndHimOffKpi_array[$key] = $value->id;
+                } 
+                $childAndHimOffKpi_array = array_merge( $childAndHimOffKpi_array, array($office->id));
+                  $planOfOfficePlan
+                = $planAcc->planSum($planAcc->Kpi->id,$childAndHimOffKpi_array);
             @endphp
             <input name="sum"    type="number" value="{{$planOfOfficePlan}}"> 
         </td>
