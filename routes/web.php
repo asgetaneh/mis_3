@@ -1,20 +1,24 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\GoalController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\GenderController;
 use App\Http\Controllers\OfficeController;
-use App\Http\Controllers\StrategyController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\StrategyController;
 use App\Http\Controllers\InititiveController;
 use App\Http\Controllers\ObjectiveController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\KpiChildOneController;
+use App\Http\Controllers\KpiChildTwoController;
 use App\Http\Controllers\PerspectiveController;
 use App\Http\Controllers\PlaningYearController;
 use App\Http\Controllers\SuitableKpiController;
+use App\Http\Controllers\KpiChildThreeController;
 use App\Http\Controllers\GoalTranslationController;
 use App\Http\Controllers\ReportingPeriodController;
 use App\Http\Controllers\ReportingPeriodTController;
@@ -27,15 +31,12 @@ use App\Http\Controllers\InititiveTranslationController;
 use App\Http\Controllers\ObjectiveTranslationController;
 use App\Http\Controllers\ReportingPeriodTypeTController;
 use App\Http\Controllers\KeyPeformanceIndicatorController;
+use App\Http\Controllers\KpiChildOneTranslationController;
+use App\Http\Controllers\KpiChildTwoTranslationController;
 use App\Http\Controllers\PerspectiveTranslationController;
 use App\Http\Controllers\PlaningYearTranslationController;
 use App\Http\Controllers\KeyPeformanceIndicatorTController;
-use App\Http\Controllers\KpiChildOneTranslationController;
-use App\Http\Controllers\KpiChildTwoTranslationController;
 use App\Http\Controllers\KpiChildThreeTranslationController;
-use App\Http\Controllers\KpiChildOneController;
-use App\Http\Controllers\KpiChildTwoController;
-use App\Http\Controllers\KpiChildThreeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,7 +49,13 @@ use App\Http\Controllers\KpiChildThreeController;
 |
 */
 
-Route::get('/', function () { return view('welcome');});
+Route::get('/', function () {
+    if(Auth::check()){
+        return redirect('/dashboard');
+    }
+
+    return view('auth.login');
+});
 Route::get('/dashboard', [HomeController::class, 'index'])->name('home');
 
 // Route::get('/dashboard', function () { return view('layouts.dashboard');});

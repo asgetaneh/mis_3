@@ -86,7 +86,7 @@
                             <form action="{{ route('login') }}" method="post">
                                 @csrf
                                 <div class="form-floating mb-3">
-                                    <input type="email" class="form-control" id="floatingInput" name="email"
+                                    <input type="text" class="form-control" id="floatingInput" name="email"
                                         value="{{ old('email') }}" placeholder="Username">
                                     @if ($errors->has('email'))
                                         <span class="text-danger">{{ $errors->first('email') }}</span>
