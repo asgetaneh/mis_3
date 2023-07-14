@@ -28,7 +28,7 @@
                         @forelse($planAccomplishments as $planAcc)
                             @php
                                 $offices = $planAcc->getOfficeFromKpiAndOfficeList($planAcc->Kpi, $only_child_array);
-                            @endphp
+                             @endphp
                             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
                                 <div class="card collapsed-card p-2">
                                     <div class="card-header">

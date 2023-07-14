@@ -24,6 +24,8 @@ use Andegna\DateTimeFactory;
 use App\Models\PlaningYear;
 use App\Models\ReportNarration;
 use DateTime;
+use Redirect;
+
 
 
 
@@ -290,19 +292,22 @@ class PlanAccomplishmentController extends Controller
                 if($str_key[0]!='d'){ 
                     $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
                     $trueindex =0;
+                    $index = [];
                     foreach ($arr_to_split_text as $splitkey => $splitvalue) {
                         $index[$trueindex] =$splitvalue;
                         $trueindex++;
                         //echo $splitvalue;
                     }
-                    $length =  count($index);
+                    if($index[0] == 'files') continue;
+                     $length =  count($index);
                      $plan_accom = new PlanAccomplishment;
                     $plan_accom->kpi_id= $index[0];
                     $quarter = $index[1]; 
                     $plan_accom->reporting_period_id = $index[1];
 
-                    $getkpi = KeyPeformanceIndicator::find( $plan_accom->kpi_id);
-                    $report_period_type = $getkpi->reportingPeriodType->id;    
+                    $getkpi = KeyPeformanceIndicator::find($plan_accom->kpi_id);
+                    //dump($getkpi);
+                     $report_period_type = $getkpi->reportingPeriodType->id;    
                    if($length > 2){
                         $plan_accom->kpi_child_one_id= $index[2];
                         if($length > 3){
@@ -322,11 +327,18 @@ class PlanAccomplishmentController extends Controller
                 $kpi_match_for_naration = $index[0];
                 }
                 else{ //dd($index[0]);
+                    $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
+                    $trueindex =0;
+                     $index =[];
+                    foreach ($arr_to_split_text as $splitkey => $splitvalue) {
+                        $index[$trueindex] =$splitvalue;
+                        $trueindex++;
+                        } 
                    $naration =new ReportNarration;
                    $naration->plan_naration=$value;
-                    $naration->key_peformance_indicator_id=$index[0];
+                    $naration->key_peformance_indicator_id=$index[1];
                     $naration->office_id=$user_offices;
-                   // $naration->reporting_period_id=$report_period[0]->id;
+                    $naration->reporting_period_id=$index[2];
                     $naration->planing_year_id=$planning[0]->id;
                     $naration->save();
                  }
@@ -335,12 +347,22 @@ class PlanAccomplishmentController extends Controller
                     if($key!="type"){
                        // $this->updatePlan($key,$str_key,$length);
                         if($str_key[0]!='d'){
+                            $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
+                            $trueindex =0;
+                            $index =[];
+                            foreach ($arr_to_split_text as $splitkey => $splitvalue) {
+                                $index[$trueindex] =$splitvalue;
+                                $trueindex++;
+                                //echo $splitvalue;
+                            }
+                            if($index[0] == 'files') continue;
+                            $length =  count($index);
                             if($length > 2){
-                            $kpi_child_one_id= $str_key[2];
+                            $kpi_child_one_id= $index[2];
                                 if($length > 3){
-                                    $kpi_child_two_id= $str_key[3];
+                                    $kpi_child_two_id= $index[3];
                                     if($length > 4){
-                                        $kpi_child_three_id= $str_key[4];
+                                        $kpi_child_three_id= $index[4];
                                     }
                                     else{$kpi_child_three_id= NULL;  }
                                 }
@@ -353,21 +375,39 @@ class PlanAccomplishmentController extends Controller
                                  $kpi_child_one_id= NULL;
                                 $kpi_child_two_id= NULL;
                                 $kpi_child_three_id= NULL;
-                            }
+                            } 
+
+                        //     $check = PlanAccomplishment::
+                        //  where('planning_year_id' , '=', $planning[0]->id)
+                        // ->where('office_id' , '=', $user_offices)
+                        // ->where('kpi_id' , '=', $index[0])
+                        // ->where('reporting_period_id' , '=', $index[1])
+                        //  ->where('kpi_child_one_id' , '=', $kpi_child_one_id)
+                        //   ->where('kpi_child_two_id' , '=', $kpi_child_two_id)
+                        //    ->where('kpi_child_three_id' , '=',$kpi_child_three_id)
+                        //      ->get();
+                        //       dump( $index);
+                        //      dump( $check);
+                
                         $updated = tap(DB::table('plan_accomplishments')
                          ->where('planning_year_id' , '=', $planning[0]->id)
                         ->where('office_id' , '=', $user_offices)
-                        ->where('kpi_id' , '=', $str_key[0])
-                        ->where('reporting_period_id' , '=', $str_key[1])
+                        ->where('kpi_id' , '=', $index[0])
+                        ->where('reporting_period_id' , '=', $index[1])
                          ->where('kpi_child_one_id' , '=', $kpi_child_one_id)
                           ->where('kpi_child_two_id' , '=', $kpi_child_two_id)
                            ->where('kpi_child_three_id' , '=',$kpi_child_three_id))
-                            ->update(['plan_value' => $value])
+                            ->update(['plan_value' => (string)$value])
                             ->first();
-                    }
+                     }
                     else{ //dd($value);
+                         $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key); 
+                         $index = [];
+                             foreach ($arr_to_split_text as $splitkey => $splitvalue) {
+                                $index[$splitkey] =$splitvalue;
+                              }
                          $updated2 = tap(DB::table('report_narrations')
-                         ->where('planing_year_id' , '=', $planning[0]->id)->where('office_id' , '=', $user_offices)->where('key_peformance_indicator_id' , '=', $str_key[4]))
+                         ->where('planing_year_id' , '=', $planning[0]->id)->where('office_id' , '=', $user_offices)->where('key_peformance_indicator_id' , '=', $index[1])->where('reporting_period_id' , '=', $index[2]))
                             ->update(['plan_naration' => $value])
                             ->first();
                     }
@@ -382,7 +422,8 @@ class PlanAccomplishmentController extends Controller
 
             ->latest()
             ->paginate(15)
-            ->withQueryString();
+            ->withQueryString(); //dd("o");
+            return Redirect::back();
             return redirect()
             ->route('view-plan-accomplishment')
             ->withSuccess(__('crud.common.created'));
@@ -404,8 +445,10 @@ class PlanAccomplishmentController extends Controller
         $only_child = $obj_office->offices; 
         foreach ($only_child as $key => $value) {
            $only_child_array[$key] = $value->id;
-        } //dd($only_child) ;
-        $only_child_array = $all_child_and_subchild;
+        } 
+        $only_child_array = array_merge( $only_child_array,array($office));
+        //dd($only_child_array) ;
+        //$only_child_array = $all_child_and_subchild;
         if($obj_office->offices->isEmpty()){
                 $all_office_list = array($office); 
             }

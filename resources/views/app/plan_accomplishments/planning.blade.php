@@ -16,7 +16,7 @@
 
 @section('content')
 
-    <div class="row justify-content-center mt-5">
+    <div class="row justify-content-left mt-5">
         <div class="col-md-2">
 
             <div class="card">
@@ -89,14 +89,16 @@
                                                 <a class="nav-link" id="{{ $obj_ts->translation_id . '-tab' }}"
                                                     data-toggle="pill" href="{{ '#objective-' . $obj_ts->translation_id }}"
                                                     role="tab" aria-controls="{{ $obj_ts->translation_id }}"
-                                                    aria-selected="false">{{ $obj_ts->name }}</a>
+                                                    aria-selected="false">{{ $obj_ts->name }}
+                                                </a>
                                             </li>
                                         @else
                                             <li class="nav-item">
                                                 <a class="nav-link active" id="{{ $obj_ts->translation_id . '-tab' }}"
                                                     data-toggle="pill" href="{{ '#objective-' . $obj_ts->translation_id }}"
                                                     role="tab" aria-controls="{{ $obj_ts->translation_id }}"
-                                                    aria-selected="true">{{ $obj_ts->name }}</a>
+                                                    aria-selected="true">{{ $obj_ts->name }}
+                                                </a>
                                             </li>
 
                                             @php
@@ -116,19 +118,6 @@
                             @endforelse
                         </ul>
                     </div>
-
-                    {{-- <div class="card-body">
-                        @forelse($reportingTypes as $key => $type)
-                            @if ($type->reportingPeriodTypeTs[0]->name == 'Quarterly')
-                                <p class=""><span class="bg-primary px-3 mr-2"></span>Quarterly</p>
-                            @else
-                                <p class=""><span class="bg-success px-3 mr-2"></span>Yearly</p>
-                            @endif
-
-                        @empty
-                        @endforelse
-
-                    </div> --}}
 
                     <div class="card-body">
                         {{-- <button class="btn" onclick="expandAll()"><h5><i class="fas fa-plus"></i> Expand All</h5></button> --}}
@@ -162,8 +151,13 @@
                                                 <div class="card-header">
                                                     <h3 class="card-title">KPI:
                                                         {{ $kpi->KeyPeformanceIndicatorTs[0]->name }}
+                                                        @php
+                                                            $kpi_id = $kpi->id;
+                                                        @endphp
                                                         (Reporting:{{ $kpi->reportingPeriodType->reportingPeriodTypeTs[0]->name }})
-                                                        ({{ $period->reportingPeriodTs[0]->name }})
+                                                       <strong  > ({{ $period->reportingPeriodTs[0]->name }})</strong>
+                                                        <span name="{{ $kpi_id }}" id="{{$kpi_id}}{{$period->id}}"></span>
+
                                                         {{--  getReportingPeriod($kpi->reportingPeriodType->id,$date) --}}
                                                     </h3>
                                                     <div class="card-tools">
@@ -206,6 +200,8 @@
                                                                             @foreach ($kpi->kpiChildOnes as $one)
                                                                                 @foreach ($kpi->kpiChildThrees as $kpiThree)
                                                                                     @php
+                                                                                        $inputname = $kpi->id . $period->id;
+                                                                                        //echo ($inputname)."<br/>";
                                                                                         $plan = getSavedPlanIndividualOneTwoThree($planning_year[0]->id, $kpi->id, $period->id, $one->id, $two->id, $kpiThree->id, auth()->user()->offices[0]->id);
                                                                                     @endphp
                                                                                     @if ($plan)
@@ -214,19 +210,31 @@
                                                                                                 name="type"
                                                                                                 value="yes">
                                                                                             <input
-                                                                                                name="{{ $kpi->id }}-{{ $period->id }}{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}-{{ 'update' }}"
+                                                                                                 name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
                                                                                                 value="{{ $plan }}"
-                                                                                                class="form-control"
+                                                                                                class="form-control {{ $inputname }}"
                                                                                                 type="number" required>
+
+
                                                                                         </td>
                                                                                     @else
                                                                                         <td>
-                                                                                            <input
-                                                                                                name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
-                                                                                                class="form-control"
+                                                                                            <input id="selectProducts"
+                                                                                                 name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
+                                                                                                class="form-control {{ $inputname }}"
                                                                                                 type="number" required>
+
                                                                                         </td>
                                                                                     @endif
+                                                                                    <script>
+                                                                    $(".{{ $inputname }}").keyup(function() {
+                                                                         var tot = 0;
+                                                                        $(".{{ $inputname }}").each(function() {
+                                                                            tot += Number($(this).val());
+                                                                        });
+                                                                        $('#{{$kpi_id}}{{$period->id}}').text(tot);
+                                                                    });
+                                                                                    </script>
                                                                                 @endforeach
                                                                             @endforeach
                                                                         </tr>
@@ -252,11 +260,17 @@
                                                                                     $plan12 = getSavedPlanIndividualOneTwo($planning_year[0]->id, $kpi->id, $period->id, $one->id, $two->id, auth()->user()->offices[0]->id);
                                                                                 @endphp
                                                                                 @if ($plan12 != 0)
+                                                                                    @php
+                                                                                        $inputname = $kpi->id;
+                                                                                        $period->id;
+                                                                                        $one->id;
+                                                                                        $two->id;
+                                                                                    @endphp
                                                                                     <td>
                                                                                         <input type="hidden" name="type"
                                                                                             value="yes">
                                                                                         <input
-                                                                                            name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ 'update' }}"
+                                                                                            name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}"
                                                                                             class="form-control"
                                                                                             value="{{ $plan12 }}"
                                                                                             type="number" required>
@@ -285,6 +299,7 @@
                                                                 <tr>
                                                                     @foreach ($kpi->kpiChildOnes as $one)
                                                                         @php
+                                                                            $inputname = '{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}';
                                                                             $plan1 = getSavedPlanIndividualOne($planning_year[0]->id, $kpi->id, $period->id, $one->id, auth()->user()->offices[0]->id);
                                                                         @endphp
                                                                         @if ($plan1)
@@ -292,7 +307,7 @@
                                                                                 <input type="hidden" name="type"
                                                                                     value="yes">
                                                                                 <input
-                                                                                    name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ 'update' }}"
+                                                                                    name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}";
                                                                                     class="form-control"
                                                                                     value="{{ $plan1 }}"
                                                                                     type="number" required>
@@ -305,6 +320,25 @@
                                                                                     required>
                                                                             </td>
                                                                         @endif
+                                                                        <script>
+                                                                            $(function() {
+                                                                                $('input[name={{ $inputname }}]').on('change', function() {
+                                                                                    // Get the values, turn them into numbers
+                                                                                    var values = $(
+                                                                                        'input[name={{ $inputname }}]:checked, input[name={{ $inputname }}][type=text]'
+                                                                                    ).map(function() {
+                                                                                        return +this.value;
+                                                                                        //     ^---- coerce to number
+                                                                                    }).get();
+                                                                                    // Sum them up
+                                                                                    var sum = values.reduce(function(a, b) {
+                                                                                        return a + b;
+                                                                                    });
+                                                                                    // Show the result
+                                                                                    $('#{{ $kpi_id }}').text(sum);
+                                                                                });
+                                                                            });
+                                                                        </script>
                                                                     @endforeach
                                                                 </tr>
                                                             @endif
@@ -314,12 +348,13 @@
                                                 @else
                                                     <p class="mb-3">
                                                         @php
+                                                            $inputname = '{{ $kpi->id }}-{{ $period->id }}';
                                                             $plan = getSavedPlanIndividual($planning_year[0]->id, $kpi->id, $period->id, auth()->user()->offices[0]->id);
                                                         @endphp
                                                         @if ($plan)
                                                             <input type="hidden" name="type" value="yes">
                                                             <input
-                                                                name="{{ $kpi->id }}-{{ $period->id }}-{{ 'update' }}"
+                                                                name="{{ $kpi->id }}-{{ $period->id }}"
                                                                 class="form-control" value="{{ $plan }}"
                                                                 type="number" required>
                                                         @else
@@ -327,35 +362,45 @@
                                                                 placeholder="Enter KPI value"
                                                                 name="{{ $kpi->id }}-{{ $period->id }}" required>
                                                         @endif
+                                                        <script>
+                                                            $(".summe").keyup(function() {
+                                                        var tot = 0;
+                                                        $(".summe").each(function() {
+                                                            tot += Number($(this).val());
+                                                        });
+                                                        $('#tot-qty').text(tot + ' usd');
+                                                        });
+                                                        </script>
                                                     </p>
                                                 @endif
                                                 @php
-                                                    $plan_naration = getSavedPlanNaration($planning_year[0]->id, $kpi->id, auth()->user()->offices[0]->id);
+                                                    $plan_naration = getSavedPlanNaration($planning_year[0]->id, $period->id,$kpi->id, auth()->user()->offices[0]->id);
                                                 @endphp
                                                 @if ($plan_naration)
                                                     <label for="summernote">Major Activities</label>
                                                     <input type="hidden" name="type" value="yes">
-                                                    <textarea name="desc{{ $kpi->id }}" style="height: 100px;" class="form-control summernote" name=""
+                                                    <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote"
                                                         id="summernote" placeholder="Narration here" required>{!! $plan_naration !!}</textarea>
                                                 @else
                                                     <label for="summernote">Major Activities</label>
-                                                    <textarea name="desc{{ $kpi->id }}" style="height: 100px;" class="form-control summernote" name=""
+                                                    <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote" 
                                                         id="summernote" placeholder="Narration here" required></textarea>
                                                 @endif
 
                                             </div>
 
+
+                                        @empty
+                                            <h4>No reporting period type for kPI !</h4>
+                                        @endforelse
+
+                                    @empty
+                                        <h4>No KPI registered for this Goal and Objective!</h4>
+                                    @endforelse
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+
+                                </form>
                         </div>
-                    @empty
-                        <h4>No reporting period type for kPI !</h4>
-                        @endforelse
-
-                    @empty
-                        <h4>No KPI registered for this Goal and Objective!</h4>
-                        @endforelse
-                        <button type="submit" class="btn btn-primary">Submit</button>
-
-                        </form>
                     </div>
 
                 @empty
@@ -419,6 +464,23 @@
         function expandAll() {
 
         }
+
+        $(function() {
+            $('input[name=selectProducts]').on('change', function() {
+                // Get the values, turn them into numbers
+                var values = $('input[name=selectProducts]:checked, input[name=selectProducts][type=text]')
+                    .map(function() {
+                        return +this.value;
+                        //     ^---- coerce to number
+                    }).get();
+                // Sum them up
+                var sum = values.reduce(function(a, b) {
+                    return a + b;
+                });
+                // Show the result
+                $('#products').text(sum);
+            });
+        });
     </script>
 
 @endsection

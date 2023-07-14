@@ -46,8 +46,8 @@ if (! function_exists('gettrans')) {
             return $planAccomplishment->plan_value;
         }
     }
-    function getSavedPlanNaration($year,$kpi, $office){
-     $ReportNarrations = ReportNarration::select()->where('planing_year_id' , '=', $year)->where('office_id' , '=', $office)->where('key_peformance_indicator_id' , '=', $kpi)->get();//dd($planAccomplishments);
+    function getSavedPlanNaration($year,$period,$kpi, $office){
+     $ReportNarrations = ReportNarration::select()->where('planing_year_id' , '=', $year)->where('reporting_period_id' , '=', $period)->where('office_id' , '=', $office)->where('key_peformance_indicator_id' , '=', $kpi)->get();//dd($planAccomplishments);
         foreach ($ReportNarrations as $key => $ReportNarration) {
             return $ReportNarration->plan_naration;
         }
