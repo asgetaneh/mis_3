@@ -1,20 +1,24 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\GoalController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\GenderController;
 use App\Http\Controllers\OfficeController;
-use App\Http\Controllers\StrategyController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\StrategyController;
 use App\Http\Controllers\InititiveController;
 use App\Http\Controllers\ObjectiveController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\KpiChildOneController;
+use App\Http\Controllers\KpiChildTwoController;
 use App\Http\Controllers\PerspectiveController;
 use App\Http\Controllers\PlaningYearController;
 use App\Http\Controllers\SuitableKpiController;
+use App\Http\Controllers\KpiChildThreeController;
 use App\Http\Controllers\GoalTranslationController;
 use App\Http\Controllers\ReportingPeriodController;
 use App\Http\Controllers\ReportingPeriodTController;
@@ -27,15 +31,12 @@ use App\Http\Controllers\InititiveTranslationController;
 use App\Http\Controllers\ObjectiveTranslationController;
 use App\Http\Controllers\ReportingPeriodTypeTController;
 use App\Http\Controllers\KeyPeformanceIndicatorController;
+use App\Http\Controllers\KpiChildOneTranslationController;
+use App\Http\Controllers\KpiChildTwoTranslationController;
 use App\Http\Controllers\PerspectiveTranslationController;
 use App\Http\Controllers\PlaningYearTranslationController;
 use App\Http\Controllers\KeyPeformanceIndicatorTController;
-use App\Http\Controllers\KpiChildOneTranslationController;
-use App\Http\Controllers\KpiChildTwoTranslationController;
 use App\Http\Controllers\KpiChildThreeTranslationController;
-use App\Http\Controllers\KpiChildOneController;
-use App\Http\Controllers\KpiChildTwoController;
-use App\Http\Controllers\KpiChildThreeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,7 +49,13 @@ use App\Http\Controllers\KpiChildThreeController;
 |
 */
 
-Route::get('/', function () { return view('welcome');});
+Route::get('/', function () {
+    if(Auth::check()){
+        return redirect('/dashboard');
+    }
+
+    return view('auth.login');
+});
 Route::get('/dashboard', [HomeController::class, 'index'])->name('home');
 
 // Route::get('/dashboard', function () { return view('layouts.dashboard');});
@@ -84,36 +91,46 @@ Route::prefix('/')
                 );
                 Route::resource('languages', LanguageController::class);
 
-                Route::get('kpi-chain-two/{id}', [KeyPeformanceIndicatorController::class, 'kpiChainTwo'])->name('kpi-chain-two.create');
-                Route::POST('kpi-chain-two/save', [KeyPeformanceIndicatorController::class, 'kpiChainTwoStore'])->name('kpi-chain-two.store');
-                Route::DELETE('kpi-chain-two-remove/{kpiOne}/{childtwo}', [KeyPeformanceIndicatorController::class, 'kpiChainTwoRemove'])->name('kpi-chain-two.remove');
-                Route::get('kpi-chain-three/{id}', [KeyPeformanceIndicatorController::class, 'kpiChainThree'])->name('kpi-chain-three.create');
-                Route::POST('kpi-chain-three/save', [KeyPeformanceIndicatorController::class, 'kpiChainThreeStore'])->name('kpi-chain-three.store');
-                Route::DELETE('kpi-chain-three-remove/{kpiTwo}/{childthree}', [KeyPeformanceIndicatorController::class, 'kpiChainThreeRemove'])->name('kpi-chain-three.remove');
+                Route::prefix('/kpi')->group(function () {
+                    Route::get('kpi-chain-two/{id}', [KeyPeformanceIndicatorController::class, 'kpiChainTwo'])->name('kpi-chain-two.create');
+                    Route::POST('kpi-chain-two/save', [KeyPeformanceIndicatorController::class, 'kpiChainTwoStore'])->name('kpi-chain-two.store');
+                    Route::DELETE('kpi-chain-two-remove/{kpiOne}/{childtwo}', [KeyPeformanceIndicatorController::class, 'kpiChainTwoRemove'])->name('kpi-chain-two.remove');
+                    Route::get('kpi-chain-three/{id}', [KeyPeformanceIndicatorController::class, 'kpiChainThree'])->name('kpi-chain-three.create');
+                    Route::POST('kpi-chain-three/save', [KeyPeformanceIndicatorController::class, 'kpiChainThreeStore'])->name('kpi-chain-three.store');
+                    Route::DELETE('kpi-chain-three-remove/{kpiTwo}/{childthree}', [KeyPeformanceIndicatorController::class, 'kpiChainThreeRemove'])->name('kpi-chain-three.remove');
+
+                    Route::resource(
+                        'key-peformance-indicators',
+                        KeyPeformanceIndicatorController::class
+                    );
+
+                    Route::resource(
+                        'kpi-child-one-translations',
+                        KpiChildOneTranslationController::class
+                    );
+                    Route::resource('kpi-child-threes', KpiChildThreeController::class);
+                    Route::resource(
+                        'kpi-child-three-translations',
+                        KpiChildThreeTranslationController::class
+                    );
+                    Route::resource('kpi-child-twos', KpiChildTwoController::class);
+                    Route::resource(
+                        'kpi-child-two-translations',
+                        KpiChildTwoTranslationController::class
+                    );
+
+                    Route::get('kpi_chain/{id}', [KeyPeformanceIndicatorController::class, 'kpiChain'])->name('kpi-Chain');
+                    Route::POST('kpi_chain/save', [KeyPeformanceIndicatorController::class, 'kpiChainSave'])->name('kpi-Chain-save');
+                    Route::DELETE('kpi_chain_remove/{kpi}/{childone}', [KeyPeformanceIndicatorController::class, 'kpiChainRemove'])->name('kpi-Chain-remove');
+                });
+
+
 
                 Route::resource('goals', GoalController::class);
                 Route::resource('goal-translations', GoalTranslationController::class);
                 Route::resource('genders', GenderController::class);
                 Route::resource('inititives', InititiveController::class);
-                Route::resource(
-                    'key-peformance-indicators',
-                    KeyPeformanceIndicatorController::class
-                );
 
-                Route::resource(
-                    'kpi-child-one-translations',
-                    KpiChildOneTranslationController::class
-                );
-                Route::resource('kpi-child-threes', KpiChildThreeController::class);
-                Route::resource(
-                    'kpi-child-three-translations',
-                    KpiChildThreeTranslationController::class
-                );
-                Route::resource('kpi-child-twos', KpiChildTwoController::class);
-                Route::resource(
-                    'kpi-child-two-translations',
-                    KpiChildTwoTranslationController::class
-                );
                 Route::resource('objectives', ObjectiveController::class);
                 Route::resource('office_translations', OfficeTranslationController::class);
                 Route::resource('perspectives', PerspectiveController::class);
@@ -153,9 +170,6 @@ Route::prefix('/')
                     PerspectiveTranslationController::class
                 );
 
-                Route::get('kpi_chain/{id}', [KeyPeformanceIndicatorController::class, 'kpiChain'])->name('kpi-Chain');
-                Route::POST('kpi_chain/save', [KeyPeformanceIndicatorController::class, 'kpiChainSave'])->name('kpi-Chain-save');
-                Route::DELETE('kpi_chain_remove/{kpi}/{childone}', [KeyPeformanceIndicatorController::class, 'kpiChainRemove'])->name('kpi-Chain-remove');
                 Route::POST('assign-office', [HomeController::class, 'assignOffice'])->name('assign-office');
 
             });

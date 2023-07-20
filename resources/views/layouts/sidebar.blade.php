@@ -115,39 +115,51 @@
                                         </li>
                                     @endcan
                                     @can('view-any', App\Models\KeyPeformanceIndicator::class)
-                                        <li class="nav-item">
-                                            <a href="{{ route('key-peformance-indicators.index') }}"
+                                        <li class="nav-item {{ Request::is('smis/setting/kpi/*') ? 'menu-open' : '' }}">
+                                            <a href="#" class="nav-link">
+                                                <i class="nav-icon fas fa-link"></i>
+                                                <p>
+                                                    KPI
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                <li class="nav-item">
+                                                    <a href="{{ route('key-peformance-indicators.index') }}"
                                                 class="nav-link
-                                {{ Request::is('smis/setting/key-peformance-indicators/*') || Request::is('smis/setting/key-peformance-indicators') || Request::is('smis/setting/kpi_chain/*') || Request::is('smis/setting/kpi-chain-two/*') || Request::is('smis/setting/kpi-chain-three/*') ? 'active' : '' }}
+                                {{ Request::is('smis/setting/kpi/key-peformance-indicators/*') || Request::is('smis/setting/kpi/key-peformance-indicators') || Request::is('smis/setting/kpi//kpi_chain/*') || Request::is('smis/setting/kpi/kpi-chain-two/*') || Request::is('smis/setting/kpi/kpi-chain-three/*') ? 'active' : '' }}
 
                                 ">
                                                 <i class="nav-icon icon ion-md-radio-button-off"></i>
                                                 <p>Key Peformance Indicators</p>
                                             </a>
-                                        </li>
-                                    @endcan
-                                    @can('view-any', App\Models\Inititive::class)
+                                                </li>
+
+                                                @can('view-any', App\Models\Inititive::class)
                                         <li class="nav-item">
-                                            <a href="{{ route('kpi-child-one-translations.index') }}" class="nav-link {{ Request::is('smis/setting/kpi-child-one-translations/*') || Request::is('smis/setting/kpi-child-one-translations') ? 'active' : '' }}">
+                                            <a href="{{ route('kpi-child-one-translations.index') }}" class="nav-link {{ Request::is('smis/setting/kpi/kpi-child-one-translations/*') || Request::is('smis/setting/kpi/kpi-child-one-translations') ? 'active' : '' }}">
                                                 <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                                <p>Inititives Level One</p>
+                                                <p>Disaggregation Level One</p>
                                             </a>
                                         </li>
                                     @endcan
                                     @can('view-any', App\Models\Inititive::class)
                                         <li class="nav-item">
-                                            <a href="{{ route('kpi-child-two-translations.index') }}" class="nav-link {{ Request::is('smis/setting/kpi-child-two-translations/*') || Request::is('smis/setting/kpi-child-two-translations') ? 'active' : '' }}">
+                                            <a href="{{ route('kpi-child-two-translations.index') }}" class="nav-link {{ Request::is('smis/setting/kpi/kpi-child-two-translations/*') || Request::is('smis/setting/kpi/kpi-child-two-translations') ? 'active' : '' }}">
                                                 <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                                <p>Inititives Level Two</p>
+                                                <p>Disaggregation Level Two</p>
                                             </a>
                                         </li>
                                     @endcan
                                     @can('view-any', App\Models\Inititive::class)
                                         <li class="nav-item">
-                                            <a href="{{ route('kpi-child-three-translations.index') }}" class="nav-link {{ Request::is('smis/setting/kpi-child-three-translations/*') || Request::is('smis/setting/kpi-child-three-translations') ? 'active' : '' }}">
+                                            <a href="{{ route('kpi-child-three-translations.index') }}" class="nav-link {{ Request::is('smis/setting/kpi/kpi-child-three-translations/*') || Request::is('smis/setting/kpi/kpi-child-three-translations') ? 'active' : '' }}">
                                                 <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                                <p>Inititives Level Three</p>
+                                                <p>Disaggregation Level Three</p>
                                             </a>
+                                        </li>
+                                    @endcan
+                                            </ul>
                                         </li>
                                     @endcan
 
@@ -241,8 +253,8 @@
 
                                     @php
                                     $user = auth()->user();
-                                    $office = $user->offices[0]; 
-                                    $childAndHimOffKpi = $office->offices; 
+                                    $office = $user->offices[0];
+                                    $childAndHimOffKpi = $office->offices;
                                     @endphp
                                     @if (!$office->offices->isEmpty())
                                     @can('view-any', App\Models\PlanAccomplishment::class)

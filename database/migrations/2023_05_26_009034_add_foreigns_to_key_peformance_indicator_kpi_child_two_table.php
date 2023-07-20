@@ -14,7 +14,7 @@ return new class extends Migration {
             Blueprint $table
         ) {
             $table
-                ->foreign('key_peformance_indicator_id')
+                ->foreign('key_peformance_indicator_id', 'kpi_two')
                 ->references('id')
                 ->on('key_peformance_indicators')
                 ->onUpdate('CASCADE')

@@ -14,14 +14,14 @@ return new class extends Migration {
             Blueprint $table
         ) {
             $table
-                ->foreign('kpi_child_three_id')
+                ->foreign('kpi_child_three_id', 'three_id')
                 ->references('id')
                 ->on('kpi_child_threes')
                 ->onUpdate('CASCADE')
                 ->onDelete('CASCADE');
 
             $table
-                ->foreign('key_peformance_indicator_id')
+                ->foreign('key_peformance_indicator_id', 'kpi_three')
                 ->references('id')
                 ->on('key_peformance_indicators')
                 ->onUpdate('CASCADE')
