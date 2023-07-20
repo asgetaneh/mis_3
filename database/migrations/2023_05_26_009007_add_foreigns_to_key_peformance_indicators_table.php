@@ -38,6 +38,13 @@ return new class extends Migration {
                 ->on('reporting_period_types')
                 ->onUpdate('CASCADE')
                 ->onDelete('CASCADE');
+            $table
+                ->foreign('behavior_id')
+                ->references('id')
+                ->on('behaviors')
+                ->onUpdate('CASCADE')
+                ->onDelete('CASCADE');
+                
         });
     }
 

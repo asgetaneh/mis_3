@@ -1,21 +1,41 @@
 <table class ="table table-bordered">
+    @if($first==1)
     <tr>
-        <td style="width:80%;">
-            Offices: {{$office->officeTranslations[0]->name}}
-        </td>
-      
-        <td> 
-            @php 
-                $childAndHimOffKpi_array =[];
-                $childAndHimOffKpi = $office->offices; 
-                foreach ($childAndHimOffKpi as $key => $value) {
-                    $childAndHimOffKpi_array[$key] = $value->id;
-                } 
-                $childAndHimOffKpi_array = array_merge( $childAndHimOffKpi_array, array($office->id));
-                  $planOfOfficePlan
-                = $planAcc->planSum($planAcc->Kpi->id,$childAndHimOffKpi_array);
+        <th>
+            Offices
+        </th>
+        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+             <th>  {{ $period->reportingPeriodTs[0]->name }}   </th>
+        @empty
+        @endforelse
+    </tr>
+    @php $first =0; @endphp
+    @endif
+    <tr> 
+           <td rowspan="2">{{$office->officeTranslations[0]->name}}</td>
+        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+            @php
+                $planOfOfficePlan
+                = $planAcc->planSum($planAcc->Kpi->id,$office, $period->id);
+               $narration = $planAcc->getNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
             @endphp
-            <input name="sum"    type="number" value="{{$planOfOfficePlan}}"> 
-        </td>
-</tr>
+            <td>
+               {{$planOfOfficePlan}} 
+            </td>
+        @empty
+        @endforelse
+ </tr>
+ <tr>
+    <td>
+        Major Activities
+    </td>
+    <td colspan="4">
+         @foreach ($narration as $key => $plannaration) 
+              {!! html_entity_decode($plannaration->plan_naration) !!}
+              @php
+              echo "<br/>"  
+              @endphp
+        @endforeach
+      </td>
+ </tr>
 </table>  

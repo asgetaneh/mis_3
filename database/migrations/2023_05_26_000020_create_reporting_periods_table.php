@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('reporting_periods', function (Blueprint $table) {
             $table->bigIncrements('id');
-            // $table->unsignedBigInteger('planing_year_id');
+            $table->Integer('slug')->default(2);
             $table->string('start_date');
             $table->string('end_date');
             $table->unsignedBigInteger('reporting_period_type_id');

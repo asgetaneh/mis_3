@@ -443,6 +443,7 @@ class PlanAccomplishmentController extends Controller
         $all_office_list = $all_child_and_subchild;
         //$all_office_list = array_merge( $all_child_and_subchild,array($office));
         $only_child = $obj_office->offices; 
+        $only_child_array = [];
         foreach ($only_child as $key => $value) {
            $only_child_array[$key] = $value->id;
         } 
@@ -468,24 +469,20 @@ class PlanAccomplishmentController extends Controller
                      foreach ($kpii as $key => $value) {
                        //dd($value->planacc);
                      }
-                
-        // $kpii = DB::table(' key_peformance_indicators')
-        //      ->select('*', DB::raw('SUM(plan_value) AS sum'))->whereIn('office_id', $all_office_list)->groupBy('office_id')
-        //     ->get(); 
  
-       $planAccomplishments = PlanAccomplishment::whereIn('office_id', $all_office_list)->select('*', DB::raw('SUM(plan_value) AS sum'))->groupBy('kpi_id')
-            ->latest()
-            ->paginate(9999999)
-            ->withQueryString(); //dd($planAccomplishments);
+       $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $all_office_list)->select('*', DB::raw('SUM(plan_value) AS sum'))->
+        where('reporting_periods.slug',"=", 1)
+       ->groupBy('kpi_id') 
+             ->get(); 
+             //dd($planAccomplishments);
         if($obj_office->offices->isEmpty()){  // office with no child
-               return view(
-            'app.plan_accomplishments.view-planning',
-            compact('planAccomplishments', 'planAccomplishment_all','all_office_list','office','search')
-        );
-            }
+              return redirect()
+            ->route('plan-accomplishment',$obj_office);
+                         }
+        $planning_year = PlaningYear::where('is_active',true)->get(); 
         return view(
             'app.plan_accomplishments.coview-planning',
-            compact('planAccomplishments', 'planAccomplishment_all','all_office_list','office','only_child_array','search')
+            compact('planAccomplishments', 'planAccomplishment_all','all_office_list','only_child_array','planning_year','obj_office','search')
         );
 
    }
@@ -514,5 +511,35 @@ class PlanAccomplishmentController extends Controller
             }
         }        
    }
+      public function planApproved(Request $request){
+        // getofficel level i.e first approved,second,...
+         $approved_list = $request->input();
+          foreach ($approved_list as $key => $value) {
+            $str_key= (string)$key ;
+              if($str_key!='_token'){             
+                foreach ($value as $key2 => $value2) {
+                     $arr_to_split_text = preg_split("/[_,\- ]+/", $value2);
+                     $index = [];
+                    foreach ($arr_to_split_text as $splitkey => $splitvalue) {
+                        $index[$splitkey] =$splitvalue;
+                 }
+                    dump($index);
+                }
+                }
+              }
+        dd("c");
+        $updated = tap(DB::table('plan_accomplishments')
+            ->where('planning_year_id' , '=', $planning[0]->id)
+        ->where('office_id' , '=', $user_offices)
+        ->where('kpi_id' , '=', $index[0])
+        ->where('reporting_period_id' , '=', $index[1])
+            ->where('kpi_child_one_id' , '=', $kpi_child_one_id)
+            ->where('kpi_child_two_id' , '=', $kpi_child_two_id)
+            ->where('kpi_child_three_id' , '=',$kpi_child_three_id))
+            ->update(['plan_value' => (string)$value])
+            ->first();
+       
+      }
+
 
 }

@@ -42,19 +42,27 @@ class PlanAccomplishment extends Model
         return $this->belongsTo(PlaningYear::class);
     }
     public function getOfficeFromKpiAndOfficeList($kpi,$only_child_array) {//dump($off_list);
-        $offices = Office::select('offices.*')
-                      ->join('kpi_office', 'offices.id', '=', 'kpi_office.office_id')
-                     ->join('key_peformance_indicators', 'key_peformance_indicators.id', '=', 'kpi_office.kpi_id')
-                      ->whereIn('office_id', $only_child_array)
-                      ->where('kpi_id' , '=', $kpi->id)
-                     ->get();
-            return $offices;
+             $offices = Office::select('offices.*')
+                        ->whereIn('id', $only_child_array)
+        //               ->where('kpi_id' , '=', $kpi->id)
+                      ->get();
+
+        // $offices = Office::select('offices.*')
+        //               ->join('kpi_office', 'offices.id', '=', 'kpi_office.office_id')
+        //              ->join('key_peformance_indicators', 'key_peformance_indicators.id', '=', 'kpi_office.kpi_id')
+        //               ->whereIn('office_id', $only_child_array)
+        //               ->where('kpi_id' , '=', $kpi->id)
+        //              ->get();
+             return $offices;
 
         
     }
-    public function planIndividual($kkp,$one,$two,$three,$all_office_list){
+    public function planIndividual($kkp,$one,$two,$three,$office,$period){
+         $childAndHimOffKpi_array =[];
+        $childAndHimOffKpi = office_all_childs_ids($office); 
+        $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
         $sum_of_sub_office = 0;
-        $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $all_office_list)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_two_id' , '=', $two)->where('kpi_child_three_id' , '=', $three)->get();//dd($planAccomplishments);
+        $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $childAndHimOffKpi_array)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_two_id' , '=', $two)->where('kpi_child_three_id' , '=', $three)->where('reporting_period_id' , '=', $period)->get();//dd($planAccomplishments);
         foreach ($planAccomplishments as $key => $planAccomplishment) {
            $sum_of_sub_office = $sum_of_sub_office+$planAccomplishment->plan_value;
         }
@@ -81,9 +89,9 @@ class PlanAccomplishment extends Model
          return $sumch1ch3_value;
         
     }
-    public function planIndividualChTwoSum($kkp,$two,$office){
+    public function planIndividualChTwoSum($kkp,$two,$office ,$period){
         $sumch1ch3_value = 0;
-        $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id' , $office)->where('kpi_id' , '=', $kkp)->where('kpi_child_two_id' , '=', $two)->get();
+        $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id' , $office)->where('kpi_id' , '=', $kkp)->where('kpi_child_two_id' , '=', $two)->where('reporting_period_id' , '=', $period)->get();
         foreach ($planAccomplishments as $key => $planAccomplishment) {
 
             $sumch1ch3_value = $sumch1ch3_value+$planAccomplishment->plan_value;
@@ -104,36 +112,64 @@ class PlanAccomplishment extends Model
     }
 
     public function planSumOfKpi($kkp,$office){
+        $childAndHimOffKpi_array =[];
+        $childAndHimOffKpi = office_all_childs_ids($office); 
+        $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
          $sumch1ch3_value = 0;
-        $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $office)->where('kpi_id' , '=', $kkp)->get();
+        $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $childAndHimOffKpi_array)->where('kpi_id' , '=', $kkp)->get();
         foreach ($planAccomplishments as $key => $planAccomplishment) {
              $sumch1ch3_value = $sumch1ch3_value+$planAccomplishment->plan_value;
          } //dd($sumch1ch3_value);
          return $sumch1ch3_value;
     }
-    public function planOne($kkp,$one,$office){
+    public function planOne($kkp,$one,$office,$period){
+         $childAndHimOffKpi_array =[];
+        $childAndHimOffKpi = office_all_childs_ids($office); 
+        $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
          $sum1 =0;
-        $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id' , $office)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->get();
+        $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id' , $childAndHimOffKpi_array)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->where('reporting_period_id' , '=', $period)->get();
         foreach ($planAccomplishments as $key => $planAccomplishment) {
             $sum1 =$sum1 +$planAccomplishment->plan_value;
            
         }
          return $sum1;
     }
-    public function planOneTwo($kkp,$one,$two,$office){
+    public function planOneTwo($kkp,$one,$two,$office,$period){
+         $childAndHimOffKpi_array =[];
+        $childAndHimOffKpi = office_all_childs_ids($office); 
+        $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
         $sum12 =0;
-        $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $office)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_two_id' , '=', $two)->get();//dd($planAccomplishments);
+        $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $childAndHimOffKpi_array)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_two_id' , '=', $two)->where('reporting_period_id' , '=', $period)->get();//dd($planAccomplishments);
         foreach ($planAccomplishments as $key => $planAccomplishment) {
             $sum12 = $sum12+$planAccomplishment->plan_value;
         }
         return $sum12;
     }
-    public function planSum($kkp,$office){
+    public function planSum($kkp,$office,$period){
+         $childAndHimOffKpi_array =[];
+        $childAndHimOffKpi = office_all_childs_ids($office); 
+        $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
         $sum =0;
-        $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id' , $office)->where('kpi_id' , '=', $kkp)->get();
+        $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id' , $childAndHimOffKpi_array)->where('kpi_id' , '=', $kkp)->where('reporting_period_id' , '=', $period)->get();
         foreach ($planAccomplishments as $key => $planAccomplishment) {
             $sum = $sum+$planAccomplishment->plan_value;
         }
         return $sum;
      }
+    public function getNarration($kkp,$year,$office,$period){
+        // get all child and subchild offices for login user
+        $childAndHimOffKpi_array =[];
+        $childAndHimOffKpi = office_all_childs_ids($office); 
+        $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
+        $plannarations = ReportNarration::select('plan_naration')->whereIn('office_id' , $childAndHimOffKpi_array)->where('key_peformance_indicator_id' , '=', $kkp)->where('planing_year_id' , '=', $year)->get();
+            return $plannarations;
+          foreach ($plannarations as $key => $plannaration) {
+             return $plannaration->plan_naration;
+        }
+       
+    }
+    public function getAllPeriod(){
+        return 11;
+    }
+
 }

@@ -24,10 +24,12 @@
                         @php
                             $kpi_repeat[0] = '0';
                             $c = 1;
-                        @endphp
+                            $first =1;
+                        @endphp 
                         @forelse($planAccomplishments as $planAcc)
                             @php
-                                $offices = $planAcc->getOfficeFromKpiAndOfficeList($planAcc->Kpi, $only_child_array);
+                                $offices = $planAcc->getOfficeFromKpiAndOfficeList($planAcc->Kpi, $only_child_array); 
+                                $period = $planAcc->getAllPeriod();
                              @endphp
                             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
                                 <div class="card collapsed-card p-2">
@@ -54,32 +56,42 @@
                                     </div>
                                  <div class="card-body" style="display: none;">
                                     {{-- If KPI has Child ones (UG, PG) --}}
-
-                                    @forelse($offices  as $office)
+                                    <x-form
+                                        method="POST"
+                                        action="{{ route('plan-approve') }}"
+                                        class="mt-4"
+                                    >
+                                     @forelse($offices  as $office) 
                                         @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
                                             <table class="table table-bordered">
                                                 <thead>
                                                     @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
                                                         @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
                                                             @include('app.plan_accomplishments.kpi123')
-                                                            {{-- KPI has  child one and child two --}}
+                                                        {{-- KPI has  child one and child two --}}
                                                         @else
                                                             @include('app.plan_accomplishments.kpi12')
                                                         @endif
-                                                        {{-- KPI has  child one only --}}
+                                                    {{-- KPI has  child one only --}}
                                                     @else
-                                                        @include('app.plan_accomplishments.kpi1')
+                                                         @include('app.plan_accomplishments.kpi1')
                                                     @endif
 
                                                 </thead>
                                             </table>
-                                            {{-- KPI has no child one, which means just only plain input --}}
-                                        @else
-                                            @include('app.plan_accomplishments.kpi')
+                                        {{-- KPI has no child one, which means just only plain input --}}
+                                        @else 
+                                             @include('app.plan_accomplishments.kpi')
                                         @endif
                                     @empty
                                         <h4>No offices!</h4>
                                     @endforelse
+                                     <tr>
+                                        <td colspan="8">
+                                            <button type="submit" class="btn-primary float-right">Appove</button>
+                                        </td>
+                                    </tr>
+                                    </x-form>
                                 </div>
                                 </div>
 

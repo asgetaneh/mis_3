@@ -1,19 +1,18 @@
 @php
-    $ospan =  $planAcc->Kpi->kpiChildThrees ->count()*$planAcc->Kpi->kpiChildOnes ->count()+1;
+    $ospan =  $planAcc->Kpi->kpiChildThrees ->count()*$planAcc->Kpi->kpiChildOnes ->count()+2;
 @endphp
 <!-- <tr id="child-ones"> -->
 <tr style ="background:#fff7e6;width:100%">
+    <th>
+        <input type ="checkbox" name="approve[]" value="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}" 
+        title="Appove for {{$office->officeTranslations[0]->name}}"/>
+    </td>
     <th colspan="{{$ospan }} ">
             Offices: {{$office->officeTranslations[0]->name}}
     </td>
-    <th colspan="{{2}} ">
-            <button type="submit" class="btn-primary float-right">
-                <input type ="checkbox" name="approve" title="Appove for {{$office->officeTranslations[0]->name}}"/>
-        </button>
-    </td>
 </tr>
 <tr>
-    <td rowspan="2">#</td>
+    <td rowspan="2" colspan="2">#</td>
     @foreach ($planAcc->Kpi->kpiChildOnes as $one)
     
         <td colspan="{{ $planAcc->Kpi->kpiChildThrees ->count() }}" >{{ $one->kpiChildOneTranslations[0]->name }}
@@ -27,7 +26,7 @@
             $childAndHimOffKpi_array[$key] = $value->id;
         } 
         $childAndHimOffKpi_array = array_merge( $childAndHimOffKpi_array, array($office->id));
-        $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id,$childAndHimOffKpi_array);
+        $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id,$office);
         @endphp
         {{"Total:"}}
     {{$planKpiOfficeYear}}
@@ -41,9 +40,13 @@
         @endforeach
     @endforeach
 </tr>
-    @foreach ($planAcc->Kpi->kpiChildTwos as $two)
+ @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
     <tr>
-            <td>
+        <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
+            {{ $period->reportingPeriodTs[0]->name }}
+        </th>
+    @foreach ($planAcc->Kpi->kpiChildTwos as $two)
+             <td>
             {{ $two->kpiChildTwoTranslations[0]->name }}
             </td>
             @foreach ($planAcc->Kpi->kpiChildOnes as $one)
@@ -58,7 +61,9 @@
                 $childAndHim_array[$key] = $value->id;
                 } 
                 $childAndHim_array = array_merge($childAndHim_array,array($office->id));
-                $plan123 = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,$childAndHim_array);
+                $plan123 = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,$office,$period->id);
+                $narration = $planAcc->getNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
+
             @endphp
             {{$plan123}}
             </td>
@@ -74,7 +79,7 @@
             } 
             $planSumch2_array = array_merge( $planSumch2_array, array($office->id));
 
-            $planSumch2Total = $planAcc->planIndividualChTwoSum($planAcc->Kpi->id,  $two->id,$planSumch2_array);
+            $planSumch2Total = $planAcc->planIndividualChTwoSum($planAcc->Kpi->id,  $two->id,$planSumch2_array,$period->id);
             @endphp
             {{$planSumch2Total}}
             </td>
@@ -82,9 +87,11 @@
         {{--end total ch2--}}
     </tr>
     @endforeach  
+    @empty
+    @endforelse
     {{--total ch1ch3--}}
     <tr>
-        <th style ="background:#ffeecc;">
+        <th style ="background:#ffeecc;" colspan="2">
         {{ "Total"}}
         </td>
         @foreach ($planAcc->Kpi->kpiChildOnes as $one)
@@ -106,4 +113,18 @@
             @endforeach
         <td>  {{$planKpiOfficeYear}}</td>
 </tr>
+<tr>
+   <td>
+        Major Activities
+    </td>
+    <td colspan="8">
+        @foreach ($narration as $key => $plannaration) 
+              {!! html_entity_decode($plannaration->plan_naration) !!}
+              @php
+              echo "<br/>"  
+              @endphp
+        @endforeach
+    </td>
+ </tr>
+
 {{--end total ch1ch3--}}

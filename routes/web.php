@@ -165,6 +165,7 @@ Route::prefix('/')
                 Route::match(array('GET', 'POST'),'plan-accomplishment-goalclick/{office}/{goal}/{offwithkpi}', [PlanAccomplishmentController::class, 'planaccomplishmentGoalClick'])->name('plan-accomplishment-goalclick');
 
                 Route::match(array('GET', 'POST'),'view-plan-accomplishment', [PlanAccomplishmentController::class, 'viewPlanAccomplishment'])->name('view-plan-accomplishment');
+                Route::match(array('GET', 'POST'),'plan-approve', [PlanAccomplishmentController::class, 'planApproved'])->name('plan-approve');
                 Route::resource(
                    'plan-accomplishments',
                    PlanAccomplishmentController::class

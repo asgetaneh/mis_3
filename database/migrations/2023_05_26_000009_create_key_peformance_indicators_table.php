@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('strategy_id');
             $table->unsignedBigInteger('created_by_id');
             $table->unsignedBigInteger('reporting_period_type_id');
-
+            $table->unsignedBigInteger('behavior_id');
             $table->timestamps();
         });
     }

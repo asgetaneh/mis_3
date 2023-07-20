@@ -30,7 +30,7 @@ class ReportingPeriodController extends Controller
 
         $reportingPeriodTS = ReportingPeriodT::search($search)
             ->latest()
-            ->paginate(15)
+            ->paginate(25)
             ->withQueryString();
 
         return view(
