@@ -154,9 +154,8 @@
                                                         $kpi_id = $kpi->id;
                                                     @endphp
                                                     (Reporting:{{ $kpi->reportingPeriodType->reportingPeriodTypeTs[0]->name }})
-                                                    {{--  <strong  > ({{ $period->reportingPeriodTs[0]->name }})</strong>
-                                                        <span name="{{ $kpi_id }}" id="{{$kpi_id}}{{$period->id}}"></span>
-
+                                                    {{--  <strong  > ({{ $period->reportingPeriodTs[0]->name }})</strong>--}}
+                                                    {{--
                                                           getReportingPeriod($kpi->reportingPeriodType->id,$date) --}}
                                                 </h3>
                                                 <div class="card-tools">
@@ -177,6 +176,18 @@
                                                                     @foreach ($kpi->kpiChildOnes as $one)
                                                                         <th colspan="{{ $kpi->kpiChildThrees->count() }}">
                                                                             {{ $one->kpiChildOneTranslations[0]->name }}
+                                                                            Enter your name: <input type="text" id="fname" onkeyup="myFunction()">
+
+                                                                        <script>
+                                                                        function myFunction() {
+                                                                        let x = document.getElementById("fname");
+                                                                        x.value = x.value.toUpperCase();
+                                                                        }
+                                                                        function myFunction1() {
+                                                                        var x = document.getElementById("fname").value;
+                                                                        document.getElementById("demo").innerHTML = x;
+                                                                        }
+                                                                        </script>
                                                                         </th>
                                                                     @endforeach
                                                                 </tr>
@@ -192,6 +203,8 @@
                                                                     <tr>
                                                                         <th rowspan="{{ $kpi->kpiChildTwos->count() }}">
                                                                             {{ $period->reportingPeriodTs[0]->name }}
+                                                                                                                                                                <span name="{{ $kpi_id }}" id="{{$kpi_id}}{{$period->id}}"></span>
+
                                                                         </th>
                                                                         @foreach ($kpi->kpiChildTwos as $two)
                                                                             <th>
@@ -221,6 +234,11 @@
                                                                                         <td>
                                                                                             <input id="selectProducts"
                                                                                                 name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
+                                                                                                @if($period->slug ==1)
+                                                                                                 id = "yearly"
+                                                                                                @else
+                                                                                                 id = "period"
+                                                                                                @endif
                                                                                                 class="form-control {{ $inputname }}"
                                                                                                 type="number" required>
 
@@ -229,10 +247,12 @@
                                                                                     <script>
                                                                                         $(".{{ $inputname }}").keyup(function() {
                                                                                             var tot = 0;
-                                                                                            $(".{{ $inputname }}").each(function() {
+                                                                                              var periodtot = 0;
+                                                                                             $(".{{ $inputname }}").each(function() {
                                                                                                 tot += Number($(this).val());
-                                                                                            });
+                                                                                             });
                                                                                             $('#{{ $kpi_id }}{{ $period->id }}').text(tot);
+                                                                                           
                                                                                         });
                                                                                     </script>
                                                                                 @endforeach
