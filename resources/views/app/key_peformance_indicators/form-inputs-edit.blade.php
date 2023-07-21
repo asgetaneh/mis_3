@@ -41,6 +41,22 @@
         </x-inputs.select>
     </x-inputs.group>
 
+    <x-inputs.group class="col-sm-12">
+        <x-inputs.select
+            name="behavior_id"
+            label="Behavior Type"
+            required
+        >
+            @php $selected = old('behavior_id', ($editing ? $keyPeformanceIndicator->behavior_id : '')) @endphp
+            <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Reporting Period Type</option>
+            @foreach($behaviors as $value => $label)
+                @if(app()->getLocale() == $label->locale)
+                    <option value="{{ $label->translation_id }}" {{ $selected == $label->translation_id ? 'selected' : '' }} >{{ $label->name }}</option>
+                @endif
+            @endforeach
+        </x-inputs.select>
+    </x-inputs.group>
+
     <!-- <label class="form-controll">Operational Office</label>
 
     <select id="oper" name="oper" class="oper " required="required"></select>

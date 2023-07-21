@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BehaviorController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GoalController;
@@ -92,6 +93,10 @@ Route::prefix('/')
                 Route::resource('languages', LanguageController::class);
 
                 Route::prefix('/kpi')->group(function () {
+                    Route::resource(
+                        'behaviors',
+                        BehaviorController::class
+                    );
                     Route::get('kpi-chain-two/{id}', [KeyPeformanceIndicatorController::class, 'kpiChainTwo'])->name('kpi-chain-two.create');
                     Route::POST('kpi-chain-two/save', [KeyPeformanceIndicatorController::class, 'kpiChainTwoStore'])->name('kpi-chain-two.store');
                     Route::DELETE('kpi-chain-two-remove/{kpiOne}/{childtwo}', [KeyPeformanceIndicatorController::class, 'kpiChainTwoRemove'])->name('kpi-chain-two.remove');

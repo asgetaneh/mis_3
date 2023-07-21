@@ -17,6 +17,7 @@ class KeyPeformanceIndicator extends Model
         'strategy_id',
         'created_by_id',
         'reporting_period_type_id',
+        'behavior_id',
     ];
 
     protected $searchableFields = ['*'];
@@ -81,5 +82,5 @@ class KeyPeformanceIndicator extends Model
     }
 
 
-    
+
 }
