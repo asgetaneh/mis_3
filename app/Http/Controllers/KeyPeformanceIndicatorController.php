@@ -27,7 +27,8 @@ use App\Models\KpiChildThreeTranslation;
 
 use App\Http\Requests\KeyPeformanceIndicatorStoreRequest;
 use App\Http\Requests\KeyPeformanceIndicatorUpdateRequest;
-
+use App\Models\Behavior;
+use App\Models\BehaviorTranslation;
 
 class KeyPeformanceIndicatorController extends Controller
 {
@@ -72,6 +73,7 @@ class KeyPeformanceIndicatorController extends Controller
     {
         $this->authorize('create', KeyPeformanceIndicator::class);
 
+        $behaviors = BehaviorTranslation::all();
         $objectives = ObjectiveTranslation::all();
         $strategies = StrategyTranslation::all();
         $users = User::pluck('name', 'id');
@@ -89,7 +91,7 @@ class KeyPeformanceIndicatorController extends Controller
 
         return view(
             'app.key_peformance_indicators.create',
-            compact('objectives', 'strategies', 'users', 'reportingPeriodTypes', 'languages', 'offices')
+            compact('objectives', 'strategies', 'users', 'reportingPeriodTypes', 'languages', 'offices', 'behaviors')
         );
     }
 
@@ -115,6 +117,7 @@ class KeyPeformanceIndicatorController extends Controller
             $keyPeformanceIndicator->objective_id= $data['objective_id'];
             $keyPeformanceIndicator->strategy_id= $data['strategy_id'];
             $keyPeformanceIndicator->reporting_period_type_id= $data['reporting_period_type_id'];
+            $keyPeformanceIndicator->behavior_id = $data['behavior_id'];
             $keyPeformanceIndicator->created_by_id= auth()->user()->id;
             $keyPeformanceIndicator->save();
              foreach ($language as $key => $value) {
@@ -175,6 +178,7 @@ class KeyPeformanceIndicatorController extends Controller
         $kpiTranslations = $keyPeformanceIndicator->keyPeformanceIndicatorTs->groupBy('locale');
         // dd($kpiTranslations);
 
+        $behaviors = BehaviorTranslation::all();
         $objectives = ObjectiveTranslation::all();
         $strategies = StrategyTranslation::all();
         $offices = OfficeTranslation::all();
@@ -193,7 +197,8 @@ class KeyPeformanceIndicatorController extends Controller
                 'kpiTranslations',
                 'offices',
                 'languages',
-                'selectedOffices'
+                'selectedOffices',
+                'behaviors'
             )
         );
     }
@@ -214,13 +219,14 @@ class KeyPeformanceIndicatorController extends Controller
             'objective_id' => $request->objective_id,
             'strategy_id' => $request->strategy_id,
             'reporting_period_type_id' => $request->reporting_period_type_id,
+            'behavior_id' => $request->behavior_id,
             'weight' => $request->weight,
             'updated_at' => new \DateTime(),
             // 'updated_by_id' => auth()->user()->id,
             // 'created_by_id' => $goal->created_by_id || '',
         ]);
 
-        foreach ($request->except('_token', '_method', 'objective_id', 'strategy_id', 'reporting_period_type_id', 'weight', 'offices') as $key => $value) {
+        foreach ($request->except('_token', '_method', 'objective_id', 'strategy_id', 'reporting_period_type_id', 'weight', 'offices', 'behavior_id') as $key => $value) {
 
             $locale = str_replace(['name_', 'description_', 'out_put_', 'out_come_'], '', $key);
 

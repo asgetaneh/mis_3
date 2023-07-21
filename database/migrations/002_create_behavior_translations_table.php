@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('behaviors', function (Blueprint $table) {
-            $table->id();
+        Schema::create('behavior_translations', function (Blueprint $table) {
+            $table->bigIncrements('id');
             $table->string('name');
-            $table->string('slug');
             $table->text('description');
+            $table->string('slug');
+            $table->unsignedBigInteger('translation_id');
+            $table->string('locale', 8);
             $table->timestamps();
-
         });
     }
 
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('behaviors');
+        Schema::dropIfExists('behavior_translations');
     }
 };
