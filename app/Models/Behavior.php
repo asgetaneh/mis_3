@@ -9,6 +9,7 @@ class Behavior extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['updated_at'];
     public function behaviorTranslations()
     {
         return $this->hasMany(BehaviorTranslation::class, 'translation_id');
