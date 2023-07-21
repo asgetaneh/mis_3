@@ -11,7 +11,7 @@ class Office extends Model
     use HasFactory;
     use Searchable;
 
-    protected $fillable = ['holder_id', 'parent_office_id'];
+    protected $fillable = ['holder_id', 'parent_office_id', 'level'];
 
     protected $searchableFields = ['*'];
 

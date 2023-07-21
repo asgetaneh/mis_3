@@ -65,7 +65,11 @@ class OfficeTranslationController extends Controller
          try {
             $office = new Office;
             if(isset($_POST['parent_name'])){
+                $parentLevel = Office::where('id', $data['parent_name'])->first();
                 $office->parent_office_id = $data['parent_name'];
+                $office->level =  $parentLevel ? $parentLevel->level + 1 : '';
+            }else{
+                $office->level = 0;
             }
 
             $office->created_at= new \DateTime();
@@ -115,11 +119,17 @@ class OfficeTranslationController extends Controller
     ): View {
         $this->authorize('update', $officeTranslation);
 
-        $offices = Office::pluck('id', 'id');
+        $officeTranslation = $officeTranslation->office->officeTranslations->groupBy('locale');
+        dd($officeTranslation);
+        $search = $request->get('search', '');
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
 
         return view(
             'app.office_translations.edit',
-            compact('officeTranslation', 'offices')
+            compact('officeTranslation', 'offices', 'languages')
         );
     }
 
