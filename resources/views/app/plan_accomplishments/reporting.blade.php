@@ -31,8 +31,8 @@
                                     @forelse($kpis['goal'] as $goal)
                                         <tr>
                                             {{-- <td class="rounded "> --}}
-                                            <a class="border btn btn-light btn-block text-left {{ Request::is('smis/plan/get-objectives/' . $goal->id) ? 'bg-primary' : '' }}"
-                                                href='{{ route('get-objectives', $goal->id) }}' role="button"
+                                            <a class="border btn btn-light btn-block text-left {{ Request::is('smis/report/get-objectives/' . $goal->id) ? 'bg-primary' : '' }}"
+                                                href='{{ route('get-objectives-reporting', $goal->id) }}' role="button"
                                                 aria-expanded="false" aria-controls="collapseExample">
                                                 {{ optional($goal->goalTranslations[0])->name ?? '-' }}
                                             </a>
@@ -138,12 +138,13 @@
                                             @endphp
                                 @endif
 
-                                <form action="{{ route('plan.save') }}" method="POST">
+                                <form action="{{ route('report.save') }}" method="POST">
                                     @csrf
 
                                     {{-- @if ($objective) --}}
                                     @php
-                                        $KeyPeformanceIndicators = getKeyperormanceIndicators($objective, $user_offices);
+                                        $reporting_time_id = getReportingPeriod();
+                                        $KeyPeformanceIndicators = getKeyperormanceIndicatorsForReporting($objective, $user_offices,$reporting_time_id);
                                     @endphp
                                     @forelse($KeyPeformanceIndicators as $kpi)
                                         <div class="card collapsed-card p-2">
@@ -201,7 +202,7 @@
                                                                         @endforeach
                                                                     @endforeach
                                                                 </tr>
-                                                                @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
+                                                                @forelse(getReportingQuarter($kpi->reportingPeriodType->id) as $period)
                                                                     <tr>
                                                                         <th rowspan="{{ $kpi->kpiChildTwos->count() }}">
                                                                             {{ $period->reportingPeriodTs[0]->name }}
@@ -221,14 +222,14 @@
                                                                                         //echo ($inputname)."<br/>";
                                                                                         $plan = getSavedPlanIndividualOneTwoThree($planning_year[0]->id, $kpi->id, $period->id, $one->id, $two->id, $kpiThree->id, auth()->user()->offices[0]->id);
                                                                                     @endphp
-                                                                                    @if ($plan)
+                                                                                    @if ($plan && $plan->accom_value)
                                                                                         <td>
                                                                                             <input type="hidden"
                                                                                                 name="type"
                                                                                                 value="yes">
                                                                                             <input
                                                                                                 name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
-                                                                                                value="{{ $plan->plan_value }}"
+                                                                                                value="{{ $plan->accom_value }}"
                                                                                                 class="form-control {{ $inputname }}"
                                                                                                 type="number" required>
 
@@ -274,7 +275,7 @@
                                                                     </th>
                                                                 @endforeach
                                                             </tr>
-                                                            @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
+                                                            @forelse(getReportingQuarter($kpi->reportingPeriodType->id) as $period)
                                                                 <tr>
                                                                     <th rowspan="{{ $kpi->kpiChildTwos->count() }}">
                                                                         {{ $period->reportingPeriodTs[0]->name }}
@@ -300,7 +301,7 @@
                                                                                     <input
                                                                                         name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}"
                                                                                         class="form-control"
-                                                                                        value="{{ $plan12->plan_value }}"
+                                                                                        value="{{ $plan12 }}"
                                                                                         type="number" required>
                                                                                 </td>
                                                                             @else
@@ -343,7 +344,7 @@
                                                 @else
                                                     <tr>
                                                         <th>#</th>
-                                                        @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
+                                                        @forelse(getReportingQuarter($kpi->reportingPeriodType->id) as $period)
                                                             <th>
                                                                 {{ $period->reportingPeriodTs[0]->name }}
                                                             </th>
@@ -354,17 +355,17 @@
                                                         <th>
                                                             {{ $one->kpiChildOneTranslations[0]->name }}<br />
                                                         </th>
-                                                        @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
+                                                        @forelse(getReportingQuarter($kpi->reportingPeriodType->id) as $period)
                                                             @php
                                                                 $inputname = '{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}';
                                                                 $plan1 = getSavedPlanIndividualOne($planning_year[0]->id, $kpi->id, $period->id, $one->id, auth()->user()->offices[0]->id);
                                                             @endphp
-                                                            @if ($plan1)
+                                                            @if ($plan1 && $plan1->accom_value)
                                                                 <td>
                                                                     <input type="hidden" name="type" value="yes">
                                                                     <input
                                                                         name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}";
-                                                                        class="form-control" value="{{ $plan1->plan_value }}"
+                                                                        class="form-control" value="{{ $plan1->accom_value }}"
                                                                         type="number" required>
                                                                 </td>
                                                             @else
@@ -407,24 +408,24 @@
                         @else
                             <table class="table table-bordered">
                                 <tr>
-                                    @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
+                                    @forelse(getReportingQuarter($kpi->reportingPeriodType->id) as $period)
                                         <th>
                                             {{ $period->reportingPeriodTs[0]->name }}
                                         </th>
                                     @empty
                                     @endforelse
                                 </tr>
-                                @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
+                                @forelse(getReportingQuarter($kpi->reportingPeriodType->id) as $period)
                                     <p class="mb-3">
                                         @php
                                             $inputname = '{{ $kpi->id }}-{{ $period->id }}';
-                                            $plan = getSavedPlanIndividual($planning_year[0]->id, $kpi->id, $period->id, auth()->user()->offices[0]->id);
+                                            $planP = getSavedPlanIndividual($planning_year[0]->id, $kpi->id, $period->id, auth()->user()->offices[0]->id);
                                         @endphp
-                                        @if ($plan)
+                                        @if ($planP && $planP->accom_value)
                                             <td>
                                                 <input type="hidden" name="type" value="yes">
                                                 <input name="{{ $kpi->id }}-{{ $period->id }}"
-                                                    class="form-control" value="{{ $plan->plan_value }}"
+                                                    class="form-control" value="{{ $planP->accom_value }}"
                                                     id="{{ $period->slug }}" type="number" required>
                                                 <span id="s{{ $period->slug }}"></span>
                                             </td>
@@ -490,7 +491,7 @@
                         </div>
 
                     @empty
-                        <h4>No KPI registered for this Goal and Objective!</h4>
+                        <h4>No KPI exit with active  reporting period in this office and Objective!</h4>
                         @endforelse
                         <button type="submit" class="btn btn-primary">Submit</button>
 

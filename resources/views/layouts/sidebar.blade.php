@@ -267,13 +267,21 @@
                                     @if (!$office->offices->isEmpty())
                                     @can('view-any', App\Models\PlanAccomplishment::class)
                                         <li class="nav-item">
+                                            <a href="{{ route('approve-plan') }}" class="nav-link {{ Request::is('smis/plan/approve-plan/*') || Request::is('smis/plan/approve-plan') ? 'active' : '' }}">
+                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                <p> Plan Approve</p>
+                                            </a>
+                                        </li>
+                                    @endcan
+                                    @endif
+                                    @can('view-any', App\Models\PlanAccomplishment::class)
+                                        <li class="nav-item">
                                             <a href="{{ route('view-plan-accomplishment') }}" class="nav-link {{ Request::is('smis/plan/view-plan-accomplishment/*') || Request::is('smis/plan/view-plan-accomplishment') ? 'active' : '' }}">
                                                 <i class="nav-icon icon ion-md-radio-button-off"></i>
                                                 <p>View Plan</p>
                                             </a>
                                         </li>
                                     @endcan
-                                    @endif
                                 </ul>
                             </li>
                             <li class="nav-item">
@@ -288,10 +296,12 @@
                                 <ul class="nav nav-treeview">
                                     @can('view-any', App\Models\StrategyTranslation::class)
                                         <li class="nav-item">
-                                            <a href="{{ route('strategy-translations.index') }}" class="nav-link">
-                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                                <p>Reporting</p>
-                                            </a>
+                                            <a href="{{ route('reporting', Auth::user()->id) }}"
+                                                    class="nav-link {{ Request::is('smis/plan/reporting/*') || Request::is('smis/plan/reporting') || Request::is('smis/plan/get-objectives/*') || Request::is('smis/plan/get-objectives') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <p>Reporting</p>
+                                                </a>
+                                             
                                         </li>
                                     @endcan
                                     @can('view-any', App\Models\Language::class)

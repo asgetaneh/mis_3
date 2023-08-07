@@ -3,10 +3,7 @@
 @endphp
 <!-- <tr id="child-ones"> -->
 <tr style ="background:#fff7e6;width:100%">
-    <th>
-        <input type ="checkbox" name="approve[]" value="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}" 
-        title="Appove for {{$office->officeTranslations[0]->name}}"/>
-    </td>
+     
     <th colspan="{{$ospan }} ">
             Offices: {{$office->officeTranslations[0]->name}}
     </td>
@@ -18,8 +15,8 @@
         <td colspan="{{ $planAcc->Kpi->kpiChildThrees ->count() }}" >{{ $one->kpiChildOneTranslations[0]->name }}
         </td>
     @endforeach
-    <td rowspan ="2">
-    @php 
+   <td rowspan ="2">
+   {{-- @php 
         $childAndHimOffKpi_array =[];
         $childAndHimOffKpi = $office->offices; 
         foreach ($childAndHimOffKpi as $key => $value) {
@@ -28,16 +25,17 @@
         $childAndHimOffKpi_array = array_merge( $childAndHimOffKpi_array, array($office->id));
         $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id,$office);
         @endphp
-        {{"Total:"}}
-    {{$planKpiOfficeYear}}
+        {{$planKpiOfficeYear}}--}} 
+
+        {{"Sum"}}
     </td>
 </tr>
 <tr>
     @foreach ($planAcc->Kpi->kpiChildOnes as $one)
         @foreach ($planAcc->Kpi->kpiChildThrees as $kpiThree)
-            <td  >{{ $kpiThree->kpiChildThreeTranslations[0]->name }}
-            </td>
-        @endforeach
+            <td >{{ $kpiThree->kpiChildThreeTranslations[0]->name }}
+          
+         @endforeach
     @endforeach
 </tr>
  @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
@@ -69,7 +67,7 @@
             </td>
         @endforeach
     @endforeach
-        {{--total ch2--}}
+        {{--total ch2 --}}
             <td>
         @php 
             $planSumch2_array= [];
@@ -89,7 +87,7 @@
     @endforeach  
     @empty
     @endforelse
-    {{--total ch1ch3--}}
+    {{--total ch1ch3 
     <tr>
         <th style ="background:#ffeecc;" colspan="2">
         {{ "Total"}}
@@ -112,7 +110,7 @@
         @endforeach
             @endforeach
         <td>  {{$planKpiOfficeYear}}</td>
-</tr>
+</tr>--}} 
 <tr>
    <td>
         Major Activities

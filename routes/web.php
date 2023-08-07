@@ -183,8 +183,8 @@ Route::prefix('/')
                 Route::match(array('GET', 'POST'),'plan-accomplishment/{office}', [PlanAccomplishmentController::class, 'officeKpiObjectiveGoal'])->name('plan-accomplishment');
                 Route::match(array('GET', 'POST'),'plan-accomplishment-goalclick/{office}/{goal}/{offwithkpi}', [PlanAccomplishmentController::class, 'planaccomplishmentGoalClick'])->name('plan-accomplishment-goalclick');
 
+                Route::match(array('GET', 'POST'),'approve-plan', [PlanAccomplishmentController::class, 'approvePlanAccomplishment'])->name('approve-plan');
                 Route::match(array('GET', 'POST'),'view-plan-accomplishment', [PlanAccomplishmentController::class, 'viewPlanAccomplishment'])->name('view-plan-accomplishment');
-                Route::match(array('GET', 'POST'),'plan-approve', [PlanAccomplishmentController::class, 'planApproved'])->name('plan-approve');
                 Route::resource(
                    'plan-accomplishments',
                    PlanAccomplishmentController::class
@@ -197,6 +197,17 @@ Route::prefix('/')
 
                 Route::GET('/get-objectives/{goal}', [PlanAccomplishmentController::class, 'getAllObjectives'])->name('get-objectives');
                 Route::POST('/plan-save', [PlanAccomplishmentController::class, 'savePlan'])->name('plan.save');
+            });
+
+            // reporting 
+            Route::prefix('/report')->group(function () {
+                Route::match(array('GET', 'POST'),'reporting/{office}', [PlanAccomplishmentController::class, 'officeKpiObjectiveGoalReporting'])->name('reporting');
+                // Route::match(array('GET', 'POST'),'plan-accomplishment-goalclick/{office}/{goal}/{offwithkpi}', [PlanAccomplishmentController::class, 'planaccomplishmentGoalClick'])->name('plan-accomplishment-goalclick');
+
+                // Route::match(array('GET', 'POST'),'approve-plan', [PlanAccomplishmentController::class, 'approvePlanAccomplishment'])->name('approve-plan');
+                // Route::match(array('GET', 'POST'),'view-plan-accomplishment', [PlanAccomplishmentController::class, 'viewPlanAccomplishment'])->name('view-plan-accomplishment'); 
+                 Route::GET('/get-objectives-reporting/{goal}', [PlanAccomplishmentController::class, 'getAllObjectivesReporting'])->name('get-objectives-reporting');
+                 Route::POST('/report-save', [PlanAccomplishmentController::class, 'saveReport'])->name('report.save');
             });
 
             Route::prefix('/report')->group(function () {

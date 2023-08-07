@@ -15,6 +15,30 @@
 @endsection
 
 @section('content')
+    @php     $first=1; @endphp
+
+
+    {{-- <form action="/cases" method="GET">
+    From:<input type="date" name="from">
+    To:<input type="date" name="to">
+    District:<input type="text" name="district" class="">
+    <button type="submit" class="btn btn-success btn-sm">Search</button>
+  </form>
+<form action=  method="get">
+    <div class="col-md-5 form-group">
+    <label for="">Date From</label>
+    {{-- <input type="date" name="date_from" class="form-control" value="{{ $request->date_from }}">  
+    </div>
+    <div class="col-md-5 form-group">
+    <label for="">Date From</label>
+    <input type="date" name="date_to" class="form-control"  
+    </div>
+    <div class="col-md-2 form-group" style="margin-top:25px;">
+    <input type="submit" class="btn btn-primary" value="Search">
+    </div>
+</form> --}}
+              
+ 
 
     <div class="row justify-content-center mt-5">
         <div class="col-12">
@@ -24,12 +48,13 @@
                         @php
                             $kpi_repeat[0] = '0';
                             $c = 1;
-                            $first =1;
-                        @endphp 
+                        @endphp
                         @forelse($planAccomplishments as $planAcc)
                             @php
-                                $offices = $planAcc->getOfficeFromKpiAndOfficeList($planAcc->Kpi, $only_child_array); 
-                              @endphp
+                                $offices = $planAcc->getOfficeFromKpiAndOfficeList($only_child_array);
+                                
+                            @endphp
+
                             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
                                 <div class="card collapsed-card p-2">
                                     <div class="card-header">
@@ -53,45 +78,42 @@
                                             <h4>No KPI name!</h4>
                                         @endforelse
                                     </div>
-                                 <div class="card-body" style="display: none;">
-                                    {{-- If KPI has Child ones (UG, PG) --}}
-                                    <x-form
-                                        method="POST"
-                                        action="{{ route('approve-plan') }}"
-                                        class="mt-4"
-                                    >
-                                     @forelse($offices  as $office) 
-                                        @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
-                                            <table class="table table-bordered">
-                                                <thead>
-                                                    @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
-                                                        @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
-                                                            @include('app.plan_accomplishments.kpi123')
-                                                        {{-- KPI has  child one and child two --}}
-                                                        @else
-                                                            @include('app.plan_accomplishments.kpi12')
-                                                        @endif
-                                                    {{-- KPI has  child one only --}}
-                                                    @else
-                                                         @include('app.plan_accomplishments.kpi1')
-                                                    @endif
+                                    <div class="card-body" style="display: none;">
+                                        {{-- If KPI has Child ones (UG, PG) --}}
+                                        <x-form method="POST" action="{{ route('approve-plan') }}" class="mt-4">
 
-                                                </thead>
-                                            </table>
-                                        {{-- KPI has no child one, which means just only plain input --}}
-                                        @else 
-                                             @include('app.plan_accomplishments.kpi')
-                                        @endif
-                                    @empty
-                                        <h4>No offices!</h4>
-                                    @endforelse
-                                     <tr>
-                                        <td colspan="8">
+                                            @forelse($offices  as $office)
+                                                @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
+                                                                @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
+                                                                    @include('app.plan_accomplishments.view-kpi123')
+                                                                    {{-- KPI has  child one and child two --}}
+                                                                @else
+                                                                    @include('app.plan_accomplishments.view-kpi12')
+                                                                @endif
+                                                                {{-- KPI has  child one only --}}
+                                                            @else
+                                                                @include('app.plan_accomplishments.view-kpi1')
+                                                            @endif
+
+                                                        </thead>
+                                                    </table>
+                                                    {{-- KPI has no child one, which means just only plain input --}}
+                                                @else
+                                                    @include('app.plan_accomplishments.view-kpi')
+                                                @endif
+                                            @empty
+                                                <h4>No offices!</h4>
+                                            @endforelse
+                                            <tr>
+                                                {{-- <td colspan="8">
                                             <button type="submit" class="btn-primary float-right">Appove</button>
-                                        </td>
-                                    </tr>
-                                    </x-form>
-                                </div>
+                                        </td> --}}
+                                            </tr>
+                                        </x-form>
+                                    </div>
                                 </div>
 
                                 @php
@@ -111,8 +133,8 @@
     </div>
 
     <script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    {{-- <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script> --}}
+    {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script> --}}
 
     {{-- <script>
         $(document).ready(function() {

@@ -6,6 +6,13 @@
   use App\Models\ReportNarration;
  use App\Models\KeyPeformanceIndicator;
 
+use Carbon\Carbon;
+use Andegna\DateTime as Et_date;
+use Andegna\DateTimeFactory;
+use App\Models\PlaningYear;
+use DateTime;
+use Redirect;
+
 
 
 /**
@@ -20,30 +27,62 @@ if (! function_exists('gettrans')) {
  
         return $reservations;
     }
+     function getReportingQuarter($type)
+    {
+        $acctive_period_list =[];
+        $report_period_list = ReportingPeriod::all();
+        $date = new \DateTime() ;
+        $ethiopic_today = DateTimeFactory::fromDateTime($date); 
+        foreach ($report_period_list as $key => $value) {
+            // today date
+             $ethiopic_today_tostring = $ethiopic_today->getYear().'-'.$ethiopic_today->getMonth().'-'.$ethiopic_today->getDay();
+            $now_et_date = DateTime::createFromFormat('Y-m-d',  $ethiopic_today_tostring);
+
+            // start date
+             $from_String_start_date = [$year, $month, $day] = explode('-', $value->start_date);
+           $start_date = DateTime::createFromFormat('Y-m-d',  $from_String_start_date[0].'-'.$from_String_start_date[1].'-'.$from_String_start_date[2]);
+
+            // end date
+            $from_String_end_date = [$year, $month, $day] = explode('-', $value->end_date);
+            $end_date = DateTime::createFromFormat('Y-m-d',  $from_String_end_date[0].'-'.$from_String_end_date[1].'-'.$from_String_end_date[2]); 
+ 
+             if($start_date < $now_et_date && $end_date > $now_et_date){
+                $report_period = ReportingPeriod::where('id' , '=', $value->id)->where('reporting_period_type_id', '=', $type)->get();
+                    if($report_period){
+                        foreach ($report_period as $key2 => $period) {
+                            $acctive_period_list[$key] = $period;
+                        }
+                     }           
+            }
+        }    
+        return $acctive_period_list;
+  
+     }
+    
     
    function getSavedPlanIndividualOneTwoThree($year,$kpi,$period, $one, $two,$three,$office){
      $planAccomplishments = PlanAccomplishment::select()->where('planning_year_id' , '=', $year)->where('office_id' , '=', $office)->where('kpi_id' , '=', $kpi)->where('reporting_period_id' , '=', $period)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_two_id' , '=', $two)->where('kpi_child_three_id' , '=', $three)->get();//dd($planAccomplishments);
         foreach ($planAccomplishments as $key => $planAccomplishment) {
-            return $planAccomplishment->plan_value;
+            return $planAccomplishment;
         }
       //return $kpi.$period.$one.$two.$three.$office;
    }
     function getSavedPlanIndividualOneTwo($year,$kpi,$period, $one, $two,$office){
      $planAccomplishments = PlanAccomplishment::select()->where('planning_year_id' , '=', $year)->where('office_id' , '=', $office)->where('kpi_id' , '=', $kpi)->where('reporting_period_id' , '=', $period)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_two_id' , '=', $two)->get();//dd($planAccomplishments);
         foreach ($planAccomplishments as $key => $planAccomplishment) {
-            return $planAccomplishment->plan_value;
+            return $planAccomplishment;
         }
     }
    function getSavedPlanIndividualOne($year,$kpi,$period, $one, $office){
      $planAccomplishments = PlanAccomplishment::select()->where('planning_year_id' , '=', $year)->where('office_id' , '=', $office)->where('kpi_id' , '=', $kpi)->where('reporting_period_id' , '=', $period)->where('kpi_child_one_id' , '=', $one)->get();//dd($planAccomplishments);
         foreach ($planAccomplishments as $key => $planAccomplishment) {
-            return $planAccomplishment->plan_value;
+            return $planAccomplishment;
         }
     }
    function getSavedPlanIndividual($year,$kpi,$period, $office){
      $planAccomplishments = PlanAccomplishment::select()->where('planning_year_id' , '=', $year)->where('office_id' , '=', $office)->where('kpi_id' , '=', $kpi)->where('reporting_period_id' , '=', $period)->get();//dd($planAccomplishments);
         foreach ($planAccomplishments as $key => $planAccomplishment) {
-            return $planAccomplishment->plan_value;
+            return $planAccomplishment;
         }
     }
     function getSavedPlanNaration($year,$period,$kpi, $office){
@@ -84,4 +123,50 @@ if (! function_exists('gettrans')) {
             }
             return $all_ids;
         }
+    //function getTimeMatchedReportingPeriod(){
+    function getReportingPeriod(){
+        $acctive_period_list =[];
+        $report_period_list = ReportingPeriod::all();
+        $date = new \DateTime() ;
+        $ethiopic_today = DateTimeFactory::fromDateTime($date); 
+        foreach ($report_period_list as $key => $value) {
+            // today date
+             $ethiopic_today_tostring = $ethiopic_today->getYear().'-'.$ethiopic_today->getMonth().'-'.$ethiopic_today->getDay();
+            $now_et_date = DateTime::createFromFormat('Y-m-d',  $ethiopic_today_tostring);
+
+            // start date
+             $from_String_start_date = [$year, $month, $day] = explode('-', $value->start_date);
+           $start_date = DateTime::createFromFormat('Y-m-d',  $from_String_start_date[0].'-'.$from_String_start_date[1].'-'.$from_String_start_date[2]);
+
+            // end date
+            $from_String_end_date = [$year, $month, $day] = explode('-', $value->end_date);
+            $end_date = DateTime::createFromFormat('Y-m-d',  $from_String_end_date[0].'-'.$from_String_end_date[1].'-'.$from_String_end_date[2]); 
+ 
+             if($start_date < $now_et_date && $end_date > $now_et_date){
+                $report_period = ReportingPeriod::where('id' , '=', $value->id)->get();
+                    if($report_period){
+                        foreach ($report_period as $key2 => $period) {
+                            $acctive_period_list[$key] = $period->id;
+                        }
+                     }           
+            }
+        }    
+        return $acctive_period_list;
+    }
+    function getKeyperormanceIndicatorsForReporting($objective, $office,$period){
+         $KeyPeformanceIndicators = KeyPeformanceIndicator::select('key_peformance_indicators.*')
+                     ->join('kpi_office', 'key_peformance_indicators.id', '=', 'kpi_office.kpi_id')
+                     ->join('offices', 'offices.id', '=', 'kpi_office.office_id')
+                      
+                     ->join('objectives', 'key_peformance_indicators.objective_id', '=', 'objectives.id')
+                    ->join('reporting_period_types', 'key_peformance_indicators.reporting_period_type_id', '=', 'reporting_period_types.id')
+                    ->join('reporting_periods', 'reporting_periods.reporting_period_type_id', '=', 'reporting_period_types.id')
+                     ->whereIn('reporting_periods.id', $period)
+                     ->where('offices.id' , '=', $office)
+                    ->where('objective_id' , '=', $objective->id)
+                    ->get();
+
+             return $KeyPeformanceIndicators;
+
+    }
 }
