@@ -259,6 +259,15 @@
                                         </li>
                                     @endcan
 
+                                    @can('view-any', App\Models\PlanAccomplishment::class)
+                                        <li class="nav-item">
+                                            <a href="{{ route('plan-approve.index') }}" class="nav-link {{ Request::is('smis/plan/approve/*') || Request::is('smis/plan/approve') ? 'active' : '' }}">
+                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                <p>Plan Approval</p>
+                                            </a>
+                                        </li>
+                                    @endcan
+
                                     @php
                                     $user = auth()->user();
                                     $office = $user->offices[0];

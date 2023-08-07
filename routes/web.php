@@ -38,6 +38,7 @@ use App\Http\Controllers\PerspectiveTranslationController;
 use App\Http\Controllers\PlaningYearTranslationController;
 use App\Http\Controllers\KeyPeformanceIndicatorTController;
 use App\Http\Controllers\KpiChildThreeTranslationController;
+use App\Http\Controllers\PlanApprovalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -184,7 +185,11 @@ Route::prefix('/')
                 Route::match(array('GET', 'POST'),'plan-accomplishment-goalclick/{office}/{goal}/{offwithkpi}', [PlanAccomplishmentController::class, 'planaccomplishmentGoalClick'])->name('plan-accomplishment-goalclick');
 
                 Route::match(array('GET', 'POST'),'view-plan-accomplishment', [PlanAccomplishmentController::class, 'viewPlanAccomplishment'])->name('view-plan-accomplishment');
-                Route::match(array('GET', 'POST'),'plan-approve', [PlanAccomplishmentController::class, 'planApproved'])->name('plan-approve');
+
+                Route::get('approve', [PlanApprovalController::class, 'viewPlanAccomplishment'])->name('plan-approve.index');
+                Route::post('plan-approve', [PlanApprovalController::class, 'planApproved'])->name('plan-approve');
+                Route::post('comment', [PlanApprovalController::class, 'planComment'])->name('plan-comment.store');
+
                 Route::resource(
                    'plan-accomplishments',
                    PlanAccomplishmentController::class
