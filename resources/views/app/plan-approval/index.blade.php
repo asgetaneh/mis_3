@@ -30,13 +30,13 @@
                             @php
 
                                 // ለአሁኑ kpi loop ለተደረገው፣ ፕላን ያረጉ ቢሮዎች ካሉ
-                                $offices = $planAcc->getOfficeFromKpiAndOfficeList($planAcc->Kpi, $only_child_array);
+                                $offices = getOfficeFromKpiAndOfficeList($planAcc->Kpi, $only_child_array);
                                 $period = getQuarter($planAcc->Kpi->reportingPeriodType->id);
                                 $isOfficeBelongToKpi = getKpiImmediateChilds($only_child_array);
                             @endphp
 
                             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
-                                @if (in_array($planAcc->kpi_id, $isOfficeBelongToKpi))
+                                {{-- @if (in_array($planAcc->kpi_id, $isOfficeBelongToKpi)) --}}
                                     <div class="card">
                                         <div class="card-header">
 
@@ -77,6 +77,7 @@
                                                     @php
                                                         $hasOfficePlan = getOfficePlanRecord($planAcc->kpi_id, $office->id, $planAcc->planning_year_id);
                                                     @endphp
+                                                    {{-- @dd($hasOfficePlan) --}}
 
                                                     @if ($hasOfficePlan->count() > 0)
                                                         @php
@@ -221,7 +222,7 @@
                                             </form>
                                         </div>
                                     </div>
-                                @endif
+                                {{-- @endif --}}
 
                                 @php
                                     $kpi_repeat[$c] = $planAcc->Kpi->id;

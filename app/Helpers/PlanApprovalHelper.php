@@ -49,10 +49,14 @@ function getKpiImmediateChilds($offices)
 function getOfficeChildrenApprovedList($kpi, $office, $year, $childOffices)
 {
 
+    $childAndHimOffKpi = office_all_childs_ids($office);
+    // dd($childAndHimOffKpi);
+
     // dd($office);
     $planRecord = PlanAccomplishment::select('office_id')
         ->where('kpi_id', $kpi)
-        ->whereIn('office_id', $childOffices)
+        // ->whereIn('office_id', $childOffices)
+        ->whereIn('office_id', $childAndHimOffKpi)
         ->where('planning_year_id', $year)->distinct('office_id')
         ->where('plan_status', $office->level)
         ->get();
@@ -81,16 +85,16 @@ function getOfficeChildrenApprovedList($kpi, $office, $year, $childOffices)
 // ----------------------------------------------------------------
 function getOfficeFromKpiAndOfficeList($kpi, $only_child_array)
 { //dump($off_list);
-    // $offices = Office::select('offices.*')
-    //     ->whereIn('id', $only_child_array)
-    //     //               ->where('kpi_id' , '=', $kpi->id)
-    //     ->get();
-
     $offices = Office::select('offices.*')
-        ->join('kpi_office', 'offices.id', '=', 'kpi_office.office_id')
         ->whereIn('id', $only_child_array)
-        ->where('kpi_id', '=', $kpi->id)
+        //               ->where('kpi_id' , '=', $kpi->id)
         ->get();
+
+    // $offices = Office::select('offices.*')
+    //     ->join('kpi_office', 'offices.id', '=', 'kpi_office.office_id')
+    //     ->whereIn('id', $only_child_array)
+    //     ->where('kpi_id', '=', $kpi->id)
+    //     ->get();
 
     // $offices = Office::select('offices.*')
     //               ->join('kpi_office', 'offices.id', '=', 'kpi_office.office_id')
@@ -203,7 +207,7 @@ function planSum($kkp, $office, $period)
     $childAndHimOffKpi = office_all_childs_ids($office);
     $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
     $sum = 0;
-    $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $childAndHimOffKpi_array)->where('kpi_id', '=', $kkp)->where('reporting_period_id', '=', $period)->get();
+    $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('reporting_period_id', '=', $period)->get();
     foreach ($planAccomplishments as $key => $planAccomplishment) {
         $sum = $sum + $planAccomplishment->plan_value;
     }

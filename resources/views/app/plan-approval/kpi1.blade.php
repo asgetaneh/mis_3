@@ -22,7 +22,7 @@
         Offices: {{ $office->officeTranslations[0]->name }}
         </td>
 
-        @if (planStatusOffice($office, $planAcc->kpi_id, $planning_year[0]->id) !== auth()->user()->offices[0]->level)
+        @if (planStatusOffice($office, $planAcc->kpi_id, $planning_year[0]->id) > auth()->user()->offices[0]->level)
             <a href="" class="btn btn-sm float-right btn-info text-white"
                 data-toggle="modal" data-target="#modal-lg"
                 data-id="">

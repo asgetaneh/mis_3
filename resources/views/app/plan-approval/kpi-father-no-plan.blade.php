@@ -3,7 +3,7 @@
     @if($first==1)
 
         {{-- check if current office is approved or not so that show the select or an APPROVED badge --}}
-        @if(planStatusOffice($office, $planAcc->kpi_id, $planning_year[0]->id) == 0)
+        @if(planStatusOffice($office, $planAcc->kpi_id, $planning_year[0]->id, $hasChildrenOfficesPlannedAndApproved) !== auth()->user()->offices[0]->level)
             <th class="bg-light">
                 {{-- <input class="form-check" type ="checkbox" name="approve[]" value="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}"
                 title="Appove for {{$office->officeTranslations[0]->name}}"/> --}}
