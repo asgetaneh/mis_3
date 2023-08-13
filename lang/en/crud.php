@@ -23,6 +23,7 @@ return [
         'removed' => 'Successfully removed',
         'assigned' => 'Successfully assigned',
         'revoked' => 'Successfully revoked',
+        'approved' => 'Successfully approved',
     ],
 
     'users' => [

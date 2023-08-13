@@ -71,6 +71,7 @@ class PlanApprovalController extends Controller
         $approvedOfficelist = $request->except('checkAll');
         $singleOfficePlan = '';
         $loggedInUserOfficeLevel = Office::where('id', auth()->user()->offices[0]->id)->first();
+        $mergedOffices = [];
 
         foreach ($approvedOfficelist as $key => $value) {
 
@@ -89,48 +90,25 @@ class PlanApprovalController extends Controller
                     $office = (int)$singleOfficePlan[1];
                     $findOffice = Office::find($office);
                     $allChildren = office_all_childs_ids($findOffice);
-                    $allChildrenApproved = getOfficeChildrenApprovedList((int)$singleOfficePlan[0], $findOffice, (int)$singleOfficePlan[2], $allChildren);
+                    $allChildrenApproved = getOfficeChildrenApprovedList((int)$singleOfficePlan[0], $findOffice, (int)$singleOfficePlan[2], 1);
+                    $isCurrentChildAlreadyApproved = isCurrentOfficeApproved((int)$singleOfficePlan[0], $findOffice, (int)$singleOfficePlan[2]);
                     // dd($allChildrenApproved);
 
+                    // Prevent immediate child from changing its status if it was first approved
                     if (count($allChildrenApproved) > 0) {
-                        $mergedOffices = array_merge($allChildrenApproved, array($office));
+                        if(!(empty($isCurrentChildAlreadyApproved)) && $isCurrentChildAlreadyApproved->plan_status < auth()->user()->offices[0]->level){
+                            $mergedOffices = $allChildrenApproved;
+                        }
+                        else{
+                            $mergedOffices = array_merge($allChildrenApproved, array($office));
+                        }
+
                     } else {
                         $mergedOffices = array($office);
                     }
 
                     // dd($mergedOffices);
 
-                    // // get all offices incl children that have a plan for the given kpi, so that we only approve the offices with a plan only
-                    // $plannedOffices = PlanAccomplishment::select('office_id')
-                    // ->where('kpi_id', $singleOfficePlan[0])
-                    // ->whereIn('office_id', $mergedOffices)
-                    // ->where('planning_year_id', $singleOfficePlan[2])->distinct('office_id')
-                    // ->get();
-
-                    // // dd($plannedOffices);
-
-                    // $plannedOfficesIdList = [];
-                    // if($plannedOffices){
-                    //     foreach ($plannedOffices as $planned){
-                    //         array_push($plannedOfficesIdList, $planned->office_id);
-                    //     }
-                    // }
-
-                    // dd($plannedOfficesIdList);
-
-                    // if it approves only its immediate children
-                    // $approvedSingleOffice = tap(DB::table('plan_accomplishments')
-                    //     ->where('planning_year_id', '=', $singleOfficePlan[2])
-                    //     ->where('office_id', '=', $singleOfficePlan[1])
-                    //     ->where('kpi_id', '=', $singleOfficePlan[0])
-                    //     // ->where('reporting_period_id', '=', $index[1])
-                    //     )
-                    //     ->update([
-                    //         'plan_status' => $loggedInUserOfficeLevel->level,
-                    //         'approved_by_id' => auth()->user()->id
-                    // ]);
-
-                    // if it approves its immediate children and also all the immediate offices' children
                     $approvedAllOffices = tap(
                         DB::table('plan_accomplishments')
                             ->where('planning_year_id', $singleOfficePlan[2])
@@ -147,18 +125,9 @@ class PlanApprovalController extends Controller
         }
 
 
-        dd("Approved");
+        // dd("Approved");
+        return redirect()->back()->withSuccess(__('crud.common.approved'));
 
-        // $updated = tap(DB::table('plan_accomplishments')
-        // ->where('planning_year_id', '=', $planning[0]->id)
-        //     ->where('office_id', '=', $user_offices)
-        //     ->where('kpi_id', '=', $index[0])
-        //     ->where('reporting_period_id', '=', $index[1])
-        //     ->where('kpi_child_one_id', '=', $kpi_child_one_id)
-        //     ->where('kpi_child_two_id', '=', $kpi_child_two_id)
-        //     ->where('kpi_child_three_id', '=', $kpi_child_three_id))
-        //     ->update(['plan_value' => (string)$value])
-        //     ->first();
     }
 
     public function planComment(Request $request){

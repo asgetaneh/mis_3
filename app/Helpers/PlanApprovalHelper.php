@@ -14,13 +14,28 @@ use App\Models\KeyPeformanceIndicator;
  * @return response()
  */
 
+function isOfficeBelongToKpi($office, $kpi)
+{
+
+    $allOffices = office_all_childs_ids($office);
+    $allOffices = array_merge($allOffices, array($office->id));
+
+    $data = KeyPeformanceIndicator::select('key_peformance_indicators.*')
+        ->join('kpi_office', 'key_peformance_indicators.id', '=', 'kpi_office.kpi_id')
+        ->join('offices', 'offices.id', '=', 'kpi_office.office_id')
+        ->where('kpi_office.kpi_id', '=', $kpi)
+        ->whereIn('kpi_office.office_id', $allOffices)
+        ->get();
+
+    return $data;
+}
 
 // get if the child office of the current father has a plan for the kpi provided
 function getOfficePlanRecord($kpi, $office, $year)
 {
     $planRecord = PlanAccomplishment::select()
         ->where('kpi_id', $kpi)
-        ->where('office_id', $office)
+        ->where('office_id', $office->id)
         ->where('planning_year_id', $year)
         ->get();
 
@@ -46,33 +61,51 @@ function getKpiImmediateChilds($offices)
 }
 
 // get if current office children are approved so that for the kpi provided their plan value will be summed with their parent
-function getOfficeChildrenApprovedList($kpi, $office, $year, $childOffices)
+function getOfficeChildrenApprovedList($kpi, $office, $year, $suffix)
 {
 
-    $childAndHimOffKpi = office_all_childs_ids($office);
-    // dd($childAndHimOffKpi);
+    if ($suffix == 1) {
+        $childAndHimOffKpi = office_all_childs_ids($office);
 
-    // dd($office);
-    $planRecord = PlanAccomplishment::select('office_id')
-        ->where('kpi_id', $kpi)
-        // ->whereIn('office_id', $childOffices)
-        ->whereIn('office_id', $childAndHimOffKpi)
-        ->where('planning_year_id', $year)->distinct('office_id')
-        ->where('plan_status', $office->level)
-        ->get();
+        $planRecord = PlanAccomplishment::select('office_id')
+            ->where('kpi_id', $kpi)
+            // ->whereIn('office_id', $childOffices)
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('planning_year_id', $year)->distinct('office_id')
+            ->where('plan_status', $office->level)
+            ->get();
 
-    // dd($planRecord);
-
-    $officeIds = [];
-    if ($planRecord) {
-        foreach ($planRecord as $plan) {
-            array_push($officeIds, $plan->office_id);
+        $officeIds = [];
+        if ($planRecord) {
+            foreach ($planRecord as $plan) {
+                array_push($officeIds, $plan->office_id);
+            }
         }
+
+        return $officeIds;
+    } else {
+        $childAndHimOffKpi = office_all_childs_ids($office);
+        $merged = array_merge($childAndHimOffKpi, array($office->id));
+
+        $planRecord = PlanAccomplishment::select()
+            ->where('kpi_id', $kpi)
+            // ->whereIn('office_id', $childOffices)
+            ->whereIn('office_id', $merged)
+            ->where('planning_year_id', $year)->distinct('office_id')
+            ->where(function ($q) {
+                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            })
+            ->get();
+
+        $officeIds = [];
+        if ($planRecord) {
+            foreach ($planRecord as $plan) {
+                array_push($officeIds, $plan->office_id);
+            }
+        }
+
+        return $officeIds;
     }
-
-    // dd($officeIds);
-
-    return $officeIds;
 }
 
 
@@ -104,8 +137,87 @@ function getOfficeFromKpiAndOfficeList($kpi, $only_child_array)
     //              ->get();
     return $offices;
 }
-function planIndividual($kkp, $one, $two, $three, $office, $period)
+function planIndividual($kkp, $one, $two, $three, $office, $period, $suffix)
 {
+    $childAndHimOffKpi_array = [];
+    $childAndHimOffKpi = office_all_childs_ids($office);
+    $planAccomplishmentsCurrent = '';
+    $planAccomplishmentsChildren = '';
+
+    if ($suffix == 1) {
+
+        // All current office children if exist with the logged in user office level
+        $planAccomplishmentsChildParent = PlanAccomplishment::select()
+            // ->where('office_id', $office->id)
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('kpi_id', $kkp)
+            ->where('kpi_child_one_id', $one)
+            ->where('kpi_child_two_id', '=', $two)
+            ->where('kpi_child_three_id', '=', $three)
+            ->where('reporting_period_id', '=', $period)
+            ->where(function ($q) {
+                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            })
+            ->get();
+
+        // Current offices record
+        $planAccomplishmentsCurrent = PlanAccomplishment::select()
+            ->where('office_id', $office->id)
+            ->where('kpi_id', $kkp)
+            ->where('kpi_child_one_id', $one)
+            ->where('kpi_child_two_id', '=', $two)
+            ->where('kpi_child_three_id', '=', $three)
+            ->where('reporting_period_id', '=', $period)
+            ->get();
+
+        // Current office children record if exists
+        $planAccomplishmentsChildren = PlanAccomplishment::select()
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('kpi_id', '=', $kkp)
+            ->where('kpi_child_one_id', '=', $one)
+            ->where('kpi_child_two_id', '=', $two)
+            ->where('kpi_child_three_id', '=', $three)
+            ->where('plan_status', $office->level)
+            ->where('reporting_period_id', '=', $period)
+            ->get();
+
+        $sum1 = 0;
+
+        foreach ($planAccomplishmentsCurrent as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        foreach ($planAccomplishmentsChildren as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        foreach ($planAccomplishmentsChildParent as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        // dd($sum1);
+        return $sum1;
+    } elseif ($suffix == 3) {
+        // All current office children if exist with the logged in user office level
+        $planAccomplishments = PlanAccomplishment::select()
+            // ->where('office_id', $office->id)
+            ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
+            ->where('kpi_id', $kkp)
+            ->where('kpi_child_one_id', $one)
+            ->where('kpi_child_two_id', '=', $two)
+            ->where('kpi_child_three_id', '=', $three)
+            ->where('reporting_period_id', '=', $period)
+            ->where(function ($q) {
+                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            })
+            ->get();
+
+        $sum1 = 0;
+
+        foreach ($planAccomplishments as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        // dd($sum1);
+        return $sum1;
+    }
+
     $childAndHimOffKpi_array = [];
     $childAndHimOffKpi = office_all_childs_ids($office);
     $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
@@ -117,8 +229,83 @@ function planIndividual($kkp, $one, $two, $three, $office, $period)
     }
     return $sum_of_sub_office;
 }
-function planIndividualChOnechThreeSum($kkp, $one, $two, $three, $office)
+function planIndividualChOnechThreeSum($kkp, $one, $two, $three, $office, $suffix)
 {
+    $childAndHimOffKpi_array = [];
+    $childAndHimOffKpi = office_all_childs_ids($office);
+    $planAccomplishmentsCurrent = '';
+    $planAccomplishmentsChildren = '';
+
+    if ($suffix == 1) {
+
+        // All current office children if exist with the logged in user office level
+        $planAccomplishmentsChildParent = PlanAccomplishment::select()
+            // ->where('office_id', $office->id)
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('kpi_id', $kkp)
+            ->where('kpi_child_one_id', '=', $two)
+            ->where('kpi_child_three_id', '=', $three)
+            // ->where('reporting_period_id', '=', $period)
+            ->where(function ($q) {
+                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            })
+            ->get();
+
+        // Current offices record
+        $planAccomplishmentsCurrent = PlanAccomplishment::select()
+            ->where('office_id', $office->id)
+            ->where('kpi_id', $kkp)
+            ->where('kpi_child_one_id', '=', $two)
+            ->where('kpi_child_three_id', '=', $three)
+            // ->where('reporting_period_id', '=', $period)
+            ->get();
+
+        // Current office children record if exists
+        $planAccomplishmentsChildren = PlanAccomplishment::select()
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('kpi_id', '=', $kkp)
+            ->where('plan_status', $office->level)
+            ->where('kpi_child_one_id', '=', $two)
+            ->where('kpi_child_three_id', '=', $three)
+            // ->where('reporting_period_id', '=', $period)
+            ->get();
+
+        $sum1 = 0;
+
+        foreach ($planAccomplishmentsCurrent as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        foreach ($planAccomplishmentsChildren as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        foreach ($planAccomplishmentsChildParent as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        // dd($sum1);
+        return $sum1;
+    } elseif ($suffix == 3) {
+        // All current office children if exist with the logged in user office level
+        $planAccomplishments = PlanAccomplishment::select()
+            // ->where('office_id', $office->id)
+            ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
+            ->where('kpi_id', $kkp)
+            ->where('kpi_child_one_id', '=', $two)
+            ->where('kpi_child_three_id', '=', $three)
+            // ->where('reporting_period_id', '=', $period)
+            ->where(function ($q) {
+                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            })
+            ->get();
+
+        $sum1 = 0;
+
+        foreach ($planAccomplishments as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        // dd($sum1);
+        return $sum1;
+    }
+
     $sumch1ch3_value = 0;
     // $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id' , $office)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_three_id' , '=', $three)->get();
     $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('kpi_child_one_id', '=', $one)->where('kpi_child_three_id', '=', $three)->get();
@@ -128,8 +315,79 @@ function planIndividualChOnechThreeSum($kkp, $one, $two, $three, $office)
     }
     return $sumch1ch3_value;
 }
-function planIndividualChOnech($kkp, $one, $two, $office)
+function planIndividualChOnech($kkp, $one, $two, $office, $suffix)
 {
+    $childAndHimOffKpi_array = [];
+    $childAndHimOffKpi = office_all_childs_ids($office);
+    $planAccomplishmentsCurrent = '';
+    $planAccomplishmentsChildren = '';
+
+    if ($suffix == 1) {
+
+        // All current office children if exist with the logged in user office level
+        $planAccomplishmentsChildParent = PlanAccomplishment::select()
+            // ->where('office_id', $office->id)
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('kpi_id', $kkp)
+            ->where('kpi_child_one_id', '=', $two)
+            // ->where('reporting_period_id', '=', $period)
+            ->where(function ($q) {
+                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            })
+            ->get();
+
+        // Current offices record
+        $planAccomplishmentsCurrent = PlanAccomplishment::select()
+            ->where('office_id', $office->id)
+            ->where('kpi_id', $kkp)
+            ->where('kpi_child_one_id', '=', $two)
+            // ->where('reporting_period_id', '=', $period)
+            ->get();
+
+        // Current office children record if exists
+        $planAccomplishmentsChildren = PlanAccomplishment::select()
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('kpi_id', '=', $kkp)
+            ->where('plan_status', $office->level)
+            ->where('kpi_child_one_id', '=', $two)
+            // ->where('reporting_period_id', '=', $period)
+            ->get();
+
+        $sum1 = 0;
+
+        foreach ($planAccomplishmentsCurrent as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        foreach ($planAccomplishmentsChildren as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        foreach ($planAccomplishmentsChildParent as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        // dd($sum1);
+        return $sum1;
+    } elseif ($suffix == 3) {
+        // All current office children if exist with the logged in user office level
+        $planAccomplishments = PlanAccomplishment::select()
+            // ->where('office_id', $office->id)
+            ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
+            ->where('kpi_id', $kkp)
+            ->where('kpi_child_one_id', '=', $two)
+            // ->where('reporting_period_id', '=', $period)
+            ->where(function ($q) {
+                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            })
+            ->get();
+
+        $sum1 = 0;
+
+        foreach ($planAccomplishments as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        // dd($sum1);
+        return $sum1;
+    }
+
     $sumch1ch3_value = 0;
     // $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id' , $office)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->get();
     $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('kpi_child_one_id', '=', $one)->get();
@@ -139,8 +397,79 @@ function planIndividualChOnech($kkp, $one, $two, $office)
     }
     return $sumch1ch3_value;
 }
-function planIndividualChTwoSum($kkp, $two, $office, $period)
+function planIndividualChTwoSum($kkp, $two, $office, $period, $suffix)
 {
+    $childAndHimOffKpi_array = [];
+    $childAndHimOffKpi = office_all_childs_ids($office);
+    $planAccomplishmentsCurrent = '';
+    $planAccomplishmentsChildren = '';
+
+    if ($suffix == 1) {
+
+        // All current office children if exist with the logged in user office level
+        $planAccomplishmentsChildParent = PlanAccomplishment::select()
+            // ->where('office_id', $office->id)
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('kpi_id', $kkp)
+            ->where('kpi_child_two_id', '=', $two)
+            ->where('reporting_period_id', '=', $period)
+            ->where(function ($q) {
+                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            })
+            ->get();
+
+        // Current offices record
+        $planAccomplishmentsCurrent = PlanAccomplishment::select()
+            ->where('office_id', $office->id)
+            ->where('kpi_id', $kkp)
+            ->where('kpi_child_two_id', '=', $two)
+            ->where('reporting_period_id', '=', $period)
+            ->get();
+
+        // Current office children record if exists
+        $planAccomplishmentsChildren = PlanAccomplishment::select()
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('kpi_id', '=', $kkp)
+            ->where('plan_status', $office->level)
+            ->where('kpi_child_two_id', '=', $two)
+            ->where('reporting_period_id', '=', $period)
+            ->get();
+
+        $sum1 = 0;
+
+        foreach ($planAccomplishmentsCurrent as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        foreach ($planAccomplishmentsChildren as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        foreach ($planAccomplishmentsChildParent as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        // dd($sum1);
+        return $sum1;
+    } elseif ($suffix == 3) {
+        // All current office children if exist with the logged in user office level
+        $planAccomplishments = PlanAccomplishment::select()
+            // ->where('office_id', $office->id)
+            ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
+            ->where('kpi_id', $kkp)
+            ->where('kpi_child_two_id', '=', $two)
+            ->where('reporting_period_id', '=', $period)
+            ->where(function ($q) {
+                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            })
+            ->get();
+
+        $sum1 = 0;
+
+        foreach ($planAccomplishments as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        // dd($sum1);
+        return $sum1;
+    }
+
     $sumch1ch3_value = 0;
     // $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id' , $office)->where('kpi_id' , '=', $kkp)->where('kpi_child_two_id' , '=', $two)->where('reporting_period_id' , '=', $period)->get();
     $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('kpi_child_two_id', '=', $two)->where('reporting_period_id', '=', $period)->get();
@@ -162,8 +491,75 @@ function planIndividualChOneSum($kkp, $office)
     return $sumch1ch3_value;
 }
 
-function planSumOfKpi($kkp, $office)
+function planSumOfKpi($kkp, $office, $suffix)
 {
+    $childAndHimOffKpi_array = [];
+    $childAndHimOffKpi = office_all_childs_ids($office);
+    $planAccomplishmentsCurrent = '';
+    $planAccomplishmentsChildren = '';
+
+    if ($suffix == 1) {
+
+        // All current office children if exist with the logged in user office level
+        $planAccomplishmentsChildParent = PlanAccomplishment::select()
+            // ->where('office_id', $office->id)
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('kpi_id', $kkp)
+            // ->where('reporting_period_id', '=', $period)
+            ->where(function ($q) {
+                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            })
+            ->get();
+
+        // Current offices record
+        $planAccomplishmentsCurrent = PlanAccomplishment::select()
+            ->where('office_id', $office->id)
+            ->where('kpi_id', $kkp)
+            // ->where('reporting_period_id', '=', $period)
+            ->get();
+
+        // Current office children record if exists
+        $planAccomplishmentsChildren = PlanAccomplishment::select()
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('kpi_id', '=', $kkp)
+            ->where('plan_status', $office->level)
+            // ->where('reporting_period_id', '=', $period)
+            ->get();
+
+        $sum1 = 0;
+
+        foreach ($planAccomplishmentsCurrent as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        foreach ($planAccomplishmentsChildren as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        foreach ($planAccomplishmentsChildParent as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        // dd($sum1);
+        return $sum1;
+    } elseif ($suffix == 3) {
+        // All current office children if exist with the logged in user office level
+        $planAccomplishments = PlanAccomplishment::select()
+            // ->where('office_id', $office->id)
+            ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
+            ->where('kpi_id', $kkp)
+            // ->where('reporting_period_id', '=', $period)
+            ->where(function ($q) {
+                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            })
+            ->get();
+
+        $sum1 = 0;
+
+        foreach ($planAccomplishments as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        // dd($sum1);
+        return $sum1;
+    }
+
     $childAndHimOffKpi_array = [];
     $childAndHimOffKpi = office_all_childs_ids($office);
     $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
@@ -176,8 +572,79 @@ function planSumOfKpi($kkp, $office)
     } //dd($sumch1ch3_value);
     return $sumch1ch3_value;
 }
-function planOne($kkp, $one, $office, $period)
+function planOne($kkp, $one, $office, $period, $suffix)
 {
+    $childAndHimOffKpi_array = [];
+    $childAndHimOffKpi = office_all_childs_ids($office);
+    $planAccomplishmentsCurrent = '';
+    $planAccomplishmentsChildren = '';
+
+    if ($suffix == 1) {
+
+        // All current office children if exist with the logged in user office level
+        $planAccomplishmentsChildParent = PlanAccomplishment::select()
+            // ->where('office_id', $office->id)
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('kpi_id', $kkp)
+            ->where('kpi_child_one_id', $one)
+            ->where('reporting_period_id', '=', $period)
+            ->where(function ($q) {
+                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            })
+            ->get();
+
+        // Current offices record
+        $planAccomplishmentsCurrent = PlanAccomplishment::select()
+            ->where('office_id', $office->id)
+            ->where('kpi_id', $kkp)
+            ->where('kpi_child_one_id', $one)
+            ->where('reporting_period_id', '=', $period)
+            ->get();
+
+        // Current office children record if exists
+        $planAccomplishmentsChildren = PlanAccomplishment::select()
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('kpi_id', '=', $kkp)
+            ->where('kpi_child_one_id', '=', $one)
+            ->where('plan_status', $office->level)
+            ->where('reporting_period_id', '=', $period)
+            ->get();
+
+        $sum1 = 0;
+
+        foreach ($planAccomplishmentsCurrent as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        foreach ($planAccomplishmentsChildren as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        foreach ($planAccomplishmentsChildParent as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        // dd($sum1);
+        return $sum1;
+    } elseif ($suffix == 3) {
+        // All current office children if exist with the logged in user office level
+        $planAccomplishments = PlanAccomplishment::select()
+            // ->where('office_id', $office->id)
+            ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
+            ->where('kpi_id', $kkp)
+            ->where('kpi_child_one_id', $one)
+            ->where('reporting_period_id', '=', $period)
+            ->where(function ($q) {
+                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            })
+            ->get();
+
+        $sum1 = 0;
+
+        foreach ($planAccomplishments as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        // dd($sum1);
+        return $sum1;
+    }
+
     $childAndHimOffKpi_array = [];
     $childAndHimOffKpi = office_all_childs_ids($office);
     $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
@@ -188,8 +655,83 @@ function planOne($kkp, $one, $office, $period)
     }
     return $sum1;
 }
-function planOneTwo($kkp, $one, $two, $office, $period)
+function planOneTwo($kkp, $one, $two, $office, $period, $suffix)
 {
+    $childAndHimOffKpi_array = [];
+    $childAndHimOffKpi = office_all_childs_ids($office);
+    $planAccomplishmentsCurrent = '';
+    $planAccomplishmentsChildren = '';
+
+    if ($suffix == 1) {
+
+        // All current office children if exist with the logged in user office level
+        $planAccomplishmentsChildParent = PlanAccomplishment::select()
+            // ->where('office_id', $office->id)
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('kpi_id', $kkp)
+            ->where('kpi_child_one_id', $one)
+            ->where('kpi_child_two_id', '=', $two)
+            ->where('reporting_period_id', '=', $period)
+            ->where(function ($q) {
+                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            })
+            ->get();
+
+        // Current offices record
+        $planAccomplishmentsCurrent = PlanAccomplishment::select()
+            ->where('office_id', $office->id)
+            ->where('kpi_id', $kkp)
+            ->where('kpi_child_one_id', $one)
+            ->where('kpi_child_two_id', '=', $two)
+            ->where('reporting_period_id', '=', $period)
+            ->get();
+
+        // Current office children record if exists
+        $planAccomplishmentsChildren = PlanAccomplishment::select()
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('kpi_id', '=', $kkp)
+            ->where('kpi_child_one_id', '=', $one)
+            ->where('kpi_child_two_id', '=', $two)
+            ->where('plan_status', $office->level)
+            ->where('reporting_period_id', '=', $period)
+            ->get();
+
+        $sum1 = 0;
+
+        foreach ($planAccomplishmentsCurrent as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        foreach ($planAccomplishmentsChildren as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        foreach ($planAccomplishmentsChildParent as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        // dd($sum1);
+        return $sum1;
+    } elseif ($suffix == 3) {
+        // All current office children if exist with the logged in user office level
+        $planAccomplishments = PlanAccomplishment::select()
+            // ->where('office_id', $office->id)
+            ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
+            ->where('kpi_id', $kkp)
+            ->where('kpi_child_one_id', $one)
+            ->where('kpi_child_two_id', '=', $two)
+            ->where('reporting_period_id', '=', $period)
+            ->where(function ($q) {
+                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            })
+            ->get();
+
+        $sum1 = 0;
+
+        foreach ($planAccomplishments as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        // dd($sum1);
+        return $sum1;
+    }
+
     $childAndHimOffKpi_array = [];
     $childAndHimOffKpi = office_all_childs_ids($office);
     $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
@@ -201,8 +743,75 @@ function planOneTwo($kkp, $one, $two, $office, $period)
     }
     return $sum12;
 }
-function planSum($kkp, $office, $period)
+function planSum($kkp, $office, $period, $suffix)
 {
+    $childAndHimOffKpi_array = [];
+    $childAndHimOffKpi = office_all_childs_ids($office);
+    $planAccomplishmentsCurrent = '';
+    $planAccomplishmentsChildren = '';
+
+    if ($suffix == 1) {
+
+        // All current office children if exist with the logged in user office level
+        $planAccomplishmentsChildParent = PlanAccomplishment::select()
+            // ->where('office_id', $office->id)
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('kpi_id', $kkp)
+            ->where('reporting_period_id', '=', $period)
+            ->where(function ($q) {
+                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            })
+            ->get();
+
+        // Current offices record
+        $planAccomplishmentsCurrent = PlanAccomplishment::select()
+            ->where('office_id', $office->id)
+            ->where('kpi_id', $kkp)
+            ->where('reporting_period_id', '=', $period)
+            ->get();
+
+        // Current office children record if exists
+        $planAccomplishmentsChildren = PlanAccomplishment::select()
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('kpi_id', '=', $kkp)
+            ->where('plan_status', $office->level)
+            ->where('reporting_period_id', '=', $period)
+            ->get();
+
+        $sum1 = 0;
+
+        foreach ($planAccomplishmentsCurrent as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        foreach ($planAccomplishmentsChildren as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        foreach ($planAccomplishmentsChildParent as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        // dd($sum1);
+        return $sum1;
+    } elseif ($suffix == 3) {
+        // All current office children if exist with the logged in user office level
+        $planAccomplishments = PlanAccomplishment::select()
+            // ->where('office_id', $office->id)
+            ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
+            ->where('kpi_id', $kkp)
+            ->where('reporting_period_id', '=', $period)
+            ->where(function ($q) {
+                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            })
+            ->get();
+
+        $sum1 = 0;
+
+        foreach ($planAccomplishments as $key => $planAccomplishment) {
+            $sum1 += $planAccomplishment->plan_value;
+        }
+        // dd($sum1);
+        return $sum1;
+    }
+
     $childAndHimOffKpi_array = [];
     $childAndHimOffKpi = office_all_childs_ids($office);
     $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
@@ -231,135 +840,6 @@ function getAllPeriod()
     return 11;
 }
 
-
-// ----------------------------------------------------------------
-// All code related to approved offices plan sum of a KPI
-// ----------------------------------------------------------------
-function planIndividualApproved($kkp, $one, $two, $three, $office, $period, $year)
-{
-    $childAndHimOffKpi_array = [];
-    $childAndHimOffKpi = office_all_childs_ids($office);
-
-    // get all children that are approved and planned for the given kpi
-    $childAndHimOffKpi = getOfficeChildrenApprovedList($kkp, $office, $year, $childAndHimOffKpi);
-
-    $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
-
-    $sum_of_sub_office = 0;
-    $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $childAndHimOffKpi_array)->where('kpi_id', '=', $kkp)->where('kpi_child_one_id', '=', $one)->where('kpi_child_two_id', '=', $two)->where('kpi_child_three_id', '=', $three)->where('reporting_period_id', '=', $period)->get(); //dd($planAccomplishments);
-    foreach ($planAccomplishments as $key => $planAccomplishment) {
-        $sum_of_sub_office = $sum_of_sub_office + $planAccomplishment->plan_value;
-    }
-    return $sum_of_sub_office;
-}
-function planIndividualChOnechThreeSumApproved($kkp, $one, $two, $three, $office)
-{
-    $sumch1ch3_value = 0;
-    $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $office)->where('kpi_id', '=', $kkp)->where('kpi_child_one_id', '=', $one)->where('kpi_child_three_id', '=', $three)->get();
-    foreach ($planAccomplishments as $key => $planAccomplishment) {
-
-        $sumch1ch3_value = $sumch1ch3_value + $planAccomplishment->plan_value;
-    }
-    return $sumch1ch3_value;
-}
-function planIndividualChOnechApproved($kkp, $one, $two, $office)
-{
-    $sumch1ch3_value = 0;
-    $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $office)->where('kpi_id', '=', $kkp)->where('kpi_child_one_id', '=', $one)->get();
-    foreach ($planAccomplishments as $key => $planAccomplishment) {
-
-        $sumch1ch3_value = $sumch1ch3_value + $planAccomplishment->plan_value;
-    }
-    return $sumch1ch3_value;
-}
-function planIndividualChTwoSumApproved($kkp, $two, $office, $period)
-{
-    $sumch1ch3_value = 0;
-    $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $office)->where('kpi_id', '=', $kkp)->where('kpi_child_two_id', '=', $two)->where('reporting_period_id', '=', $period)->get();
-    foreach ($planAccomplishments as $key => $planAccomplishment) {
-
-        $sumch1ch3_value = $sumch1ch3_value + $planAccomplishment->plan_value;
-    }
-    return $sumch1ch3_value;
-}
-
-function planIndividualChOneSumApproved($kkp, $office)
-{
-    $sumch1ch3_value = 0;
-    $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $office)->where('kpi_id', '=', $kkp)->where('kpi_child_two_id', '=', $two)->get();
-    foreach ($planAccomplishments as $key => $planAccomplishment) {
-
-        $sumch1ch3_value = $sumch1ch3_value + $planAccomplishment->plan_value;
-    }
-    return $sumch1ch3_value;
-}
-
-function planSumOfKpiApproved($kkp, $office, $year)
-{
-    $childAndHimOffKpi_array = [];
-    $childAndHimOffKpi = office_all_childs_ids($office);
-
-    // get all children that are approved and planned for the given kpi
-    $childAndHimOffKpi = getOfficeChildrenApprovedList($kkp, $office, $year, $childAndHimOffKpi);
-
-    $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
-    // dd($childAndHimOffKpi_array);
-    $sumch1ch3_value = 0;
-    $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $childAndHimOffKpi_array)->where('kpi_id', '=', $kkp)->get();
-    foreach ($planAccomplishments as $key => $planAccomplishment) {
-        $sumch1ch3_value = $sumch1ch3_value + $planAccomplishment->plan_value;
-    } //dd($sumch1ch3_value);
-    return $sumch1ch3_value;
-}
-function planOneApproved($kkp, $one, $office, $period, $year)
-{
-    $childAndHimOffKpi_array = [];
-    $childAndHimOffKpi = office_all_childs_ids($office);
-
-    // get all children that are approved and planned for the given kpi
-    $childAndHimOffKpi = getOfficeChildrenApprovedList($kkp, $office, $year, $childAndHimOffKpi);
-
-    $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
-    $sum1 = 0;
-    $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $childAndHimOffKpi_array)->where('kpi_id', '=', $kkp)->where('kpi_child_one_id', '=', $one)->where('reporting_period_id', '=', $period)->get();
-    foreach ($planAccomplishments as $key => $planAccomplishment) {
-        $sum1 = $sum1 + $planAccomplishment->plan_value;
-    }
-    return $sum1;
-}
-function planOneTwoApproved($kkp, $one, $two, $office, $period, $year)
-{
-    $childAndHimOffKpi_array = [];
-    $childAndHimOffKpi = office_all_childs_ids($office);
-
-    // get all children that are approved and planned for the given kpi
-    $childAndHimOffKpi = getOfficeChildrenApprovedList($kkp, $office, $year, $childAndHimOffKpi);
-
-    $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
-    $sum12 = 0;
-    $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $childAndHimOffKpi_array)->where('kpi_id', '=', $kkp)->where('kpi_child_one_id', '=', $one)->where('kpi_child_two_id', '=', $two)->where('reporting_period_id', '=', $period)->get(); //dd($planAccomplishments);
-    foreach ($planAccomplishments as $key => $planAccomplishment) {
-        $sum12 = $sum12 + $planAccomplishment->plan_value;
-    }
-    return $sum12;
-}
-function planSumApproved($kkp, $office, $period, $year)
-{
-    $childAndHimOffKpi_array = [];
-    $childAndHimOffKpi = office_all_childs_ids($office);
-
-    // get all children that are approved and planned for the given kpi
-    $childAndHimOffKpi = getOfficeChildrenApprovedList($kkp, $office, $year, $childAndHimOffKpi);
-
-    $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
-
-    $sum = 0;
-    $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $childAndHimOffKpi_array)->where('kpi_id', '=', $kkp)->where('reporting_period_id', '=', $period)->get();
-    foreach ($planAccomplishments as $key => $planAccomplishment) {
-        $sum = $sum + $planAccomplishment->plan_value;
-    }
-    return $sum;
-}
 function getNarrationApproved($kkp, $year, $office, $period)
 {
     // get all child and subchild offices for login user
@@ -402,4 +882,19 @@ function planStatusOfficeApproved($office, $kpi, $year, $childrenApproved)
 
     // dd($status);
     return $status->plan_status ?? '';
+}
+
+function isCurrentOfficeApproved($kpi, $office, $year)
+{
+    $status = PlanAccomplishment::select('plan_status')
+        ->where('office_id', $office->id)
+        ->where('kpi_id', $kpi)
+        ->where(function ($q) {
+            $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+        })
+        ->where('planning_year_id', $year)
+        ->first();
+
+    // dd($status);
+    return $status ?? '';
 }
