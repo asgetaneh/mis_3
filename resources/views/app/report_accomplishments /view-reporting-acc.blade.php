@@ -20,7 +20,7 @@
         <div class="col-12">
             <div class="card card-primary card-outline card-outline-tabs fillable-objective">
                 <div class="card-body">
-                         <form role="form" class="form-horizontal" method="get" action="{{ route('view-plan-accomplishment') }}">
+                         <form role="form" class="form-horizontal" method="get" action="{{ route('view-report-accomplishment') }}">
                             <div class="row">
                                 <div class="col-md-5">
                                     <label class="label" for="filters">Offices:</label>
@@ -37,7 +37,8 @@
                                     <select class="form-control" name="kpi">
                                         <option value=" ">Select KPI</option>
                                        @forelse(getAllKpi() as $kpi)
-                                            <option value="{{$kpi->id }}">{{$kpi->keyPeformanceIndicatorTs[0]->name}}</option>
+                                            <option value="{{$kpi->id }}">{{$kpi->keyPeformanceIndicatorTs[0]->name}}
+                                            </option>
                                          @empty
                                         @endforelse
                                     </select>
@@ -52,10 +53,7 @@
                  </div>
             </div>
         </div>
-
     </div>
-
-
 
 
     <div class="row justify-content-center mt-5">
@@ -120,21 +118,21 @@
                                                         <thead>
                                                             @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
                                                                 @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
-                                                                    @include('app.plan_accomplishments.view-kpi123')
+                                                                    @include('app.report_accomplishments .view-kpi123')
                                                                     {{-- KPI has  child one and child two --}}
                                                                 @else
-                                                                    @include('app.plan_accomplishments.view-kpi12')
+                                                                    @include('app.report_accomplishments .view-kpi12')
                                                                 @endif
                                                                 {{-- KPI has  child one only --}}
                                                             @else
-                                                                @include('app.plan_accomplishments.view-kpi1')
+                                                                @include('app.report_accomplishments .view-kpi1')
                                                             @endif
 
                                                         </thead>
                                                     </table>
                                                     {{-- KPI has no child one, which means just only plain input --}}
                                                 @else
-                                                    @include('app.plan_accomplishments.view-kpi')
+                                                    @include('app.report_accomplishments .view-kpi')
                                                 @endif
                                             @empty
                                                 <h4>No offices!</h4>

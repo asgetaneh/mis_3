@@ -27,12 +27,13 @@ class OfficeTranslationController extends Controller
 
         $officeTranslations = OfficeTranslation::search($search)
             ->latest()
-            ->paginate(15)
+            ->paginate(30)
             ->withQueryString();
-
+        $officesT = OfficeTranslation ::select('office_translations.*')
+         ->join('offices', 'offices.id', '=', 'office_translations.translation_id')->where('offices.parent_office_id','=',NULL)->get();
         return view(
-            'app.office_translations.index',
-            compact('officeTranslations', 'search')
+            'app.office_translations.index2',
+            compact('officeTranslations', 'officesT','search')
         );
     }
 

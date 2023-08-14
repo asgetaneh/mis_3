@@ -147,17 +147,20 @@
                                         $KeyPeformanceIndicators = getKeyperormanceIndicatorsForReporting($objective, $user_offices,$reporting_time_id);
                                     @endphp
                                     @forelse($KeyPeformanceIndicators as $kpi)
+                                        @php
+                                            $checkPlanedForKpi = checkPlanedForKpi($planning_year[0]->id, $kpi->id, auth()->user()->offices[0]->id);
+                                        @endphp
+                                        @if($checkPlanedForKpi)
                                         <div class="card collapsed-card p-2">
                                             <div class="card-header">
                                                 <h3 class="card-title">KPI:
                                                     {{ $kpi->KeyPeformanceIndicatorTs[0]->name }}
                                                     @php
                                                         $kpi_id = $kpi->id;
+                                                        $checkPlanedForKpi = checkPlanedForKpi($planning_year[0]->id, $kpi->id, auth()->user()->offices[0]->id);
                                                     @endphp
                                                     (Reporting:{{ $kpi->reportingPeriodType->reportingPeriodTypeTs[0]->name }})
-                                                    {{--  <strong  > ({{ $period->reportingPeriodTs[0]->name }})</strong> --}}
-                                                    {{--
-                                                          getReportingPeriod($kpi->reportingPeriodType->id,$date) --}}
+                                                    
                                                 </h3>
                                                 <div class="card-tools">
                                                     <button type="button" class="btn btn-tool"
@@ -221,19 +224,19 @@
                                                                                         $inputname = $kpi->id . $period->id;
                                                                                         //echo ($inputname)."<br/>";
                                                                                         $plan = getSavedPlanIndividualOneTwoThree($planning_year[0]->id, $kpi->id, $period->id, $one->id, $two->id, $kpiThree->id, auth()->user()->offices[0]->id);
+                                                                                        $off_level = auth()->user()->offices[0]->level;
+                                                                                        $disabled ="";
                                                                                     @endphp
                                                                                     @if ($plan && $plan->accom_value)
+                                                                                     @if ($off_level!=$plan->accom_status)
+                                                                                        @php $disabled ="disabled"; @endphp
+                                                                                     @endif
                                                                                         <td>
-                                                                                            <input type="hidden"
-                                                                                                name="type"
-                                                                                                value="yes">
                                                                                             <input
                                                                                                 name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
                                                                                                 value="{{ $plan->accom_value }}"
                                                                                                 class="form-control {{ $inputname }}"
-                                                                                                type="number" required>
-
-
+                                                                                                type="number" required {{$disabled}}>
                                                                                         </td>
                                                                                     @else
                                                                                         <td>
@@ -294,15 +297,19 @@
                                                                                     $period->id;
                                                                                     $one->id;
                                                                                     $two->id;
+                                                                                    $off_level = auth()->user()->offices[0]->level;
+                                                                                    $disabled ="";
+                                                              
                                                                                 @endphp
+                                                                                @if ($off_level!=$plan12->accom_status)
+                                                                                    @php $disabled ="disabled"; @endphp
+                                                                                @endif
                                                                                 <td>
-                                                                                    <input type="hidden" name="type"
-                                                                                        value="yes">
                                                                                     <input
                                                                                         name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}"
                                                                                         class="form-control"
-                                                                                        value="{{ $plan12 }}"
-                                                                                        type="number" required>
+                                                                                        value="{{ $plan12->accom_value }}"
+                                                                                        type="number" required {{$disabled}}>
                                                                                 </td>
                                                                             @else
                                                                                 <td>
@@ -359,14 +366,19 @@
                                                             @php
                                                                 $inputname = '{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}';
                                                                 $plan1 = getSavedPlanIndividualOne($planning_year[0]->id, $kpi->id, $period->id, $one->id, auth()->user()->offices[0]->id);
+                                                                $off_level = auth()->user()->offices[0]->level;
+                                                                $disabled ="";
+                                                                
                                                             @endphp
                                                             @if ($plan1 && $plan1->accom_value)
+                                                             @if ($off_level!=$plan1->accom_status)
+                                                                    @php $disabled ="disabled"; @endphp
+                                                                @endif
                                                                 <td>
-                                                                    <input type="hidden" name="type" value="yes">
                                                                     <input
                                                                         name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}";
                                                                         class="form-control" value="{{ $plan1->accom_value }}"
-                                                                        type="number" required>
+                                                                        type="number" required {{$disabled}}>
                                                                 </td>
                                                             @else
                                                                 <td>
@@ -418,15 +430,20 @@
                                 @forelse(getReportingQuarter($kpi->reportingPeriodType->id) as $period)
                                     <p class="mb-3">
                                         @php
-                                            $inputname = '{{ $kpi->id }}-{{ $period->id }}';
-                                            $planP = getSavedPlanIndividual($planning_year[0]->id, $kpi->id, $period->id, auth()->user()->offices[0]->id);
+                                        $inputname = '{{ $kpi->id }}-{{ $period->id }}';
+                                        $planP = getSavedPlanIndividual($planning_year[0]->id, $kpi->id, 
+                                        $period->id, auth()->user()->offices[0]->id);
+                                        $off_level = auth()->user()->offices[0]->level;
+                                        $disabled ="";
                                         @endphp
                                         @if ($planP && $planP->accom_value)
-                                            <td>
-                                                <input type="hidden" name="type" value="yes">
-                                                <input name="{{ $kpi->id }}-{{ $period->id }}"
+                                         @if ($off_level!=$planP->accom_status)
+                                            @php $disabled ="disabled"; @endphp
+                                         @endif
+                                             <td>
+                                                 <input name="{{ $kpi->id }}-{{ $period->id }}"
                                                     class="form-control" value="{{ $planP->accom_value }}"
-                                                    id="{{ $period->slug }}" type="number" required>
+                                                    id="{{ $period->slug }}" type="number" required {{$disabled}}>
                                                 <span id="s{{ $period->slug }}"></span>
                                             </td>
                                         @else
@@ -475,13 +492,13 @@
                             </p>
                             @endif
                             @php
-                                $plan_naration = getSavedPlanNaration($planning_year[0]->id, $period->id, $kpi->id, auth()->user()->offices[0]->id);
-                            @endphp
-                            @if ($plan_naration)
+                                $report_naration = getSavedReportNaration($planning_year[0]->id, $period->id, $kpi->id, auth()->user()->offices[0]->id);
+                             @endphp
+                            @if ($report_naration)
                                 <label for="summernote">Major Activities</label>
                                 <input type="hidden" name="type" value="yes">
-                                <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote"
-                                    id="summernote" placeholder="Narration here" required>{!! $plan_naration !!}</textarea>
+                                 <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote"
+                                    id="summernote" placeholder="Narration here" required>{!! $report_naration !!}</textarea>
                             @else
                                 <label for="summernote">Major Activities</label>
                                 <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote"
@@ -489,7 +506,9 @@
                             @endif
 
                         </div>
-
+                    @else
+                    <h5>{{"No Plan for Keyperformance indicator"}}</h5>
+                    @endif
                     @empty
                         <h4>No KPI exit with active  reporting period in this office and Objective!</h4>
                         @endforelse

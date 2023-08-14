@@ -2,9 +2,11 @@
   use App\Models\OwnershipTranslation;
   use App\Models\SuppervisionTranslation;
   use App\Models\ReportingPeriod;
+  use App\Models\Office;
   use App\Models\PlanAccomplishment;
   use App\Models\ReportNarration;
  use App\Models\KeyPeformanceIndicator;
+use App\Models\ReportNarrationReport;
 
 use Carbon\Carbon;
 use Andegna\DateTime as Et_date;
@@ -21,6 +23,18 @@ use Redirect;
  * @return response()
  */
 if (! function_exists('gettrans')) {
+    function getAllOffices()
+    {
+    	$off = Office::get();
+ 
+        return $off;
+    }
+     function getAllKpi()
+    {
+    	$kpi = KeyPeformanceIndicator::get();
+ 
+        return $kpi;
+    }
     function getQuarter($type)
     {
     	$reservations = ReportingPeriod::where('reporting_period_type_id', '=', $type) ->get();
@@ -59,9 +73,15 @@ if (! function_exists('gettrans')) {
   
      }
     
-    
+    function checkPlanedForKpi($year,$kpi,$office){
+     $planAccomplishments = PlanAccomplishment::select()->where('planning_year_id' , '=', $year)->where('office_id' , '=', $office)->where('kpi_id' , '=', $kpi) ->get();//dump($planAccomplishments);
+        foreach ($planAccomplishments as $key => $planAccomplishment) {
+            return $planAccomplishment;
+        }
+      //return $kpi.$period.$one.$two.$three.$office;
+   }
    function getSavedPlanIndividualOneTwoThree($year,$kpi,$period, $one, $two,$three,$office){
-     $planAccomplishments = PlanAccomplishment::select()->where('planning_year_id' , '=', $year)->where('office_id' , '=', $office)->where('kpi_id' , '=', $kpi)->where('reporting_period_id' , '=', $period)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_two_id' , '=', $two)->where('kpi_child_three_id' , '=', $three)->get();//dd($planAccomplishments);
+     $planAccomplishments = PlanAccomplishment::select()->where('planning_year_id' , '=', $year)->where('office_id' , '=', $office)->where('kpi_id' , '=', $kpi)->where('reporting_period_id' , '=', $period)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_two_id' , '=', $two)->where('kpi_child_three_id' , '=', $three)->get();//dump($planAccomplishments);
         foreach ($planAccomplishments as $key => $planAccomplishment) {
             return $planAccomplishment;
         }
@@ -85,10 +105,16 @@ if (! function_exists('gettrans')) {
             return $planAccomplishment;
         }
     }
-    function getSavedPlanNaration($year,$period,$kpi, $office){
-     $ReportNarrations = ReportNarration::select()->where('planing_year_id' , '=', $year)->where('reporting_period_id' , '=', $period)->where('office_id' , '=', $office)->where('key_peformance_indicator_id' , '=', $kpi)->get();//dd($planAccomplishments);
+    function getSavedPlanNaration($year,$kpi, $office){
+     $ReportNarrations = ReportNarration::select()->where('planing_year_id' , '=', $year)->where('office_id' , '=', $office)->where('key_peformance_indicator_id' , '=', $kpi)->get();//dd($planAccomplishments);
         foreach ($ReportNarrations as $key => $ReportNarration) {
             return $ReportNarration->plan_naration;
+        }
+    }
+    function getSavedReportNaration($year,$period,$kpi, $office){
+     $ReportNarrations = ReportNarrationReport::select()->where('planing_year_id' , '=', $year)->where('reporting_period_id' , '=', $period)->where('office_id' , '=', $office)->where('key_peformance_indicator_id' , '=', $kpi)->get();
+        foreach ($ReportNarrations as $key => $ReportNarration) {
+            return $ReportNarration->report_naration;
         }
     }
     function gettransSuppervision($locale, $idd)

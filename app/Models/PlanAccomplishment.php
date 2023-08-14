@@ -71,7 +71,7 @@ class PlanAccomplishment extends Model
         $sum_of_sub_office_plan = 0;
         $sum_of_sub_office_report = 0;
         $plan_accom = [];
-        $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $childAndHimOffKpi_array)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_two_id' , '=', $two)->where('kpi_child_three_id' , '=', $three)->where('reporting_period_id' , '=', $period)->get();//dd($planAccomplishments);
+        $planAccomplishments = PlanAccomplishment::select('*')->whereIn('office_id', $childAndHimOffKpi_array)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_two_id' , '=', $two)->where('kpi_child_three_id' , '=', $three)->where('reporting_period_id' , '=', $period)->get();//dump($planAccomplishments);
         foreach ($planAccomplishments as $key => $planAccomplishment) {
            $sum_of_sub_office_plan = $sum_of_sub_office_plan+$planAccomplishment->plan_value;
            $sum_of_sub_office_report = $sum_of_sub_office_report+$planAccomplishment->accom_value;

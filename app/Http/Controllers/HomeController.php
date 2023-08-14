@@ -28,7 +28,7 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
-        $user_office = $user->performers;
+        $user_office = $user->offices;
        
         if($user_office->isEmpty()){  
              $search = $request->get('search', '');

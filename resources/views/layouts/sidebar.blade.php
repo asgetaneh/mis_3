@@ -225,7 +225,7 @@
                                 </a>
                             </li>
                             @endcan --}}
-
+                            {{-- @dd(auth()->user()->roles->first()->permi); --}}
                                     @can('view-any', App\Models\Language::class)
                                         <li class="nav-item">
                                             <a href="{{ route('languages.index') }}" class="nav-link {{ Request::is('smis/setting/languages') || Request::is('smis/setting/languages/*') ? 'active' : '' }}">
@@ -315,7 +315,7 @@
                                     @endcan
                                     @can('view-any', App\Models\Language::class)
                                         <li class="nav-item">
-                                            <a href="{{ route('languages.index') }}" class="nav-link">
+                                            <a href="{{ route('view-report-accomplishment') }}" class="nav-link">
                                                 <i class="nav-icon icon ion-md-radio-button-off"></i>
                                                 <p>View Report </p>
                                             </a>
