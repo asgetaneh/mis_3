@@ -25,6 +25,7 @@
                             $kpi_repeat[0] = '0';
                             $c = 1;
                             $first = 1;
+                            $kpiList = [];
                         @endphp
                         @forelse($planAccomplishments as $planAcc)
                             @php
@@ -32,10 +33,11 @@
                                 $offices = getOfficeFromKpiAndOfficeList($planAcc->Kpi, $only_child_array);
                                 $period = getQuarter($planAcc->Kpi->reportingPeriodType->id);
                                 $isOfficeBelongToKpi = getKpiImmediateChilds($only_child_array);
+                                array_push($kpiList, $planAcc->kpi_id);
                             @endphp
 
                             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
-                                <div class="card">
+                                <div class="card collapsed-card">
                                     <div class="card-header">
 
                                         @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
@@ -47,7 +49,8 @@
                                                                 value="{{ $planAcc->sum }}">
                                                         </th>
                                                         <th>
-                                                            <button type="button" class="btn btn-tool bg-primary"
+                                                            <button type="button"
+                                                                class="btn btn-flat btn-tool bg-primary m-auto py-2 px-4"
                                                                 data-card-widget="collapse"><i class="fas fa-plus"></i>
                                                             </button>
                                                         </th>
@@ -59,11 +62,12 @@
                                         @endforelse
 
                                     </div>
-                                    <div class="card-body" style="display: block;">
+                                    <div class="card-body" style="display: none;">
                                         {{-- If KPI has Child ones (UG, PG) --}}
                                         <form method="POST" action="{{ route('plan-approve') }}" class="">
                                             @csrf
-                                            <div class="icheck-success float-right bg-light border p-3">
+                                            <div class="icheck-success float-right bg-light border p-3"
+                                                id="checkAll-div{{ $planAcc->kpi_id }}">
                                                 <input class="checkAllOffices" name="checkAll" type="checkbox"
                                                     id="checkAll{{ $planAcc->kpi_id }}" value="{{ $planAcc->kpi_id }}">
                                                 <label for="checkAll{{ $planAcc->kpi_id }}">
@@ -204,6 +208,7 @@
                                             <tr>
                                                 <td colspan="8">
                                                     <button type="submit" class="btn btn-primary float-right"
+                                                        id="approve-for-{{ $planAcc->kpi_id }}"
                                                         onclick="return checkSelectedOffices({{ $planAcc->kpi_id }}, {{ json_encode($officeNameList) }})"><i
                                                             class="fa fa-check nav-icon"></i> Approve</button>
                                                 </td>
@@ -294,7 +299,21 @@
             $('.summernote').summernote({
                 height: 200
             });
-            $('.dropdown-toggle').dropdown()
+            $('.dropdown-toggle').dropdown();
+
+            let kpiList = {{ json_encode($kpiList) }};
+
+            for (let i = 0; i < kpiList.length; i++) {
+                let selector = `.office-checkbox-kpi-${kpiList[i]}`;
+                var checkboxes = $(selector);
+
+                if (checkboxes.length <= 0) {
+                    $(`#checkAll-div${kpiList[i]}`).css("display", "none");
+                    $(`#approve-for-${kpiList[i]}`).css("display", "none");
+                }
+
+            }
+
         });
     </script>
 
