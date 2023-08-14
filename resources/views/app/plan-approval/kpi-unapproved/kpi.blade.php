@@ -3,7 +3,7 @@
     @if($first==1)
 
         {{-- check if current office is approved or not so that show the select or an APPROVED badge --}}
-        @if($planAcc->planStatusOffice($office, $planAcc->kpi_id, $planning_year[0]->id) == 0)
+        {{-- @if(planStatusOffice($office, $planAcc->kpi_id, $planning_year[0]->id) == 0) --}}
             <th class="bg-light">
                 {{-- <input class="form-check" type ="checkbox" name="approve[]" value="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}"
                 title="Appove for {{$office->officeTranslations[0]->name}}"/> --}}
@@ -16,11 +16,11 @@
                 </div>
             </th>
 
-        @else
+        {{-- @else
             <th>
                 <p class="badge badge-success d-inline">APPROVED</p>
             </th>
-        @endif
+        @endif --}}
     </tr>
     <tr>
         <th>
@@ -38,8 +38,8 @@
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @php
                 $planOfOfficePlan
-                = planSumApproved($planAcc->Kpi->id,$office, $period->id, $planning_year[0]->id);
-               $narration = getNarrationApproved($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id,);
+                = planSum($planAcc->Kpi->id,$office, $period->id, 1);
+               $narration = getNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
             @endphp
             <td>
                {{$planOfOfficePlan}}

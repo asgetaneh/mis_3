@@ -25,203 +25,197 @@
                             $kpi_repeat[0] = '0';
                             $c = 1;
                             $first = 1;
+                            $kpiList = [];
                         @endphp
                         @forelse($planAccomplishments as $planAcc)
                             @php
 
-                                // ለአሁኑ kpi loop ለተደረገው፣ ፕላን ያረጉ ቢሮዎች ካሉ
-                                $offices = $planAcc->getOfficeFromKpiAndOfficeList($planAcc->Kpi, $only_child_array);
+                                $offices = getOfficeFromKpiAndOfficeList($planAcc->Kpi, $only_child_array);
                                 $period = getQuarter($planAcc->Kpi->reportingPeriodType->id);
                                 $isOfficeBelongToKpi = getKpiImmediateChilds($only_child_array);
+                                array_push($kpiList, $planAcc->kpi_id);
                             @endphp
 
                             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
-                                @if (in_array($planAcc->kpi_id, $isOfficeBelongToKpi))
-                                    <div class="card">
-                                        <div class="card-header">
+                                <div class="card collapsed-card">
+                                    <div class="card-header">
 
-                                            @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
-                                                @if (app()->getLocale() == $kpiT->locale)
-                                                    <table class="table">
-                                                        <tr style="background:#CDCDCD;" class="">
-                                                            <th style="width:80%;"> KPI: {{ $kpiT->name }}</th>
-                                                            <th> <input name="sum" class="form-control" type="number"
-                                                                    value="{{ $planAcc->sum }}">
-                                                            </th>
-                                                            <th>
-                                                                <button type="button" class="btn btn-tool bg-primary"
-                                                                    data-card-widget="collapse"><i class="fas fa-plus"></i>
-                                                                </button>
-                                                            </th>
-                                                        </tr>
-                                                    </table>
+                                        @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
+                                            @if (app()->getLocale() == $kpiT->locale)
+                                                <table class="table">
+                                                    <tr style="background:#CDCDCD;" class="">
+                                                        <th style="width:80%;"> KPI: {{ $kpiT->name }}</th>
+                                                        <th> <input name="sum" class="form-control" type="number"
+                                                                value="{{ $planAcc->sum }}">
+                                                        </th>
+                                                        <th>
+                                                            <button type="button"
+                                                                class="btn btn-flat btn-tool bg-primary m-auto py-2 px-4"
+                                                                data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                                            </button>
+                                                        </th>
+                                                    </tr>
+                                                </table>
+                                            @endif
+                                        @empty
+                                            <h4>No KPI name!</h4>
+                                        @endforelse
+
+                                    </div>
+                                    <div class="card-body" style="display: none;">
+                                        {{-- If KPI has Child ones (UG, PG) --}}
+                                        <form method="POST" action="{{ route('plan-approve') }}" class="">
+                                            @csrf
+                                            <div class="icheck-success float-right bg-light border p-3"
+                                                id="checkAll-div{{ $planAcc->kpi_id }}">
+                                                <input class="checkAllOffices" name="checkAll" type="checkbox"
+                                                    id="checkAll{{ $planAcc->kpi_id }}" value="{{ $planAcc->kpi_id }}">
+                                                <label for="checkAll{{ $planAcc->kpi_id }}">
+                                                    Select All
+                                                </label>
+                                            </div>
+                                            @forelse($offices  as $office)
+                                                {{-- @dd($offices) --}}
+
+                                                {{-- get all children of current office so that its parent can see the sum of the plan for the current kpi plan --}}
+                                                @php
+                                                    $hasChildrenOfficesPlannedAndApproved = getOfficeChildrenApprovedList($planAcc->kpi_id, $office, $planAcc->planning_year_id, 1);
+                                                @endphp
+
+                                                {{-- if the office has children that have a plan for the current kpi and are also approved by him,
+                                                    so that add their sum with their parent and display to the leader --}}
+                                                {{-- @dd($hasChildrenOfficesPlannedAndApproved) --}}
+                                                @if (count($hasChildrenOfficesPlannedAndApproved) > 0)
+                                                    @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
+                                                        <table class="table table-bordered">
+                                                            <thead>
+                                                                @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
+                                                                    @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
+                                                                        @include('app.plan-approval.kpi-unapproved.kpi123')
+                                                                        {{-- KPI has  child one and child two --}}
+                                                                    @else
+                                                                        @include('app.plan-approval.kpi-unapproved.kpi12')
+                                                                    @endif
+                                                                    {{-- KPI has  child one only --}}
+                                                                @else
+                                                                    @include('app.plan-approval.kpi-unapproved.kpi1')
+                                                                @endif
+
+                                                            </thead>
+                                                        </table>
+                                                        {{-- KPI has no child one, which means just only plain input --}}
+                                                    @else
+                                                        @include('app.plan-approval.kpi-unapproved.kpi')
+                                                    @endif
+                                                @else
+                                                    @php
+                                                        $anyChildrenOfficePlannedAndApproved = getOfficeChildrenApprovedList($planAcc->kpi_id, $office, $planAcc->planning_year_id, 2);
+                                                    @endphp
+                                                    {{-- @dd($anyChildrenOfficePlannedAndApproved) --}}
+
+                                                    {{-- Including current office and its children, are they approved and they are up to their grandfather --}}
+                                                    @if (count($anyChildrenOfficePlannedAndApproved) > 0)
+                                                        @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
+                                                            <table class="table table-bordered">
+                                                                <thead>
+                                                                    @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
+                                                                        @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
+                                                                            @include('app.plan-approval.kpi-approved.kpi123-with-approved')
+                                                                            {{-- KPI has  child one and child two --}}
+                                                                        @else
+                                                                            @include('app.plan-approval.kpi-approved.kpi12-with-approved')
+                                                                        @endif
+                                                                        {{-- KPI has  child one only --}}
+                                                                    @else
+                                                                        @include('app.plan-approval.kpi-approved.kpi1-with-approved')
+                                                                    @endif
+
+                                                                </thead>
+                                                            </table>
+                                                            {{-- KPI has no child one, which means just only plain input --}}
+                                                        @else
+                                                            @include('app.plan-approval.kpi-approved.kpi-with-approved')
+                                                        @endif
+                                                    @else
+                                                        {{-- check if direct child has plan --}}
+                                                        @php
+                                                            $hasOfficePlan = getOfficePlanRecord($planAcc->kpi_id, $office, $planAcc->planning_year_id);
+                                                        @endphp
+                                                        {{-- @dd($hasOfficePlan) --}}
+
+                                                        @if ($hasOfficePlan->count() > 0)
+                                                            @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
+                                                                <table class="table table-bordered">
+                                                                    <thead>
+                                                                        @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
+                                                                            @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
+                                                                                @include('app.plan-approval.office-plan-only.office-plan-only123')
+                                                                                {{-- KPI has  child one and child two --}}
+                                                                            @else
+                                                                                @include('app.plan-approval.office-plan-only.office-plan-only12')
+                                                                            @endif
+                                                                            {{-- KPI has  child one only --}}
+                                                                        @else
+                                                                            @include('app.plan-approval.office-plan-only.office-plan-only1')
+                                                                        @endif
+
+                                                                    </thead>
+                                                                </table>
+                                                                {{-- KPI has no child one, which means just only plain input --}}
+                                                            @else
+                                                                @include('app.plan-approval.office-plan-only.office-plan-only')
+                                                            @endif
+                                                        @else
+                                                            @php
+                                                                $isOfficeBelongToKpi = isOfficeBelongToKpi($office, $planAcc->Kpi->id);
+                                                            @endphp
+
+                                                            @if ($isOfficeBelongToKpi->count() > 0)
+                                                                @if (count(office_all_childs_ids($office)) > 0)
+                                                                    <p>Office
+                                                                        <u>{{ $office->officeTranslations[0]->name }}</u>
+                                                                        has
+                                                                        no plan or not approved its children yet!
+                                                                    </p>
+                                                                @else
+                                                                    <p>Office
+                                                                        <u>{{ $office->officeTranslations[0]->name }}</u>
+                                                                        has
+                                                                        not planned for this KPI yet!
+                                                                    </p>
+                                                                @endif
+                                                            @else
+                                                            @endif
+                                                        @endif
+                                                    @endif
                                                 @endif
                                             @empty
-                                                <h4>No KPI name!</h4>
+                                                <h4>No offices!</h4>
                                             @endforelse
 
-                                        </div>
-                                        <div class="card-body" style="display: block;">
-                                            {{-- If KPI has Child ones (UG, PG) --}}
-                                            <form method="POST" action="{{ route('plan-approve') }}" class="">
-                                                @csrf
-                                                <div class="icheck-success float-right bg-light border p-3">
-                                                    <input class="checkAllOffices" name="checkAll" type="checkbox"
-                                                        id="checkAll{{ $planAcc->kpi_id }}" value="{{ $planAcc->kpi_id }}">
-                                                    <label for="checkAll{{ $planAcc->kpi_id }}">
-                                                        Select All
-                                                    </label>
-                                                </div>
-                                                @forelse($offices  as $office)
-                                                    {{-- Check if current office for the KPI has a plan record --}}
-                                                    @php
-                                                        $hasOfficePlan = getOfficePlanRecord($planAcc->kpi_id, $office->id, $planAcc->planning_year_id);
-                                                    @endphp
-
-                                                    @if ($hasOfficePlan->count() > 0)
-                                                        @php
-                                                            $currentOfficeChildren = [];
-                                                        @endphp
-                                                        @forelse ($office->offices as $child)
-                                                            @php
-                                                                array_push($currentOfficeChildren, $child->id);
-                                                            @endphp
-                                                        @empty
-                                                        @endforelse
-                                                        {{-- get all children of current office so that its parent can see the sum of the plan for the current kpi plan --}}
-                                                        @php
-                                                            $hasChildrenOfficesPlannedAndApproved = getOfficeChildrenApprovedList($planAcc->kpi_id, $office, $planAcc->planning_year_id, $currentOfficeChildren);
-                                                        @endphp
-
-                                                        {{-- if the office has children that have a plan for the current kpi and are also approved,
-                                                            so that add their sum with their parent and display to the leader --}}
-                                                        {{-- @dd($hasChildrenOfficesPlannedAndApproved) --}}
-                                                        @if (count($hasChildrenOfficesPlannedAndApproved) > 0)
-                                                            @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
-                                                                <table class="table table-bordered">
-                                                                    <thead>
-                                                                        @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
-                                                                            @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
-                                                                                @include('app.plan-approval.kpi123-with-approved')
-                                                                                {{-- KPI has  child one and child two --}}
-                                                                            @else
-                                                                                @include('app.plan-approval.kpi12-with-approved')
-                                                                            @endif
-                                                                            {{-- KPI has  child one only --}}
-                                                                        @else
-                                                                            @include('app.plan-approval.kpi1-with-approved')
-                                                                        @endif
-
-                                                                    </thead>
-                                                                </table>
-                                                                {{-- KPI has no child one, which means just only plain input --}}
-                                                            @else
-                                                                @include('app.plan-approval.kpi-with-approved')
-                                                            @endif
-                                                        @else
-                                                            @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
-                                                                <table class="table table-bordered">
-                                                                    <thead>
-                                                                        @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
-                                                                            @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
-                                                                                @include('app.plan-approval.kpi123')
-                                                                                {{-- KPI has  child one and child two --}}
-                                                                            @else
-                                                                                @include('app.plan-approval.kpi12')
-                                                                            @endif
-                                                                            {{-- KPI has  child one only --}}
-                                                                        @else
-                                                                            @include('app.plan-approval.kpi1')
-                                                                        @endif
-
-                                                                    </thead>
-                                                                </table>
-                                                                {{-- KPI has no child one, which means just only plain input --}}
-                                                            @else
-                                                                @include('app.plan-approval.kpi')
-                                                            @endif
-                                                        @endif
-
-
-                                                        {{-- office has no plan for the current KPI, so that look if the office's all children has plan for this KPI
-                                                        and are approved so that they will be displayed by grouping them with their father name --}}
-                                                    @else
-                                                        @php
-                                                            $currentOfficeChildren = [];
-                                                        @endphp
-                                                        @forelse ($office->offices as $child)
-                                                            @php
-                                                                array_push($currentOfficeChildren, $child->id);
-                                                            @endphp
-                                                        @empty
-                                                        @endforelse
-
-                                                        {{-- get all children of current office so that its parent can see the sum of the plan for the current kpi plan --}}
-                                                        @php
-                                                            $hasChildrenOfficesPlannedAndApproved = getOfficeChildrenApprovedList($planAcc->kpi_id, $office, $planAcc->planning_year_id, $currentOfficeChildren);
-                                                        @endphp
-
-                                                        {{-- if immediate has no plan, but children have plan that are approved --}}
-                                                        {{-- The office name will be set as their parent name, then their sum value added up and displayed --}}
-                                                        {{-- @dd(count($hasChildrenOfficesPlannedAndApproved)) --}}
-                                                        @if (count($hasChildrenOfficesPlannedAndApproved) > 0)
-                                                            @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
-                                                                <table class="table table-bordered">
-                                                                    <thead>
-                                                                        @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
-                                                                            @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
-                                                                                @include('app.plan-approval.kpi123-father-no-plan')
-                                                                                {{-- KPI has  child one and child two --}}
-                                                                            @else
-                                                                                @include('app.plan-approval.kpi12-father-no-plan')
-                                                                            @endif
-                                                                            {{-- KPI has  child one only --}}
-                                                                        @else
-                                                                            @include('app.plan-approval.kpi1-father-no-plan')
-                                                                        @endif
-
-                                                                    </thead>
-                                                                </table>
-                                                                {{-- KPI has no child one, which means just only plain input --}}
-                                                            @else
-                                                                @include('app.plan-approval.kpi-father-no-plan')
-                                                            @endif
-                                                        @else
-                                                            {{-- Parent no plan, Children may have plan but not approved yet --}}
-                                                            {{-- <p><u>{{ $office->officeTranslations[0]->name }}</u> has no plan or plan is not approved!</p> --}}
-                                                        @endif
-
-
-                                                        {{-- below code is as it is --}}
-                                                    @endif
-
-                                                @empty
-                                                    <h4>No offices!</h4>
-                                                @endforelse
-
+                                            @php
+                                                $officeNameList = [];
+                                            @endphp
+                                            @forelse ($offices as $key => $office)
                                                 @php
-                                                    $officeNameList = [];
+                                                    // array_push($officeNameList, $office->officeTranslations[0]->name);
+                                                    $officeNameList[$office->id] = $office->officeTranslations[0]->name;
                                                 @endphp
-                                                @forelse ($offices as $key => $office)
-                                                    @php
-                                                        // array_push($officeNameList, $office->officeTranslations[0]->name);
-                                                        $officeNameList[$office->id] = $office->officeTranslations[0]->name;
-                                                    @endphp
-                                                @empty
-                                                @endforelse
+                                            @empty
+                                            @endforelse
 
-                                                {{-- @dd($officeNameList) --}}
-                                                <tr>
-                                                    <td colspan="8">
-                                                        <button type="submit" class="btn btn-primary float-right"
-                                                            onclick="return checkSelectedOffices({{ $planAcc->kpi_id }}, {{ json_encode($officeNameList) }})"><i
-                                                                class="fa fa-check nav-icon"></i> Approve</button>
-                                                    </td>
-                                                </tr>
-                                            </form>
-                                        </div>
+                                            {{-- @dd($officeNameList) --}}
+                                            <tr>
+                                                <td colspan="8">
+                                                    <button type="submit" class="btn btn-primary float-right"
+                                                        id="approve-for-{{ $planAcc->kpi_id }}"
+                                                        onclick="return checkSelectedOffices({{ $planAcc->kpi_id }}, {{ json_encode($officeNameList) }})"><i
+                                                            class="fa fa-check nav-icon"></i> Approve</button>
+                                                </td>
+                                            </tr>
+                                        </form>
                                     </div>
-                                @endif
+                                </div>
 
                                 @php
                                     $kpi_repeat[$c] = $planAcc->Kpi->id;
@@ -230,7 +224,7 @@
                                 @endphp
                             @endif
                         @empty
-                            {{-- <p>ugyftrdy</p> --}}
+                            <p>No KPI!</p>
                         @endforelse
                     </div>
                 </div>
@@ -254,7 +248,8 @@
                     <input type="hidden" id="" class="" value="">
                     <div class="modal-body vehicle-modal-body">
                         {{-- content to be filled after ajax request here --}}
-                        <textarea class="form-control summernote" name="plan_comment" id="" cols="30" rows="10" placeholder="Enter your comment"></textarea>
+                        <textarea class="form-control summernote" name="plan_comment" id="" cols="30" rows="10"
+                            placeholder="Enter your comment"></textarea>
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -304,7 +299,21 @@
             $('.summernote').summernote({
                 height: 200
             });
-            $('.dropdown-toggle').dropdown()
+            $('.dropdown-toggle').dropdown();
+
+            let kpiList = {{ json_encode($kpiList) }};
+
+            for (let i = 0; i < kpiList.length; i++) {
+                let selector = `.office-checkbox-kpi-${kpiList[i]}`;
+                var checkboxes = $(selector);
+
+                if (checkboxes.length <= 0) {
+                    $(`#checkAll-div${kpiList[i]}`).css("display", "none");
+                    $(`#approve-for-${kpiList[i]}`).css("display", "none");
+                }
+
+            }
+
         });
     </script>
 
