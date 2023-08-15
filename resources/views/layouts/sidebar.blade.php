@@ -245,7 +245,9 @@
                                         <i class="right fas fa-angle-left"></i>
                                     </p>
                                 </a>
-
+                                 {{-- dd(Auth::user()->getPermissionsViaRoles()->pluck('name'));  
+                                dd($user->hasAnyRole(['writer', 'reader'])); --}}
+ 
                                 <ul class="nav nav-treeview">
                                     @can('view-any', App\Models\PlanAccomplishment::class)
                                         <li class="nav-item">
@@ -258,31 +260,23 @@
                                             @endif
                                         </li>
                                     @endcan
-
+                                    @php
+                                    $user = auth()->user();
+                                    $office = $user->offices[0];
+                                    $childAndHimOffKpi = $office->offices;
+                                    @endphp
                                     @can('view-any', App\Models\PlanAccomplishment::class)
+                                    @if (!$office->offices->isEmpty())
                                         <li class="nav-item">
                                             <a href="{{ route('plan-approve.index') }}" class="nav-link {{ Request::is('smis/plan/approve/*') || Request::is('smis/plan/approve') ? 'active' : '' }}">
                                                 <i class="nav-icon icon ion-md-radio-button-off"></i>
                                                 <p>Plan Approval</p>
                                             </a>
                                         </li>
+                                         @endif
                                     @endcan
 
-                                    @php
-                                    $user = auth()->user();
-                                    $office = $user->offices[0];
-                                    $childAndHimOffKpi = $office->offices;
-                                    @endphp
-                                    @if (!$office->offices->isEmpty())
-                                    @can('view-any', App\Models\PlanAccomplishment::class)
-                                        <li class="nav-item">
-                                            <a href="{{ route('approve-plan') }}" class="nav-link {{ Request::is('smis/plan/approve-plan/*') || Request::is('smis/plan/approve-plan') ? 'active' : '' }}">
-                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                                <p> Plan Approve</p>
-                                            </a>
-                                        </li>
-                                    @endcan
-                                    @endif
+                                    
                                     @can('view-any', App\Models\PlanAccomplishment::class)
                                         <li class="nav-item">
                                             <a href="{{ route('view-plan-accomplishment') }}" class="nav-link {{ Request::is('smis/plan/view-plan-accomplishment/*') || Request::is('smis/plan/view-plan-accomplishment') ? 'active' : '' }}">
