@@ -2,16 +2,18 @@
   use App\Models\OwnershipTranslation;
   use App\Models\SuppervisionTranslation;
   use App\Models\ReportingPeriod;
+  use App\Models\Office;
   use App\Models\PlanAccomplishment;
   use App\Models\ReportNarration;
  use App\Models\KeyPeformanceIndicator;
+use App\Models\ReportNarrationReport;
 
 use Carbon\Carbon;
 use Andegna\DateTime as Et_date;
 use Andegna\DateTimeFactory;
 use App\Models\PlaningYear;
-use DateTime;
-use Redirect;
+// use DateTime;
+// use Redirect;
 
 
 
@@ -21,10 +23,22 @@ use Redirect;
  * @return response()
  */
 if (! function_exists('gettrans')) {
+    function getAllOffices()
+    {
+    	$off = Office::get();
+
+        return $off;
+    }
+     function getAllKpi()
+    {
+    	$kpi = KeyPeformanceIndicator::get();
+
+        return $kpi;
+    }
     function getQuarter($type)
     {
     	$reservations = ReportingPeriod::where('reporting_period_type_id', '=', $type) ->get();
- 
+
         return $reservations;
     }
      function getReportingQuarter($type)
@@ -32,7 +46,7 @@ if (! function_exists('gettrans')) {
         $acctive_period_list =[];
         $report_period_list = ReportingPeriod::all();
         $date = new \DateTime() ;
-        $ethiopic_today = DateTimeFactory::fromDateTime($date); 
+        $ethiopic_today = DateTimeFactory::fromDateTime($date);
         foreach ($report_period_list as $key => $value) {
             // today date
              $ethiopic_today_tostring = $ethiopic_today->getYear().'-'.$ethiopic_today->getMonth().'-'.$ethiopic_today->getDay();
@@ -44,24 +58,30 @@ if (! function_exists('gettrans')) {
 
             // end date
             $from_String_end_date = [$year, $month, $day] = explode('-', $value->end_date);
-            $end_date = DateTime::createFromFormat('Y-m-d',  $from_String_end_date[0].'-'.$from_String_end_date[1].'-'.$from_String_end_date[2]); 
- 
+            $end_date = DateTime::createFromFormat('Y-m-d',  $from_String_end_date[0].'-'.$from_String_end_date[1].'-'.$from_String_end_date[2]);
+
              if($start_date < $now_et_date && $end_date > $now_et_date){
                 $report_period = ReportingPeriod::where('id' , '=', $value->id)->where('reporting_period_type_id', '=', $type)->get();
                     if($report_period){
                         foreach ($report_period as $key2 => $period) {
                             $acctive_period_list[$key] = $period;
                         }
-                     }           
+                     }
             }
-        }    
+        }
         return $acctive_period_list;
-  
+
      }
-    
-    
+
+    function checkPlanedForKpi($year,$kpi,$office){
+     $planAccomplishments = PlanAccomplishment::select()->where('planning_year_id' , '=', $year)->where('office_id' , '=', $office)->where('kpi_id' , '=', $kpi) ->get();//dump($planAccomplishments);
+        foreach ($planAccomplishments as $key => $planAccomplishment) {
+            return $planAccomplishment;
+        }
+      //return $kpi.$period.$one.$two.$three.$office;
+   }
    function getSavedPlanIndividualOneTwoThree($year,$kpi,$period, $one, $two,$three,$office){
-     $planAccomplishments = PlanAccomplishment::select()->where('planning_year_id' , '=', $year)->where('office_id' , '=', $office)->where('kpi_id' , '=', $kpi)->where('reporting_period_id' , '=', $period)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_two_id' , '=', $two)->where('kpi_child_three_id' , '=', $three)->get();//dd($planAccomplishments);
+     $planAccomplishments = PlanAccomplishment::select()->where('planning_year_id' , '=', $year)->where('office_id' , '=', $office)->where('kpi_id' , '=', $kpi)->where('reporting_period_id' , '=', $period)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_two_id' , '=', $two)->where('kpi_child_three_id' , '=', $three)->get();//dump($planAccomplishments);
         foreach ($planAccomplishments as $key => $planAccomplishment) {
             return $planAccomplishment;
         }
@@ -85,10 +105,16 @@ if (! function_exists('gettrans')) {
             return $planAccomplishment;
         }
     }
-    function getSavedPlanNaration($year,$period,$kpi, $office){
-     $ReportNarrations = ReportNarration::select()->where('planing_year_id' , '=', $year)->where('reporting_period_id' , '=', $period)->where('office_id' , '=', $office)->where('key_peformance_indicator_id' , '=', $kpi)->get();//dd($planAccomplishments);
+    function getSavedPlanNaration($year,$kpi, $office){
+     $ReportNarrations = ReportNarration::select()->where('planing_year_id' , '=', $year)->where('office_id' , '=', $office)->where('key_peformance_indicator_id' , '=', $kpi)->get();//dd($planAccomplishments);
         foreach ($ReportNarrations as $key => $ReportNarration) {
             return $ReportNarration->plan_naration;
+        }
+    }
+    function getSavedReportNaration($year,$period,$kpi, $office){
+     $ReportNarrations = ReportNarrationReport::select()->where('planing_year_id' , '=', $year)->where('reporting_period_id' , '=', $period)->where('office_id' , '=', $office)->where('key_peformance_indicator_id' , '=', $kpi)->get();
+        foreach ($ReportNarrations as $key => $ReportNarration) {
+            return $ReportNarration->report_naration;
         }
     }
     function gettransSuppervision($locale, $idd)
@@ -96,14 +122,14 @@ if (! function_exists('gettrans')) {
       $reservations = SuppervisionTranslation::where('suppervision_id', '=', $idd)
                            ->where('locale', '=', $locale)
                            ->get();
- 
+
         return $reservations;
     }
     function getKeyperormanceIndicators($objective, $office){
          $KeyPeformanceIndicators = KeyPeformanceIndicator::select('key_peformance_indicators.*')
                      ->join('kpi_office', 'key_peformance_indicators.id', '=', 'kpi_office.kpi_id')
                      ->join('offices', 'offices.id', '=', 'kpi_office.office_id')
-                      
+
                      ->join('objectives', 'key_peformance_indicators.objective_id', '=', 'objectives.id')
                      ->where('offices.id' , '=', $office)
                     ->where('objective_id' , '=', $objective->id)
@@ -128,7 +154,7 @@ if (! function_exists('gettrans')) {
         $acctive_period_list =[];
         $report_period_list = ReportingPeriod::all();
         $date = new \DateTime() ;
-        $ethiopic_today = DateTimeFactory::fromDateTime($date); 
+        $ethiopic_today = DateTimeFactory::fromDateTime($date);
         foreach ($report_period_list as $key => $value) {
             // today date
              $ethiopic_today_tostring = $ethiopic_today->getYear().'-'.$ethiopic_today->getMonth().'-'.$ethiopic_today->getDay();
@@ -140,24 +166,24 @@ if (! function_exists('gettrans')) {
 
             // end date
             $from_String_end_date = [$year, $month, $day] = explode('-', $value->end_date);
-            $end_date = DateTime::createFromFormat('Y-m-d',  $from_String_end_date[0].'-'.$from_String_end_date[1].'-'.$from_String_end_date[2]); 
- 
+            $end_date = DateTime::createFromFormat('Y-m-d',  $from_String_end_date[0].'-'.$from_String_end_date[1].'-'.$from_String_end_date[2]);
+
              if($start_date < $now_et_date && $end_date > $now_et_date){
                 $report_period = ReportingPeriod::where('id' , '=', $value->id)->get();
                     if($report_period){
                         foreach ($report_period as $key2 => $period) {
                             $acctive_period_list[$key] = $period->id;
                         }
-                     }           
+                     }
             }
-        }    
+        }
         return $acctive_period_list;
     }
     function getKeyperormanceIndicatorsForReporting($objective, $office,$period){
          $KeyPeformanceIndicators = KeyPeformanceIndicator::select('key_peformance_indicators.*')
                      ->join('kpi_office', 'key_peformance_indicators.id', '=', 'kpi_office.kpi_id')
                      ->join('offices', 'offices.id', '=', 'kpi_office.office_id')
-                      
+
                      ->join('objectives', 'key_peformance_indicators.objective_id', '=', 'objectives.id')
                     ->join('reporting_period_types', 'key_peformance_indicators.reporting_period_type_id', '=', 'reporting_period_types.id')
                     ->join('reporting_periods', 'reporting_periods.reporting_period_type_id', '=', 'reporting_period_types.id')

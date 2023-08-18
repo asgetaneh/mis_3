@@ -5,8 +5,8 @@ use App\Models\ReportingPeriod;
 use App\Models\ReportNarration;
 use App\Models\PlanAccomplishment;
 use App\Models\KeyPeformanceIndicator;
-
-
+use App\Models\OfficeTranslation;
+use App\Models\PlanComment;
 
 /**
  * Write code on Method
@@ -892,6 +892,45 @@ function isCurrentOfficeApproved($kpi, $office, $year)
         ->where(function ($q) {
             $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
         })
+        ->where('planning_year_id', $year)
+        ->first();
+
+    // dd($status);
+    return $status ?? '';
+}
+
+function hasOfficeActiveComment($office, $kpi, $year){
+
+    $comment = PlanComment::select()
+        ->where('kpi_id', $kpi)
+        ->where('office_id', $office)
+        ->where('planning_year_id', $year)
+        ->where('status', 1)
+        ->first();
+
+    // dd($comment);
+    return $comment;
+}
+
+function getPlanCommentorInfo($office, $kpi, $year){
+    $info = PlanComment::select()
+        ->where('kpi_id', $kpi)
+        ->where('office_id', $office)
+        ->where('planning_year_id', $year)
+        ->first();
+
+    $officeName = OfficeTranslation::where('translation_id', $info->commented_by)->first();
+
+    return $officeName->name ?? '-';
+}
+
+function commentorTextStatus($office, $commentorId, $kpi, $year){
+
+    // dd($office->id);
+    $status = PlanComment::select()
+        ->where('kpi_id', $kpi)
+        ->where('commented_by', $commentorId)
+        ->where('office_id', $office->id)
         ->where('planning_year_id', $year)
         ->first();
 

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\PlanAccomplishment;
 use Illuminate\Support\Facades\DB;
 use App\Models\KeyPeformanceIndicator;
+use App\Models\PlanComment;
 
 class PlanApprovalController extends Controller
 {
@@ -130,7 +131,219 @@ class PlanApprovalController extends Controller
 
     }
 
+    public function planDisapproved(Request $request){
+        // dd($request->all());
+
+        $requestData = explode('-', $request->input('disapprove-office-info'));
+
+        $kpi = $requestData[0];
+        // $office = $requestData[1];
+        // $office = Office::find($office);
+        $planningYear = $requestData[1];
+
+        $officeLogged = Office::find(auth()->user()->offices[0]->id);
+
+        $officeList = office_all_childs_ids($officeLogged);
+        // dd($officeList);
+
+        // $officeList = array_merge($officeList, array($officeLogged->level+1));
+
+        if(count($officeList) > 0){
+            foreach($officeList as $office){
+                $officeInfo = Office::find($office);
+
+                $disapproved = DB::table('plan_accomplishments')
+                ->where('kpi_id', $kpi)
+                ->where('office_id', $office)
+                ->where('planning_year_id', $planningYear)
+                ->update([
+                    'plan_status' => $officeInfo->level,
+                ]);
+
+                // try to insert the comment for each office so that they will be able to see the comment when to modify planning
+                // $isCommentExists = DB::table('plan_comments')->where('office_id', $office)->get();
+                // if($isCommentExists->count() > 0){
+                //     $disapproved = DB::table('plan_comments')
+                //     ->where('kpi_id', $kpi)
+                //     ->where('office_id', $office)
+                //     ->where('planning_year_id', $planningYear)
+                //     ->update([
+                //         'plan_status' => $officeInfo->level,
+                //     ]);
+                // }
+            }
+        }
+
+        return redirect()->back()->withSuccess(__('crud.common.disapproved'));
+    }
+
     public function planComment(Request $request){
-        dd($request->all());
+        // dd($request->all());
+
+        $loggedInUserOfficeLevel = Office::where('id', auth()->user()->offices[0]->id)->first();
+        $requestArray = explode('-', $request->input('commented-office-info'));
+
+        $planComment = $request->input('plan_comment');
+        $kpi = (int)$requestArray[0];
+        $office = (int)$requestArray[1];
+        $officeId = Office::find($office);
+        $planningYear = (int)$requestArray[2];
+        $reportingPeriod = 3; // static for now, think on it later
+
+        $isCurrentOfficePlanned = getOfficePlanRecord($kpi, $officeId, $planningYear);
+        $isOfficeLast= office_all_childs_ids($officeId);
+        // dd(count($isOfficeLast));
+        // dd($isCurrentOfficePlanned);
+
+        // dd($isCurrentOfficePlanned->count() > 0 && count($isOfficeLast) == 0);
+        // make current office's plan_status downgrade so that KPI plan form will be editable
+        if($isCurrentOfficePlanned->count() > 0 && count($isOfficeLast) == 0){
+            $changePlanStatus = DB::table('plan_accomplishments')
+                ->where('planning_year_id', $planningYear)
+                ->where('office_id', $office)
+                ->where('kpi_id', $kpi)
+                // ->where('reporting_period_id', $reportingPeriod)
+                ->update([
+                    'plan_status' => $loggedInUserOfficeLevel->level+1, // or the current office's level
+                    // 'approved_by_id' => auth()->user()->id
+                ]);
+        }
+
+        $isCommentExists = DB::table('plan_comments')->where('office_id', $office)->where('kpi_id', $kpi)->where('planning_year_id', $planningYear)->get();
+        // dd($isCommentExists);
+
+        if($isCommentExists->count() > 0){
+            $planCommented = DB::table('plan_comments')
+            ->update([
+                'plan_comment' => $planComment,
+                'status' => 1
+            ]);
+        }
+
+        $planCommented = PlanComment::create([
+            'plan_comment' => $planComment,
+            'kpi_id' => $kpi,
+            'reporting_period_id' => $reportingPeriod,
+            'planning_year_id' => $planningYear,
+            'office_id' => $office,
+            'commented_by' => $loggedInUserOfficeLevel->id
+        ]);
+
+        return redirect()->back()->withSuccess(__('crud.common.commented'));
+
+
+    }
+
+    public function replyComment(Request $request){
+        // dd($request->all());
+
+        $requestData = explode('-', $request->input('view-commented-office-info'));
+        // dd($requestData);
+
+        $planCommentId = $requestData[0];
+        $kpi = $requestData[1];
+        $planningYear = $requestData[2];
+
+        $replyComment = DB::table('plan_comments')
+            ->where('id', $planCommentId)
+            ->where('kpi_id', $kpi)
+            ->where('planning_year_id', $planningYear)
+            ->update([
+                'reply_comment' => $request->input('reply_comment'),
+                'status' => 0,
+            ]);
+
+        return redirect()->back()->withSuccess(__('crud.common.replied'));
+    }
+
+    // AJAX responses
+    public function getOfficeKpiInfo($data){
+        $requestArray = explode('-', $data);
+        // error_log($requestArray[1]);
+
+        $returnData = $data;
+
+        $kpi = (int)$requestArray[0];
+        $office = (int)$requestArray[1];
+        // $planningYear = (int)$requestArray[2];
+
+        $responseData = [];
+
+        $officeName = Office::find($office);
+        $officeName = $officeName->officeTranslations[0]->name;
+        $kpiName = KeyPeformanceIndicator::find($kpi);
+        $kpiName = $kpiName->keyPeformanceIndicatorTs[0]->name;
+
+        $responseData['info'] = $returnData;
+        $responseData['officeName'] = $officeName;
+        $responseData['kpi'] = $kpiName;
+
+        return response()->json($responseData);
+
+    }
+
+    public function getCommentInfo($data){
+        $requestArray = explode('-', $data);
+        error_log($requestArray[0]);
+
+        $returnData = $data;
+
+        $kpi = (int)$requestArray[1];
+        // $office = (int)$requestArray[2];
+        $planningYear = (int)$requestArray[2];
+
+        $officeName = getPlanCommentorInfo(auth()->user()->offices[0]->id, $kpi, $planningYear);
+
+        $commentText = hasOfficeActiveComment(auth()->user()->offices[0]->id,$kpi, $planningYear)->plan_comment;
+
+        $responseData = [];
+        $responseData['info'] = $returnData;
+        $responseData['officeName'] = $officeName;
+        $responseData['commentText'] = $commentText;
+
+        return response()->json($responseData);
+    }
+
+    public function disapproveInfo($data){
+        $requestArray = explode('-', $data);
+        // error_log($requestArray[1]);
+
+        $returnData = $data;
+
+        $kpi = (int)$requestArray[0];
+        $office = (int)$requestArray[1];
+        // $planningYear = (int)$requestArray[2];
+
+        $responseData = [];
+
+        $officeName = Office::find($office);
+
+        $responseData['info'] = $returnData;
+
+        return response()->json($responseData);
+
+    }
+
+    public function replyInfo($data){
+        $requestArray = explode('-', $data);
+        // error_log($requestArray[1]);
+
+        $returnData = $data;
+
+        $office = $requestArray[0];
+        $office = Office::find($office);
+        $planCommentId = (int)$requestArray[1];
+        $kpi = (int)$requestArray[2];
+        $planningYear = (int)$requestArray[3];
+
+        $replyText = commentorTextStatus($office, auth()->user()->offices[0]->id, $kpi, $planningYear)->reply_comment;
+
+        $responseData = [];
+
+        $responseData['info'] = $returnData;
+        $responseData['replyText'] = $replyText;
+
+        return response()->json($responseData);
+
     }
 }

@@ -16,29 +16,47 @@
 
 @section('content')
     @php     $first=1; @endphp
+    <div class="row justify-content-center mt-5">
+        <div class="col-12">
+            <div class="card card-primary card-outline card-outline-tabs fillable-objective">
+                <div class="card-body">
+                         <form role="form" class="form-horizontal" method="get" action="{{ route('view-plan-accomplishment') }}">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <label class="label" for="filters">Offices:</label>
+                                    <select class="form-control" name="office">
+                                        <option value=" ">Select Office</option>
+                                        @forelse(getAllOffices() as $office)
+                                            <option value="{{$office->id }}">{{$office->officeTranslations[0]->name}}</option>
+                                         @empty
+                                        @endforelse
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class=" " for="filters">KPI:</label>
+                                    <select class="form-control" name="kpi">
+                                        <option value=" ">Select KPI</option>
+                                       @forelse(getAllKpi() as $kpi)
+                                            <option value="{{$kpi->id }}">{{$kpi->keyPeformanceIndicatorTs[0]->name}}</option>
+                                         @empty
+                                        @endforelse
+                                    </select>
+
+                                </div>
+                                <div class="col-md-1"><br/>
+                                    <button class="btn btn-primary" value="search" name="search"
+                                        type="submit">Search</button>
+                                 </div>
+                            </div>
+                        </form>
+                 </div>
+            </div>
+        </div>
+
+    </div>
 
 
-    {{-- <form action="/cases" method="GET">
-    From:<input type="date" name="from">
-    To:<input type="date" name="to">
-    District:<input type="text" name="district" class="">
-    <button type="submit" class="btn btn-success btn-sm">Search</button>
-  </form>
-<form action=  method="get">
-    <div class="col-md-5 form-group">
-    <label for="">Date From</label>
-    {{-- <input type="date" name="date_from" class="form-control" value="{{ $request->date_from }}">  
-    </div>
-    <div class="col-md-5 form-group">
-    <label for="">Date From</label>
-    <input type="date" name="date_to" class="form-control"  
-    </div>
-    <div class="col-md-2 form-group" style="margin-top:25px;">
-    <input type="submit" class="btn btn-primary" value="Search">
-    </div>
-</form> --}}
-              
- 
+
 
     <div class="row justify-content-center mt-5">
         <div class="col-12">
@@ -48,6 +66,7 @@
                         @php
                             $kpi_repeat[0] = '0';
                             $c = 1;
+                            $objective_array =[];
                         @endphp
                         @forelse($planAccomplishments as $planAcc)
                             @php
@@ -61,9 +80,22 @@
                                         @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
                                             @if (app()->getLocale() == $kpiT->locale)
                                                 <table class="table">
-                                                    <tr style="background:#CDCDCD;">
-                                                        <th style="width:80%;"> KPI: {{ $kpiT->name }}</th>
-                                                        <th> <input name="sum" class="form-control" type="number"
+                                                    <tr style="background:#87cdc6;">
+                                                        @if(!in_array($planAcc->Kpi ->objective->id,$objective_array))
+                                                         <th  colspan="3" style="width:100%;"> Objective: {{ $planAcc->Kpi ->objective->objectiveTranslations[0]->name}}</th>
+                                                        <th> 
+                                                        @endif
+                                                        @php
+                                                            $objective_array = array_merge($objective_array,array($planAcc->Kpi ->objective->id));
+                                                         @endphp
+                                                         </tr>
+                                                          <tr style="background:#21212121;">
+                                                        <th style="width:5%;">  
+                                                        </th>
+                                                         <th style="width:75%;"> KPI: {{ $kpiT->name }}
+                                                        </th>
+                                                        <th> 
+                                                            <input name="sum" class="form-control" type="number"
                                                                 value="{{ $planAcc->sum }}">
                                                         </th>
                                                         <th>

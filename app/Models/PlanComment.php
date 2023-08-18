@@ -12,10 +12,13 @@ class PlanComment extends Model
     use Searchable;
 
     protected $fillable = [
+        'plan_comment',
         'kpi_id',
         'reporting_period_id',
         'planning_year_id',
-        'office_id'
+        'office_id',
+        'status',
+        'commented_by'
     ];
 
     protected $searchableFields = ['*'];

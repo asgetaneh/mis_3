@@ -186,10 +186,16 @@ Route::prefix('/')
 
                 Route::match(array('GET', 'POST'),'approve-plan', [PlanAccomplishmentController::class, 'approvePlanAccomplishment'])->name('approve-plan');
                 Route::match(array('GET', 'POST'),'view-plan-accomplishment', [PlanAccomplishmentController::class, 'viewPlanAccomplishment'])->name('view-plan-accomplishment');
- 
+
                 Route::get('approve', [PlanApprovalController::class, 'viewPlanAccomplishment'])->name('plan-approve.index');
                 Route::post('plan-approve', [PlanApprovalController::class, 'planApproved'])->name('plan-approve');
                 Route::post('comment', [PlanApprovalController::class, 'planComment'])->name('plan-comment.store');
+                Route::get('/comment/fetch/{data}', [PlanApprovalController::class, 'getOfficeKpiInfo'])->name('plan-comment.ajax')->where('data', '.*');
+                Route::get('/view/comment/{data}', [PlanApprovalController::class, 'getCommentInfo'])->name('plan-comment.view-comment')->where('data', '.*');
+                Route::post('/reply-comment', [PlanApprovalController::class, 'replyComment'])->name('reply-comment.store');
+                Route::post('/plan-disapproval',[PlanApprovalController::class, 'planDisapproved'])->name('disapprove-plan.store');
+                Route::get('/disapprove/fetch/{data}', [PlanApprovalController::class, 'disapproveInfo'])->name('disapprove-plan.ajax')->where('data', '.*');
+                Route::get('/reply/fetch/{data}', [PlanApprovalController::class, 'replyInfo'])->name('reply-comment.ajax')->where('data', '.*');
 
                  Route::resource(
                    'plan-accomplishments',
@@ -205,13 +211,13 @@ Route::prefix('/')
                 Route::POST('/plan-save', [PlanAccomplishmentController::class, 'savePlan'])->name('plan.save');
             });
 
-            // reporting 
+            // reporting
             Route::prefix('/report')->group(function () {
                 Route::match(array('GET', 'POST'),'reporting/{office}', [PlanAccomplishmentController::class, 'officeKpiObjectiveGoalReporting'])->name('reporting');
                 // Route::match(array('GET', 'POST'),'plan-accomplishment-goalclick/{office}/{goal}/{offwithkpi}', [PlanAccomplishmentController::class, 'planaccomplishmentGoalClick'])->name('plan-accomplishment-goalclick');
 
                 // Route::match(array('GET', 'POST'),'approve-plan', [PlanAccomplishmentController::class, 'approvePlanAccomplishment'])->name('approve-plan');
-                // Route::match(array('GET', 'POST'),'view-plan-accomplishment', [PlanAccomplishmentController::class, 'viewPlanAccomplishment'])->name('view-plan-accomplishment'); 
+                Route::match(array('GET', 'POST'),'view-report-accomplishment', [PlanAccomplishmentController::class, 'viewReportAccomplishment'])->name('view-report-accomplishment');
                  Route::GET('/get-objectives-reporting/{goal}', [PlanAccomplishmentController::class, 'getAllObjectivesReporting'])->name('get-objectives-reporting');
                  Route::POST('/report-save', [PlanAccomplishmentController::class, 'saveReport'])->name('report.save');
             });

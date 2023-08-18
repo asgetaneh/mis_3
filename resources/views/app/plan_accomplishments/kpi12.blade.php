@@ -91,6 +91,6 @@
               echo "<br/>"  
               @endphp
         @endforeach
-    </td>
+</td>
     </tr>
     {{-- end total ch1ch3 --}}
