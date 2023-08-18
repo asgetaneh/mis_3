@@ -26,21 +26,13 @@ if (! function_exists('gettrans')) {
     function getAllOffices()
     {
     	$off = Office::get();
-<<<<<<< HEAD
 
-=======
- 
->>>>>>> 987382749f5dd7ccfffa9aa4fb5385b3e57e402d
         return $off;
     }
      function getAllKpi()
     {
     	$kpi = KeyPeformanceIndicator::get();
-<<<<<<< HEAD
 
-=======
- 
->>>>>>> 987382749f5dd7ccfffa9aa4fb5385b3e57e402d
         return $kpi;
     }
     function getQuarter($type)
@@ -80,11 +72,7 @@ if (! function_exists('gettrans')) {
         return $acctive_period_list;
 
      }
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> 987382749f5dd7ccfffa9aa4fb5385b3e57e402d
     function checkPlanedForKpi($year,$kpi,$office){
      $planAccomplishments = PlanAccomplishment::select()->where('planning_year_id' , '=', $year)->where('office_id' , '=', $office)->where('kpi_id' , '=', $kpi) ->get();//dump($planAccomplishments);
         foreach ($planAccomplishments as $key => $planAccomplishment) {
