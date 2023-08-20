@@ -62,7 +62,7 @@
         @livewireStyles
     </head>
 
-    <body class="sidebar-mini layout-fixed layout-navbar-fixed sidebar-expand">
+    <body class="sidebar-mini layout-fixed layout-navbar-fixed {{ Request::is('smis/plan/plan-accomplishment/*') || Request::is('smis/plan/plan-accomplishment') || Request::is('smis/plan/get-objectives/*') || Request::is('smis/plan/get-objectives') || Request::is('smis/report/reporting/*') || Request::is('smis/report/reporting') || Request::is('smis/report/get-objectives-reporting/*') || Request::is('smis/report/get-objectives-reporting') ? 'sidebar-collapse' : 'sidebar-expand' }}">
         <div id="app" class="wrapper">
             <div class="main-header">
                 @include('layouts.nav')

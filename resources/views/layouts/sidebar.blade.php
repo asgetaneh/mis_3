@@ -245,9 +245,9 @@
                                         <i class="right fas fa-angle-left"></i>
                                     </p>
                                 </a>
-                                 {{-- dd(Auth::user()->getPermissionsViaRoles()->pluck('name'));  
+                                 {{-- dd(Auth::user()->getPermissionsViaRoles()->pluck('name'));
                                 dd($user->hasAnyRole(['writer', 'reader'])); --}}
- 
+
                                 <ul class="nav nav-treeview">
                                     @can('view-any', App\Models\PlanAccomplishment::class)
                                         <li class="nav-item">
@@ -276,7 +276,7 @@
                                          @endif
                                     @endcan
 
-                                    
+
                                     @can('view-any', App\Models\PlanAccomplishment::class)
                                         <li class="nav-item">
                                             <a href="{{ route('view-plan-accomplishment') }}" class="nav-link {{ Request::is('smis/plan/view-plan-accomplishment/*') || Request::is('smis/plan/view-plan-accomplishment') ? 'active' : '' }}">
@@ -287,7 +287,7 @@
                                     @endcan
                                 </ul>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item {{ Request::is('smis/report/*') ? 'menu-open' : '' }}">
                                 <a href="#" class="nav-link">
                                     <i class="fa fa-tasks nav-icon"></i>
                                     <p>
@@ -300,13 +300,30 @@
                                     @can('view-any', App\Models\StrategyTranslation::class)
                                         <li class="nav-item">
                                             <a href="{{ route('reporting', Auth::user()->id) }}"
-                                                    class="nav-link {{ Request::is('smis/plan/reporting/*') || Request::is('smis/plan/reporting') || Request::is('smis/plan/get-objectives/*') || Request::is('smis/plan/get-objectives') ? 'active' : '' }}">
+                                                    class="nav-link {{ Request::is('smis/report/reporting/*') || Request::is('smis/report/reporting') || Request::is('smis/report/get-objectives/*') || Request::is('smis/report/get-objectives') ? 'active' : '' }}">
                                                     <i class="nav-icon icon ion-md-radio-button-off"></i>
                                                     <p>Reporting</p>
                                                 </a>
-                                             
+
                                         </li>
                                     @endcan
+
+                                    @php
+                                    $user = auth()->user();
+                                    $office = $user->offices[0];
+                                    $childAndHimOffKpi = $office->offices;
+                                    @endphp
+                                    @can('view-any', App\Models\PlanAccomplishment::class)
+                                    @if (!$office->offices->isEmpty())
+                                        <li class="nav-item">
+                                            <a href="{{ route('report-approve.index') }}" class="nav-link {{ Request::is('smis/report/approve/*') || Request::is('smis/report/approve') ? 'active' : '' }}">
+                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                <p>Report Approval</p>
+                                            </a>
+                                        </li>
+                                         @endif
+                                    @endcan
+
                                     @can('view-any', App\Models\Language::class)
                                         <li class="nav-item">
                                             <a href="{{ route('view-report-accomplishment') }}" class="nav-link">
