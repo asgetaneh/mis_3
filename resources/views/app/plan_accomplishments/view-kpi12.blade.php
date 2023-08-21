@@ -36,7 +36,7 @@
                         @php
                             $planOneTwo = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id, $office, $period->id);
                         @endphp
-                        {{ $planOneTwo }}
+                        {{ $planOneTwo[0] }}
                     </td>
                 @endforeach
                 {{-- total ch2 --}}

@@ -23,16 +23,16 @@
             >
         </x-inputs.group>
 
-        <x-inputs.group class="col-sm-12">
-            <x-inputs.text
-                name="{{'slug_'.$lang->locale}}"
-                label="{{'Slug in '.$lang->name}}"
-                value="{{ $behaviorTranslations[$lang->locale][0]->slug ?? '' }}"
-                placeholder="{{'Slug in '.$lang->name}}"
-                required
-            ></x-inputs.text>
-        </x-inputs.group>
+        
 
     @endforeach
+    <x-inputs.group class="col-sm-12">
+            <x-inputs.text
+                name="{{'slug_'}}"
+                label="{{'Slug '}}"
+                placeholder="Slug"
+                required
+            ></x-inputs.text>
+            </x-inputs.group>
 
 </div>

@@ -15,7 +15,6 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->text('description');
-            $table->string('slug');
             $table->unsignedBigInteger('translation_id');
             $table->string('locale', 8);
             $table->timestamps();

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Office;
 use App\Models\Performer;
+use App\Models\Manager;
 use Illuminate\Support\Facades\DB;
 
 
@@ -31,15 +32,15 @@ class HomeController extends Controller
         $user_office = $user->offices;
        
         if($user_office->isEmpty()){  
-             $search = $request->get('search', '');
+            $search = $request->get('search', '');
             $offices = Office::search($search)
                 ->latest()
-                ->paginate(5)
+                ->paginate(500)
                 ->withQueryString();
              $l_offices=$offices->where("parent_office_id",null);
              $ll_offices=$offices->where("parent_office_id",1);
              $lll_offices=$offices->where("parent_office_id",2);
-             return view('app.offices.choose_office', compact('user','l_offices', 'll_offices', 'lll_offices','search'));
+             return view('app.offices.choose_office', compact('user','l_offices', 'll_offices', 'lll_offices','offices','search'));
         }
         else{  
             return view('layouts.dashboard');
@@ -48,20 +49,26 @@ class HomeController extends Controller
         // return view('home');
     }
     public function assignOffice(Request $request){
-         $this->authorize('create', Office::class);
-         $data = $request->input();
+        // $this->authorize('create', Office::class);
+         $data = $request->input(); 
         $search = $request->get('search', '');
-        $performer = DB::select('select * from performers where user_id='.$data['user']);
-        if($performer){
-             $performer->office_id =   $data['urofficelll'];
-            $performer->user_id =   $data['user'];
+        $offices = Office::search($search)
+                ->latest()
+                ->paginate(500)
+                ->withQueryString();
+        $manager = DB::select('select * from manager where office_id='.$data['urofficel']);
+        if($manager){
+             return redirect()->back()->with('error', 'Office  has already been assigned for Manager');
+             return redirect()
+                ->route('home')
+                ->withSuccess(__('crud.common.removed'));
         }
         else{
-            $performer = new Performer;
-            $performer->office_id =   $data['urofficelll'];
-            $performer->user_id =   $data['user'];
-        }        
-        $performer->save();
-            return view('layouts.dashboard');
+             $manager = DB::insert('insert into manager (office_id, user_id) values (?, ?)', [$data['urofficel'], $data['user']]);
+             
+        } return redirect()
+                ->route('home')
+                 ->withSuccess(__('crud.common.created'));        
+             return view('layouts.dashboard');
     }
 }

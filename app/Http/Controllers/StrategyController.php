@@ -13,7 +13,7 @@ use App\Http\Requests\StrategyStoreRequest;
 use App\Http\Requests\StrategyUpdateRequest;
 use App\Models\ObjectiveTranslation;
 use App\Models\StrategyTranslation;
-
+use Illuminate\Support\Facades\Gate;
 class StrategyController extends Controller
 {
     /**
@@ -21,13 +21,15 @@ class StrategyController extends Controller
      */
     public function index(Request $request): View
     {
-        $this->authorize('view-any', Strategy::class);
+        if (! Gate::allows('view keypeformanceindicators', KeyPeformanceIndicator::class)) {
+                    abort(403);
+                }
 
         $search = $request->get('search', '');
 
         $strategy_ts = StrategyTranslation::search($search)
             ->latest()
-            ->paginate(5)
+            ->paginate(35)
             ->withQueryString();
 
         return view('app.strategies.index', compact('strategy_ts', 'search'));

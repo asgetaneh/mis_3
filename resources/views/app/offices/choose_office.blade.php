@@ -20,12 +20,15 @@
                     <x-inputs.select name="urofficel" label="Office">
                         
                         <option>Please select the Office</option>
-                        @foreach($l_offices as $value => $label)
+                        @foreach($offices as $value => $label)
                         <option value="{{ $label->id }}"  >{{ $label->officeTranslations[0]->name }}</option>
                         @endforeach
                     </x-inputs.select>
+                    @if (session()->has('error'))
+                            <p class="text-danger mb-0">{{ session('error') }}</p>
+                        @endif
                 </x-inputs.group>
-                 <x-inputs.group class="col-sm-12">
+                 {{-- <x-inputs.group class="col-sm-12">
                     <x-inputs.select name="urofficell" label="Office">
                         
                         <option>Please select the Office</option>
@@ -42,7 +45,7 @@
                         <option value="{{ $label->id }}"  >{{ $label->officeTranslations[0]->name }}</option>
                         @endforeach
                     </x-inputs.select>
-                </x-inputs.group>
+                </x-inputs.group> --}}
 
                 <div class="mt-4">
                     <a

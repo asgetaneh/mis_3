@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+ 
 
 class User extends Authenticatable
 {
@@ -71,11 +72,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Office::class, 'holder_id');
     }
-
-    // public function languages()
-    // {
-    //     return $this->hasMany(Language::class, 'created_by_id');
-    // }
+ 
 
     public function offices()
     {
@@ -86,8 +83,19 @@ class User extends Authenticatable
     {
         return $this->hasRole('super-admin');
     }
+    
      public function performers()
     {
         return $this->hasMany(Performer::class, 'user_id');
+    }
+    public function hasPermission($check_permission){
+        $user = auth()->user();
+        $permissions =  $user->getPermissionsViaRoles();
+        foreach ($permissions as $key => $permission) {
+             if($permission->name == $check_permission){
+                return true;
+            }
+        }
+         return false;
     }
 }

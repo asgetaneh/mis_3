@@ -33,6 +33,10 @@ class KeyPeformanceIndicator extends Model
     {
         return $this->belongsTo(Strategy::class);
     }
+    public function behavior()
+    {
+        return $this->belongsTo(Behavior::class);
+    }
 
     public function user()
     {

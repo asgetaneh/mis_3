@@ -35,7 +35,57 @@ if (! function_exists('gettrans')) {
  
         return $kpi;
     }
-    function getQuarter($type)
+    function getKpiReport($Kpi,$office){
+        $offices =  allChildAndChildChild($office);
+         $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $offices)->where('kpi_id','=', $Kpi->id);
+        //  $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $offices)->where('kpi_id','=', $Kpi->id);
+               $total = 0;
+        // constant 
+        if($Kpi->behavior->slug == 1){//dd($planAccomplishments);
+            $planAccomplishments=  $planAccomplishments->select('*')->get(); 
+            foreach ($planAccomplishments as $key => $planAccomplishment) {
+               $total = $total+ $planAccomplishment->accom_value;
+            } 
+            return $total;
+        }
+        // constant 
+        else if($Kpi->behavior->slug == 2){
+            $current_report_periods = getReportingQuarter($Kpi->reportingPeriodType->id);
+            foreach ($current_report_periods as $key => $current_report_period) {
+               $period = $current_report_period->id;
+            }
+             $planAccomplishments= $planAccomplishments->where('plan_accomplishments.reporting_period_id','=', $period)->select('*')->get(); 
+            foreach ($planAccomplishments as $key => $planAccomplishment) { 
+                $total = $total+ $planAccomplishment->accom_value;
+            }  
+            return $total;
+        }
+        //incrimental
+        else if($Kpi->behavior->slug == 3){
+             $current_report_periods = getReportingQuarter($Kpi->reportingPeriodType->id);
+            foreach ($current_report_periods as $key => $current_report_period) {
+               $period = $current_report_period->id;
+            }
+             $planAccomplishments= $planAccomplishments->where('plan_accomplishments.reporting_period_id','=', $period)->select('*')->get(); 
+            foreach ($planAccomplishments as $key => $planAccomplishment) { 
+                $total = $total+ $planAccomplishment->accom_value;
+            }  
+            return $total;
+        }
+         //decrimental
+        else if($Kpi->behavior->slug == 4){
+             $current_report_periods = getReportingQuarter($Kpi->reportingPeriodType->id);
+            foreach ($current_report_periods as $key => $current_report_period) {
+               $period = $current_report_period->id;
+            }
+             $planAccomplishments= $planAccomplishments->where('plan_accomplishments.reporting_period_id','=', $period)->select('*')->get(); 
+            foreach ($planAccomplishments as $key => $planAccomplishment) { 
+                $total = $total+ $planAccomplishment->accom_value;
+            }  
+            return $total;
+        }
+    }
+     function getQuarter($type)
     {
     	$reservations = ReportingPeriod::where('reporting_period_type_id', '=', $type) ->get();
  
@@ -195,4 +245,14 @@ if (! function_exists('gettrans')) {
              return $KeyPeformanceIndicators;
 
     }
+     function allChildAndChildChild($office){
+     $all_ids = [];
+        if ($office->offices->count() > 0) {
+            foreach ($office->offices as $child) {
+                $all_ids[] = $child->id;
+                $all_ids=array_merge($all_ids,is_array(office_all_childs_ids($child))?office_all_childs_ids($child):[] );
+            }
+        }
+        return $all_ids;
+   }
 }

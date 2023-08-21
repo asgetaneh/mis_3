@@ -23,7 +23,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('kpi_child_two_id') ->nullable();
             $table->unsignedBigInteger('kpi_child_three_id') ->nullable();
             $table->unsignedBigInteger('office_id');
-
+            $table->unsignedBigInteger('approved_by_id')->nullable();
             $table->timestamps();
         });
     }

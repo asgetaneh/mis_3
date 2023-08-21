@@ -9,6 +9,10 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
+
 
 class AuthenticatedSessionController extends Controller
 {
@@ -25,6 +29,12 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        $credentials = $request->input(); 
+        $ldp_login =false;
+        if($ldp_login){
+            $this->authenticate($credentials);
+
+        }
         $request->authenticate();
 
         $request->session()->regenerate();
@@ -45,4 +55,110 @@ class AuthenticatedSessionController extends Controller
 
         return redirect('/');
     }
+
+ public static function authenticate($credentials)
+    {
+        $ldapconn = ldap_connect('ldapmaster.ju.edu.et', 389);
+
+        $uid = $credentials['email'];
+        $password = $credentials['password'];
+
+        try {
+            ldap_set_option($ldapconn, LDAP_OPT_REFERRALS, 0);
+            ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
+            $ldapbind = ldap_bind($ldapconn, "uid=$uid,ou=people,dc=ju,dc=edu,dc=et", $password);
+            //true if credentials are valid
+            if ($ldapbind) {
+                $search = ldap_search($ldapconn, 'dc=ju,dc=edu,dc=et', "uid=$uid");
+                $info = ldap_get_entries($ldapconn, $search);
+
+                // if ($info[0]['employeetype']['count'] > 0 && $info[0]['employeetype'][0] == 'Student')
+                //     return new UnauthorizedException(403);
+
+                $first_name = $info[0]['givenname'][0];
+                $middle_name = 'Unknown';
+                $last_name = 'Unknown';
+                if (isset($info[0]['sn'])) {
+                    if ($info[0]['sn']['count'] > 0) {
+                        $middle_name = $info[0]['sn'][0];
+                    }
+                }
+                if (isset($info[0]['sn'])) {
+                    if ($info[0]['sn']['count'] > 1) {
+                        $last_name = $info[0]['sn'][1];
+                    }
+                }
+                $email = 'Unknown';
+                if (isset($info[0]['mail'])) {
+                    if ($info[0]['mail']['count'] > 0) {
+                        $email = $info[0]['mail'][0];
+                    }
+                }
+                $phone = 'Unknown';
+                if (isset($info[0]['mobile'])) {
+                    if ($info[0]['mobile']['count'] > 0) {
+                        $phone = $info[0]['mobile'][0];
+                    }
+                }
+                if (isset($info[0]['homephone'])) {
+                    if ($info[0]['homephone']['count'] > 0) {
+                        $phone = $info[0]['homephone'][0];
+                    }
+                }
+                $user = User::where('email', '=', $credentials['email'])->first();
+                if (!$user) {
+                    try { 
+                        $user = User::create([
+                            'email' => $uid,
+                            'password' => Hash::make($password),
+                             'name' => $first_name." ".$middle_name." ".$last_name,
+                           // 'email' => $email,
+                            'gender' => 'Unknown',
+                            'phone' => $phone,
+
+                        ]);
+
+                        // ]);
+                        // $user->assignRole('Staff');
+
+                        return $user;
+                    } catch (Exception $e) {
+                        return $e;
+                    }
+                } else {
+                    // dd($first_name,$middle_name,$last_name,$email,$phone);
+
+                    $user->update([
+                        'email' => $uid,
+                        'password' => Hash::make($password),
+                        'name' => $first_name." ".$middle_name." ".$last_name,
+                        
+                       // 'email' => $email,
+                        'gender' => 'Unknown',
+                        'phone' => $phone,
+                ]);
+
+                 $user->save();
+                    return $user;
+                }
+            } else {
+                return new ModelNotFoundException();
+            }
+        } catch (Exception $e) {
+            if (strpos($e->getMessage(), 'Invalid credentials') == true) {
+                if (Config::get('app.env') == 'local') {
+                    // dd('stop');
+                    return Auth::attempt(['username' => $uid, 'password' => $password]) ? Auth::user() : new ModelNotFoundException();
+                }
+                return new ModelNotFoundException();
+            } else {
+                if (Auth::attempt(['username' => $uid, 'password' => $password])) {
+                    return Auth::user();
+                } else {
+                    return new ModelNotFoundException();
+                }
+            }
+        }
+    }
+
 }

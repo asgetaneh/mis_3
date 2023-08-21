@@ -20,7 +20,7 @@
                $narration = $planAcc->getNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
             @endphp
             <td>
-               {{$planOfOfficePlan}} 
+               {{$planOfOfficePlan[0]}} 
             </td>
         @empty
         @endforelse

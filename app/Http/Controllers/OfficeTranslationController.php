@@ -32,7 +32,7 @@ class OfficeTranslationController extends Controller
         $officesT = OfficeTranslation ::select('office_translations.*')
          ->join('offices', 'offices.id', '=', 'office_translations.translation_id')->where('offices.parent_office_id','=',NULL)->get();
         return view(
-            'app.office_translations.index2',
+            'app.office_translations.index',
             compact('officeTranslations', 'officesT','search')
         );
     }

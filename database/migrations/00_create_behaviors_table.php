@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('behaviors', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('slug');
             // $table->string('name');
             // $table->string('slug');
             // $table->text('description');

@@ -17,10 +17,10 @@
             @php
                 $planOfOfficePlan
                 = $planAcc->planSum($planAcc->Kpi->id,$office, $period->id);
-               $narration = $planAcc->getNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
-            @endphp
+               $narration = $planAcc->getReportNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
+             @endphp
             <td>
-               {{$planOfOfficePlan}} 
+               {{$planOfOfficePlan[1]}} 
             </td>
         @empty
         @endforelse
@@ -31,9 +31,9 @@
     </td>
     <td colspan="4">
          @foreach ($narration as $key => $plannaration) 
-              {!! html_entity_decode($plannaration->plan_naration) !!}
+              {!! html_entity_decode($plannaration->report_naration) !!}
               @php
-              echo "<br/>"  
+               echo "<br/>"  
               @endphp
         @endforeach
       </td>

@@ -13,14 +13,14 @@
     </x-inputs.group>
 
     <x-inputs.group class="col-sm-12">
-        <x-inputs.email
+        <x-inputs.text
             name="email"
             label="Email"
             :value="old('email', ($editing ? $user->email : ''))"
             maxlength="255"
             placeholder="Email"
             required
-        ></x-inputs.email>
+        ></x-inputs.text>
     </x-inputs.group>
 
     <x-inputs.group class="col-sm-12">

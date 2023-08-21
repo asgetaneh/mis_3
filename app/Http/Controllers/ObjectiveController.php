@@ -15,7 +15,7 @@ use App\Models\ObjectiveTranslation;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\ObjectiveStoreRequest;
 use App\Http\Requests\ObjectiveUpdateRequest;
-
+use Illuminate\Support\Facades\Gate;
 class ObjectiveController extends Controller
 {
     /**
@@ -23,7 +23,9 @@ class ObjectiveController extends Controller
      */
     public function index(Request $request): View
     {
-        $this->authorize('view-any', Objective::class);
+         if (! Gate::allows('view keypeformanceindicators', KeyPeformanceIndicator::class)) {
+                    abort(403);
+                }
 
         $search = $request->get('search', '');
 

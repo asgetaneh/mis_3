@@ -93,8 +93,11 @@
                                                          <th style="width:75%;"> KPI: {{ $kpiT->name }}
                                                         </th>
                                                         <th> 
+                                                            @php
+                                                                $kpi_report =getKpiReport($planAcc->Kpi,auth()->user());
+                                                            @endphp
                                                             <input name="sum" class="form-control" type="number"
-                                                                value="{{ $planAcc->sum }}">
+                                                                value="{{ $kpi_report }}">
                                                         </th>
                                                         <th>
                                                             <button type="button" class="btn btn-tool"

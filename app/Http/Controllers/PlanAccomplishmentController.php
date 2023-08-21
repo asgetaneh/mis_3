@@ -324,7 +324,7 @@ class PlanAccomplishmentController extends Controller
                     $plan_accom->plan_value=$value;
                     $plan_accom->accom_value=0;
                     $plan_accom->plan_status=$getoffice->level;
-                    $plan_accom->accom_status=0;
+                    $plan_accom->accom_status=$getoffice->level;
                      $plan_accom->planning_year_id=$planning[0]->id;
                   $plan_accom->save();
                 $kpi_match_for_naration = $index[0];

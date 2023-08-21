@@ -69,7 +69,7 @@
                                 Reporting Period Type
                             </th>
                             <th class="text-left">
-                                @lang('crud.key_peformance_indicators.inputs.weight')
+                               Objective
                             </th>
                             <th class="text-center">
                                 @lang('crud.common.actions')
@@ -84,41 +84,11 @@
                         @if(app()->getLocale() == $keyPeformanceIndicator_t->locale)
                         <tr>
                             <td>{{ $count++ }}</td>
+                            {{-- <td>{{ $keyPeformanceIndicator_t->id }}</td> --}}
                             <td>
                                 {{
                                 $keyPeformanceIndicator_t->name
                                 ?? '-' }}
-
-                                <div class="bg-light mt-2 p-2">
-
-                                    @forelse($keyPeformanceIndicator_t->keyPeformanceIndicator->objective->goal->goalTranslations as $key => $goal)
-                                        @if(app()->getLocale() == $goal->locale)
-                                            <p class="text-primary d-inline"><span class="text-secondary">Goal:</span> {{ $goal->name }}</p>
-                                            <br>
-                                        @endif
-                                    @empty
-                                        <p>-</p>
-                                    @endforelse
-
-                                    @forelse($keyPeformanceIndicator_t->keyPeformanceIndicator->objective->objectiveTranslations as $key => $objective)
-                                        @if(app()->getLocale() == $objective->locale)
-                                            <p class="text-primary d-inline"><span class="text-secondary">Objective:</span> {{ $objective->name }}</p>
-                                            <br>
-                                        @endif
-                                    @empty
-                                        <p>-</p>
-                                    @endforelse
-
-                                    @forelse($keyPeformanceIndicator_t->keyPeformanceIndicator->strategy->strategyTranslations as $key => $strategy)
-                                        @if(app()->getLocale() == $strategy->locale)
-                                            <p class="text-primary d-inline"><span class="text-secondary">Strategy:</span> {{ $strategy->name }}</p>
-                                        @endif
-                                    @empty
-                                        <p>-</p>
-                                    @endforelse
-
-                                </div>
-
                             </td>
                             <td>
                                 {{
@@ -165,7 +135,35 @@
                                 ?? '-' }}
                             </td>
                             <td>
-                                {{ $keyPeformanceIndicator_t->keyPeformanceIndicator->weight ?? '-' }}
+                                <div class="bg-light mt-2 p-2">
+
+                                    {{-- @forelse($keyPeformanceIndicator_t->keyPeformanceIndicator->objective->goal->goalTranslations as $key => $goal)
+                                        @if(app()->getLocale() == $goal->locale)
+                                            <p class="text-primary d-inline"><span class="text-secondary">Goal:</span> {{ $goal->name }}</p>
+                                            <br>
+                                        @endif
+                                    @empty
+                                        <p>-</p>
+                                    @endforelse --}}
+
+                                    @forelse($keyPeformanceIndicator_t->keyPeformanceIndicator->objective->objectiveTranslations as $key => $objective)
+                                        @if(app()->getLocale() == $objective->locale)
+                                            <p class="text-primary d-inline"><span class="text-secondary">Objective:</span> {{ $objective->name }}</p>
+                                            <br>
+                                        @endif
+                                    @empty
+                                        <p>-</p>
+                                    @endforelse
+
+                                    {{-- @forelse($keyPeformanceIndicator_t->keyPeformanceIndicator->strategy->strategyTranslations as $key => $strategy)
+                                        @if(app()->getLocale() == $strategy->locale)
+                                            <p class="text-primary d-inline"><span class="text-secondary">Strategy:</span> {{ $strategy->name }}</p>
+                                        @endif
+                                    @empty
+                                        <p>-</p>
+                                    @endforelse --}}
+
+                                </div>
                             </td>
                             <td class="text-center" style="width: 134px;">
                                 <div

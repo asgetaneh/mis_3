@@ -51,6 +51,9 @@
                             <th class="text-left">
                                 Description
                             </th>
+                            <th class="text-left">
+                                Code
+                            </th>
                             <th class="text-center">
                                 @lang('crud.common.actions')
                             </th>
@@ -66,6 +69,7 @@
                             <td>{{ $count++ }}</td>
                             <td>{{ $behavior_t->name ?? '-' }}</td>
                             <td>{{ $behavior_t->description ?? '-' }}</td>
+                            <td>{{ $behavior_t->behavior->slug ?? '-' }}</td>
                             <td class="text-center" style="width: 134px;">
                                 <div
                                     role="group"

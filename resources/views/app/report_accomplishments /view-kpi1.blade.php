@@ -32,7 +32,7 @@
                 $planOne = $planAcc->planOne($planAcc->Kpi->id, $one->id, $office, $period->id);
                 $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
             @endphp
-            {{ $planOne }}
+            {{ $planOne[1] }}
         </td>
     @empty
     @endforelse

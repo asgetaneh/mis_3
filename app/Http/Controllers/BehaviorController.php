@@ -57,13 +57,13 @@ class BehaviorController extends Controller
             $behavior = new Behavior;
             $behavior->created_at = new \DateTime();
             $behavior->updated_at = new \DateTime();
+            $behavior->slug = $data['slug_'];
             $behavior->save();
             foreach ($language as $key => $value) {
                 // code...
                 $behavior_translation = new BehaviorTranslation;
                 $behavior_translation->translation_id = $behavior->id;
                 $behavior_translation->name = $data['name_' . $value->locale];
-                $behavior_translation->slug = $data['slug_' . $value->locale];
                 $behavior_translation->description = $data['description_' . $value->locale];
                 $behavior_translation->locale = $value->locale;
                 $behavior_translation->save();

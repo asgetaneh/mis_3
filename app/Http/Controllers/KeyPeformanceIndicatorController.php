@@ -22,8 +22,7 @@ use App\Models\KeyPeformanceIndicatorT;
 use App\Models\KpiChildOneTranslation;
 use App\Models\KpiChildTwoTranslation;
 use App\Models\KpiChildThreeTranslation;
-
-
+use Illuminate\Support\Facades\Gate;
 
 use App\Http\Requests\KeyPeformanceIndicatorStoreRequest;
 use App\Http\Requests\KeyPeformanceIndicatorUpdateRequest;
@@ -37,8 +36,10 @@ class KeyPeformanceIndicatorController extends Controller
      */
     public function index(Request $request): View
     {
-        $this->authorize('view-any', KeyPeformanceIndicator::class);
-
+        if (! Gate::allows('view keypeformanceindicators', KeyPeformanceIndicator::class)) {
+                    abort(403);
+                }
+ 
         $search = $request->get('search', '');
         $keyPeformanceIndicator_ts = KeyPeformanceIndicatorT::search($search)
             ->latest()

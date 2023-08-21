@@ -7,6 +7,7 @@ use Illuminate\View\View;
 use App\Models\Perspective;
 use App\Models\PerspectiveTranslation;
 use App\Models\Language;
+use Illuminate\Support\Facades\Gate;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -20,7 +21,9 @@ class PerspectiveController extends Controller
      */
     public function index(Request $request): View
     {
-        $this->authorize('view-any', Perspective::class);
+        if (! Gate::allows('view keypeformanceindicators', KeyPeformanceIndicator::class)) {
+                    abort(403);
+                }
 
         $search = $request->get('search', '');
 

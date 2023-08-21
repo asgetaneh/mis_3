@@ -10,6 +10,14 @@
     <div class="sidebar">
 
         <hr>
+        @php
+            $user = auth()->user();
+             if(!$user->offices->isEmpty()){
+                 $office = $user->offices[0];
+                $childAndHimOffKpi = $office->offices;
+            }
+           
+        @endphp
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu">
@@ -25,7 +33,7 @@
                     </li>
 
 
-
+                    @if(!$user->offices->isEmpty())
                     <li class="nav-item">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-sitemap"></i>
@@ -77,7 +85,7 @@
                                 </a>
 
                                 <ul class="nav nav-treeview">
-                                    @can('view-any', App\Models\Perspective::class)
+                                    @if($user->hasPermission('view keypeformanceindicators')) 
                                         <li class="nav-item">
                                             <a href="{{ route('perspectives.index') }}"
                                                 class="nav-link {{ Request::is('smis/setting/perspectives/*') || Request::is('smis/setting/perspectives') ? 'active' : '' }}">
@@ -85,8 +93,8 @@
                                                 <p>Perspectives</p>
                                             </a>
                                         </li>
-                                    @endcan
-                                    @can('view-any', App\Models\Goal::class)
+                                    @endif
+                                    @if($user->hasPermission('view keypeformanceindicators')) 
                                         <li class="nav-item">
                                             <a href="{{ route('goals.index') }}"
                                                 class="nav-link {{ Request::is('smis/setting/goals/*') || Request::is('smis/setting/goals') ? 'active' : '' }}">
@@ -94,9 +102,9 @@
                                                 <p>Goals</p>
                                             </a>
                                         </li>
-                                    @endcan
+                                    @endif
 
-                                    @can('view-any', App\Models\Objective::class)
+                                    @if($user->hasPermission('view keypeformanceindicators')) 
                                         <li class="nav-item">
                                             <a href="{{ route('objectives.index') }}"
                                                 class="nav-link {{ Request::is('smis/setting/objectives/*') || Request::is('smis/setting/objectives') ? 'active' : '' }}">
@@ -104,8 +112,8 @@
                                                 <p>Objectives</p>
                                             </a>
                                         </li>
-                                    @endcan
-                                    @can('view-any', App\Models\Strategy::class)
+                                    @endif
+                                    @if($user->hasPermission('view keypeformanceindicators')) 
                                         <li class="nav-item">
                                             <a href="{{ route('strategies.index') }}"
                                                 class="nav-link {{ Request::is('smis/setting/strategies/*') || Request::is('smis/setting/strategies') ? 'active' : '' }}">
@@ -113,8 +121,8 @@
                                                 <p>Strategies</p>
                                             </a>
                                         </li>
-                                    @endcan
-                                    @can('view-any', App\Models\KeyPeformanceIndicator::class)
+                                    @endif
+                                    @if($user->hasPermission('view keypeformanceindicators')) 
                                         <li class="nav-item {{ Request::is('smis/setting/kpi/*') ? 'menu-open' : '' }}">
                                             <a href="#" class="nav-link">
                                                 <i class="nav-icon fas fa-link"></i>
@@ -249,7 +257,7 @@
                                 dd($user->hasAnyRole(['writer', 'reader'])); --}}
  
                                 <ul class="nav nav-treeview">
-                                    @can('view-any', App\Models\PlanAccomplishment::class)
+                                    @if($user->hasPermission('create planaccomplishments')) 
                                         <li class="nav-item">
                                             @if (Auth::user() != [])
                                                 <a href="{{ route('plan-accomplishment', Auth::user()->id) }}"
@@ -259,13 +267,9 @@
                                                 </a>
                                             @endif
                                         </li>
-                                    @endcan
-                                    @php
-                                    $user = auth()->user();
-                                    $office = $user->offices[0];
-                                    $childAndHimOffKpi = $office->offices;
-                                    @endphp
-                                    @can('view-any', App\Models\PlanAccomplishment::class)
+                                   @endif
+                                    
+                                    @if($user->hasPermission('create planaccomplishments')) 
                                     @if (!$office->offices->isEmpty())
                                         <li class="nav-item">
                                             <a href="{{ route('plan-approve.index') }}" class="nav-link {{ Request::is('smis/plan/approve/*') || Request::is('smis/plan/approve') ? 'active' : '' }}">
@@ -274,17 +278,17 @@
                                             </a>
                                         </li>
                                          @endif
-                                    @endcan
+                                    @endif
 
                                     
-                                    @can('view-any', App\Models\PlanAccomplishment::class)
+                                    @if($user->hasPermission('create planaccomplishments')) 
                                         <li class="nav-item">
                                             <a href="{{ route('view-plan-accomplishment') }}" class="nav-link {{ Request::is('smis/plan/view-plan-accomplishment/*') || Request::is('smis/plan/view-plan-accomplishment') ? 'active' : '' }}">
                                                 <i class="nav-icon icon ion-md-radio-button-off"></i>
                                                 <p>View Plan</p>
                                             </a>
                                         </li>
-                                    @endcan
+                                    @endif
                                 </ul>
                             </li>
                             <li class="nav-item">
@@ -297,7 +301,7 @@
                                 </a>
 
                                 <ul class="nav nav-treeview">
-                                    @can('view-any', App\Models\StrategyTranslation::class)
+                                    @if($user->hasPermission('create planaccomplishments')) 
                                         <li class="nav-item">
                                             <a href="{{ route('reporting', Auth::user()->id) }}"
                                                     class="nav-link {{ Request::is('smis/plan/reporting/*') || Request::is('smis/plan/reporting') || Request::is('smis/plan/get-objectives/*') || Request::is('smis/plan/get-objectives') ? 'active' : '' }}">
@@ -306,15 +310,15 @@
                                                 </a>
                                              
                                         </li>
-                                    @endcan
-                                    @can('view-any', App\Models\Language::class)
+                                    @endif
+                                    @if($user->hasPermission('create planaccomplishments')) 
                                         <li class="nav-item">
                                             <a href="{{ route('view-report-accomplishment') }}" class="nav-link">
                                                 <i class="nav-icon icon ion-md-radio-button-off"></i>
                                                 <p>View Report </p>
                                             </a>
                                         </li>
-                                    @endcan
+                                    @endif
                                 </ul>
                             </li>
 
@@ -365,6 +369,7 @@
                             </ul>
                         </li>
                     @endif
+                @endif
                 @endauth
 
                 @auth

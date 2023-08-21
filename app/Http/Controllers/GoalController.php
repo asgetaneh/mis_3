@@ -11,6 +11,7 @@ use App\Http\Requests\GoalUpdateRequest;
 use App\Models\Language;
 use App\Models\GoalTranslation;
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 
 class GoalController extends Controller
 {
@@ -19,8 +20,9 @@ class GoalController extends Controller
      */
     public function index(Request $request): View
     {
-        $this->authorize('view-any', Goal::class);
-
+        if (! Gate::allows('view keypeformanceindicators', Goal::class)) {
+                    abort(403);
+                }
         $search = $request->get('search', '');
         $goal_ts = GoalTranslation::search($search)
 
