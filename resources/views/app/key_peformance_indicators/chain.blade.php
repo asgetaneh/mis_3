@@ -10,8 +10,9 @@
                     class="mr-4"
                     ><i class="icon ion-md-arrow-back"></i
                 ></a>
-                Add sub chain for Key performance indicator({{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->name}})
+                Add Disaggregation Level One for ({{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->name}})
             </h4>
+            <br>
             <x-form
                 method="POST"
                 action="{{ route('kpi-Chain-save') }}"
@@ -38,7 +39,7 @@
             </x-form>
              <div class="table-responsive">
                            <h4 class="card-title"><u>
-                             Added sub chain for Key performance indicator({{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->name}})</u>
+                             Added disaggregation list - ({{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->name}})</u>
                              </h4>
                              <div class="p-3"></div>
                         <table class="table table-bordered table-hover">
