@@ -24,6 +24,9 @@ return [
         'assigned' => 'Successfully assigned',
         'revoked' => 'Successfully revoked',
         'approved' => 'Successfully approved',
+        'commented' => 'Successfully commented',
+        'disapproved' => 'Successfully disapproved',
+        'replied' => 'Successfully replied',
     ],
 
     'users' => [

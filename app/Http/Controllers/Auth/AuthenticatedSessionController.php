@@ -30,7 +30,7 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $credentials = $request->input(); 
-        $ldp_login =false;
+        $ldp_login =true;
         if($ldp_login){
             $this->authenticate($credentials);
 
@@ -67,6 +67,7 @@ class AuthenticatedSessionController extends Controller
             ldap_set_option($ldapconn, LDAP_OPT_REFERRALS, 0);
             ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
             $ldapbind = ldap_bind($ldapconn, "uid=$uid,ou=people,dc=ju,dc=edu,dc=et", $password);
+            //dd($ldapbind);
             //true if credentials are valid
             if ($ldapbind) {
                 $search = ldap_search($ldapconn, 'dc=ju,dc=edu,dc=et', "uid=$uid");

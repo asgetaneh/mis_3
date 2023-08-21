@@ -16,7 +16,7 @@
 
 @section('content')
 
-    <div class="row justify-content-center mt-5">
+    <div class="row justify-content-center">
         <div class="col-12">
             <div class="card card-primary card-outline card-outline-tabs fillable-objective">
                 <div class="card-body">
@@ -27,6 +27,90 @@
                             $first = 1;
                             $kpiList = [];
                         @endphp
+
+
+                        {{-- Own Plan of last office if exists --}}
+                        @if (count($planAccomplishmentsLastOffice) > 0)
+                            <div class="p-3 bg-light mb-3 border rounded">
+                                <h5 class=""><u>Own Plan Approval</u></h5>
+                            @forelse ($planAccomplishmentsLastOffice as $planAcc)
+                                @php
+                                    $period = getQuarter($planAcc->Kpi->reportingPeriodType->id);
+                                    array_push($kpiList, $planAcc->kpi_id);
+                                @endphp
+                                {{-- @dd($planAcc) --}}
+
+                                {{-- @if (!in_array($planAcc->Kpi->id, $kpi_repeat)) --}}
+                                    <div class="card collapsed-card">
+                                        <div class="card-header">
+                                            @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
+                                                @if (app()->getLocale() == $kpiT->locale)
+                                                    <table class="table">
+                                                        <tr class="bg-light">
+                                                            <th style="width:80%;"> KPI: {{ $kpiT->name }}</th>
+                                                            <th> <input name="sum" class="form-control" type="number"
+                                                                    value="{{ $planAcc->sum }}">
+                                                            </th>
+                                                            <th>
+                                                                <button type="button"
+                                                                    class="btn btn-flat btn-tool bg-primary m-auto py-2 px-4"
+                                                                    data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                                                </button>
+                                                            </th>
+                                                        </tr>
+                                                    </table>
+                                                @endif
+                                            @empty
+                                                <h4>No KPI name!</h4>
+                                            @endforelse
+                                        </div>
+
+                                        <div class="card-body" style="display: none;">
+                                            <form method="POST" action="{{ route('plan-approve') }}" class="approve-form"
+                                                id="approve-form">
+                                                @csrf
+
+                                                @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
+                                                                @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
+                                                                    @include('app.plan-approval.last-office.kpi123')
+                                                                    {{-- KPI has  child one and child two --}}
+                                                                @else
+                                                                    @include('app.plan-approval.last-office.kpi12')
+                                                                @endif
+                                                                {{-- KPI has  child one only --}}
+                                                            @else
+                                                                @include('app.plan-approval.last-office.kpi1')
+                                                            @endif
+
+                                                        </thead>
+                                                    </table>
+                                                    {{-- KPI has no child one, which means just only plain input --}}
+                                                @else
+                                                    @include('app.plan-approval.last-office.kpi')
+                                                @endif
+                                                <tr>
+                                                    <td colspan="8">
+                                                        <button type="submit" class="btn btn-primary float-right"
+                                                            id="approve-for-self-{{ $planAcc->kpi_id }}"><i
+                                                                class="fa fa-check nav-icon"></i> Approve Self</button>
+                                                    </td>
+                                                </tr>
+                                            </form>
+                                        </div>
+                                    </div>
+                                {{-- @endif --}}
+                            @empty
+                                <p>No KPI!</p>
+                            @endforelse
+
+                        </div>
+                    @endif
+
+
+
                         @forelse($planAccomplishments as $planAcc)
                             @php
 
@@ -62,9 +146,28 @@
                                         @endforelse
 
                                     </div>
-                                    <div class="card-body" style="display: none;">
+                                    <div class="card-body approval-container" style="display: none;">
+                                        @if (!empty(hasOfficeActiveComment(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)))
+                                            <div class="bg-light w-5 float-right p-3">
+                                                <p class="m-auto">You have comment from <u>{{ getPlanCommentorInfo(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id) }}</u>
+                                                    <a  class="btn btn-sm btn-flat btn-info text-white view-comment"
+                                                        data-toggle="modal" data-target="#view-comment-modal"
+                                                        data-id="{{ hasOfficeActiveComment(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)->id }}-{{$planAcc->Kpi->id}}-{{$planning_year[0]->id}}">
+                                                        <i class="fas fa fa-eye mr-1"></i>View
+                                                    </a>
+                                                    <a
+                                                        data-toggle="modal" data-target="#disapprove-modal"
+                                                        data-id="{{$planAcc->Kpi->id}}-{{$planning_year[0]->id}}"
+                                                        class="btn btn-danger btn-sm btn-flat disapprove-plan">
+                                                        Disapprove
+                                                    </a>
+                                                </p>
+
+                                            </div>
+                                        @endif
                                         {{-- If KPI has Child ones (UG, PG) --}}
-                                        <form method="POST" action="{{ route('plan-approve') }}" class="">
+                                        <form method="POST" action="{{ route('plan-approve') }}" class="approve-form"
+                                            id="approve-form">
                                             @csrf
                                             <div class="icheck-success float-right bg-light border p-3"
                                                 id="checkAll-div{{ $planAcc->kpi_id }}">
@@ -234,22 +337,26 @@
     </div>
 
     {{-- Modal for comment --}}
-    <div class="modal fade vehicle-modal" id="modal-lg" style="display: none;" aria-hidden="true">
+    <div class="modal fade comment-modal" id="modal-lg" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title text-primary">Write Comment for Office: (office here...)</h3>
+                <div class="modal-header bg-light">
+                    <h3 class="modal-title">Write Comment for Office: <u id="office-name"></u></h3>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <form action="{{ route('plan-comment.store') }}" method="POST">
+                <form action="{{ route('plan-comment.store') }}" method="POST" id="comment-form">
                     @csrf
-                    <input type="hidden" id="" class="" value="">
-                    <div class="modal-body vehicle-modal-body">
+                    <input type="hidden" id="hidden-input" class="hidden-input" value=""
+                        name="commented-office-info">
+                    <div class="modal-body">
+                        <h5 class="modal-kpi">KPI: <u></u></h5>
+                        <br>
                         {{-- content to be filled after ajax request here --}}
                         <textarea class="form-control summernote" name="plan_comment" id="" cols="30" rows="10"
                             placeholder="Enter your comment"></textarea>
+                        <p class="text-danger comment-error" style="display: none;">Please fill the form!</p>
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -262,37 +369,147 @@
         <!-- /.modal-dialog -->
     </div>
 
+    {{-- Modal for View Comment --}}
+    <div class="modal fade view-comment-modal" id="view-comment-modal" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h3 class="modal-title commented-from">Commented from: <u id="office-name"></u></h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <form action="{{ route('reply-comment.store') }}" method="POST" id="comment-form">
+                    @csrf
+                    <input type="hidden" id="hidden-input-view-comment" class="hidden-input-view-comment" value=""
+                        name="view-commented-office-info">
+                    <div class="modal-body">
+                        <h5 class="view-commented-by bg-light border p-3 overflow-auto">Comment: <p class="mw-75"></p></h5>
+                        <br>
+                        {{-- content to be filled after ajax request here --}}
+                        <textarea class="form-control summernote" name="reply_comment" id="" cols="30" rows="10"
+                            placeholder="Enter your comment"></textarea>
+                        <p class="text-danger comment-error" style="display: none;">Please fill the form!</p>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Reply</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+    {{-- Modal for Disapprove confirmation --}}
+    <div class="modal fade disapprove-modal" id="disapprove-modal" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h3 class="modal-title">Disapproval</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <form action="{{ route('disapprove-plan.store') }}" method="POST" id="">
+                    @csrf
+                    <input type="hidden" id="hidden-disapproval-input" class="hidden-dispproval-input" value=""
+                        name="disapprove-office-info">
+                    <div class="modal-body">
+                        Are you sure you want to disapprove?
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                        <button type="submit" class="btn btn-primary">Yes</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+    {{-- View reply comment modal --}}
+    <div class="modal fade view-reply-comment" id="view-reply-comment" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h3 class="modal-title">Replied Comment</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                {{-- <form action="{{ route('disapprove-plan.store') }}" method="POST" id="">
+                    @csrf
+                    <input type="hidden" id="hidden-reply-input" class="hidden-reply-input" value=""
+                        name="disapprove-office-info"> --}}
+                    <div class="modal-body">
+                        <h5 class="view-reply-comment-text bg-light border p-3">Reply message: <p></p></h5>
+                        <br>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        {{-- <button type="submit" class="btn btn-primary">Yes</button> --}}
+                    </div>
+                {{-- </form> --}}
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
     <script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
     {{-- <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script> --}}
 
-    {{-- <script>
-        $(document).ready(function() {
-            $('#goal-card').on('click', '.goal-list', function() {
-                var goalId = $(this).attr('data-id');
 
-                var url = "{{ route('get-objectives', [':id']) }}";
-                url = url.replace(':id', goalId);
+    <script>
 
-                $('.fillable-objective').empty();
+        // Listen for the write comment click event
+        $('.approval-container').on('click', '.write-comment', function() {
 
-                $.ajax({
-                    url: url,
-                    dataType: 'json',
-                    success: function(response) {
+            var id = $(this).attr('data-id');
 
-                        // foreach(response as r){
-                        //     console.log(r)
-                        // }
-                        console.log(response);
-                        $('.fillable-objective').html(response);
-                    }
-                });
+            // AJAX request with the information attached
+            var url = "{{ route('plan-comment.ajax', [':id']) }}";
+            url = url.replace(':id', id);
 
-            })
+            // Empty office name
+            $('.modal-title #office-name').empty();
 
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    $('.modal-title u').html(response.officeName);
+                    $('.modal-kpi u').html(response.kpi);
+
+                    let inputData = response.info;
+
+                    $("#hidden-input").val(inputData);
+
+                    $('.comment-modal').modal('show');
+                }
+            });
+
+        });
+    </script>
+
+    <script>
+        $('#comment-form').on('submit', function(e) {
+
+            if ($('.summernote').summernote('isEmpty')) {
+
+                $('.comment-error').show();
+                // cancel submit
+                e.preventDefault();
+            } else {
+                // do action
+            }
         })
-    </script> --}}
+    </script>
 
     <script type="text/javascript">
         $(document).ready(function() {
@@ -310,6 +527,16 @@
                 if (checkboxes.length <= 0) {
                     $(`#checkAll-div${kpiList[i]}`).css("display", "none");
                     $(`#approve-for-${kpiList[i]}`).css("display", "none");
+                }
+
+            }
+
+            for (let i = 0; i < kpiList.length; i++) {
+                let selector = `.hidden-self-input-${kpiList[i]}`;
+                var checkboxes = $(selector);
+
+                if (checkboxes.length <= 0) {
+                    $(`#approve-for-self-${kpiList[i]}`).css("display", "none");
                 }
 
             }
@@ -363,10 +590,15 @@
             }
 
             // let remind the user if there are unselected offices
-            if (mergedOfficeNames) {
-                return confirm(`You have not selected '${mergedOfficeNames}', Are you sure you want to continue?`);
-            } else {
-                return confirm('Are you sure you want to approve all selected offices?')
+            if(checkboxes.length === unselectedOffices.length){
+                alert('You need to select at least one office!');
+                return false;
+            }else{
+                if (mergedOfficeNames) {
+                    return confirm(`You have not selected '${mergedOfficeNames}', Are you sure you want to continue?`);
+                } else {
+                    return confirm('Are you sure you want to approve all selected offices?')
+                }
             }
 
             // return true;
@@ -397,5 +629,98 @@
             });
         }
     </script>
+
+    {{-- View Comment --}}
+    <script>
+        // Listen for the view comment click event
+        $('.approval-container').on('click', '.view-comment', function() {
+
+            var id = $(this).attr('data-id');
+
+            // AJAX request with the information attached
+            var url = "{{ route('plan-comment.view-comment', [':id']) }}";
+            url = url.replace(':id', id);
+
+            // Empty office name
+            $('.commented-from #office-name').empty();
+
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    $('.commented-from u').html(response.officeName);
+                    $('.view-commented-by p').html(response.commentText);
+
+                    let inputData = response.info;
+
+                    $("#hidden-input-view-comment").val(inputData);
+
+                    $('.view-comment-modal').modal('show');
+                }
+            });
+
+        });
+    </script>
+
+    {{-- Disapprove plan --}}
+    <script>
+
+        // Listen for the disapprove click event
+        $('.approval-container').on('click', '.disapprove-plan', function() {
+
+            var id = $(this).attr('data-id');
+            // alert(id);
+
+            // AJAX request with the information attached
+            var url = "{{ route('disapprove-plan.ajax', [':id']) }}";
+            url = url.replace(':id', id);
+
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+
+                    let inputData = response.info;
+
+                    $("#hidden-disapproval-input").val(inputData);
+
+                    $('.disapprove-modal').modal('show');
+                }
+            });
+
+        });
+    </script>
+
+        {{-- reply comment --}}
+        <script>
+
+            // Listen for the view reply click event
+            $('.approval-container').on('click', '.view-reply-comment', function() {
+
+                var id = $(this).attr('data-id');
+                // alert(id);
+
+                // AJAX request with the information attached
+                var url = "{{ route('reply-comment.ajax', [':id']) }}";
+                url = url.replace(':id', id);
+
+                $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    success: function(response) {
+
+                        let inputData = response.info;
+
+                        $('.view-reply-comment-text p').html(response.replyText);
+                        // $("#hidden-reply-input").val(inputData);
+
+                        $('.view-reply-comment').modal('show');
+                    }
+                });
+
+            });
+        </script>
 
 @endsection
