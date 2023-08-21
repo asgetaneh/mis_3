@@ -16,7 +16,7 @@
 
 @section('content')
 
-    <div class="row justify-content-left mt-5">
+    <div class="row justify-content-left mt-3">
         <div class="col-md-2">
 
             <div class="card">
@@ -31,7 +31,7 @@
                                     @forelse($kpis['goal'] as $goal)
                                         <tr>
                                             {{-- <td class="rounded "> --}}
-                                            <a class="border btn btn-light btn-block text-left {{ Request::is('smis/report/get-objectives/' . $goal->id) ? 'bg-primary' : '' }}"
+                                            <a class="border btn btn-light btn-block text-left {{ Request::is('smis/report/get-objectives-reporting/' . $goal->id) ? 'bg-primary' : '' }}"
                                                 href='{{ route('get-objectives-reporting', $goal->id) }}' role="button"
                                                 aria-expanded="false" aria-controls="collapseExample">
                                                 {{ optional($goal->goalTranslations[0])->name ?? '-' }}
@@ -89,7 +89,7 @@
                                                 <a class="nav-link" id="{{ $obj_ts->translation_id . '-tab' }}"
                                                     data-toggle="pill" href="{{ '#objective-' . $obj_ts->translation_id }}"
                                                     role="tab" aria-controls="{{ $obj_ts->translation_id }}"
-                                                    aria-selected="false">{{ $obj_ts->name }}
+                                                    aria-selected="false" title="{{ $obj_ts->name }}">{{ Str::of($obj_ts->name)->limit(10) }}
                                                 </a>
                                             </li>
                                         @else
@@ -97,7 +97,7 @@
                                                 <a class="nav-link active" id="{{ $obj_ts->translation_id . '-tab' }}"
                                                     data-toggle="pill" href="{{ '#objective-' . $obj_ts->translation_id }}"
                                                     role="tab" aria-controls="{{ $obj_ts->translation_id }}"
-                                                    aria-selected="true">{{ $obj_ts->name }}
+                                                    aria-selected="true" title="{{ $obj_ts->name }}">{{ Str::of($obj_ts->name)->limit(10) }}
                                                 </a>
                                             </li>
 
@@ -151,7 +151,7 @@
                                             $checkPlanedForKpi = checkPlanedForKpi($planning_year[0]->id, $kpi->id, auth()->user()->offices[0]->id);
                                         @endphp
                                         @if($checkPlanedForKpi)
-                                        <div class="card collapsed-card p-2">
+                                        <div class="card p-2">
                                             <div class="card-header">
                                                 <h3 class="card-title">KPI:
                                                     {{ $kpi->KeyPeformanceIndicatorTs[0]->name }}
@@ -160,7 +160,7 @@
                                                         $checkPlanedForKpi = checkPlanedForKpi($planning_year[0]->id, $kpi->id, auth()->user()->offices[0]->id);
                                                     @endphp
                                                     (Reporting:{{ $kpi->reportingPeriodType->reportingPeriodTypeTs[0]->name }})
-                                                    
+
                                                 </h3>
                                                 <div class="card-tools">
                                                     <button type="button" class="btn btn-tool"
@@ -168,6 +168,7 @@
                                                     </button>
                                                 </div>
                                             </div>
+                                            <div class="card-body">
                                             <table class="table table-bordered">
                                                 <thead>
                                                     {{-- If KPI has Child ones (UG, PG) --}}
@@ -193,7 +194,7 @@
                                                                                     var x = document.getElementById("fname").value;
                                                                                     document.getElementById("demo").innerHTML = x;
                                                                                 }
-                                                                            </script>--}} 
+                                                                            </script>--}}
                                                                         </th>
                                                                     @endforeach
                                                                 </tr>
@@ -299,7 +300,7 @@
                                                                                     $two->id;
                                                                                     $off_level = auth()->user()->offices[0]->level;
                                                                                     $disabled ="";
-                                                              
+
                                                                                 @endphp
                                                                                 @if ($off_level!=$plan12->accom_status)
                                                                                     @php $disabled ="disabled"; @endphp
@@ -368,7 +369,7 @@
                                                                 $plan1 = getSavedPlanIndividualOne($planning_year[0]->id, $kpi->id, $period->id, $one->id, auth()->user()->offices[0]->id);
                                                                 $off_level = auth()->user()->offices[0]->level;
                                                                 $disabled ="";
-                                                                
+
                                                             @endphp
                                                             @if ($plan1 && $plan1->accom_value)
                                                              @if ($off_level!=$plan1->accom_status)
@@ -431,7 +432,7 @@
                                     <p class="mb-3">
                                         @php
                                         $inputname = '{{ $kpi->id }}-{{ $period->id }}';
-                                        $planP = getSavedPlanIndividual($planning_year[0]->id, $kpi->id, 
+                                        $planP = getSavedPlanIndividual($planning_year[0]->id, $kpi->id,
                                         $period->id, auth()->user()->offices[0]->id);
                                         $off_level = auth()->user()->offices[0]->level;
                                         $disabled ="";
@@ -505,7 +506,7 @@
                                     id="summernote" placeholder="Narration here" required></textarea>
                             @endif
 
-                        </div>
+                        {{-- </div> --}}
                     @else
                     <h5>{{"No Plan for Keyperformance indicator"}}</h5>
                     @endif
@@ -513,9 +514,9 @@
                         <h4>No KPI exit with active  reporting period in this office and Objective!</h4>
                         @endforelse
                         <button type="submit" class="btn btn-primary">Submit</button>
-
+                                        {{-- </div> --}}
                         </form>
-                    </div>
+                    {{-- </div> --}}
                 </div>
 
             @empty

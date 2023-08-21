@@ -95,7 +95,7 @@
                                 @if ($officeTranslation->office->users->count() > 0)
                                     <form action="{{ route('office-manager.remove', $officeTranslation->office->users[0]->id) }}" class="d-inline" method="POST">
                                         @csrf
-                                        <button class="btn btn-sm btn-danger ml-3">Revoke</button>
+                                        <button class="btn btn-sm btn-outline-danger ml-3 float-right">Revoke</button>
                                     </form>
                                 @endif
                             </td>
@@ -155,14 +155,10 @@
                         </tr>
                         @endforelse
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="4">
-                                {!! $officeTranslations->render() !!}
-                            </td>
-                        </tr>
-                    </tfoot>
                 </table>
+                <div class="float-right">
+                    {!! $officeTranslations->render() !!}
+                </div>
             </div>
         </div>
     </div>

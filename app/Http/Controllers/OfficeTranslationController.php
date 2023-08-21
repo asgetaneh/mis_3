@@ -43,7 +43,7 @@ class OfficeTranslationController extends Controller
     public function create(Request $request): View
     {
         $this->authorize('create', OfficeTranslation::class);
-        $offices = Office::all();
+        $offices = OfficeTranslation::all();
         // $offices = Office::pluck('id', 'id');
         $search = $request->get('search', '');
            $languages = Language::search($search)
@@ -68,7 +68,7 @@ class OfficeTranslationController extends Controller
             if(isset($_POST['parent_name'])){
                 $parentLevel = Office::where('id', $data['parent_name'])->first();
                 $office->parent_office_id = $data['parent_name'];
-                $office->level =  $parentLevel ? $parentLevel->level + 1 : '';
+                $office->level =  $parentLevel ? $parentLevel->level + 1 : null;
             }else{
                 $office->level = 0;
             }
@@ -81,9 +81,9 @@ class OfficeTranslationController extends Controller
                 $office_translation = new OfficeTranslation;
 
                 $office_translation ->translation_id=$office->id;
-                $office_translation ->name = $data['name'.$value->locale];
+                $office_translation ->name = $data['name_'.$value->locale];
                  $office_translation ->locale = $value->locale;
-                $office_translation ->description = $data['description'.$value->locale];
+                $office_translation ->description = $data['description_'.$value->locale];
                 $office_translation->save();
                 }
          return redirect()
@@ -120,8 +120,10 @@ class OfficeTranslationController extends Controller
     ): View {
         $this->authorize('update', $officeTranslation);
 
-        $officeTranslation = $officeTranslation->office->officeTranslations->groupBy('locale');
-        dd($officeTranslation);
+        $officeTranslations = $officeTranslation->office->officeTranslations->groupBy('locale');
+        // dd($officeTranslation);
+        $offices = OfficeTranslation::all();
+
         $search = $request->get('search', '');
         $languages = Language::search($search)
             ->latest()
@@ -130,7 +132,7 @@ class OfficeTranslationController extends Controller
 
         return view(
             'app.office_translations.edit',
-            compact('officeTranslation', 'offices', 'languages')
+            compact('officeTranslation', 'offices', 'languages', 'officeTranslations')
         );
     }
 
@@ -138,18 +140,48 @@ class OfficeTranslationController extends Controller
      * Update the specified resource in storage.
      */
     public function update(
-        OfficeTranslationUpdateRequest $request,
+        Request $request,
         OfficeTranslation $officeTranslation
     ): RedirectResponse {
         $this->authorize('update', $officeTranslation);
 
-        $validated = $request->validated();
+        $data = $request->input();
+        $language = Language::all();
 
-        $officeTranslation->update($validated);
+        // dd(isset($_POST['parent_name']));
+        if(isset($_POST['parent_name'])){
+            $parentLevel = Office::where('id', $data['parent_name'])->first();
+            $officeTranslation->office->update([
+                'parent_office_id' => $data['parent_name'],
+                'level' => $parentLevel ? $parentLevel->level + 1 : null,
+                'updated_at' => new \DateTime(),
+            ]);
+
+        }else{
+            $officeTranslation->office->update([
+                'level' => 0,
+                'updated_at' => new \DateTime(),
+            ]);
+        }
+
+        foreach ($request->except('_token', '_method', 'parent_name') as $key => $value) {
+
+            $locale = str_replace(['name_', 'description_'], '', $key);
+
+            $officeTranslations = $officeTranslation->office->officeTranslations->where('locale', $locale)->first();
+
+            $column = str_replace('_'.$locale, '', $key);
+
+            if ($officeTranslations) {
+                $officeTranslations->update([
+                    $column => $value
+                ]);
+            }
+        }
 
         return redirect()
-            ->route('office-translations.edit', $officeTranslation)
-            ->withSuccess(__('crud.common.saved'));
+            ->route('office-translations.index', $officeTranslation)
+            ->withSuccess(__('crud.common.updated'));
     }
 
     /**
