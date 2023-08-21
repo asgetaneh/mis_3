@@ -57,12 +57,18 @@ class ReportApprovalController extends Controller
                 $only_child_array = array_merge($all_office_list,array($office_id));
             }
 
-            $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $only_child_array)->whereIn('kpi_id', $kpi_array)->select('*', DB::raw('SUM(accom_value) AS sum'))
+            $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
+            ->whereIn('office_id', $only_child_array)->whereIn('kpi_id', $kpi_array)
+            ->whereNotNull('accom_value')
+            ->select('*', DB::raw('SUM(accom_value) AS sum'))
                 //-> where('reporting_periods.slug',"=", 1)
                 ->groupBy('kpi_id')  ->get();
         }
         else{
-            $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $only_child_array)->select('*', DB::raw('SUM(accom_value) AS sum'))
+            $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
+            ->whereIn('office_id', $only_child_array)
+            ->select('*', DB::raw('SUM(accom_value) AS sum'))
+            ->whereNotNull('accom_value')
             //-> where('reporting_periods.slug',"=", 1)
            ->groupBy('kpi_id')  ->get();
 
@@ -108,9 +114,23 @@ class ReportApprovalController extends Controller
         // }
 
         $planning_year = PlaningYear::where('is_active', true)->get();
+
+        $planAccomplishmentsLastOffice = [];
+        if(auth()->user()->offices[0]->parent_office_id === null){
+            $planAccomplishmentsLastOffice = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
+            ->where('reporting_periods.slug', "=", 1)
+            ->where('office_id', auth()->user()->offices[0]->id)
+            ->select('*', DB::raw('SUM(accom_value) AS sum'))
+            ->whereNotNull('accom_value')
+            ->groupBy('kpi_id')
+            ->get();
+
+            // dd($planAccomplishmentsLastOffice);
+        }
+
         return view(
             'app.report-approval.index',
-            compact('planAccomplishments', 'all_office_list', 'only_child_array', 'planning_year', 'obj_office', 'search')
+            compact('planAccomplishments', 'all_office_list', 'only_child_array', 'planning_year', 'obj_office', 'search', 'planAccomplishmentsLastOffice')
         );
     }
 
@@ -136,40 +156,53 @@ class ReportApprovalController extends Controller
                     //     $singleOfficePlan[$splitkey] = $splitvalue;
                     // }
 
-
-                    $office = (int)$singleOfficePlan[1];
-                    $findOffice = Office::find($office);
-                    $allChildren = office_all_childs_ids($findOffice);
-                    $allChildrenApproved = getOfficeChildrenReportApprovedList((int)$singleOfficePlan[0], $findOffice, (int)$singleOfficePlan[2], 1);
-                    $isCurrentChildAlreadyApproved = isCurrentOfficeReportApproved((int)$singleOfficePlan[0], $findOffice, (int)$singleOfficePlan[2]);
-                    // dd($allChildrenApproved);
-
-                    // Prevent immediate child from changing its status if it was first approved
-                    if (count($allChildrenApproved) > 0) {
-                        if(!(empty($isCurrentChildAlreadyApproved)) && $isCurrentChildAlreadyApproved->accom_status < auth()->user()->offices[0]->level){
-                            $mergedOffices = $allChildrenApproved;
-                        }
-                        else{
-                            $mergedOffices = array_merge($allChildrenApproved, array($office));
-                        }
-
-                    } else {
-                        $mergedOffices = array($office);
+                    // check and approve self approver office
+                    if(auth()->user()->offices[0]->id === (int)$singleOfficePlan[1]){
+                        $approvedSelfOffice = DB::table('plan_accomplishments')
+                                ->where('planning_year_id', $singleOfficePlan[2])
+                                ->where('office_id', auth()->user()->offices[0]->id)
+                                ->where('kpi_id', $singleOfficePlan[0])
+                                // ->where('reporting_period_id', '=', $index[1])
+                                ->update([
+                                    'accom_status' => 0, // decide what value it is later.
+                                    'approved_by_id' => auth()->user()->id
+                                ]);
                     }
+                    else{
+                        $office = (int)$singleOfficePlan[1];
+                        $findOffice = Office::find($office);
+                        $allChildren = office_all_childs_ids($findOffice);
+                        $allChildrenApproved = getOfficeChildrenReportApprovedList((int)$singleOfficePlan[0], $findOffice, (int)$singleOfficePlan[2], 1);
+                        $isCurrentChildAlreadyApproved = isCurrentOfficeReportApproved((int)$singleOfficePlan[0], $findOffice, (int)$singleOfficePlan[2]);
+                        // dd($allChildrenApproved);
 
-                    // dd($mergedOffices);
+                        // Prevent immediate child from changing its status if it was first approved
+                        if (count($allChildrenApproved) > 0) {
+                            if(!(empty($isCurrentChildAlreadyApproved)) && $isCurrentChildAlreadyApproved->accom_status < auth()->user()->offices[0]->level){
+                                $mergedOffices = $allChildrenApproved;
+                            }
+                            else{
+                                $mergedOffices = array_merge($allChildrenApproved, array($office));
+                            }
 
-                    $approvedAllOffices = tap(
-                        DB::table('plan_accomplishments')
-                            ->where('planning_year_id', $singleOfficePlan[2])
-                            ->whereIn('office_id', $mergedOffices)
-                            ->where('kpi_id', $singleOfficePlan[0])
-                        // ->where('reporting_period_id', '=', $index[1])
-                    )
-                        ->update([
-                            'accom_status' => $loggedInUserOfficeLevel->level,
-                            'approved_by_id' => auth()->user()->id
-                        ]);
+                        } else {
+                            $mergedOffices = array($office);
+                        }
+
+                        // dd($mergedOffices);
+
+                        $approvedAllOffices = tap(
+                            DB::table('plan_accomplishments')
+                                ->where('planning_year_id', $singleOfficePlan[2])
+                                ->whereIn('office_id', $mergedOffices)
+                                ->where('kpi_id', $singleOfficePlan[0])
+                            // ->where('reporting_period_id', '=', $index[1])
+                        )
+                            ->update([
+                                'accom_status' => $loggedInUserOfficeLevel->level,
+                                'approved_by_id' => auth()->user()->id
+                            ]);
+                    }
                 }
             }
         }

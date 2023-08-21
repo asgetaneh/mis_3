@@ -59,9 +59,23 @@ class PlanApprovalController extends Controller
                 ->route('plan-accomplishment', $obj_office);
         }
         $planning_year = PlaningYear::where('is_active', true)->get();
+
+        // Own plan approval, last office
+
+        $planAccomplishmentsLastOffice = [];
+        if(auth()->user()->offices[0]->parent_office_id === null){
+            $planAccomplishmentsLastOffice = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
+            ->where('reporting_periods.slug', "=", 1)
+            ->where('office_id', auth()->user()->offices[0]->id)
+            ->select('*', DB::raw('SUM(plan_value) AS sum'))
+            ->groupBy('kpi_id')
+            ->get();
+
+            // dd($planAccomplishmentsLastOffice);
+        }
         return view(
             'app.plan-approval.index',
-            compact('planAccomplishments', 'planAccomplishment_all', 'all_office_list', 'only_child_array', 'planning_year', 'obj_office', 'search')
+            compact('planAccomplishments', 'planAccomplishment_all', 'all_office_list', 'only_child_array', 'planning_year', 'obj_office', 'search', 'planAccomplishmentsLastOffice')
         );
     }
 
@@ -87,40 +101,53 @@ class PlanApprovalController extends Controller
                     //     $singleOfficePlan[$splitkey] = $splitvalue;
                     // }
 
-
-                    $office = (int)$singleOfficePlan[1];
-                    $findOffice = Office::find($office);
-                    $allChildren = office_all_childs_ids($findOffice);
-                    $allChildrenApproved = getOfficeChildrenApprovedList((int)$singleOfficePlan[0], $findOffice, (int)$singleOfficePlan[2], 1);
-                    $isCurrentChildAlreadyApproved = isCurrentOfficeApproved((int)$singleOfficePlan[0], $findOffice, (int)$singleOfficePlan[2]);
-                    // dd($allChildrenApproved);
-
-                    // Prevent immediate child from changing its status if it was first approved
-                    if (count($allChildrenApproved) > 0) {
-                        if(!(empty($isCurrentChildAlreadyApproved)) && $isCurrentChildAlreadyApproved->plan_status < auth()->user()->offices[0]->level){
-                            $mergedOffices = $allChildrenApproved;
-                        }
-                        else{
-                            $mergedOffices = array_merge($allChildrenApproved, array($office));
-                        }
-
-                    } else {
-                        $mergedOffices = array($office);
+                    // check and approve self approver office
+                    if(auth()->user()->offices[0]->id === (int)$singleOfficePlan[1]){
+                        $approvedSelfOffice = DB::table('plan_accomplishments')
+                                ->where('planning_year_id', $singleOfficePlan[2])
+                                ->where('office_id', auth()->user()->offices[0]->id)
+                                ->where('kpi_id', $singleOfficePlan[0])
+                                // ->where('reporting_period_id', '=', $index[1])
+                                ->update([
+                                    'plan_status' => 0, // decide what value it is later.
+                                    'approved_by_id' => auth()->user()->id
+                                ]);
                     }
+                    else{
+                        $office = (int)$singleOfficePlan[1];
+                        $findOffice = Office::find($office);
+                        $allChildren = office_all_childs_ids($findOffice);
+                        $allChildrenApproved = getOfficeChildrenApprovedList((int)$singleOfficePlan[0], $findOffice, (int)$singleOfficePlan[2], 1);
+                        $isCurrentChildAlreadyApproved = isCurrentOfficeApproved((int)$singleOfficePlan[0], $findOffice, (int)$singleOfficePlan[2]);
+                        // dd($allChildrenApproved);
 
-                    // dd($mergedOffices);
+                        // Prevent immediate child from changing its status if it was first approved
+                        if (count($allChildrenApproved) > 0) {
+                            if(!(empty($isCurrentChildAlreadyApproved)) && $isCurrentChildAlreadyApproved->plan_status < auth()->user()->offices[0]->level){
+                                $mergedOffices = $allChildrenApproved;
+                            }
+                            else{
+                                $mergedOffices = array_merge($allChildrenApproved, array($office));
+                            }
 
-                    $approvedAllOffices = tap(
-                        DB::table('plan_accomplishments')
-                            ->where('planning_year_id', $singleOfficePlan[2])
-                            ->whereIn('office_id', $mergedOffices)
-                            ->where('kpi_id', $singleOfficePlan[0])
-                        // ->where('reporting_period_id', '=', $index[1])
-                    )
-                        ->update([
-                            'plan_status' => $loggedInUserOfficeLevel->level,
-                            'approved_by_id' => auth()->user()->id
-                        ]);
+                        } else {
+                            $mergedOffices = array($office);
+                        }
+
+                        // dd($mergedOffices);
+
+                        $approvedAllOffices = tap(
+                            DB::table('plan_accomplishments')
+                                ->where('planning_year_id', $singleOfficePlan[2])
+                                ->whereIn('office_id', $mergedOffices)
+                                ->where('kpi_id', $singleOfficePlan[0])
+                            // ->where('reporting_period_id', '=', $index[1])
+                        )
+                            ->update([
+                                'plan_status' => $loggedInUserOfficeLevel->level,
+                                'approved_by_id' => auth()->user()->id
+                            ]);
+                    }
                 }
             }
         }

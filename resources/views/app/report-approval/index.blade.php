@@ -16,7 +16,7 @@
 
 @section('content')
 
-    <div class="row justify-content-center mt-5">
+    <div class="row justify-content-center">
         <div class="col-12">
             <div class="card card-primary card-outline card-outline-tabs fillable-objective">
                 <div class="card-body">
@@ -27,6 +27,92 @@
                             $first = 1;
                             $kpiList = [];
                         @endphp
+
+
+                        {{-- @dd($planAccomplishmentsLastOffice) --}}
+
+                        {{-- Own Plan of last office if exists --}}
+                        @if (count($planAccomplishmentsLastOffice) > 0)
+                            <div class="p-3 bg-light mb-3 border rounded">
+                                <h5 class=""><u>Own Report Approval</u></h5>
+                            @forelse ($planAccomplishmentsLastOffice as $planAcc)
+                                @php
+                                    $period = getQuarter($planAcc->Kpi->reportingPeriodType->id);
+                                    array_push($kpiList, $planAcc->kpi_id);
+                                @endphp
+                                {{-- @dd($planAcc) --}}
+
+                                {{-- @if (!in_array($planAcc->Kpi->id, $kpi_repeat)) --}}
+                                    <div class="card collapsed-card">
+                                        <div class="card-header">
+                                            @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
+                                                @if (app()->getLocale() == $kpiT->locale)
+                                                    <table class="table">
+                                                        <tr class="bg-light">
+                                                            <th style="width:80%;"> KPI: {{ $kpiT->name }}</th>
+                                                            <th> <input name="sum" class="form-control" type="number"
+                                                                    value="{{ $planAcc->sum }}">
+                                                            </th>
+                                                            <th>
+                                                                <button type="button"
+                                                                    class="btn btn-flat btn-tool bg-primary m-auto py-2 px-4"
+                                                                    data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                                                </button>
+                                                            </th>
+                                                        </tr>
+                                                    </table>
+                                                @endif
+                                            @empty
+                                                <h4>No KPI name!</h4>
+                                            @endforelse
+                                        </div>
+
+                                        <div class="card-body" style="display: none;">
+                                            <form method="POST" action="{{ route('report-approve') }}" class="approve-form"
+                                                id="approve-form">
+                                                @csrf
+
+                                                @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
+                                                                @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
+                                                                    @include('app.report-approval.last-office.kpi123')
+                                                                    {{-- KPI has  child one and child two --}}
+                                                                @else
+                                                                    @include('app.report-approval.last-office.kpi12')
+                                                                @endif
+                                                                {{-- KPI has  child one only --}}
+                                                            @else
+                                                                @include('app.report-approval.last-office.kpi1')
+                                                            @endif
+
+                                                        </thead>
+                                                    </table>
+                                                    {{-- KPI has no child one, which means just only plain input --}}
+                                                @else
+                                                    @include('app.report-approval.last-office.kpi')
+                                                @endif
+                                                <tr>
+                                                    <td colspan="8">
+                                                        <button type="submit" class="btn btn-primary float-right"
+                                                            id="approve-for-self-{{ $planAcc->kpi_id }}"><i
+                                                                class="fa fa-check nav-icon"></i> Approve Self</button>
+                                                    </td>
+                                                </tr>
+                                            </form>
+                                        </div>
+                                    </div>
+                                {{-- @endif --}}
+                            @empty
+                                <p>No KPI!</p>
+                            @endforelse
+
+                        </div>
+                    @endif
+
+
+
                         @forelse($planAccomplishments as $planAcc)
                             @php
 
@@ -38,7 +124,7 @@
 
                             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
                                 <div class="card">
-                                    <div class="card-header">
+                                    <div class="card-header collapsed-card">
 
                                         @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
                                             @if (app()->getLocale() == $kpiT->locale)
@@ -62,7 +148,7 @@
                                         @endforelse
 
                                     </div>
-                                    <div class="card-body approval-container" style="display: block;">
+                                    <div class="card-body approval-container" style="display: none;">
                                         @if (!empty(hasOfficeActiveReportComment(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)))
                                             <div class="bg-light w-5 float-right p-3">
                                                 <p class="m-auto">You have comment from <u>{{ getReportCommentorInfo(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id) }}</u>
@@ -443,6 +529,16 @@
                 if (checkboxes.length <= 0) {
                     $(`#checkAll-div${kpiList[i]}`).css("display", "none");
                     $(`#approve-for-${kpiList[i]}`).css("display", "none");
+                }
+
+            }
+
+            for (let i = 0; i < kpiList.length; i++) {
+                let selector = `.hidden-self-input-${kpiList[i]}`;
+                var checkboxes = $(selector);
+
+                if (checkboxes.length <= 0) {
+                    $(`#approve-for-self-${kpiList[i]}`).css("display", "none");
                 }
 
             }
