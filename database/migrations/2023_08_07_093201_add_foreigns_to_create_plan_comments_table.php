@@ -35,8 +35,8 @@ return new class extends Migration
 
             $table
                 ->foreign('office_id')
-                ->references('office_id')
-                ->on('plan_accomplishments')
+                ->references('id')
+                ->on('offices')
                 ->onUpdate('CASCADE')
                 ->onDelete('CASCADE');
         });

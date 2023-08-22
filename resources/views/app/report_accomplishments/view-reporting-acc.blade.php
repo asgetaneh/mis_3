@@ -121,21 +121,21 @@
                                                         <thead>
                                                             @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
                                                                 @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
-                                                                    @include('app.report_accomplishments .view-kpi123')
+                                                                    @include('app.report_accomplishments.view-kpi123')
                                                                     {{-- KPI has  child one and child two --}}
                                                                 @else
-                                                                    @include('app.report_accomplishments .view-kpi12')
+                                                                    @include('app.report_accomplishments.view-kpi12')
                                                                 @endif
                                                                 {{-- KPI has  child one only --}}
                                                             @else
-                                                                @include('app.report_accomplishments .view-kpi1')
+                                                                @include('app.report_accomplishments.view-kpi1')
                                                             @endif
 
                                                         </thead>
                                                     </table>
                                                     {{-- KPI has no child one, which means just only plain input --}}
                                                 @else
-                                                    @include('app.report_accomplishments .view-kpi')
+                                                    @include('app.report_accomplishments.view-kpi')
                                                 @endif
                                             @empty
                                                 <h4>No offices!</h4>

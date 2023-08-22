@@ -451,7 +451,7 @@
                                         @php
                                             $last_period = count(getQuarter($kpi->reportingPeriodType->id));
                                             
-                                            $inputid = $kpi->id . $last_period;
+                                            $inputid = $kpi->id . $last_period; 
                                             $plan = getSavedPlanIndividual($planning_year[0]->id, $kpi->id, $period->id, auth()->user()->offices[0]->id);
                                             $off_level = auth()->user()->offices[0]->level;
                                             $disabled = '';
@@ -484,9 +484,9 @@
                             </table>
                            
                               <script>
-                                $(function() {
-                                    $('input[id={{ $inputid }}]').on('change', function() {
-                                        var sum = 0;
+                                $(function() { 
+                                    $('input[id={{ $inputid }}]').on('change', function() { 
+                                        var sum = 0; 
                                         var loop = {{ $last_period }};
                                         var behavior = String({{ $behavior }});
                                         var idd_y = String({{ $kpi->id }}) + String(1);

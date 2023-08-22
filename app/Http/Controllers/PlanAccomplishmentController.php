@@ -628,7 +628,7 @@ class PlanAccomplishmentController extends Controller
            $kpis = ['kpi' => $fun_kpi, 'goal' => $fun_goal, 'offwithkpi' => $getoffice];
        }
 
-       return view('app.report_accomplishments .reporting', [
+       return view('app.report_accomplishments.reporting', [
            'objectives' => $objectives,
            'kpis' => $kpis,
             'planning_year' => $planning_year,
@@ -731,7 +731,7 @@ class PlanAccomplishmentController extends Controller
             ->withSuccess(__('crud.common.created'));
 
          return view(
-            'app.report_accomplishments .index',
+            'app.report_accomplishments.index',
             compact('planAccomplishments', 'search')
         );
 
@@ -789,7 +789,7 @@ class PlanAccomplishmentController extends Controller
        //dd($planAccomplishments);
          $planning_year = PlaningYear::where('is_active',true)->get();
         return view(
-            'app.report_accomplishments .view-reporting-acc',
+            'app.report_accomplishments.view-reporting-acc',
             compact('planAccomplishments','all_office_list','only_child_array','planning_year','office','search')
         );
 
