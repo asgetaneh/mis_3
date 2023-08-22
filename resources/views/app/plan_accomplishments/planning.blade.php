@@ -612,7 +612,7 @@
     {{-- <script src="{{ asset('assets/plugins/summernote/summernote-bs4.min.js') }}"></script> --}}
     <script type="text/javascript">
         $(document).ready(function() {
-            $('#summernote').summernote({
+            $('.summernote').summernote({
                 height: 150
             });
             $('.dropdown-toggle').dropdown()
