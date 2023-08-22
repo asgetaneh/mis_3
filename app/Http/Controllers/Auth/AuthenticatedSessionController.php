@@ -12,6 +12,8 @@ use Illuminate\View\View;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Config;
+use Adldap\Laravel\Facades\Adldap;
+
 
 
 
@@ -31,6 +33,10 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $credentials = $request->input(); 
+
+        // Finding a user:
+        //$user = Adldap::search()->users()->find('john doe');
+        //dd($user);
         $ldp_login =true;
         if($ldp_login){
             $this->authenticate($credentials);
