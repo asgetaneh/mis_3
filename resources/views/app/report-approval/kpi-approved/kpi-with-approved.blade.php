@@ -16,7 +16,7 @@
 
         @else --}}
             <th>
-                <p class="badge badge-success d-inline">APPROVED</p>
+                <p class="badge badge-success d-inline" id="any-approved-{{ $planAcc->Kpi->id }}">APPROVED</p>
             </th>
         {{-- @endif --}}
     </tr>

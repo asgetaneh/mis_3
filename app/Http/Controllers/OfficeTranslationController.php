@@ -193,7 +193,7 @@ class OfficeTranslationController extends Controller
     ): RedirectResponse {
         $this->authorize('delete', $officeTranslation);
 
-        $officeTranslation->delete();
+        $officeTranslation->office->delete();
 
         return redirect()
             ->route('office-translations.index')

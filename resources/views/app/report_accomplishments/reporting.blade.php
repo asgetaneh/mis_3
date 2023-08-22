@@ -168,7 +168,20 @@
                                                     </button>
                                                 </div>
                                             </div>
-                                            <div class="card-body">
+                                            <div class="card-body reporting-container">
+
+                                            {{-- @if (!empty(hasOfficeActiveReportComment(auth()->user()->offices[0]->id, $kpi_id, $planning_year[0]->id)))
+                                                <div class="bg-light w-5 float-right p-3">
+                                                    <p class="m-auto">You have comment from <u>{{ getReportCommentorInfo(auth()->user()->offices[0]->id, $kpi_id, $planning_year[0]->id) }}</u>
+                                                        <a  class="btn btn-sm btn-flat btn-info text-white view-comment"
+                                                            data-toggle="modal" data-target="#view-comment-modal"
+                                                            data-id="{{ hasOfficeActiveReportComment(auth()->user()->offices[0]->id, $kpi_id, $planning_year[0]->id)->id }}-{{$kpi_id}}-{{$planning_year[0]->id}}">
+                                                            <i class="fas fa fa-eye mr-1"></i>View Comment
+                                                        </a>
+                                                    </p>
+                                                </div>
+                                            @endif --}}
+
                                             <table class="table table-bordered">
                                                 <thead>
                                                     {{-- If KPI has Child ones (UG, PG) --}}
@@ -535,12 +548,46 @@
 
     </div>
 
+    {{-- Modal for View Comment --}}
+    <div class="modal fade view-comment-modal" id="view-comment-modal" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h3 class="modal-title commented-from">Commented from: <u id="office-name"></u></h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <form action="{{ route('reply-comment.store') }}" method="POST" id="comment-form">
+                    @csrf
+                    <input type="hidden" id="hidden-input-view-comment" class="hidden-input-view-comment" value=""
+                        name="view-commented-office-info">
+                    <div class="modal-body">
+                        <h5 class="view-commented-by bg-light border p-3 overflow-auto">Comment: <p class="mw-75"></p></h5>
+                        <br>
+                        {{-- content to be filled after ajax request here --}}
+                        <textarea class="form-control summernote" name="reply_comment" id="" cols="30" rows="10"
+                            placeholder="Enter your comment"></textarea>
+                        <p class="text-danger comment-error" style="display: none;">Please fill the form!</p>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Reply</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
     <script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script> --}}
     {{-- <script src="{{ asset('assets/plugins/summernote/summernote-bs4.min.js') }}"></script> --}}
     <script type="text/javascript">
         $(document).ready(function() {
-            $('#summernote').summernote({
+            $('.summernote').summernote({
                 height: 150
             });
             $('.dropdown-toggle').dropdown()
@@ -596,6 +643,39 @@
                 // Show the result
                 $('#products').text(sum);
             });
+        });
+    </script>
+
+    {{-- View Comment --}}
+    <script>
+        // Listen for the view comment click event
+        $('.reporting-container').on('click', '.view-comment', function() {
+
+            var id = $(this).attr('data-id');
+
+            // AJAX request with the information attached
+            var url = "{{ route('report-comment.view-comment', [':id']) }}";
+            url = url.replace(':id', id);
+
+            // Empty office name
+            $('.commented-from #office-name').empty();
+
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    $('.commented-from u').html(response.officeName);
+                    $('.view-commented-by p').html(response.commentText);
+
+                    let inputData = response.info;
+
+                    $("#hidden-input-view-comment").val(inputData);
+
+                    $('.view-comment-modal').modal('show');
+                }
+            });
+
         });
     </script>
 

@@ -155,12 +155,12 @@
                                                     <a  class="btn btn-sm btn-flat btn-info text-white view-comment"
                                                         data-toggle="modal" data-target="#view-comment-modal"
                                                         data-id="{{ hasOfficeActiveReportComment(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)->id }}-{{$planAcc->Kpi->id}}-{{$planning_year[0]->id}}">
-                                                        <i class="fas fa fa-eye mr-1"></i>View
+                                                        <i class="fas fa fa-eye mr-1"></i>View/Reply
                                                     </a>
                                                     <a
                                                         data-toggle="modal" data-target="#disapprove-modal"
-                                                        data-id="{{$planAcc->Kpi->id}}-{{$planning_year[0]->id}}"
-                                                        class="btn btn-danger btn-sm btn-flat disapprove-plan">
+                                                        data-id="{{auth()->user()->offices[0]->id}}-{{$planAcc->Kpi->id}}-{{$planning_year[0]->id}}"
+                                                        class="btn btn-danger btn-sm btn-flat disapprove-plan" id="disapprove-for-{{ $planAcc->Kpi->id }}">
                                                         Disapprove
                                                     </a>
                                                 </p>
@@ -348,7 +348,7 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <form action="{{ route('plan-comment.store') }}" method="POST" id="comment-form">
+                <form action="{{ route('report-comment.store') }}" method="POST" id="comment-form">
                     @csrf
                     <input type="hidden" id="hidden-input" class="hidden-input" value=""
                         name="commented-office-info">
@@ -381,7 +381,7 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <form action="{{ route('reply-comment.store') }}" method="POST" id="comment-form">
+                <form action="{{ route('replyreport-comment.store') }}" method="POST" id="comment-form">
                     @csrf
                     <input type="hidden" id="hidden-input-view-comment" class="hidden-input-view-comment" value=""
                         name="view-commented-office-info">
@@ -406,7 +406,7 @@
 
     {{-- Modal for Disapprove confirmation --}}
     <div class="modal fade disapprove-modal" id="disapprove-modal" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header bg-light">
                     <h3 class="modal-title">Disapproval</h3>
@@ -414,16 +414,24 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <form action="{{ route('disapprove-plan.store') }}" method="POST" id="">
+                <form action="{{ route('disapprove-report.store') }}" method="POST" id="">
                     @csrf
                     <input type="hidden" id="hidden-disapproval-input" class="hidden-dispproval-input" value=""
                         name="disapprove-office-info">
-                    <div class="modal-body">
-                        Are you sure you want to disapprove?
-                    </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <select class="offices select2 col-sm-12" multiple="multiple" data-placeholder="Select office" label="Office" required name="disapproved-office-list[]" id="disapproval-select">
+
+                                </select>
+                            </div>
+                            <br>
+                            <textarea class="form-control summernote" name="written_comment" id="" cols="30" rows="10"
+                                placeholder="Enter your comment"></textarea>
+
+                        </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
-                        <button type="submit" class="btn btn-primary">Yes</button>
+                        <button type="submit" class="btn btn-primary">Disapprove</button>
                     </div>
                 </form>
             </div>
@@ -530,6 +538,14 @@
                     $(`#checkAll-div${kpiList[i]}`).css("display", "none");
                     $(`#approve-for-${kpiList[i]}`).css("display", "none");
                 }
+
+                let anyApprovedSelector = $(`#any-approved-${kpiList[i]}`);
+
+                // console.log(anyApprovedSelector.length);
+                if(anyApprovedSelector.length <= 0) {
+                    $(`#disapprove-for-${kpiList[i]}`).css("display", "none");
+                }
+
 
             }
 
@@ -688,6 +704,11 @@
 
                     $("#hidden-disapproval-input").val(inputData);
 
+                    $.each(response.offices, function(key, value) {
+                            console.log(key);
+                            $("#disapproval-select").append('<option value="' + key + '">' + value + '</option>');
+                        });
+
                     $('.disapprove-modal').modal('show');
                 }
             });
@@ -721,6 +742,14 @@
                         $('.view-reply-comment').modal('show');
                     }
                 });
+
+            });
+        </script>
+
+        <script>
+            $(document).ready(function() {
+
+                $('.select2').select2();
 
             });
         </script>
