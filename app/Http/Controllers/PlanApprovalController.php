@@ -162,44 +162,71 @@ class PlanApprovalController extends Controller
         // dd($request->all());
 
         $requestData = explode('-', $request->input('disapprove-office-info'));
+        $selectedOfficeList = $request->input('disapproved-office-list');
+        $writtenComment = $request->input('written_comment');
+        // dd($selectedOfficeList);
 
-        $kpi = $requestData[0];
-        // $office = $requestData[1];
-        // $office = Office::find($office);
-        $planningYear = $requestData[1];
+        $loggedInOffice = (int)$requestData[0];
+        $kpi = (int)$requestData[1];
+        $planningYear = (int)$requestData[2];
+        $reportingPeriod = 3;
 
-        $officeLogged = Office::find(auth()->user()->offices[0]->id);
+        $officeLogged = Office::find($loggedInOffice);
 
-        $officeList = office_all_childs_ids($officeLogged);
-        // dd($officeList);
+        // dd($officeLogged);
+        foreach ($selectedOfficeList as $key => $office) {
+
+            $officeLevel = Office::find((int)$office);
+
+            $officeDisapproved = DB::table('plan_accomplishments')
+                    ->where('planning_year_id', $planningYear)
+                    ->where('office_id', (int)$office)
+                    ->where('kpi_id', $kpi)
+                // ->where('reporting_period_id', '=', $index[1])
+                ->update([
+                    'plan_status' => $officeLevel->level,
+                    // 'approved_by_id' => $loggedInOffice
+                ]);
+
+            $officeCommented = PlanComment::updateOrCreate([
+                'plan_comment' => $writtenComment,
+                'kpi_id' => $kpi,
+                'reporting_period_id' => $reportingPeriod,
+                'planning_year_id' => $planningYear,
+                'office_id' => $office,
+                'commented_by' => $loggedInOffice
+            ]);
+        }
+
+        // dd('disapproved and commented');
 
         // $officeList = array_merge($officeList, array($officeLogged->level+1));
 
-        if(count($officeList) > 0){
-            foreach($officeList as $office){
-                $officeInfo = Office::find($office);
+        // if(count($officeList) > 0){
+        //     foreach($officeList as $office){
+        //         $officeInfo = Office::find($office);
 
-                $disapproved = DB::table('plan_accomplishments')
-                ->where('kpi_id', $kpi)
-                ->where('office_id', $office)
-                ->where('planning_year_id', $planningYear)
-                ->update([
-                    'plan_status' => $officeInfo->level,
-                ]);
+        //         $disapproved = DB::table('plan_accomplishments')
+        //         ->where('kpi_id', $kpi)
+        //         ->where('office_id', $office)
+        //         ->where('planning_year_id', $planningYear)
+        //         ->update([
+        //             'plan_status' => $officeInfo->level,
+        //         ]);
 
-                // try to insert the comment for each office so that they will be able to see the comment when to modify planning
-                // $isCommentExists = DB::table('plan_comments')->where('office_id', $office)->get();
-                // if($isCommentExists->count() > 0){
-                //     $disapproved = DB::table('plan_comments')
-                //     ->where('kpi_id', $kpi)
-                //     ->where('office_id', $office)
-                //     ->where('planning_year_id', $planningYear)
-                //     ->update([
-                //         'plan_status' => $officeInfo->level,
-                //     ]);
-                // }
-            }
-        }
+        //         // try to insert the comment for each office so that they will be able to see the comment when to modify planning
+        //         // $isCommentExists = DB::table('plan_comments')->where('office_id', $office)->get();
+        //         // if($isCommentExists->count() > 0){
+        //         //     $disapproved = DB::table('plan_comments')
+        //         //     ->where('kpi_id', $kpi)
+        //         //     ->where('office_id', $office)
+        //         //     ->where('planning_year_id', $planningYear)
+        //         //     ->update([
+        //         //         'plan_status' => $officeInfo->level,
+        //         //     ]);
+        //         // }
+        //     }
+        // }
 
         return redirect()->back()->withSuccess(__('crud.common.disapproved'));
     }
@@ -331,21 +358,45 @@ class PlanApprovalController extends Controller
         return response()->json($responseData);
     }
 
+    // Disapproval will hold offices and comment box
     public function disapproveInfo($data){
         $requestArray = explode('-', $data);
-        // error_log($requestArray[1]);
+        // error_log($requestArray[0]);
 
         $returnData = $data;
 
-        $kpi = (int)$requestArray[0];
-        $office = (int)$requestArray[1];
-        // $planningYear = (int)$requestArray[2];
+        $loggedInOffice = $requestArray[0];
+        $kpi = (int)$requestArray[1];
+        $planningYear = (int)$requestArray[2];
 
         $responseData = [];
 
-        $officeName = Office::find($office);
+        $office = Office::find($loggedInOffice);
+        $onlyChild = $office->offices;
+
+        $onlyChildArray = [];
+        foreach ($onlyChild as $key => $office) {
+            $onlyChildArray[$key] = $office->id;
+        }
+
+        $onlyApprovedOffices = PlanAccomplishment::select()
+            ->whereIn('office_id', $onlyChildArray)
+            ->where('kpi_id', $kpi)
+            ->where('planning_year_id', $planningYear)
+            ->where(function ($q) {
+                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            })
+            ->get();
+
+        $onlyChildArray = [];
+        foreach ($onlyApprovedOffices as $key => $office) {
+            $onlyChildArray[$office->office_id] = $office->office->officeTranslations[0]->name;
+        }
+
+        // error_log(($onlyChildArray[1]));
 
         $responseData['info'] = $returnData;
+        $responseData['offices'] = $onlyChildArray;
 
         return response()->json($responseData);
 
