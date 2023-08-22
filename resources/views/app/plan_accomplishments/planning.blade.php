@@ -467,27 +467,28 @@
                                     @endforelse
                                 </tr>
                                 @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
-                                    {{-- <p class="mb-3"> --}}
-                                    @php
-                                        $last_period = count(getQuarter($kpi->reportingPeriodType->id));
-
-                                        $inputid = $kpi->id . $last_period;
-                                        $plan = getSavedPlanIndividual($planning_year[0]->id, $kpi->id, $period->id, auth()->user()->offices[0]->id);
-                                        $off_level = auth()->user()->offices[0]->level;
-                                        $disabled = '';
-                                    @endphp
-                                    @if ($plan)
-                                        @if ($off_level != $plan->plan_status)
-                                            @php $disabled ="disabled"; @endphp
-                                        @endif
-                                        <td>
-                                            <input type="hidden" name="type" value="yes">
-                                            <input name="{{ $kpi->id }}-{{ $period->id }}" class="form-control"
-                                                value="{{ $plan->plan_value }}"
-                                                id="{{ $kpi->id }}{{ $period->slug }}" type="number" required
-                                                {{ $disabled }}>
-                                            <span id="s{{ $period->slug }}"></span>
-                                        </td>
+                                    <p class="mb-3">
+                                        @php
+                                            $last_period = count(getQuarter($kpi->reportingPeriodType->id));
+                                            
+                                            $inputid = $kpi->id . $last_period; 
+                                            $plan = getSavedPlanIndividual($planning_year[0]->id, $kpi->id, $period->id, auth()->user()->offices[0]->id);
+                                            $off_level = auth()->user()->offices[0]->level;
+                                            $disabled = '';
+                                        @endphp
+                                        @if ($plan)
+                                            @if ($off_level != $plan->plan_status)
+                                                @php $disabled ="disabled"; @endphp
+                                            @endif
+                                            <td>
+                                                <input type="hidden" name="type" value="yes">
+                                                <input name="{{ $kpi->id }}-{{ $period->id }}"
+                                                    class="form-control" value="{{ $plan->plan_value }}"
+                                                    id="{{ $kpi->id }}{{ $period->slug }}" type="number"
+                                                    required {{ $disabled }}>
+                                                <span id="s{{ $period->slug }}"></span>
+                                            </td>
+                                       
                                     @else
                                         <td>
                                             <input class="form-control" type="number" placeholder="Enter KPI value"

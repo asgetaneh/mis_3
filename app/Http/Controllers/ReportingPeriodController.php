@@ -16,6 +16,8 @@ use App\Models\PlaningYearTranslation;
 use App\Http\Requests\ReportingPeriodStoreRequest;
 use App\Http\Requests\ReportingPeriodUpdateRequest;
 use Andegna\DateTimeFactory;
+use Illuminate\Support\Facades\DB;
+
 
 class ReportingPeriodController extends Controller
 {
@@ -98,9 +100,16 @@ class ReportingPeriodController extends Controller
             //  $reportingPeriod->planing_year_id= $data['planing_year_id'];
             $reportingPeriod->start_date= $startDate;
             $reportingPeriod->end_date= $endDate;
-             $reportingPeriod->reporting_period_type_id= $data['reporting_period_type_id'];
+            $reportingPeriod->reporting_period_type_id= $data['reporting_period_type_id'];
             $reportingPeriod->save();
-
+            // to update
+            $no_r_period = ReportingPeriod::select('reporting_periods.id')
+                      ->where('reporting_period_type_id','=', $reportingPeriod->reporting_period_type_id)->get();
+            $reportingPeriodslug =count($no_r_period);
+            $updated = tap(DB::table('reporting_periods') 
+            ->where('reporting_periods.id' , '=',$reportingPeriod->id))
+            ->update(['slug' => (string)$reportingPeriodslug])
+            ->first();
              foreach ($language as $key => $value) {
                 // code...
                 $reportingPeriodTranslation = new ReportingPeriodT;

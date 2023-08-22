@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Config;
 
 
 
@@ -58,19 +59,20 @@ class AuthenticatedSessionController extends Controller
 
  public static function authenticate($credentials)
     {
-        $ldapconn = ldap_connect('ldapmaster.ju.edu.et', 389);
-
+        $url = config('parameters.url');
+        $ldap_port = config('parameters.ldap_port');
+        $LDAP_BASE_DN = config('parameters.LDAP_BASE_DN');
+        $ldapconn = ldap_connect($url, $ldap_port);
         $uid = $credentials['email'];
         $password = $credentials['password'];
-
         try {
             ldap_set_option($ldapconn, LDAP_OPT_REFERRALS, 0);
             ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
-            $ldapbind = ldap_bind($ldapconn, "uid=$uid,ou=people,dc=ju,dc=edu,dc=et", $password);
+            $ldapbind = ldap_bind($ldapconn, "uid=$uid,ou=people,$LDAP_BASE_DN", $password);
             //dd($ldapbind);
             //true if credentials are valid
             if ($ldapbind) {
-                $search = ldap_search($ldapconn, 'dc=ju,dc=edu,dc=et', "uid=$uid");
+                $search = ldap_search($ldapconn, $LDAP_BASE_DN, "uid=$uid");
                 $info = ldap_get_entries($ldapconn, $search);
 
                 // if ($info[0]['employeetype']['count'] > 0 && $info[0]['employeetype'][0] == 'Student')

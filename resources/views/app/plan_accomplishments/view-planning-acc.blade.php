@@ -71,7 +71,6 @@
                         @forelse($planAccomplishments as $planAcc)
                             @php
                                 $offices = $planAcc->getOfficeFromKpiAndOfficeList($only_child_array);
-                                
                             @endphp
 
                             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
