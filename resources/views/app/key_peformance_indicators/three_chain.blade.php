@@ -7,9 +7,9 @@
                 <h4 class="card-title">
                     <a href="{{ route('key-peformance-indicators.index') }}" class="mr-4"><i
                             class="icon ion-md-arrow-back"></i></a>
-                    Add sub chain three for Key performance indicator child ({{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->name }})
+                            Add Disaggregation Level Three for ({{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->name }})
                 </h4>
-
+                <br>
                 <x-form method="POST" action="{{ route('kpi-chain-three.store') }}" class="mt-4">
                     @include('app.key_peformance_indicators.three_chain_form_inputs')
 
@@ -28,7 +28,7 @@
                 <br>
                 <div class="table-responsive">
                     <h4 class="card-title"><u>
-                        Add sub chain for Key performance indicator child ({{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->name }})</u>
+                        Added disaggregation list - ({{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->name }})</u>
                     </h4>
                     <div class="p-3"></div>
                     <table class="table table-bordered table-hover">

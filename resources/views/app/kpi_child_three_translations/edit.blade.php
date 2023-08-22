@@ -10,9 +10,9 @@
                     class="mr-4"
                     ><i class="icon ion-md-arrow-back"></i
                 ></a>
-                @lang('crud.kpi_child_three_translations.edit_title')
+                Edit Disaggregation Three
             </h4>
-
+            <br>
             <x-form
                 method="PUT"
                 action="{{ route('kpi-child-three-translations.update', $kpiChildThreeTranslation) }}"

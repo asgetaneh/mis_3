@@ -176,6 +176,7 @@
                                         <button
                                             type="button"
                                             class="btn btn-light"
+                                            title="Add Disaggregation One"
                                         >
                                             <i class="icon ion-md-add">One</i>
                                         </button>
@@ -186,6 +187,7 @@
                                         <button
                                             type="button"
                                             class="btn btn-light"
+                                            title="Add Disaggregation Two"
                                         >
                                             <i class="icon ion-md-add">Two</i>
                                         </button>
@@ -196,6 +198,7 @@
                                         <button
                                             type="button"
                                             class="btn btn-light"
+                                            title="Add Disaggregation Three"
                                         >
                                             <i class="icon ion-md-add">Three</i>
                                         </button>

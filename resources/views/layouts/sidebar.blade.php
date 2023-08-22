@@ -16,7 +16,7 @@
                 $office = $user->offices[0];
                 $childAndHimOffKpi = $office->offices;
             }
-            
+
         @endphp
         <!-- Sidebar Menu -->
         <nav class="mt-2">
@@ -315,7 +315,7 @@
                                     @if ($user->hasPermission('create planaccomplishments'))
                                         <li class="nav-item">
                                             <a href="{{ route('reporting', Auth::user()->id) }}"
-                                                class="nav-link {{ Request::is('smis/report/reporting/*') || Request::is('smis/report/reporting') || Request::is('smis/report/get-objectives/*') || Request::is('smis/report/get-objectives') ? 'active' : '' }}">
+                                                class="nav-link {{ Request::is('smis/report/reporting/*') || Request::is('smis/report/reporting') || Request::is('smis/report/get-objectives-reporting/*') || Request::is('smis/report/get-objectives-reporting') ? 'active' : '' }}">
                                                 <i class="nav-icon icon ion-md-radio-button-off"></i>
                                                 <p>Reporting</p>
                                             </a>

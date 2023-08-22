@@ -8,7 +8,7 @@
                 <a href="{{ route('office-translations.index') }}" class="mr-4"
                     ><i class="icon ion-md-arrow-back"></i
                 ></a>
-                @lang('crud.office_translations.create_title')
+                Create Office
             </h4>
 
             <x-form

@@ -8,7 +8,7 @@
                 <a href="{{ route('office-translations.index') }}" class="mr-4"
                     ><i class="icon ion-md-arrow-back"></i
                 ></a>
-                @lang('crud.office_translations.show_title')
+                View Office
             </h4>
 
             <div class="mt-4">
@@ -17,10 +17,11 @@
                         @lang('crud.office_translations.inputs.translation_id')
                     </h5>
                     <span
-                        >{{ optional($officeTranslation->office)->id ?? '-'
+                        >{{ $officeTranslation->office->office->officeTranslations[0]->name ?? '-'
                         }}</span
                     >
                 </div>
+                <hr>
                 <div class="mb-4">
                     <h5>@lang('crud.office_translations.inputs.name')</h5>
                     <span>{{ $officeTranslation->name ?? '-' }}</span>

@@ -1,13 +1,29 @@
 @php $editing = isset($officeTranslation) @endphp
+{{-- @dd($officeTranslation->office) --}}
 
 <div class="row">
-    <x-inputs.group class="col-sm-12">
+    {{-- <x-inputs.group class="col-sm-12">
         <x-inputs.select name="parent_name" label="Parent Office" required>
             @php $selected = old('translation_id', ($editing ? $officeTranslation->translation_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Office</option>
             @foreach($offices as $value => $label)
             <option value="{{ $label->id }}" {{ $selected == $value ? 'selected' : '' }} >{{ $label->officeTranslations[0]->name }}</option>
             @endforeach
+        </x-inputs.select>
+    </x-inputs.group> --}}
+
+    <x-inputs.group class="col-sm-12">
+        <x-inputs.select name="parent_name" label="Parent Office" required>
+            @php $selected = old('translation_id', ($editing ? $officeTranslation->office->parent_office_id : '')) @endphp
+            <option disabled {{ empty($selected) ? 'selected' : '' }} value="">Please select the Office</option>
+            <option value="">NO PARENT</option>
+
+            @foreach($offices as $value => $label)
+                @if(app()->getLocale() == $label->locale)
+                    <option value="{{ $label->translation_id }}" {{ $selected == $label->office->id ? 'selected' : '' }} >{{ $label->name }}</option>
+                @endif
+            @endforeach
+
         </x-inputs.select>
     </x-inputs.group>
 
@@ -16,7 +32,7 @@
 
     <x-inputs.group class="col-sm-12">
         <x-inputs.text
-            name="{{'name'.$lang->locale}}"
+            name="{{'name_'.$lang->locale}}"
             label="{{'Name in '.$lang->name}}"
              maxlength="255"
             placeholder="{{'name in '.$lang->name}}"
@@ -29,11 +45,11 @@
 
     <x-inputs.group class="col-sm-12">
         <x-inputs.textarea
-            name="{{'description'.$lang->locale}}"
+            name="{{'description_'.$lang->locale}}"
             label="{{'Description in '.$lang->name}}"
-            value="{{ $officeTranslations[$lang->locale][0]->name ?? '' }}"
-            maxlength="255"
-            required>
+            maxlength=""
+            placeholder="{{ 'description in '.$lang->name }}"
+            required>{{ $officeTranslations[$lang->locale][0]->description ?? '' }}
               </x-inputs.textarea
         >
     </x-inputs.group>

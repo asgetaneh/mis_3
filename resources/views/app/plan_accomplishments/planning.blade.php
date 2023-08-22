@@ -16,7 +16,7 @@
 
 @section('content')
 
-    <div class="row justify-content-left mt-5">
+    <div class="row justify-content-left mt-3">
         <div class="col-md-2">
 
             <div class="card">
@@ -27,7 +27,7 @@
                         <div class="mb-3 row">
                             <table class="table table-borderless table-hover">
                                 <tbody>
-                                   
+
                                     @forelse($kpis['goal'] as $goal)
                                         <tr>
                                             {{-- <td class="rounded "> --}}
@@ -89,7 +89,7 @@
                                                 <a class="nav-link" id="{{ $obj_ts->translation_id . '-tab' }}"
                                                     data-toggle="pill" href="{{ '#objective-' . $obj_ts->translation_id }}"
                                                     role="tab" aria-controls="{{ $obj_ts->translation_id }}"
-                                                    aria-selected="false">{{ $obj_ts->name }}
+                                                    aria-selected="false" title="{{ $obj_ts->name }}">{{ Str::of($obj_ts->name)->limit(10) }}
                                                 </a>
                                             </li>
                                         @else
@@ -97,7 +97,7 @@
                                                 <a class="nav-link active" id="{{ $obj_ts->translation_id . '-tab' }}"
                                                     data-toggle="pill" href="{{ '#objective-' . $obj_ts->translation_id }}"
                                                     role="tab" aria-controls="{{ $obj_ts->translation_id }}"
-                                                    aria-selected="true">{{ $obj_ts->name }}
+                                                    aria-selected="true" title="{{ $obj_ts->name }}">{{ Str::of($obj_ts->name)->limit(10) }}
                                                 </a>
                                             </li>
 
@@ -146,7 +146,7 @@
                                         $KeyPeformanceIndicators = getKeyperormanceIndicators($objective, $user_offices);
                                     @endphp
                                     @forelse($KeyPeformanceIndicators as $kpi)
-                                        <div class="card collapsed-card p-2">
+                                        <div class="card p-2">
                                             <div class="card-header">
                                                 <h3 class="card-title">KPI:
                                                     {{ $kpi->KeyPeformanceIndicatorTs[0]->name }}
@@ -166,6 +166,7 @@
                                                     </button>
                                                 </div>
                                             </div>
+                                            <div class="card-body">
                                             <table class="table table-bordered">
                                                 <thead>
                                                     {{-- If KPI has Child ones (UG, PG) --}}
@@ -468,86 +469,90 @@
                                                     required {{ $disabled }}>
                                                 <span id="s{{ $period->slug }}"></span>
                                             </td>
-                                        @else
-                                            <td>
-                                                <input class="form-control" type="number" placeholder="Enter KPI value"
-                                                    id="{{ $kpi->id }}{{ $period->slug }}"
-                                                    name="{{ $kpi->id }}-{{ $period->id }}"
-                                                    required>
-                                                <span id="s{{ $kpi->id }}{{ $period->slug }}"></span>
-                                            </td>
-                                        @endif
+                                       
+                                    @else
+                                        <td>
+                                            <input class="form-control" type="number" placeholder="Enter KPI value"
+                                                id="{{ $kpi->id }}{{ $period->slug }}"
+                                                name="{{ $kpi->id }}-{{ $period->id }}" required>
+                                            <span id="s{{ $kpi->id }}{{ $period->slug }}"></span>
+                                        </td>
+                                    @endif
 
-                                    @empty
+                                @empty
                                 @endforelse
                                 </tr>
                             </table>
-                           
-                              <script>
-                                $(function() { 
-                                    $('input[id={{ $inputid }}]').on('change', function() { 
-                                        var sum = 0; 
+
+                            <script>
+                                $(function() {
+                                    $('input[id={{ $inputid }}]').on('change', function() {
+                                        var sum = 0;
                                         var loop = {{ $last_period }};
                                         var behavior = String({{ $behavior }});
                                         var idd_y = String({{ $kpi->id }}) + String(1);
-                                         var yearly = document.getElementById(idd_y).value;
-                                         // addtive
-                                        if(behavior ==1){
+                                        var yearly = document.getElementById(idd_y).value;
+                                        // addtive
+                                        if (behavior == 1) {
                                             for (var i = loop; i > 1; i--) {
                                                 var idd = String({{ $kpi->id }}) + String(i);
                                                 var values = document.getElementById(idd).value;
                                                 sum = parseFloat(sum) + parseFloat(values);
                                             }
                                             if (yearly != sum) {
-                                                document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML = "Period plan not matched with yearly";
+                                                document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
+                                                    "Period plan not matched with yearly";
                                                 $('#' + idd_y).val("");
                                             }
                                         }
                                         // constant
-                                        else if(behavior ==2){
+                                        else if (behavior == 2) {
                                             for (var i = loop; i > 2; i--) {
                                                 var idd = String({{ $kpi->id }}) + String(i);
-                                                var iddd = String({{ $kpi->id }}) + String(i-1);
+                                                var iddd = String({{ $kpi->id }}) + String(i - 1);
                                                 var values = document.getElementById(idd).value;
                                                 var values2 = document.getElementById(iddd).value;
-                                             }
+                                            }
                                             if (values != values2) {
-                                                document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML = "Plan should be constant";
+                                                document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
+                                                    "Plan should be constant";
                                                 $('#' + idd_y).val("");
                                             }
                                         }
                                         // incremental
-                                        else if(behavior ==3){
+                                        else if (behavior == 3) {
                                             for (var i = loop; i > 2; i--) {
                                                 var idd = String({{ $kpi->id }}) + String(i);
-                                                var iddd = String({{ $kpi->id }}) + String(i-1);
+                                                var iddd = String({{ $kpi->id }}) + String(i - 1);
                                                 var values = document.getElementById(idd).value;
                                                 var values2 = document.getElementById(iddd).value;
-                                                 if (values < values2) {
-                                                    
-                                                    document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML = "Plan should be incremental";
+                                                if (values < values2) {
+
+                                                    document.getElementById("s{{ $kpi->id }}{{ 1 }}")
+                                                        .innerHTML = "Plan should be incremental";
                                                     $('#' + idd_y).val("");
                                                 }
                                             }
                                         }
-                                        // decrimental 
-                                        else if(behavior ==4){
+                                        // decrimental
+                                        else if (behavior == 4) {
                                             for (var i = loop; i > 2; i--) {
                                                 var idd = String({{ $kpi->id }}) + String(i);
-                                                var iddd = String({{ $kpi->id }}) + String(i-1);
+                                                var iddd = String({{ $kpi->id }}) + String(i - 1);
                                                 var values = document.getElementById(idd).value;
                                                 var values2 = document.getElementById(iddd).value;
-                                             }
+                                            }
                                             if (values > values2) {
-                                                document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML = "Plan should be incremental";
+                                                document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
+                                                    "Plan should be incremental";
                                                 $('#' + idd_y).val("");
                                             }
-                                        }
-                                        else{
-                                            document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML = "problem";
+                                        } else {
+                                            document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
+                                                "problem";
                                         }
 
-                                        
+
                                     });
                                 });
                             </script>
@@ -576,13 +581,13 @@
                                     class="form-control summernote" id="summernote" placeholder="Narration here" required></textarea>
                             @endif
 
-                        </div>
+                        {{-- </div> --}}
 
                     @empty
                         <h4>No KPI registered for this Goal and Objective!</h4>
                         @endforelse
                         <button type="submit" class="btn btn-primary">Submit</button>
-
+                        </div>
                         </form>
                     </div>
                 </div>
