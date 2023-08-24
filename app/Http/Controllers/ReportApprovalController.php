@@ -66,7 +66,7 @@ class ReportApprovalController extends Controller
         }
         else{
             $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
-            ->whereIn('office_id', $only_child_array)
+            ->whereIn('office_id', $all_office_list)
             ->select('*', DB::raw('SUM(accom_value) AS sum'))
             ->whereNotNull('accom_value')
             //-> where('reporting_periods.slug',"=", 1)
@@ -143,6 +143,9 @@ class ReportApprovalController extends Controller
         $loggedInUserOfficeLevel = Office::where('id', auth()->user()->offices[0]->id)->first();
         $mergedOffices = [];
 
+        $activeReportingPeriodList = getReportingPeriod();
+        // dd($activeReportingPeriodList);
+
         foreach ($approvedOfficelist as $key => $value) {
 
             $str_key = (string)$key;
@@ -162,7 +165,7 @@ class ReportApprovalController extends Controller
                                 ->where('planning_year_id', $singleOfficePlan[2])
                                 ->where('office_id', auth()->user()->offices[0]->id)
                                 ->where('kpi_id', $singleOfficePlan[0])
-                                // ->where('reporting_period_id', '=', $index[1])
+                                ->whereIn('reporting_period_id', $activeReportingPeriodList)
                                 ->update([
                                     'accom_status' => 0, // decide what value it is later.
                                     'approved_by_id' => auth()->user()->id
@@ -196,7 +199,7 @@ class ReportApprovalController extends Controller
                                 ->where('planning_year_id', $singleOfficePlan[2])
                                 ->whereIn('office_id', $mergedOffices)
                                 ->where('kpi_id', $singleOfficePlan[0])
-                            // ->where('reporting_period_id', '=', $index[1])
+                                ->whereIn('reporting_period_id', $activeReportingPeriodList)
                         )
                             ->update([
                                 'accom_status' => $loggedInUserOfficeLevel->level,
@@ -241,7 +244,7 @@ class ReportApprovalController extends Controller
                 ]);
 
             $officeCommented = ReportComment::updateOrCreate([
-                'plan_comment' => $writtenComment,
+                'report_comment' => $writtenComment,
                 'kpi_id' => $kpi,
                 'reporting_period_id' => $reportingPeriod,
                 'planning_year_id' => $planningYear,
@@ -444,6 +447,8 @@ class ReportApprovalController extends Controller
         foreach ($onlyApprovedOffices as $key => $office) {
             $onlyChildArray[$office->office_id] = $office->office->officeTranslations[0]->name;
         }
+
+       $onlyChildArray[$office->id] = $office->officeTranslations[0]->name;
 
         // error_log(($onlyChildArray[1]));
 

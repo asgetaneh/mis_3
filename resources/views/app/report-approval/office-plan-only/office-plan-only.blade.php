@@ -45,7 +45,7 @@
         <th>
             Offices
         </th>
-        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+        @forelse(getReportingQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
              <th>  {{ $period->reportingPeriodTs[0]->name }}   </th>
         @empty
         @endforelse
@@ -54,7 +54,7 @@
     @endif
     <tr>
            <td rowspan="2">{{$office->officeTranslations[0]->name}}</td>
-        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+        @forelse(getReportingQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @php
                 $planOfOfficePlan
                 = reportSum($planAcc->Kpi->id,$office, $period->id, 2);
@@ -72,7 +72,7 @@
     </td>
     <td colspan="4">
          @foreach ($narration as $key => $plannaration)
-              {!! html_entity_decode($plannaration->plan_naration) !!}
+              {!! html_entity_decode($plannaration->report_naration) !!}
               @php
               echo "<br/>"
               @endphp

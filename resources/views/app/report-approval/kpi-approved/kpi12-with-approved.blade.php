@@ -36,7 +36,7 @@
     @endforeach
     <th>Sum</th>
     </tr>
-        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+        @forelse(getReportingQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
              @php
                 $childAndHimOffKpi_array = [];
                 $childAndHimOffKpi = $office->offices;
@@ -112,7 +112,7 @@
         </td>
         <td colspan="5">
             @foreach ($narration as $key => $plannaration)
-                  {!! html_entity_decode($plannaration->plan_naration) !!}
+                  {!! html_entity_decode($plannaration->report_naration) !!}
                   @php
                   echo "<br/>"
                   @endphp

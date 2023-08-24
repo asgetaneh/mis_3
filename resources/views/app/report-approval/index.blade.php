@@ -123,8 +123,8 @@
                             @endphp
 
                             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
-                                <div class="card">
-                                    <div class="card-header collapsed-card">
+                                <div class="card collapsed-card">
+                                    <div class="card-header">
 
                                         @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
                                             @if (app()->getLocale() == $kpiT->locale)
@@ -694,6 +694,7 @@
             var url = "{{ route('disapprove-report.ajax', [':id']) }}";
             url = url.replace(':id', id);
 
+            $("#disapproval-select").html('');
             $.ajax({
                 url: url,
                 dataType: 'json',

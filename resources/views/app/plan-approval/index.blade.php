@@ -691,6 +691,7 @@
             var url = "{{ route('disapprove-plan.ajax', [':id']) }}";
             url = url.replace(':id', id);
 
+            $("#disapproval-select").html('');
             $.ajax({
                 url: url,
                 dataType: 'json',

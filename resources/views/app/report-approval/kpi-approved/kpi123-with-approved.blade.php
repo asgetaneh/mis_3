@@ -61,7 +61,7 @@
         @endforeach
     @endforeach
 </tr>
- @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+ @forelse(getReportingQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
     <tr>
         <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
             {{ $period->reportingPeriodTs[0]->name }}
@@ -142,7 +142,7 @@
     </td>
     <td colspan="8">
         @foreach ($narration as $key => $plannaration)
-              {!! html_entity_decode($plannaration->plan_naration) !!}
+              {!! html_entity_decode($plannaration->report_naration) !!}
               @php
               echo "<br/>"
               @endphp

@@ -170,7 +170,7 @@
                                             </div>
                                             <div class="card-body reporting-container">
 
-                                            {{-- @if (!empty(hasOfficeActiveReportComment(auth()->user()->offices[0]->id, $kpi_id, $planning_year[0]->id)))
+                                            @if (!empty(hasOfficeActiveReportComment(auth()->user()->offices[0]->id, $kpi_id, $planning_year[0]->id)))
                                                 <div class="bg-light w-5 float-right p-3">
                                                     <p class="m-auto">You have comment from <u>{{ getReportCommentorInfo(auth()->user()->offices[0]->id, $kpi_id, $planning_year[0]->id) }}</u>
                                                         <a  class="btn btn-sm btn-flat btn-info text-white view-comment"
@@ -180,7 +180,7 @@
                                                         </a>
                                                     </p>
                                                 </div>
-                                            @endif --}}
+                                            @endif
 
                                             <table class="table table-bordered">
                                                 <thead>
@@ -527,9 +527,9 @@
                         <h4>No KPI exit with active  reporting period in this office and Objective!</h4>
                         @endforelse
                         <button type="submit" class="btn btn-primary">Submit</button>
-                                        {{-- </div> --}}
+                                        </div>
                         </form>
-                    {{-- </div> --}}
+                    </div>
                 </div>
 
             @empty
@@ -558,7 +558,7 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <form action="{{ route('reply-comment.store') }}" method="POST" id="comment-form">
+                <form action="{{ route('replyreport-comment.store') }}" method="POST" id="comment-form">
                     @csrf
                     <input type="hidden" id="hidden-input-view-comment" class="hidden-input-view-comment" value=""
                         name="view-commented-office-info">

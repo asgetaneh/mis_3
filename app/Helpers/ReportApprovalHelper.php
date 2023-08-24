@@ -838,8 +838,33 @@ function getReportNarration($kkp, $year, $office, $period)
     $childAndHimOffKpi_array = [];
     $childAndHimOffKpi = office_all_childs_ids($office);
     $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
+    $activeReportingPeriodList = getReportingPeriod();
     // $plannarations = ReportNarration::select('plan_naration')->whereIn('office_id' , $childAndHimOffKpi_array)->where('key_peformance_indicator_id' , '=', $kkp)->where('planing_year_id' , '=', $year)->get();
-    $plannarations = ReportNarrationReport::select('report_naration')->where('office_id', $office->id)->where('key_peformance_indicator_id', '=', $kkp)->where('planing_year_id', '=', $year)->get();
+    $plannarations = ReportNarrationReport::select('report_naration')
+        ->whereIn('office_id', $childAndHimOffKpi_array)
+        ->where('key_peformance_indicator_id', '=', $kkp)
+        ->where('planing_year_id', '=', $year)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
+        ->get();
+    return $plannarations;
+    foreach ($plannarations as $key => $plannaration) {
+        return $plannaration->plan_naration;
+    }
+}
+function getReportNarrationSelfOffice($kkp, $year, $office, $period)
+{
+    // get all child and subchild offices for login user
+    $childAndHimOffKpi_array = [];
+    $childAndHimOffKpi = office_all_childs_ids($office);
+    $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
+    $activeReportingPeriodList = getReportingPeriod();
+    // $plannarations = ReportNarration::select('plan_naration')->whereIn('office_id' , $childAndHimOffKpi_array)->where('key_peformance_indicator_id' , '=', $kkp)->where('planing_year_id' , '=', $year)->get();
+    $plannarations = ReportNarrationReport::select('report_naration')
+        ->where('office_id', $office->id)
+        ->where('key_peformance_indicator_id', '=', $kkp)
+        ->where('planing_year_id', '=', $year)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
+        ->get();
     return $plannarations;
     foreach ($plannarations as $key => $plannaration) {
         return $plannaration->plan_naration;
@@ -872,10 +897,13 @@ function getReportNarration($kkp, $year, $office, $period)
 
 function reportStatusOffice($office, $kpi, $year)
 {
+
+    $activeReportingPeriodList = getReportingPeriod();
     $status = PlanAccomplishment::select('accom_status')
         ->where('office_id', $office->id)
         ->where('kpi_id', $kpi)
         ->where('planning_year_id', $year)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
         ->first();
 
     // dd($status);
