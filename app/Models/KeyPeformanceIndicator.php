@@ -18,6 +18,7 @@ class KeyPeformanceIndicator extends Model
         'created_by_id',
         'reporting_period_type_id',
         'behavior_id',
+        'kpi_type_id',
     ];
 
     protected $searchableFields = ['*'];
@@ -36,6 +37,11 @@ class KeyPeformanceIndicator extends Model
     public function behavior()
     {
         return $this->belongsTo(Behavior::class);
+    }
+
+    public function kpiType()
+    {
+        return $this->belongsTo(KpiType::class);
     }
 
     public function user()

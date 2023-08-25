@@ -38,6 +38,7 @@ use App\Http\Controllers\PerspectiveTranslationController;
 use App\Http\Controllers\PlaningYearTranslationController;
 use App\Http\Controllers\KeyPeformanceIndicatorTController;
 use App\Http\Controllers\KpiChildThreeTranslationController;
+use App\Http\Controllers\KpiTypeController;
 use App\Http\Controllers\PlanApprovalController;
 use App\Http\Controllers\ReportApprovalController;
 
@@ -98,6 +99,10 @@ Route::prefix('/')
                     Route::resource(
                         'behaviors',
                         BehaviorController::class
+                    );
+                    Route::resource(
+                        'types',
+                        KpiTypeController::class
                     );
                     Route::get('kpi-chain-two/{id}', [KeyPeformanceIndicatorController::class, 'kpiChainTwo'])->name('kpi-chain-two.create');
                     Route::POST('kpi-chain-two/save', [KeyPeformanceIndicatorController::class, 'kpiChainTwoStore'])->name('kpi-chain-two.store');

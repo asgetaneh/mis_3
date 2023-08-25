@@ -173,6 +173,15 @@
                                                     @endcan
                                                     @can('view-any', App\Models\Behavior::class)
                                                         <li class="nav-item">
+                                                            <a href="{{ route('types.index') }}"
+                                                                class="nav-link {{ Request::is('smis/setting/kpi/types/*') || Request::is('smis/setting/kpi/types') ? 'active' : '' }}">
+                                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                                <p>KPI Type</p>
+                                                            </a>
+                                                        </li>
+                                                    @endcan
+                                                    @can('view-any', App\Models\Behavior::class)
+                                                        <li class="nav-item">
                                                             <a href="{{ route('behaviors.index') }}"
                                                                 class="nav-link {{ Request::is('smis/setting/kpi/behaviors/*') || Request::is('smis/setting/kpi/behaviors') ? 'active' : '' }}">
                                                                 <i class="nav-icon icon ion-md-radio-button-off"></i>

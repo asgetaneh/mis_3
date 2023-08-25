@@ -14,12 +14,13 @@ return new class extends Migration {
             Blueprint $table
         ) {
             $table->bigIncrements('id');
-            $table->double('weight');
+            $table->double('weight')->nullable();
             $table->unsignedBigInteger('objective_id');
             $table->unsignedBigInteger('strategy_id');
             $table->unsignedBigInteger('created_by_id');
             $table->unsignedBigInteger('reporting_period_type_id');
             $table->unsignedBigInteger('behavior_id');
+            $table->unsignedBigInteger('kpi_type_id');
             $table->timestamps();
         });
     }

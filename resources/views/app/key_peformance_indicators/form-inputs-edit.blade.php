@@ -48,7 +48,7 @@
             required
         >
             @php $selected = old('behavior_id', ($editing ? $keyPeformanceIndicator->behavior_id : '')) @endphp
-            <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Reporting Period Type</option>
+            <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Behavior Type</option>
             @foreach($behaviors as $value => $label)
                 @if(app()->getLocale() == $label->locale)
                     <option value="{{ $label->translation_id }}" {{ $selected == $label->translation_id ? 'selected' : '' }} >{{ $label->name }}</option>
@@ -100,6 +100,22 @@
         </x-inputs.select>
     </x-inputs.group>
 
+    <x-inputs.group class="col-sm-12">
+        <x-inputs.select
+            name="kpi_type_id"
+            label="KPI Type"
+            required
+        >
+            @php $selected = old('kpi_type_id', ($editing ? $keyPeformanceIndicator->kpi_type_id : '')) @endphp
+            <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the KPI Type</option>
+            @foreach($kpiTypes as $value => $label)
+                @if(app()->getLocale() == $label->locale)
+                    <option value="{{ $label->type_id }}" {{ $selected == $label->type_id ? 'selected' : '' }} >{{ $label->name }}</option>
+                @endif
+            @endforeach
+        </x-inputs.select>
+    </x-inputs.group>
+
     {{-- <x-inputs.group class="col-sm-12">
         <x-inputs.select name="created_by_id" label="User" required>
             @php $selected = old('created_by_id', ($editing ? $keyPeformanceIndicator->created_by_id : '')) @endphp
@@ -124,7 +140,7 @@
         ></x-inputs.text>
     </x-inputs.group>
 
-     <x-inputs.group class="col-sm-12">
+     {{-- <x-inputs.group class="col-sm-12">
         <x-inputs.text
             name="{{'out_put_'.$lang->locale}}"
             label="{{'Output in '.$lang->name}}"
@@ -144,7 +160,7 @@
             value="{{ $kpiTranslations[$lang->locale][0]->out_come ?? '' }}"
             required
         ></x-inputs.text>
-    </x-inputs.group>
+    </x-inputs.group> --}}
 
     <x-inputs.group class="col-sm-12">
         <x-inputs.textarea
@@ -166,7 +182,7 @@
             max="255"
             step="0.01"
             placeholder="Weight"
-            required
+            {{-- required --}}
         ></x-inputs.number>
     </x-inputs.group>
 </div>

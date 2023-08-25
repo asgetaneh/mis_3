@@ -1,26 +1,22 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('key_peformance_indicator_ts', function (
-            Blueprint $table
-        ) {
+        Schema::create('kpi_type_translations', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('type_id');
             $table->string('name');
             $table->text('description');
-            // $table->text('out_put');
-            // $table->text('out_come');
-            $table->unsignedBigInteger('translation_id');
             $table->string('locale', 8);
-
             $table->timestamps();
         });
     }
@@ -30,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('key_peformance_indicator_ts');
+        Schema::dropIfExists('kpi_type_translations');
     }
 };

@@ -28,6 +28,7 @@ use App\Http\Requests\KeyPeformanceIndicatorStoreRequest;
 use App\Http\Requests\KeyPeformanceIndicatorUpdateRequest;
 use App\Models\Behavior;
 use App\Models\BehaviorTranslation;
+use App\Models\KpiTypeTranslation;
 
 class KeyPeformanceIndicatorController extends Controller
 {
@@ -39,7 +40,7 @@ class KeyPeformanceIndicatorController extends Controller
         if (! Gate::allows('view keypeformanceindicators', KeyPeformanceIndicator::class)) {
                     abort(403);
                 }
- 
+
         $search = $request->get('search', '');
         $keyPeformanceIndicator_ts = KeyPeformanceIndicatorT::search($search)
             ->latest()
@@ -80,6 +81,7 @@ class KeyPeformanceIndicatorController extends Controller
         $users = User::pluck('name', 'id');
         $offices = OfficeTranslation::all();
         $reportingPeriodTypes = ReportingPeriodTypeT::all();
+        $kpiTypes = KpiTypeTranslation::all();
         // $offices = OfficeTranslation::whereHas('office', function ($query) {
         //     $query->where('parent_office_id', 1);
         // })->get();
@@ -92,7 +94,7 @@ class KeyPeformanceIndicatorController extends Controller
 
         return view(
             'app.key_peformance_indicators.create',
-            compact('objectives', 'strategies', 'users', 'reportingPeriodTypes', 'languages', 'offices', 'behaviors')
+            compact('objectives', 'strategies', 'users', 'reportingPeriodTypes', 'kpiTypes', 'languages', 'offices', 'behaviors')
         );
     }
 
@@ -114,11 +116,12 @@ class KeyPeformanceIndicatorController extends Controller
          //$lastGoal = Goal::select('id')->orderBy('id','desc')->first();
         try {
             $keyPeformanceIndicator = new KeyPeformanceIndicator;
-            $keyPeformanceIndicator->weight= $data['weight'];
+            $keyPeformanceIndicator->weight= $data['weight'] ?? null;
             $keyPeformanceIndicator->objective_id= $data['objective_id'];
             $keyPeformanceIndicator->strategy_id= $data['strategy_id'];
             $keyPeformanceIndicator->reporting_period_type_id= $data['reporting_period_type_id'];
             $keyPeformanceIndicator->behavior_id = $data['behavior_id'];
+            $keyPeformanceIndicator->kpi_type_id = $data['kpi_type_id'];
             $keyPeformanceIndicator->created_by_id= auth()->user()->id;
             $keyPeformanceIndicator->save();
              foreach ($language as $key => $value) {
@@ -128,8 +131,8 @@ class KeyPeformanceIndicatorController extends Controller
                 $kpi_translation ->name = $data['name_'.$value->locale];
                 $kpi_translation ->locale = $value->locale;
                 $kpi_translation ->description = $data['description_'.$value->locale];
-                $kpi_translation ->out_put = $data['out_put_'.$value->locale];
-                $kpi_translation ->out_come = $data['out_come_'.$value->locale];
+                // $kpi_translation ->out_put = $data['out_put_'.$value->locale];
+                // $kpi_translation ->out_come = $data['out_come_'.$value->locale];
                 $kpi_translation->save();
          }
 
@@ -171,6 +174,7 @@ class KeyPeformanceIndicatorController extends Controller
         $this->authorize('update', $keyPeformanceIndicator);
 
         $search = $request->get('search', '');
+        // dd($keyPeformanceIndicator);
         $languages = Language::search($search)
             ->latest()
             ->paginate(5)
@@ -185,6 +189,7 @@ class KeyPeformanceIndicatorController extends Controller
         $offices = OfficeTranslation::all();
         $users = User::pluck('name', 'id');
         $reportingPeriodTypes = ReportingPeriodTypeT::all();
+        $kpiTypes = KpiTypeTranslation::all();
         $selectedOffices = $keyPeformanceIndicator->offices;
 
         return view(
@@ -195,6 +200,7 @@ class KeyPeformanceIndicatorController extends Controller
                 'strategies',
                 'users',
                 'reportingPeriodTypes',
+                'kpiTypes',
                 'kpiTranslations',
                 'offices',
                 'languages',
@@ -221,15 +227,16 @@ class KeyPeformanceIndicatorController extends Controller
             'strategy_id' => $request->strategy_id,
             'reporting_period_type_id' => $request->reporting_period_type_id,
             'behavior_id' => $request->behavior_id,
-            'weight' => $request->weight,
+            'weight' => $request->weight ?? null,
+            'kpi_type_id' => $request->kpi_type_id,
             'updated_at' => new \DateTime(),
             // 'updated_by_id' => auth()->user()->id,
             // 'created_by_id' => $goal->created_by_id || '',
         ]);
 
-        foreach ($request->except('_token', '_method', 'objective_id', 'strategy_id', 'reporting_period_type_id', 'weight', 'offices', 'behavior_id') as $key => $value) {
+        foreach ($request->except('_token', '_method', 'objective_id', 'strategy_id', 'reporting_period_type_id', 'weight', 'offices', 'behavior_id', 'kpi_type_id') as $key => $value) {
 
-            $locale = str_replace(['name_', 'description_', 'out_put_', 'out_come_'], '', $key);
+            $locale = str_replace(['name_', 'description_'], '', $key);
 
             $kpiTranslation = $keyPeformanceIndicator->keyPeformanceIndicatorTs->where('locale', $locale)->first();
 

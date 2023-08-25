@@ -74,6 +74,19 @@
                     <hr>
                     <div class="mb-4">
                         <h5>
+                            Type
+                        </h5>
+                        @forelse ($keyPeformanceIndicator->kpiType->kpiTypeTranslations as $key => $kpiType)
+                            @if (app()->getLocale() == $kpiType->locale)
+                                <p class="">{{ $kpiType->name ?? '-' }}</p>
+                            @endif
+                        @empty
+                            <p>-</p>
+                        @endforelse
+                    </div>
+                    <hr>
+                    <div class="mb-4">
+                        <h5>
                             @lang('crud.key_peformance_indicators.inputs.weight')
                         </h5>
                         <span>{{ $keyPeformanceIndicator->weight ?? '-' }}</span>
