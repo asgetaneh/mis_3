@@ -105,7 +105,7 @@
                 }
                 $childAndHim_array = array_merge($childAndHim_array,array($office->id));
                 $plan123 = planIndividual($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,$office,$period->id, 1);
-                $narration = getNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
+                $narration = getNarrationApproved($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
 
             @endphp
             {{$plan123}}

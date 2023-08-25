@@ -212,7 +212,7 @@
                                                     @endif
                                                 @else
                                                     @php
-                                                        $anyChildrenOfficePlannedAndApproved = getOfficeChildrenApprovedList($planAcc->kpi_id, $office, $planAcc->planning_year_id, 2);
+                                                        $anyChildrenOfficePlannedAndApproved = getOfficeChildrenApprovedList($planAcc->kpi_id, $office, $planAcc->planning_year_id, 3);
                                                     @endphp
                                                     {{-- @dd($anyChildrenOfficePlannedAndApproved) --}}
 

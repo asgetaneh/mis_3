@@ -67,7 +67,7 @@
                 }
                 $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
                 $planKpiOfficeYear = planSumOfKpi($planAcc->Kpi->id, $office, 1);
-                $narration = getNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
+                $narration = getNarrationApproved($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
             @endphp
             <tr>
                 <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">

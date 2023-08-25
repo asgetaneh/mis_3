@@ -83,7 +83,43 @@ function getOfficeChildrenApprovedList($kpi, $office, $year, $suffix)
         }
 
         return $officeIds;
-    } else {
+    }
+    else if($suffix == 2){
+        $planRecordOffice = PlanAccomplishment::select('office_id')
+            ->where('kpi_id', $kpi)
+            // ->whereIn('office_id', $childOffices)
+            ->where('office_id', $office->id)
+            ->where('planning_year_id', $year)->distinct('office_id')
+            ->get();
+
+        $childAndHimOffKpi = office_all_childs_ids($office);
+        $planRecord = PlanAccomplishment::select('office_id')
+            ->where('kpi_id', $kpi)
+            // ->whereIn('office_id', $childOffices)
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('planning_year_id', $year)->distinct('office_id')
+            ->where('plan_status', '<',$office->level)
+            ->orWhere('plan_status', '=', $office->level)
+            // ->where(function ($q) {
+            //     $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            // })
+            ->get();
+                $officeIds = [];
+
+        if ($planRecordOffice) {
+            foreach ($planRecordOffice as $plan) {
+                array_push($officeIds, $plan->office_id);
+            }
+        }
+        if ($planRecord) {
+            foreach ($planRecord as $plan) {
+                array_push($officeIds, $plan->office_id);
+            }
+        }
+
+        return $officeIds;
+    }
+    else {
         $childAndHimOffKpi = office_all_childs_ids($office);
         $merged = array_merge($childAndHimOffKpi, array($office->id));
 
@@ -847,7 +883,7 @@ function getNarrationApproved($kkp, $year, $office, $period)
     $childAndHimOffKpi = office_all_childs_ids($office);
 
     // get all children that are approved and planned for the given kpi
-    $childAndHimOffKpi = getOfficeChildrenApprovedList($kkp, $office, $year, $childAndHimOffKpi);
+    $childAndHimOffKpi = getOfficeChildrenApprovedList($kkp, $office, $year, 2);
 
     $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
     $plannarations = ReportNarration::select('plan_naration')->whereIn('office_id', $childAndHimOffKpi_array)->where('key_peformance_indicator_id', '=', $kkp)->where('planing_year_id', '=', $year)->get();

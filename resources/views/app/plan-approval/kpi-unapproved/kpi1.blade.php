@@ -69,7 +69,7 @@
     <td>
         @php
             $planOne = planOne($planAcc->Kpi->id, $one->id, $office, $period->id, 1);
-            $narration = getNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
+            $narration = getNarrationApproved($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
         @endphp
         {{ $planOne }}
     </td>
