@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
+use Exception;
 use App\Models\User;
+use Illuminate\View\View;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Config;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Config;
+use App\Providers\RouteServiceProvider;
+use App\Http\Requests\Auth\LoginRequest;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 
 
@@ -30,7 +32,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $credentials = $request->input(); 
+        $credentials = $request->input();
         $ldp_login =true;
         if($ldp_login){
             $this->authenticate($credentials);
@@ -63,7 +65,7 @@ class AuthenticatedSessionController extends Controller
         $ldap_port = config('parameters.ldap_port');
         $LDAP_BASE_DN = config('parameters.LDAP_BASE_DN');
         $ldapconn = ldap_connect($url, $ldap_port);
-        $uid = $credentials['email'];
+        $uid = $credentials['username'];
         $password = $credentials['password'];
         try {
             ldap_set_option($ldapconn, LDAP_OPT_REFERRALS, 0);
@@ -108,16 +110,16 @@ class AuthenticatedSessionController extends Controller
                         $phone = $info[0]['homephone'][0];
                     }
                 }
-                $user = User::where('email', '=', $credentials['email'])->first();
+                $user = User::where('username', '=', $credentials['username'])->first();
                 if (!$user) {
-                    try { 
+                    try {
                         $user = User::create([
-                            'email' => $uid,
+                            'username' => $uid,
                             'password' => Hash::make($password),
-                             'name' => $first_name." ".$middle_name." ".$last_name,
-                           // 'email' => $email,
-                            'gender' => 'Unknown',
-                            'phone' => $phone,
+                            'name' => $first_name." ".$middle_name." ".$last_name,
+                            'email' => $email,
+                            // 'gender' => 'Unknown',
+                            // 'phone' => $phone,
 
                         ]);
 
@@ -132,13 +134,12 @@ class AuthenticatedSessionController extends Controller
                     // dd($first_name,$middle_name,$last_name,$email,$phone);
 
                     $user->update([
-                        'email' => $uid,
+                        'username' => $uid,
                         'password' => Hash::make($password),
                         'name' => $first_name." ".$middle_name." ".$last_name,
-                        
-                       // 'email' => $email,
-                        'gender' => 'Unknown',
-                        'phone' => $phone,
+                        'email' => $email,
+                        // 'gender' => 'Unknown',
+                        // 'phone' => $phone,
                 ]);
 
                  $user->save();
