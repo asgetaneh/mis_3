@@ -11,6 +11,9 @@
         table {
             border-collapse: collapse;
         }
+        #view-comment-paragraph *{
+            margin-bottom: 0 !important;
+        }
     </style>
 @endsection
 
@@ -168,12 +171,12 @@
                                             </div>
                                             <div class="card-body planning-container">
 
-                                                @if (!empty(hasOfficeActiveComment(auth()->user()->offices[0]->id, $kpi_id, $planning_year[0]->id)))
+                                                @if (hasOfficeActiveComment(auth()->user()->offices[0]->id, $kpi_id, $planning_year[0]->id)->count() > 0)
                                                     <div class="bg-light w-5 float-right p-3">
                                                         <p class="m-auto">You have comment from <u>{{ getPlanCommentorInfo(auth()->user()->offices[0]->id, $kpi_id, $planning_year[0]->id) }}</u>
                                                             <a  class="btn btn-sm btn-flat btn-info text-white view-comment"
                                                                 data-toggle="modal" data-target="#view-comment-modal"
-                                                                data-id="{{ hasOfficeActiveComment(auth()->user()->offices[0]->id, $kpi_id, $planning_year[0]->id)->id }}-{{$kpi_id}}-{{$planning_year[0]->id}}">
+                                                                data-id="{{ 1 }}-{{$kpi_id}}-{{$planning_year[0]->id}}">
                                                                 <i class="fas fa fa-eye mr-1"></i>View Comment
                                                             </a>
                                                             {{-- <a
@@ -470,8 +473,8 @@
                                     <p class="mb-3">
                                         @php
                                             $last_period = count(getQuarter($kpi->reportingPeriodType->id));
-                                            
-                                            $inputid = $kpi->id . $last_period; 
+
+                                            $inputid = $kpi->id . $last_period;
                                             $plan = getSavedPlanIndividual($planning_year[0]->id, $kpi->id, $period->id, auth()->user()->offices[0]->id);
                                             $off_level = auth()->user()->offices[0]->level;
                                             $disabled = '';
@@ -488,7 +491,7 @@
                                                     required {{ $disabled }}>
                                                 <span id="s{{ $period->slug }}"></span>
                                             </td>
-                                       
+
                                     @else
                                         <td>
                                             <input class="form-control" type="number" placeholder="Enter KPI value"
@@ -642,7 +645,7 @@
                     <input type="hidden" id="hidden-input-view-comment" class="hidden-input-view-comment" value=""
                         name="view-commented-office-info">
                     <div class="modal-body">
-                        <h5 class="view-commented-by bg-light border p-3 overflow-auto">Comment: <p class="mw-75"></p></h5>
+                        <h5 class="view-commented-by bg-light border p-3 overflow-auto"><u>Comment: </u><p class="mw-75"></p></h5>
                         <br>
                         {{-- content to be filled after ajax request here --}}
                         <textarea class="form-control summernote" name="reply_comment" id="" cols="30" rows="10"

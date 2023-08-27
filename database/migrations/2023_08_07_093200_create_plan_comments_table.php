@@ -22,6 +22,7 @@ return new class extends Migration
             $table->boolean('status')->default(1);
             $table->text('reply_comment')->nullable();
             $table->integer('commented_by');
+            $table->boolean('replied_active')->nullable();
 
             $table->timestamps();
         });

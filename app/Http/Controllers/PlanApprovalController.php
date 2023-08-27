@@ -263,16 +263,16 @@ class PlanApprovalController extends Controller
                 ]);
         }
 
-        $isCommentExists = DB::table('plan_comments')->where('office_id', $office)->where('kpi_id', $kpi)->where('planning_year_id', $planningYear)->get();
-        // dd($isCommentExists);
+        // $isCommentExists = DB::table('plan_comments')->where('office_id', $office)->where('kpi_id', $kpi)->where('planning_year_id', $planningYear)->get();
+        // // dd($isCommentExists);
 
-        if($isCommentExists->count() > 0){
-            $planCommented = DB::table('plan_comments')
-            ->update([
-                'plan_comment' => $planComment,
-                'status' => 1
-            ]);
-        }
+        // if($isCommentExists->count() > 0){
+        //     $planCommented = DB::table('plan_comments')
+        //     ->update([
+        //         'plan_comment' => $planComment,
+        //         'status' => 1
+        //     ]);
+        // }
 
         $planCommented = PlanComment::create([
             'plan_comment' => $planComment,
@@ -299,11 +299,12 @@ class PlanApprovalController extends Controller
         $planningYear = $requestData[2];
 
         $replyComment = DB::table('plan_comments')
-            ->where('id', $planCommentId)
+            // ->where('id', $planCommentId)
             ->where('kpi_id', $kpi)
             ->where('planning_year_id', $planningYear)
             ->update([
                 'reply_comment' => $request->input('reply_comment'),
+                'replied_active' =>  1,
                 'status' => 0,
             ]);
 
@@ -338,7 +339,7 @@ class PlanApprovalController extends Controller
 
     public function getCommentInfo($data){
         $requestArray = explode('-', $data);
-        error_log($requestArray[0]);
+        // error_log($requestArray[0]);
 
         $returnData = $data;
 
@@ -348,12 +349,23 @@ class PlanApprovalController extends Controller
 
         $officeName = getPlanCommentorInfo(auth()->user()->offices[0]->id, $kpi, $planningYear);
 
-        $commentText = hasOfficeActiveComment(auth()->user()->offices[0]->id,$kpi, $planningYear)->plan_comment;
+        $commentText = hasOfficeActiveComment(auth()->user()->offices[0]->id,$kpi, $planningYear);
+        $commentTextString = '';
+
+        if($commentText->count() > 0){
+            foreach($commentText as $comment){
+                $commentTextString = $commentTextString.' '.$comment->plan_comment;
+            }
+        }
+        error_log($commentTextString);
+
+        $commentTextString = '<div id="view-comment-paragraph">'.$commentTextString.'</div>';
+        error_log($commentTextString);
 
         $responseData = [];
         $responseData['info'] = $returnData;
         $responseData['officeName'] = $officeName;
-        $responseData['commentText'] = $commentText;
+        $responseData['commentText'] = $commentTextString;
 
         return response()->json($responseData);
     }
@@ -414,7 +426,7 @@ class PlanApprovalController extends Controller
         $kpi = (int)$requestArray[2];
         $planningYear = (int)$requestArray[3];
 
-        $replyText = commentorTextStatus($office, auth()->user()->offices[0]->id, $kpi, $planningYear)->reply_comment;
+        $replyText = commentorTextStatus($office, auth()->user()->offices[0]->id, $kpi, $planningYear, 3)->reply_comment;
 
         $responseData = [];
 

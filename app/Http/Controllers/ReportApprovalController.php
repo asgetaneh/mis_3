@@ -319,16 +319,16 @@ class ReportApprovalController extends Controller
                 ]);
         }
 
-        $isCommentExists = DB::table('report_comments')->where('office_id', $office)->where('kpi_id', $kpi)->where('planning_year_id', $planningYear)->get();
-        // dd($isCommentExists);
+        // $isCommentExists = DB::table('report_comments')->where('office_id', $office)->where('kpi_id', $kpi)->where('planning_year_id', $planningYear)->get();
+        // // dd($isCommentExists);
 
-        if($isCommentExists->count() > 0){
-            $planCommented = DB::table('report_comments')
-            ->update([
-                'report_comment' => $planComment,
-                'status' => 1
-            ]);
-        }
+        // if($isCommentExists->count() > 0){
+        //     $planCommented = DB::table('report_comments')
+        //     ->update([
+        //         'report_comment' => $planComment,
+        //         'status' => 1
+        //     ]);
+        // }
 
         $planCommented = ReportComment::create([
             'report_comment' => $planComment,
@@ -355,11 +355,12 @@ class ReportApprovalController extends Controller
         $planningYear = $requestData[2];
 
         $replyComment = DB::table('report_comments')
-            ->where('id', $planCommentId)
+            // ->where('id', $planCommentId)
             ->where('kpi_id', $kpi)
             ->where('planning_year_id', $planningYear)
             ->update([
                 'reply_comment' => $request->input('reply_comment'),
+                'replied_active' =>  1,
                 'status' => 0,
             ]);
 
@@ -394,7 +395,7 @@ class ReportApprovalController extends Controller
 
     public function getCommentInfo($data){
         $requestArray = explode('-', $data);
-        error_log($requestArray[0]);
+        // error_log($requestArray[0]);
 
         $returnData = $data;
 
@@ -404,12 +405,22 @@ class ReportApprovalController extends Controller
 
         $officeName = getReportCommentorInfo(auth()->user()->offices[0]->id, $kpi, $planningYear);
 
-        $commentText = hasOfficeActiveReportComment(auth()->user()->offices[0]->id,$kpi, $planningYear)->report_comment;
+        $commentText = hasOfficeActiveReportComment(auth()->user()->offices[0]->id,$kpi, $planningYear);
+        $commentTextString = '';
+
+        if($commentText->count() > 0){
+            foreach($commentText as $comment){
+                $commentTextString = $commentTextString.' '.$comment->report_comment;
+            }
+        }
+
+        $commentTextString = '<div id="view-comment-paragraph">'.$commentTextString.'</div>';
+        error_log($commentTextString);
 
         $responseData = [];
         $responseData['info'] = $returnData;
         $responseData['officeName'] = $officeName;
-        $responseData['commentText'] = $commentText;
+        $responseData['commentText'] = $commentTextString;
 
         return response()->json($responseData);
     }
@@ -471,7 +482,7 @@ class ReportApprovalController extends Controller
         $kpi = (int)$requestArray[2];
         $planningYear = (int)$requestArray[3];
 
-        $replyText = reportCommentorTextStatus($office, auth()->user()->offices[0]->id, $kpi, $planningYear)->reply_comment;
+        $replyText = reportCommentorTextStatus($office, auth()->user()->offices[0]->id, $kpi, $planningYear, 3)->reply_comment;
 
         $responseData = [];
 

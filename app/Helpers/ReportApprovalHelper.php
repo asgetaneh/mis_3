@@ -944,7 +944,7 @@ function hasOfficeActiveReportComment($office, $kpi, $year){
         ->where('office_id', $office)
         ->where('planning_year_id', $year)
         ->where('status', 1)
-        ->first();
+        ->get();
 
     // dd($comment);
     return $comment;
@@ -957,20 +957,38 @@ function getReportCommentorInfo($office, $kpi, $year){
         ->where('planning_year_id', $year)
         ->first();
 
-    $officeName = OfficeTranslation::where('translation_id', $info->commented_by)->first();
+    $officeName = $info ? OfficeTranslation::where('translation_id', $info->commented_by)->first() : null;
 
     return $officeName->name ?? '-';
 }
 
-function reportCommentorTextStatus($office, $commentorId, $kpi, $year){
+function reportCommentorTextStatus($office, $commentorId, $kpi, $year, $suffix){
 
     // dd($office->id);
-    $status = ReportComment::select()
+    if($suffix == 1){
+        $status = ReportComment::select()
+        ->where('kpi_id', $kpi)
+        ->where('commented_by', $commentorId)
+        ->where('office_id', $office->id)
+        ->where('planning_year_id', $year)
+        ->where('replied_active', 1)
+        ->get();
+    }elseif($suffix == 2){
+        $status = ReportComment::select()
+        ->where('kpi_id', $kpi)
+        ->where('commented_by', $commentorId)
+        ->where('office_id', $office->id)
+        ->where('planning_year_id', $year)
+        ->where('status', 1)
+        ->get();
+    }else{
+        $status = ReportComment::select()
         ->where('kpi_id', $kpi)
         ->where('commented_by', $commentorId)
         ->where('office_id', $office->id)
         ->where('planning_year_id', $year)
         ->first();
+    }
 
     // dd($status);
     return $status ?? '';

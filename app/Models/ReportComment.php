@@ -19,7 +19,8 @@ class ReportComment extends Model
         'office_id',
         'status',
         'reply_comment',
-        'commented_by'
+        'commented_by',
+        'replied_active'
     ];
 
     protected $searchableFields = ['*'];
