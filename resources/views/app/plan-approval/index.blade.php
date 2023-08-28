@@ -11,6 +11,9 @@
         table {
             border-collapse: collapse;
         }
+        #view-comment-paragraph *{
+            margin-bottom: 0 !important;
+        }
     </style>
 @endsection
 
@@ -278,7 +281,7 @@
                                                                     <p>Office
                                                                         <u>{{ $office->officeTranslations[0]->name }}</u>
                                                                         has
-                                                                        no plan or not approved its children yet!
+                                                                        no plan or not approved its offices yet!
                                                                     </p>
                                                                 @else
                                                                     <p>Office
