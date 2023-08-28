@@ -957,7 +957,7 @@ function getPlanCommentorInfo($office, $kpi, $year){
 
     $officeName = $info ? OfficeTranslation::where('translation_id', $info->commented_by)->first() : null;
 
-    return $officeName->name ?? '-';
+    return $officeName ?? '-';
 }
 
 function commentorTextStatus($office, $commentorId, $kpi, $year, $suffix){
