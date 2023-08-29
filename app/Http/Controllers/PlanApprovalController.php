@@ -134,7 +134,7 @@ class PlanApprovalController extends Controller
                             $mergedOffices = array($office);
                         }
 
-                        // dd($mergedOffices);
+                         //dd($loggedInUserOfficeLevel->level);
 
                         $approvedAllOffices = tap(
                             DB::table('plan_accomplishments')
@@ -146,6 +146,17 @@ class PlanApprovalController extends Controller
                             ->update([
                                 'plan_status' => $loggedInUserOfficeLevel->level,
                                 'approved_by_id' => auth()->user()->id
+                            ]);
+                        // approve major activities also
+                        $approvedAllOfficesMactivities = tap(
+                            DB::table('report_narrations')
+                                ->where('planing_year_id', $singleOfficePlan[2])
+                                ->whereIn('office_id', $mergedOffices)
+                                ->where('key_peformance_indicator_id', $singleOfficePlan[0])
+                            // ->where('reporting_period_id', '=', $index[1])
+                        )
+                            ->update([
+                                'approval_status' => $loggedInUserOfficeLevel->level
                             ]);
                     }
                 }

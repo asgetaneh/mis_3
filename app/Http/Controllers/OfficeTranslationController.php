@@ -180,7 +180,9 @@ class OfficeTranslationController extends Controller
         }
 
         return redirect()
-            ->route('office-translations.index', $officeTranslation)
+            ->route('office-translations.index2
+            
+            ', $officeTranslation)
             ->withSuccess(__('crud.common.updated'));
     }
 

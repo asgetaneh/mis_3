@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('report_narrations', function (Blueprint $table) {
             $table->id();
             $table->text('plan_naration') ->nullable();
-             $table->text('approval_text') ->nullable();
+            $table->text('approval_text') ->nullable();
+            $table->tinyInteger('approval_status')->nullable();
+
             $table->unsignedBigInteger('key_peformance_indicator_id');
             $table
                 ->foreign('key_peformance_indicator_id')

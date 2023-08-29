@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
              $table->text('report_naration') ->nullable();
             $table->text('approval_text') ->nullable();
+            $table->tinyInteger('approval_status')->nullable();
+
             $table->unsignedBigInteger('key_peformance_indicator_id');
             $table
                 ->foreign('key_peformance_indicator_id')

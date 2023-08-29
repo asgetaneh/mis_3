@@ -12,8 +12,7 @@ use Illuminate\View\View;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Config;
-use Adldap\Laravel\Facades\Adldap;
-
+ 
 
 
 
@@ -37,7 +36,7 @@ class AuthenticatedSessionController extends Controller
         // Finding a user:
         //$user = Adldap::search()->users()->find('john doe');
         //dd($user);
-        $ldp_login =true;
+        $ldp_login =false;
         if($ldp_login){
             $this->authenticate($credentials);
 
@@ -157,11 +156,11 @@ class AuthenticatedSessionController extends Controller
             if (strpos($e->getMessage(), 'Invalid credentials') == true) {
                 if (Config::get('app.env') == 'local') {
                     // dd('stop');
-                    return Auth::attempt(['username' => $uid, 'password' => $password]) ? Auth::user() : new ModelNotFoundException();
+                    return Auth::attempt(['email' => $uid, 'password' => $password]) ? Auth::user() : new ModelNotFoundException();
                 }
                 return new ModelNotFoundException();
             } else {
-                if (Auth::attempt(['username' => $uid, 'password' => $password])) {
+                if (Auth::attempt(['email' => $uid, 'password' => $password])) {
                     return Auth::user();
                 } else {
                     return new ModelNotFoundException();
