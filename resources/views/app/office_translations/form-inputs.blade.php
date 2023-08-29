@@ -12,6 +12,11 @@
         </x-inputs.select>
     </x-inputs.group> --}}
 
+    @if (isset($officeTranslation))
+        <input type="hidden" value="{{ $officeTranslation->translation_id }}" name="officeId">
+        <input type="hidden" value="{{ $officeTranslation->office->parent_office_id }}" name="parentOfficeId">
+    @endif
+
     <x-inputs.group class="col-sm-12">
         <x-inputs.select name="parent_name" label="Parent Office" required>
             @php $selected = old('translation_id', ($editing ? $officeTranslation->office->parent_office_id : '')) @endphp
