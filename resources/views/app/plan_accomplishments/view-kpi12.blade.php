@@ -1,3 +1,4 @@
+<table class="table table-bordered" style="background:#12cd4322;">
 <tr>
 <tr>
     <th colspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 3 }} ">
@@ -10,7 +11,7 @@
         {{ $one->kpiChildOneTranslations[0]->name }}
     </td>
 @endforeach
-<th>Sum</th>
+{{-- <th>Sum</th> --}}
 </tr>
     @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
          @php
@@ -40,7 +41,7 @@
                     </td>
                 @endforeach
                 {{-- total ch2 --}}
-                <td>
+                {{-- <td>
                     @php
                         $planSumch2_array = [];
                         $planSumch2 = $office->offices;
@@ -52,14 +53,14 @@
                         $planSumch2Total = $planAcc->planIndividualChTwoSum($planAcc->Kpi->id, $two->id, $planSumch2_array,$period->id);
                     @endphp
                     {{ $planSumch2Total }}
-                </td>
+                </td> --}}
                 {{-- end total ch2 --}}
         </tr>
     @endforeach
 @empty
     @endforelse
     {{-- total ch1ch3 --}}
-    <tr>
+    {{-- <tr>
         <th colspan='2' style="background:#ffeecc;">
             {{ 'Total' }}
             </td>
@@ -92,5 +93,98 @@
               @endphp
         @endforeach
     </td>
+    </tr> --}}
+    <tr>
+        <td>
+            Major Activities
+        </td>
+        <td colspan="2">
+            @foreach ($narration as $key => $plannaration)
+                {!! html_entity_decode($plannaration->plan_naration) !!}
+                @php
+                    echo '<br/>';
+                @endphp
+            @endforeach
+        </td>
+        <td>
+            @if (!$office->offices->isEmpty())
+                <p>
+                    <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}" role="button"
+                        aria-expanded="false" aria-controls="collapseExample0">
+                        Details
+                    </a>
+                </p>
+            @else
+                {{ 'no child ' }}
+            @endif
+        </td>
     </tr>
-    {{-- end total ch1ch3 --}}
+    </table>
+{{-- level two (directores and same level) --}}
+<div class="collapse" id="off{{ $office->id }}">
+    <div class="card card-body">
+        @php
+            $offices_twos = $office->offices;
+        @endphp
+        @forelse ($offices_twos as $office)
+
+            @include('app.plan_accomplishments.view-kpi122')
+            <div class="collapse" id="off{{ $office->id }}">
+                <div class="card card-body">
+                    @php
+                        $offices_threes = $office->offices;
+                    @endphp
+                    @forelse ($offices_threes as $office)
+                        @include('app.plan_accomplishments.view-kpi122')
+                        <div class="collapse" id="off{{ $office->id }}">
+                            <div class="card card-body">
+                                @php
+                                    $offices_fours = $office->offices;
+                                @endphp
+                                @forelse ($offices_fours as $office)
+                                    @include('app.plan_accomplishments.view-kpi122')
+                                    <div class="collapse" id="off{{ $office->id }}">
+                                        <div class="card card-body">
+                                            @php
+                                                $offices_fives = $office->offices;
+                                            @endphp
+                                            @forelse ($offices_fives as $office)
+                                                @include('app.plan_accomplishments.view-kpi122')
+                                                <div class="collapse" id="off{{ $office->id }}">
+                                                    <div class="card card-body">
+                                                        @php
+                                                            $offices_sixs = $office->offices;
+                                                        @endphp
+                                                        @forelse ($offices_sixs as $office)
+                                                            @include('app.plan_accomplishments.view-kpi122')
+                                                            <div class="collapse" id="off{{ $office->id }}">
+                                                                <div class="card card-body">
+
+                                                                </div>
+                                                            </div>
+                                                        @empty
+                                                            <h4>on child!</h4>
+                                                        @endforelse
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <h4>on child!</h4>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                @empty
+                                    <h4>on child!</h4>
+                                @endforelse
+                            </div>
+                        </div>
+                    @empty
+                        <h4>on child!</h4>
+                    @endforelse
+                </div>
+            </div>
+        @empty
+            <h4>on child!</h4>
+        @endforelse
+    </div>
+</div>
+

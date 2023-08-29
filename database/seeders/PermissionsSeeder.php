@@ -6,6 +6,9 @@ use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
+use App\Models\Office;
+use App\Models\OfficeTranslation;
+
 
 class PermissionsSeeder extends Seeder
 {
@@ -15,6 +18,9 @@ class PermissionsSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Create default permissions
+        Office::create(['level' => '999','level' => '999']);
+        OfficeTranslation::create(['translation_id' => '1','name' => 'xx','description' => 'xx','locale' => 'en']);
+
         Permission::create(['name' => 'list genders']);
         Permission::create(['name' => 'view genders']);
         Permission::create(['name' => 'create genders']);

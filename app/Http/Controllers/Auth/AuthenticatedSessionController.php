@@ -32,7 +32,11 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $credentials = $request->input();
+        $credentials = $request->input(); 
+
+        // Finding a user:
+        //$user = Adldap::search()->users()->find('john doe');
+        //dd($user);
         $ldp_login =true;
         if($ldp_login){
             $this->authenticate($credentials);
@@ -152,11 +156,11 @@ class AuthenticatedSessionController extends Controller
             if (strpos($e->getMessage(), 'Invalid credentials') == true) {
                 if (Config::get('app.env') == 'local') {
                     // dd('stop');
-                    return Auth::attempt(['username' => $uid, 'password' => $password]) ? Auth::user() : new ModelNotFoundException();
+                    return Auth::attempt(['email' => $uid, 'password' => $password]) ? Auth::user() : new ModelNotFoundException();
                 }
                 return new ModelNotFoundException();
             } else {
-                if (Auth::attempt(['username' => $uid, 'password' => $password])) {
+                if (Auth::attempt(['email' => $uid, 'password' => $password])) {
                     return Auth::user();
                 } else {
                     return new ModelNotFoundException();
