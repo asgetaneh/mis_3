@@ -44,7 +44,13 @@ return new class extends Migration {
                 ->on('behaviors')
                 ->onUpdate('CASCADE')
                 ->onDelete('CASCADE');
-                
+            $table
+                ->foreign('kpi_type_id')
+                ->references('id')
+                ->on('kpi_types')
+                ->onUpdate('CASCADE')
+                ->onDelete('CASCADE');
+
         });
     }
 
@@ -58,6 +64,8 @@ return new class extends Migration {
             $table->dropForeign(['strategy_id']);
             $table->dropForeign(['created_by_id']);
             $table->dropForeign(['reporting_period_type_id']);
+            $table->dropForeign(['behavior_id']);
+            $table->dropForeign(['kpi_type_id']);
         });
     }
 };

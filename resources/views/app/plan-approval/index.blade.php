@@ -11,6 +11,9 @@
         table {
             border-collapse: collapse;
         }
+        #view-comment-paragraph *{
+            margin-bottom: 0 !important;
+        }
     </style>
 @endsection
 
@@ -127,10 +130,10 @@
                                         @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
                                             @if (app()->getLocale() == $kpiT->locale)
                                                 <table class="table">
-                                                    <tr style="background:#CDCDCD;" class="">
-                                                        <th style="width:80%;"> KPI: {{ $kpiT->name }}</th>
-                                                        <th> <input name="sum" class="form-control" type="number"
-                                                                value="{{ $planAcc->sum }}">
+                                                    <tr style="" class="border">
+                                                        <th style="width:75%;" class=""> <p class="m-auto py-2 px-1">KPI: {{ $kpiT->name }}</p></th>
+                                                        <th style="width: 25%;" class="bg-light border">
+                                                            <p class="m-auto py-2 px-1">Total: <u>{{ $planAcc->sum }}</u></p>
                                                         </th>
                                                         <th>
                                                             <button type="button"
@@ -147,12 +150,12 @@
 
                                     </div>
                                     <div class="card-body approval-container" style="display: none;">
-                                        @if (!empty(hasOfficeActiveComment(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)))
+                                        @if ((hasOfficeActiveComment(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id))->count() > 0)
                                             <div class="bg-light w-5 float-right p-3">
-                                                <p class="m-auto">You have comment from <u>{{ getPlanCommentorInfo(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id) }}</u>
+                                                <p class="m-auto">You have comment from <u>{{ getPlanCommentorInfo(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)->name ?? '-' }}</u>
                                                     <a  class="btn btn-sm btn-flat btn-info text-white view-comment"
                                                         data-toggle="modal" data-target="#view-comment-modal"
-                                                        data-id="{{ hasOfficeActiveComment(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)->id }}-{{$planAcc->Kpi->id}}-{{$planning_year[0]->id}}">
+                                                        data-id="{{ getPlanCommentorInfo(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)->translation_id ?? '-' }}-{{$planAcc->Kpi->id}}-{{$planning_year[0]->id}}">
                                                         <i class="fas fa fa-eye mr-1"></i>View/Reply
                                                     </a>
                                                     <a
@@ -212,7 +215,7 @@
                                                     @endif
                                                 @else
                                                     @php
-                                                        $anyChildrenOfficePlannedAndApproved = getOfficeChildrenApprovedList($planAcc->kpi_id, $office, $planAcc->planning_year_id, 2);
+                                                        $anyChildrenOfficePlannedAndApproved = getOfficeChildrenApprovedList($planAcc->kpi_id, $office, $planAcc->planning_year_id, 3);
                                                     @endphp
                                                     {{-- @dd($anyChildrenOfficePlannedAndApproved) --}}
 
@@ -278,7 +281,7 @@
                                                                     <p>Office
                                                                         <u>{{ $office->officeTranslations[0]->name }}</u>
                                                                         has
-                                                                        no plan or not approved its children yet!
+                                                                        no plan or not approved its offices yet!
                                                                     </p>
                                                                 @else
                                                                     <p>Office
@@ -691,6 +694,7 @@
             var url = "{{ route('disapprove-plan.ajax', [':id']) }}";
             url = url.replace(':id', id);
 
+            $("#disapproval-select").html('');
             $.ajax({
                 url: url,
                 dataType: 'json',

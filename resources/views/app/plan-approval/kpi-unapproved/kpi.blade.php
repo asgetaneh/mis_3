@@ -23,23 +23,23 @@
         @endif --}}
 
         <th>
-            @if (empty(commentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)))
-                <a class="btn btn-sm float-right btn-info text-white write-comment"
-                    data-toggle="modal" data-target="#modal-lg"
-                    data-id="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}">
-                    <i class="fas fa fa-comments mr-1"></i> Write Comment
-                </a>
-            @else
-                @if (!empty(commentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)) && commentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)->reply_comment !== null)
-                    <a class="btn btn-sm float-right btn-info text-white view-reply-comment"
-                        data-toggle="modal" data-target="#view-reply-comment"
-                        data-id="{{ $office->id }}-{{ commentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)->id }}-{{$planAcc->Kpi->id}}-{{$planning_year[0]->id}}">
-                        <i class="fas fa fa-eye mr-1"></i> View Reply
-                    </a>
-                @else
+            <a class="btn btn-sm float-right btn-info text-white write-comment ml-2"
+                data-toggle="modal" data-target="#modal-lg"
+                data-id="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}">
+                <i class="fas fa fa-comments mr-1"></i> Write Comment
+            </a>
+
+                @if (commentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id, 2)->count() > 0)
                     <p class="float-right text-primary"><u>Waiting for reply!</u></p>
+                @else
+                    @if (!empty(commentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id, 1)) && commentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id, 1)->count() > 0)
+                        <a class="btn btn-sm view-reply-comment text-primary float-right"
+                            data-toggle="modal" data-target="#view-reply-comment"
+                            data-id="{{ $office->id }}-{{ 1 }}-{{$planAcc->Kpi->id}}-{{$planning_year[0]->id}}">
+                            <u>View Reply</u>
+                        </a>
+                    @endif
                 @endif
-            @endif
         </th>
 
     </tr>
@@ -60,7 +60,7 @@
             @php
                 $planOfOfficePlan
                 = planSum($planAcc->Kpi->id,$office, $period->id, 1);
-               $narration = getNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
+               $narration = getNarrationApproved($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
             @endphp
             <td>
                {{$planOfOfficePlan}}

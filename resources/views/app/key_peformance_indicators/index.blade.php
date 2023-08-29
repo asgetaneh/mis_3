@@ -53,15 +53,18 @@
                             <th class="text-left">
                                 Name
                             </th>
+                            <th>
+                                Type
+                            </th>
                             <th class="text-left">
                                 Description
                             </th>
-                            <th class="text-left">
+                            {{-- <th class="text-left">
                                 Output
                             </th>
                             <th class="text-left">
                                 Outcome
-                            </th>
+                            </th> --}}
                             {{-- <th class="text-left">
                                 Strategy
                             </th> --}}
@@ -90,12 +93,23 @@
                                 $keyPeformanceIndicator_t->name
                                 ?? '-' }}
                             </td>
+                            @php
+                            $kpiType = '';
+                                foreach ($keyPeformanceIndicator_t->keyPeformanceIndicator->kpiType->kpiTypeTranslations as $key => $value) {
+                                    if (app()->getLocale() == $value->locale){
+                                        $kpiType = $value->name;
+                                    }
+                                }
+                            @endphp
+                            <td>
+                                {{ $kpiType ?? '-' }}
+                            </td>
                             <td>
                                 {{
                                 $keyPeformanceIndicator_t->description
                                 ?? '-' }}
                             </td>
-                            <td>
+                            {{-- <td>
                                 {{
                                 $keyPeformanceIndicator_t->out_put
                                 ?? '-' }}
@@ -104,7 +118,7 @@
                                 {{
                                 $keyPeformanceIndicator_t->out_come
                                 ?? '-' }}
-                            </td>
+                            </td> --}}
 
                             @php
                                 $strategy = '';

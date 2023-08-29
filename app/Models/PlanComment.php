@@ -18,7 +18,8 @@ class PlanComment extends Model
         'planning_year_id',
         'office_id',
         'status',
-        'commented_by'
+        'commented_by',
+        'replied_active'
     ];
 
     protected $searchableFields = ['*'];

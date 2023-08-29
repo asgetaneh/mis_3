@@ -20,7 +20,11 @@
 
             @foreach($offices as $value => $label)
                 @if(app()->getLocale() == $label->locale)
-                    <option value="{{ $label->translation_id }}" {{ $selected == $label->office->id ? 'selected' : '' }} >{{ $label->name }}</option>
+                    @if ($editing && $officeTranslation->translation_id == $label->translation_id)
+                        @continue
+                    @else
+                        <option value="{{ $label->translation_id }}" {{ $selected == $label->office->id ? 'selected' : '' }} >{{ $label->name }}</option>
+                    @endif
                 @endif
             @endforeach
 

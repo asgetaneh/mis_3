@@ -22,36 +22,36 @@
     Offices: {{ $office->officeTranslations[0]->name }}
     </td>
 
-    {{-- @if (planStatusOffice($office, $planAcc->kpi_id, $planning_year[0]->id) > auth()->user()->offices[0]->level)
-        <a class="btn btn-sm float-right btn-info text-white write-comment"
-            data-toggle="modal" data-target="#modal-lg"
-            data-id="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}">
-            <i class="fas fa fa-comments mr-1"></i> Write Comment
-        </a>
-    @endif --}}
+    <a class="btn btn-sm float-right btn-info text-white write-comment ml-2"
+                    data-toggle="modal" data-target="#modal-lg"
+                    data-id="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}">
+                    <i class="fas fa fa-comments mr-1"></i> Write Comment
+                </a>
 
-    @if (empty(reportCommentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)))
-        <a class="btn btn-sm float-right btn-info text-white write-comment"
-            data-toggle="modal" data-target="#modal-lg"
-            data-id="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}">
-            <i class="fas fa fa-comments mr-1"></i> Write Comment
-        </a>
-    @else
-        @if (!empty(reportCommentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)) && reportCommentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)->reply_comment !== null)
-            <a class="btn btn-sm float-right btn-info text-white view-reply-comment"
-                data-toggle="modal" data-target="#view-reply-comment"
-                data-id="{{ $office->id }}-{{ reportCommentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)->id }}-{{$planAcc->Kpi->id}}-{{$planning_year[0]->id}}">
-                <i class="fas fa fa-eye mr-1"></i> View Reply
-            </a>
-        @else
-            <p class="float-right text-primary"><u>Waiting for reply!</u></p>
-        @endif
-    @endif
+                @if (reportCommentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id, 2)->count() >
+                        0)
+                    <p class="float-right text-primary"><u>Waiting for reply!</u></p>
+                @else
+                    @if (
+                        !empty(reportCommentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id, 1)) &&
+                        reportCommentorTextStatus(
+                                $office,
+                                auth()->user()->offices[0]->id,
+                                $planAcc->kpi_id,
+                                $planning_year[0]->id,
+                                1)->count() > 0)
+                        <a class="btn btn-sm view-reply-comment text-primary float-right" data-toggle="modal"
+                            data-target="#view-reply-comment"
+                            data-id="{{ $office->id }}-{{ 1 }}-{{ $planAcc->Kpi->id }}-{{ $planning_year[0]->id }}">
+                            <u>View Reply</u>
+                        </a>
+                    @endif
+                @endif
 
 </tr>
 <tr>
 <th>#</th>
-@forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+@forelse(getReportingQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
     <th>
         {{ $period->reportingPeriodTs[0]->name }}
     </th>
@@ -72,7 +72,7 @@
 <td>
     {{ $one->kpiChildOneTranslations[0]->name }}
 </td>
-@forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+@forelse(getReportingQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
     <td>
         @php
             $planOne = reportOne($planAcc->Kpi->id, $one->id, $office, $period->id, 2);
@@ -98,7 +98,7 @@
 </td>
 <td colspan="5">
     @foreach ($narration as $key => $plannaration)
-          {!! html_entity_decode($plannaration->plan_naration) !!}
+          {!! html_entity_decode($plannaration->report_naration) !!}
           @php
           echo "<br/>"
           @endphp

@@ -66,7 +66,7 @@ class ReportApprovalController extends Controller
         }
         else{
             $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
-            ->whereIn('office_id', $only_child_array)
+            ->whereIn('office_id', $all_office_list)
             ->select('*', DB::raw('SUM(accom_value) AS sum'))
             ->whereNotNull('accom_value')
             //-> where('reporting_periods.slug',"=", 1)
@@ -143,6 +143,9 @@ class ReportApprovalController extends Controller
         $loggedInUserOfficeLevel = Office::where('id', auth()->user()->offices[0]->id)->first();
         $mergedOffices = [];
 
+        $activeReportingPeriodList = getReportingPeriod();
+        // dd($activeReportingPeriodList);
+
         foreach ($approvedOfficelist as $key => $value) {
 
             $str_key = (string)$key;
@@ -162,7 +165,7 @@ class ReportApprovalController extends Controller
                                 ->where('planning_year_id', $singleOfficePlan[2])
                                 ->where('office_id', auth()->user()->offices[0]->id)
                                 ->where('kpi_id', $singleOfficePlan[0])
-                                // ->where('reporting_period_id', '=', $index[1])
+                                ->whereIn('reporting_period_id', $activeReportingPeriodList)
                                 ->update([
                                     'accom_status' => 0, // decide what value it is later.
                                     'approved_by_id' => auth()->user()->id
@@ -196,7 +199,7 @@ class ReportApprovalController extends Controller
                                 ->where('planning_year_id', $singleOfficePlan[2])
                                 ->whereIn('office_id', $mergedOffices)
                                 ->where('kpi_id', $singleOfficePlan[0])
-                            // ->where('reporting_period_id', '=', $index[1])
+                                ->whereIn('reporting_period_id', $activeReportingPeriodList)
                         )
                             ->update([
                                 'accom_status' => $loggedInUserOfficeLevel->level,
@@ -225,14 +228,37 @@ class ReportApprovalController extends Controller
         $planningYear = (int)$requestData[2];
         $reportingPeriod = 3;
 
+        $officeLogged = Office::find($loggedInOffice);
+
         // dd($officeLogged);
         foreach ($selectedOfficeList as $key => $office) {
 
             $officeLevel = Office::find((int)$office);
 
+            $childrenoffices = office_all_childs_ids($officeLevel);
+            // dd($childrenoffices);
+            $allChildrenApproved = PlanAccomplishment::select()
+                ->where('kpi_id', $kpi)
+                ->whereIn('office_id', $childrenoffices)
+                ->where('planning_year_id', $planningYear)
+                ->where('plan_status', '=', $officeLogged->level)->distinct('office_id')
+                ->get();
+            // dd($allChildrenApproved);
+
+            $officeIdList = [];
+            if($allChildrenApproved->count() > 0){
+                foreach ($allChildrenApproved as $officer){
+                    array_push($officeIdList, $officer->office_id);
+                }
+            }
+
+            $officeIdList = array_unique($officeIdList);
+            $officeIdList = array_merge($officeIdList, array((int)$office));
+
+
             $officeDisapproved = DB::table('plan_accomplishments')
                     ->where('planning_year_id', $planningYear)
-                    ->where('office_id', (int)$office)
+                    ->whereIn('office_id', $officeIdList)
                     ->where('kpi_id', $kpi)
                 // ->where('reporting_period_id', '=', $index[1])
                 ->update([
@@ -241,7 +267,7 @@ class ReportApprovalController extends Controller
                 ]);
 
             $officeCommented = ReportComment::updateOrCreate([
-                'plan_comment' => $writtenComment,
+                'report_comment' => $writtenComment,
                 'kpi_id' => $kpi,
                 'reporting_period_id' => $reportingPeriod,
                 'planning_year_id' => $planningYear,
@@ -316,16 +342,16 @@ class ReportApprovalController extends Controller
                 ]);
         }
 
-        $isCommentExists = DB::table('report_comments')->where('office_id', $office)->where('kpi_id', $kpi)->where('planning_year_id', $planningYear)->get();
-        // dd($isCommentExists);
+        // $isCommentExists = DB::table('report_comments')->where('office_id', $office)->where('kpi_id', $kpi)->where('planning_year_id', $planningYear)->get();
+        // // dd($isCommentExists);
 
-        if($isCommentExists->count() > 0){
-            $planCommented = DB::table('report_comments')
-            ->update([
-                'report_comment' => $planComment,
-                'status' => 1
-            ]);
-        }
+        // if($isCommentExists->count() > 0){
+        //     $planCommented = DB::table('report_comments')
+        //     ->update([
+        //         'report_comment' => $planComment,
+        //         'status' => 1
+        //     ]);
+        // }
 
         $planCommented = ReportComment::create([
             'report_comment' => $planComment,
@@ -347,16 +373,19 @@ class ReportApprovalController extends Controller
         $requestData = explode('-', $request->input('view-commented-office-info'));
         // dd($requestData);
 
-        $planCommentId = $requestData[0];
+        // $planCommentId = $requestData[0];
+        $commentedById = $requestData[0];
         $kpi = $requestData[1];
         $planningYear = $requestData[2];
 
         $replyComment = DB::table('report_comments')
-            ->where('id', $planCommentId)
+            // ->where('id', $planCommentId)
+            ->where('commented_by', $commentedById)
             ->where('kpi_id', $kpi)
             ->where('planning_year_id', $planningYear)
             ->update([
                 'reply_comment' => $request->input('reply_comment'),
+                'replied_active' =>  1,
                 'status' => 0,
             ]);
 
@@ -391,7 +420,7 @@ class ReportApprovalController extends Controller
 
     public function getCommentInfo($data){
         $requestArray = explode('-', $data);
-        error_log($requestArray[0]);
+        // error_log($requestArray[0]);
 
         $returnData = $data;
 
@@ -399,14 +428,24 @@ class ReportApprovalController extends Controller
         // $office = (int)$requestArray[2];
         $planningYear = (int)$requestArray[2];
 
-        $officeName = getReportCommentorInfo(auth()->user()->offices[0]->id, $kpi, $planningYear);
+        $officeName = getReportCommentorInfo(auth()->user()->offices[0]->id, $kpi, $planningYear)->name ?? '-';
 
-        $commentText = hasOfficeActiveReportComment(auth()->user()->offices[0]->id,$kpi, $planningYear)->report_comment;
+        $commentText = hasOfficeActiveReportComment(auth()->user()->offices[0]->id,$kpi, $planningYear);
+        $commentTextString = '';
+
+        if($commentText->count() > 0){
+            foreach($commentText as $comment){
+                $commentTextString = $commentTextString.' '.$comment->report_comment;
+            }
+        }
+
+        $commentTextString = '<div id="view-comment-paragraph">'.$commentTextString.'</div>';
+        error_log($commentTextString);
 
         $responseData = [];
         $responseData['info'] = $returnData;
         $responseData['officeName'] = $officeName;
-        $responseData['commentText'] = $commentText;
+        $responseData['commentText'] = $commentTextString;
 
         return response()->json($responseData);
     }
@@ -445,6 +484,8 @@ class ReportApprovalController extends Controller
             $onlyChildArray[$office->office_id] = $office->office->officeTranslations[0]->name;
         }
 
+       $onlyChildArray[$office->id] = $office->officeTranslations[0]->name;
+
         // error_log(($onlyChildArray[1]));
 
         $responseData['info'] = $returnData;
@@ -466,7 +507,7 @@ class ReportApprovalController extends Controller
         $kpi = (int)$requestArray[2];
         $planningYear = (int)$requestArray[3];
 
-        $replyText = reportCommentorTextStatus($office, auth()->user()->offices[0]->id, $kpi, $planningYear)->reply_comment;
+        $replyText = reportCommentorTextStatus($office, auth()->user()->offices[0]->id, $kpi, $planningYear, 3)->reply_comment;
 
         $responseData = [];
 

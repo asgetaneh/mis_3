@@ -86,10 +86,10 @@
                             <form action="{{ route('login') }}" method="post">
                                 @csrf
                                 <div class="form-floating mb-3">
-                                    <input type="text" class="form-control" id="floatingInput" name="email"
-                                        value="{{ old('email') }}" placeholder="Username">
-                                    @if ($errors->has('email'))
-                                        <span class="text-danger">{{ $errors->first('email') }}</span>
+                                    <input type="text" class="form-control" id="floatingInput" name="username"
+                                        value="{{ old('username') }}" placeholder="Username">
+                                    @if ($errors->has('username'))
+                                        <span class="text-danger">{{ $errors->first('username') }}</span>
                                     @endif
                                     <label class="text-secondary" for="floatingInput">Username</label>
                                 </div>

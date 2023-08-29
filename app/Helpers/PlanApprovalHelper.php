@@ -83,7 +83,43 @@ function getOfficeChildrenApprovedList($kpi, $office, $year, $suffix)
         }
 
         return $officeIds;
-    } else {
+    }
+    else if($suffix == 2){
+        $planRecordOffice = PlanAccomplishment::select('office_id')
+            ->where('kpi_id', $kpi)
+            // ->whereIn('office_id', $childOffices)
+            ->where('office_id', $office->id)
+            ->where('planning_year_id', $year)->distinct('office_id')
+            ->get();
+
+        $childAndHimOffKpi = office_all_childs_ids($office);
+        $planRecord = PlanAccomplishment::select('office_id')
+            ->where('kpi_id', $kpi)
+            // ->whereIn('office_id', $childOffices)
+            ->whereIn('office_id', $childAndHimOffKpi)
+            ->where('planning_year_id', $year)->distinct('office_id')
+            ->where('plan_status', '<',$office->level)
+            ->orWhere('plan_status', '=', $office->level)
+            // ->where(function ($q) {
+            //     $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            // })
+            ->get();
+                $officeIds = [];
+
+        if ($planRecordOffice) {
+            foreach ($planRecordOffice as $plan) {
+                array_push($officeIds, $plan->office_id);
+            }
+        }
+        if ($planRecord) {
+            foreach ($planRecord as $plan) {
+                array_push($officeIds, $plan->office_id);
+            }
+        }
+
+        return $officeIds;
+    }
+    else {
         $childAndHimOffKpi = office_all_childs_ids($office);
         $merged = array_merge($childAndHimOffKpi, array($office->id));
 
@@ -847,7 +883,7 @@ function getNarrationApproved($kkp, $year, $office, $period)
     $childAndHimOffKpi = office_all_childs_ids($office);
 
     // get all children that are approved and planned for the given kpi
-    $childAndHimOffKpi = getOfficeChildrenApprovedList($kkp, $office, $year, $childAndHimOffKpi);
+    $childAndHimOffKpi = getOfficeChildrenApprovedList($kkp, $office, $year, 2);
 
     $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
     $plannarations = ReportNarration::select('plan_naration')->whereIn('office_id', $childAndHimOffKpi_array)->where('key_peformance_indicator_id', '=', $kkp)->where('planing_year_id', '=', $year)->get();
@@ -906,7 +942,7 @@ function hasOfficeActiveComment($office, $kpi, $year){
         ->where('office_id', $office)
         ->where('planning_year_id', $year)
         ->where('status', 1)
-        ->first();
+        ->get();
 
     // dd($comment);
     return $comment;
@@ -919,20 +955,40 @@ function getPlanCommentorInfo($office, $kpi, $year){
         ->where('planning_year_id', $year)
         ->first();
 
-    $officeName = OfficeTranslation::where('translation_id', $info->commented_by)->first();
+    $officeName = $info ? OfficeTranslation::where('translation_id', $info->commented_by)->first() : null;
 
-    return $officeName->name ?? '-';
+    return $officeName ?? '-';
 }
 
-function commentorTextStatus($office, $commentorId, $kpi, $year){
+function commentorTextStatus($office, $commentorId, $kpi, $year, $suffix){
 
     // dd($office->id);
-    $status = PlanComment::select()
-        ->where('kpi_id', $kpi)
-        ->where('commented_by', $commentorId)
-        ->where('office_id', $office->id)
-        ->where('planning_year_id', $year)
-        ->first();
+
+    $status = "";
+    if($suffix == 1){
+        $status = PlanComment::select()
+            ->where('kpi_id', $kpi)
+            ->where('commented_by', $commentorId)
+            ->where('office_id', $office->id)
+            ->where('planning_year_id', $year)
+            ->where('replied_active', 1)
+            ->get();
+    }elseif($suffix == 2){
+        $status = PlanComment::select()
+            ->where('kpi_id', $kpi)
+            ->where('commented_by', $commentorId)
+            ->where('office_id', $office->id)
+            ->where('planning_year_id', $year)
+            ->where('status', 1)
+            ->get();
+    }else{
+        $status = PlanComment::select()
+            ->where('kpi_id', $kpi)
+            ->where('commented_by', $commentorId)
+            ->where('office_id', $office->id)
+            ->where('planning_year_id', $year)
+            ->first();
+    }
 
     // dd($status);
     return $status ?? '';

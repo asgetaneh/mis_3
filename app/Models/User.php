@@ -8,7 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
- 
+
 
 class User extends Authenticatable
 {
@@ -17,7 +17,7 @@ class User extends Authenticatable
     use HasFactory;
     use Searchable;
 
-    protected $fillable = ['name', 'email', 'password', 'is_admin'];
+    protected $fillable = ['username', 'name', 'email', 'password', 'is_admin'];
 
     protected $searchableFields = ['*'];
 
@@ -72,7 +72,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Office::class, 'holder_id');
     }
- 
+
 
     public function offices()
     {
@@ -83,7 +83,7 @@ class User extends Authenticatable
     {
         return $this->hasRole('super-admin');
     }
-    
+
      public function performers()
     {
         return $this->hasMany(Performer::class, 'user_id');
