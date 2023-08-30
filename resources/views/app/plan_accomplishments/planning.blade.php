@@ -479,9 +479,13 @@
                                             $disabled = '';
                                         @endphp
                                         @if ($plan)
-                                            @if ($off_level != $plan->plan_status)
+                                             @if($off_level ===1) 
+                                                @if ($off_level === $plan->plan_status)
+                                                    @php $disabled ="disabled"; @endphp
+                                                @endif
+                                            @elseif ($off_level != $plan->plan_status)
                                                 @php $disabled ="disabled"; @endphp
-                                            @endif
+                                             @endif  
                                             <td>
                                                 <input type="hidden" name="type" value="yes">
                                                 <input name="{{ $kpi->id }}-{{ $period->id }}"
