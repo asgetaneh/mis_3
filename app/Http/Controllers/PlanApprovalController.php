@@ -224,7 +224,7 @@ class PlanApprovalController extends Controller
                 'kpi_id' => $kpi,
                 'reporting_period_id' => $reportingPeriod,
                 'planning_year_id' => $planningYear,
-                'office_id' => $office,
+                'office_id' => (int)$office,
                 'commented_by' => $loggedInOffice
             ]);
         }

@@ -34,7 +34,7 @@
 
                         {{-- Own Plan of last office if exists --}}
                         @if (count($planAccomplishmentsLastOffice) > 0)
-                            <div class="p-3 bg-light mb-3 border rounded">
+                            <div class="p-3 bg-light mb-3 rounded shadow-sm" style="border: 1px solid #d3d2d2;">
                                 <h5 class=""><u>Own Plan Approval</u></h5>
                             @forelse ($planAccomplishmentsLastOffice as $planAcc)
                                 @php
@@ -45,14 +45,14 @@
 
                                 {{-- @if (!in_array($planAcc->Kpi->id, $kpi_repeat)) --}}
                                     <div class="card collapsed-card">
-                                        <div class="card-header">
+                                        <div class="card-header pb-0">
                                             @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
                                                 @if (app()->getLocale() == $kpiT->locale)
                                                     <table class="table">
                                                         <tr class="bg-light">
-                                                            <th style="width:80%;"> KPI: {{ $kpiT->name }}</th>
-                                                            <th> <input name="sum" class="form-control" type="number"
-                                                                    value="{{ $planAcc->sum }}">
+                                                            <th style="width:75%;"> KPI: {{ $kpiT->name }}</th>
+                                                            <th style="width: 25%;" class="bg-light border">
+                                                                <p class="m-auto py-2 px-1">Total: <u>{{ $planAcc->sum }}</u></p>
                                                             </th>
                                                             <th>
                                                                 <button type="button"
@@ -124,8 +124,8 @@
                             @endphp
 
                             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
-                                <div class="card collapsed-card">
-                                    <div class="card-header">
+                                <div class="card collapsed-card" style="border: 1px solid #d3d2d2;">
+                                    <div class="card-header pb-0">
 
                                         @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
                                             @if (app()->getLocale() == $kpiT->locale)
@@ -442,7 +442,7 @@
     </div>
 
     {{-- View reply comment modal --}}
-    <div class="modal fade view-reply-comment" id="view-reply-comment" style="display: none;" aria-hidden="true">
+    <div class="modal fade view-reply-comment-modal" id="view-reply-comment" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header bg-light">
@@ -456,7 +456,7 @@
                     <input type="hidden" id="hidden-reply-input" class="hidden-reply-input" value=""
                         name="disapprove-office-info"> --}}
                     <div class="modal-body">
-                        <h5 class="view-reply-comment-text bg-light border p-3">Reply message: <p></p></h5>
+                        <h5 class="view-reply-comment-text bg-light border p-3"><u>Reply message:</u> <p></p></h5>
                         <br>
                     </div>
                     <div class="modal-footer justify-content-between">
@@ -602,8 +602,14 @@
             // merge all unselected offices as single string
             let mergedOfficeNames = '';
             if (officesNameList !== []) {
+                let counted = 0;
                 for (let i = 0; i < officesNameList.length; i++) {
-                    mergedOfficeNames += `${officesNameList[i]}, `;
+                    if(counted == 0){
+                        mergedOfficeNames += `${officesNameList[i]}`;
+                    }else{
+                        mergedOfficeNames += `, ${officesNameList[i]}`;
+                    }
+                    counted++;
                 }
             }
 
@@ -740,7 +746,7 @@
                         $('.view-reply-comment-text p').html(response.replyText);
                         // $("#hidden-reply-input").val(inputData);
 
-                        $('.view-reply-comment').modal('show');
+                        $('.view-reply-comment-modal').modal('show');
                     }
                 });
 

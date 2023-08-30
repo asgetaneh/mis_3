@@ -8,8 +8,8 @@
                 title="Appove for {{$office->officeTranslations[0]->name}}"/> --}}
 
                 <div class="icheck-success d-inline">
-                    <input class="office-checkbox-kpi-{{ $planAcc->kpi_id }}" name="approve[]" type="checkbox" id="{{$office->id}}" value="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}">
-                    <label for="{{$office->id}}">
+                    <input class="office-checkbox-kpi-{{ $planAcc->kpi_id }}" name="approve[]" type="checkbox" id="{{ $planAcc->kpi_id }}-{{$office->id}}" value="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}">
+                    <label for="{{ $planAcc->kpi_id }}-{{$office->id}}">
                         Select Office
                     </label>
                 </div>
@@ -22,7 +22,7 @@
         @endif --}}
         <th colspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 3 }} ">
             Offices: {{ $office->officeTranslations[0]->name }}
-            
+
             <a class="btn btn-sm float-right btn-info text-white write-comment ml-2"
                     data-toggle="modal" data-target="#modal-lg"
                     data-id="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}">
