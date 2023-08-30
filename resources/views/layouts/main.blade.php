@@ -279,7 +279,11 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <span class="hidden-xs glyphicon glyphicon-user 
 ">   
-                     {{ Auth::user()->name }}</span>
+                     {{ Auth::user()->name }}
+                     @if(!Auth::user()->offices->isEmpty())
+                      {{Auth::user()->offices[0]->officetranslation[0]->name}}
+                     @endif
+                     </span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->

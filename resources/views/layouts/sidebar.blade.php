@@ -85,6 +85,15 @@
                                     </a>
 
                                     <ul class="nav nav-treeview">
+                                     @can('view-any', App\Models\Language::class)
+                                            <li class="nav-item">
+                                                <a href="{{ route('languages.index') }}"
+                                                    class="nav-link {{ Request::is('smis/setting/languages') || Request::is('smis/setting/languages/*') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <p>Languages</p>
+                                                </a>
+                                            </li>
+                                        @endcan
                                         @if ($user->hasPermission('view keypeformanceindicators'))
                                             <li class="nav-item">
                                                 <a href="{{ route('perspectives.index') }}"
@@ -251,15 +260,7 @@
                             </li>
                             @endcan --}}
                                         {{-- @dd(auth()->user()->roles->first()->permi); --}}
-                                        @can('view-any', App\Models\Language::class)
-                                            <li class="nav-item">
-                                                <a href="{{ route('languages.index') }}"
-                                                    class="nav-link {{ Request::is('smis/setting/languages') || Request::is('smis/setting/languages/*') ? 'active' : '' }}">
-                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                                    <p>Languages</p>
-                                                </a>
-                                            </li>
-                                        @endcan
+                                       
                                 </ul>
                             </li>
 

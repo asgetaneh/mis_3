@@ -282,6 +282,10 @@ class PlanAccomplishmentController extends Controller
        $getuser = User::find($user);
        $user_offices = $getuser->offices[0]->id;
        $getoffice = Office::find($user_offices);
+       $plan_status=$getoffice->level;
+       if($getoffice->level ===1){
+        $plan_status =11;
+       }
          $submit = "create";
          $index = [];
         $planning = PlaningYear::where('is_active',true)->get();
@@ -322,8 +326,8 @@ class PlanAccomplishmentController extends Controller
                     }
                     $plan_accom->office_id=$user_offices;
                     $plan_accom->plan_value=$value;
-                    $plan_accom->accom_value=0;
-                    $plan_accom->plan_status=$getoffice->level;
+                    //$plan_accom->accom_value=0;
+                    $plan_accom->plan_status=$plan_status;
                     $plan_accom->accom_status=$getoffice->level;
                      $plan_accom->planning_year_id=$planning[0]->id;
                   $plan_accom->save();
@@ -528,7 +532,6 @@ class PlanAccomplishmentController extends Controller
        ->groupBy('kpi_id')  ->get();
          if( $is_admin){
             $imagen_off = Office::find(1); //immaginery office of which contain all office kpi plan
-
             $off_level = 1;
             $all_offices = getAllOffices();
             $only_child_array = [];
@@ -657,6 +660,10 @@ class PlanAccomplishmentController extends Controller
        $getuser = User::find($user);
        $user_offices = $getuser->offices[0]->id;
        $getoffice = Office::find($user_offices);
+       $accom_status=$getoffice->level;
+       if($getoffice->level ===1){
+        $accom_status =11;
+       }
         $submit = "create";
          $index = [];
         $planning = PlaningYear::where('is_active',true)->get();
@@ -704,7 +711,7 @@ class PlanAccomplishmentController extends Controller
                         ->where('kpi_child_two_id' , '=', $kpi_child_two_id)
                         ->where('kpi_child_three_id' , '=',$kpi_child_three_id))
                             ->update(['accom_value' => (string)$value])
-                            ->update(['accom_status' => (string)$off_level]);
+                            ->update(['accom_status' => (string)$accom_status]);
                       }
                     else{
                         if($value=="yes"){ $submit = "update"; continue;}
@@ -755,6 +762,8 @@ class PlanAccomplishmentController extends Controller
        $search = $request->get('search', '');
        $office_id = auth()->user()->offices[0]->id;
        $office =Office::find($office_id);
+        $imagen_off = $office;
+        $off_level = $office->level;
        $all_office_list = $this->allChildAndChildChild($office);
        $only_child_array = array_merge($all_office_list,array($office_id));
 
@@ -776,6 +785,8 @@ class PlanAccomplishmentController extends Controller
                 $office =Office::find($office_id);
                 $all_office_list = $this->allChildAndChildChild($office);
                 $only_child_array = array_merge($all_office_list,array($office_id));
+                 $off_level = $office->level;
+                $imagen_off = $office;
             }
 
             $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $only_child_array)->whereIn('kpi_id', $kpi_array)->select('*', DB::raw('SUM(accom_value) AS sum'))
@@ -787,6 +798,8 @@ class PlanAccomplishmentController extends Controller
         //-> where('reporting_periods.slug',"=", 1)
        ->groupBy('kpi_id')  ->get();
          if( $is_admin){
+             $imagen_off = Office::find(1); //immaginery office of which contain all office kpi plan
+            $off_level = 1;
             $all_offices = getAllOffices();
             $only_child_array = [];
             foreach ($all_offices as $key => $value) {
@@ -805,7 +818,7 @@ class PlanAccomplishmentController extends Controller
          $planning_year = PlaningYear::where('is_active',true)->get();
         return view(
             'app.report_accomplishments.view-reporting-acc',
-            compact('planAccomplishments','all_office_list','only_child_array','planning_year','office','search')
+            compact('planAccomplishments','all_office_list','only_child_array','planning_year','office','off_level','imagen_off','search')
         );
 
    }

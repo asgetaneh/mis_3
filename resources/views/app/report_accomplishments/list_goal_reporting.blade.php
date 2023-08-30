@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 
-<div class="row justify-content-center mt-5">
+<div class="row justify-content-center mt-3">
     <div class="col-md-2">
 
         <div class="card">
@@ -49,9 +49,9 @@
     <div class="col-md-10">
 
          <div class="card" class="collapse">
-            <div class="card-header">Management information systems (MIS)</div>
+            <div class="card-header">Management information systems (MIS) - Reporting Area</div>
             <div class="card-body">
-                   <table class="table table-borderless table-hover">
+                   {{-- <table class="table table-borderless table-hover">
                     <tbody>
 
                         @forelse($suitableKpis as $suitable)
@@ -122,7 +122,20 @@
                                 </td>
                         </tr>
                     </tfoot>
-                </table>
+                </table> --}}
+
+                @if (count($kpis['goal']) > 0)
+                    <div class="callout callout-info">
+                        {{-- <h5>I am an info callout!</h5> --}}
+                        <p>Please select a Goal from left menu for reporting!</p>
+                    </div>
+                    {{-- <h4 class="">Please select a Goal from left menu to start planning!</h4> --}}
+                @else
+                    <div class="callout callout-info">
+                        {{-- <h5>I am an info callout!</h5> --}}
+                        <p>Nothing to show here!</p>
+                    </div>
+                @endif
 
             </div>
         </div>

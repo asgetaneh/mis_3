@@ -20,44 +20,40 @@
         <div class="col-12">
             <div class="card card-primary card-outline card-outline-tabs fillable-objective">
                 <div class="card-body">
-                    <form role="form" class="form-horizontal" method="get"
-                        action="{{ route('view-plan-accomplishment') }}">
-                        <div class="row">
-                            <div class="col-md-5">
-                                <label class="label" for="filters">Offices:</label>
-                                <select class="form-control" name="office">
-                                    <option value=" ">Select Office</option>
-                                    @forelse(getAllOffices() as $office)
-                                        <option value="{{ $office->id }}">{{ $office->officeTranslations[0]->name }}
-                                        </option>
-                                    @empty
-                                    @endforelse
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class=" " for="filters">KPI:</label>
-                                <select class="form-control" name="kpi">
-                                    <option value=" ">Select KPI</option>
-                                    @forelse(getAllKpi() as $kpi)
-                                        <option value="{{ $kpi->id }}">{{ $kpi->keyPeformanceIndicatorTs[0]->name }}
-                                        </option>
-                                    @empty
-                                    @endforelse
-                                </select>
+                         <form role="form" class="form-horizontal" method="get" action="{{ route('view-report-accomplishment') }}">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <label class="label" for="filters">Offices:</label>
+                                    <select class="form-control" name="office">
+                                        <option value=" ">Select Office</option>
+                                        @forelse(getAllOffices() as $office)
+                                            <option value="{{$office->id }}">{{$office->officeTranslations[0]->name}}</option>
+                                         @empty
+                                        @endforelse
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class=" " for="filters">KPI:</label>
+                                    <select class="form-control" name="kpi">
+                                        <option value=" ">Select KPI</option>
+                                       @forelse(getAllKpi() as $kpi)
+                                            <option value="{{$kpi->id }}">{{$kpi->keyPeformanceIndicatorTs[0]->name}}
+                                            </option>
+                                         @empty
+                                        @endforelse
+                                    </select>
 
+                                </div>
+                                <div class="col-md-1"><br/>
+                                    <button class="btn btn-primary" value="search" name="search"
+                                        type="submit">Search</button>
+                                 </div>
                             </div>
-                            <div class="col-md-1"><br />
-                                <button class="btn btn-primary" value="search" name="search" type="submit">Search</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                        </form>
+                 </div>
             </div>
         </div>
-
     </div>
-
-
 
 
     <div class="row justify-content-center mt-5">
@@ -66,9 +62,9 @@
                 <div class="card-body">
                     <div class="tab-content" id="custom-tabs-four-tabContent">
                         @php
-                            $kpi_repeat[0] = null;
+                            $kpi_repeat[0] = '0';
                             $c = 1;
-                            $objective_array = [];
+                            $objective_array =[];
                         @endphp
                         @forelse($planAccomplishments as $planAcc)
                             @php
@@ -81,7 +77,7 @@
                                     <div class="card-header">
                                         @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
                                             @if (app()->getLocale() == $kpiT->locale)
-                                                <table class="table">
+                                               <table class="table">
                                                     <tr style="background:#87cdc6;">
                                                         @if (!in_array($planAcc->Kpi->objective->id, $objective_array))
                                                              <th colspan="2" style="width:100%;"> Objective:
@@ -145,8 +141,8 @@
 
                                             @forelse($offices  as $office)
                                                 @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
-                                                    {{-- <table class="table table-bordered">
-                                                        <thead> --}}
+                                                    <table class="table table-bordered">
+                                                        <thead>
                                                             @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
                                                                 @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
                                                                     @include('app.report_accomplishments.view-kpi123')
@@ -159,8 +155,8 @@
                                                                 @include('app.report_accomplishments.view-kpi1')
                                                             @endif
 
-                                                        {{-- </thead>
-                                                    </table> --}}
+                                                        </thead>
+                                                    </table>
                                                     {{-- KPI has no child one, which means just only plain input --}}
                                                 @else
                                                     @include('app.report_accomplishments.view-kpi')

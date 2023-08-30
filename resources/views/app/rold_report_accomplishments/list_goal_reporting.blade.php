@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 
-<div class="row justify-content-center mt-3">
+<div class="row justify-content-center mt-5">
     <div class="col-md-2">
 
         <div class="card">
@@ -13,10 +13,10 @@
                         <table class="table table-borderless table-hover">
                     <tbody>
 
-                        @forelse($kpis['goal'] as $goal) 
+                        @forelse($kpis['goal'] as $goal)
                         <tr>
                             {{-- <td> --}}
-                                 <a class="border btn btn-light btn-block text-left {{ Request::is('smis/plan/get-objectives/'.$goal->id) ? 'bg-primary' : '' }}" href="{{ route('get-objectives', $goal->id) }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                 <a class="border btn btn-light btn-block text-left {{ Request::is('smis/report/get-objectives/'.$goal->id) ? 'bg-primary' : '' }}" href="{{ route('get-objectives-reporting', $goal->id) }}" role="button" aria-expanded="false" aria-controls="collapseExample">
                                 {{
                                 optional($goal->goalTranslations[0])->name
                                 ?? '-' }}
@@ -49,9 +49,9 @@
     <div class="col-md-10">
 
          <div class="card" class="collapse">
-            <div class="card-header bg-light">Management information systems (MIS) - Planning Area</div>
+            <div class="card-header">Management information systems (MIS)</div>
             <div class="card-body">
-                   {{-- <table class="table table-borderless table-hover">
+                   <table class="table table-borderless table-hover">
                     <tbody>
 
                         @forelse($suitableKpis as $suitable)
@@ -122,21 +122,7 @@
                                 </td>
                         </tr>
                     </tfoot>
-                </table> --}}
-
-                @if (count($kpis['goal']) > 0)
-                    <div class="callout callout-info">
-                        {{-- <h5>I am an info callout!</h5> --}}
-                        <p>Please select a Goal from left menu for planning!</p>
-                    </div>
-                    {{-- <h4 class="">Please select a Goal from left menu to start planning!</h4> --}}
-                @else
-                    <div class="callout callout-info">
-                        {{-- <h5>I am an info callout!</h5> --}}
-                        <p>Nothing to show here!</p>
-                    </div>
-                @endif
-
+                </table>
 
             </div>
         </div>

@@ -62,10 +62,10 @@
                 } 
                 $childAndHim_array = array_merge($childAndHim_array,array($office->id));
                 $plan123 = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,$office,$period->id);
-                $narration = $planAcc->getReportNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
+                $narration = $planAcc->getNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
 
             @endphp
-            {{$plan123[1]}}
+            {{$plan123[0]}}
             </td>
         @endforeach
     @endforeach

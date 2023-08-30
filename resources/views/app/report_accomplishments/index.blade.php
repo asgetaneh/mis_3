@@ -25,9 +25,9 @@
                 </form>
             </div>
             <div class="col-md-6 text-right">
-                @can('create', App\Models\KeyPeformanceIndicatorT::class)
+                @can('create', App\Models\PlanAccomplishment::class)
                 <a
-                    href="{{ route('key-peformance-indicator-ts.create') }}"
+                    href="{{ route('plan-accomplishments.create') }}"
                     class="btn btn-primary"
                 >
                     <i class="icon ion-md-add"></i> @lang('crud.common.create')
@@ -41,7 +41,7 @@
         <div class="card-body">
             <div style="display: flex; justify-content: space-between;">
                 <h4 class="card-title">
-                    @lang('crud.key_peformance_indicator_translations.index_title')
+                    @lang('crud.plan_accomplishments.index_title')
                 </h4>
             </div>
 
@@ -50,19 +50,31 @@
                     <thead>
                         <tr>
                             <th class="text-left">
-                                @lang('crud.key_peformance_indicator_translations.inputs.name')
+                                @lang('crud.plan_accomplishments.inputs.kpi')
                             </th>
                             <th class="text-left">
-                                @lang('crud.key_peformance_indicator_translations.inputs.description')
+                                @lang('crud.plan_accomplishments.inputs.reporting_period_id')
+                            </th>
+                            <!-- <td>
+                             @forelse($planAccomplishments as $planAccomplishment)
+                               @forelse($planAccomplishment->Kpi-> kpiChildOnes as $choneT)
+                                         {{$choneT->id}}
+                                 @empty
+                             @endforelse
+                             @empty
+                             @endforelse
+                            </td> -->
+                            <th class="text-right">
+                                @lang('crud.plan_accomplishments.inputs.plan_value')
+                            </th>
+                            <th class="text-right">
+                                @lang('crud.plan_accomplishments.inputs.accom_value')
                             </th>
                             <th class="text-left">
-                                @lang('crud.key_peformance_indicator_translations.inputs.out_put')
+                                @lang('crud.plan_accomplishments.inputs.plan_status')
                             </th>
                             <th class="text-left">
-                                @lang('crud.key_peformance_indicator_translations.inputs.out_come')
-                            </th>
-                            <th class="text-left">
-                                @lang('crud.key_peformance_indicator_translations.inputs.translation_id')
+                                @lang('crud.plan_accomplishments.inputs.accom_status')
                             </th>
                             <th class="text-center">
                                 @lang('crud.common.actions')
@@ -70,24 +82,49 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($keyPeformanceIndicatorTs as
-                        $keyPeformanceIndicatorT)
+                        @forelse($planAccomplishments as $planAccomplishment)
                         <tr>
-                            <td>{{ $keyPeformanceIndicatorT->name ?? '-' }}</td>
                             <td>
-                                {{ $keyPeformanceIndicatorT->description ?? '-'
-                                }}
+                              @forelse($planAccomplishment->Kpi-> keyPeformanceIndicatorTs as $kpi)
+                                @if(app()->getLocale() == $kpi->locale) 
+                                        {{$kpi->name}}
+                                @endif
+                                @empty
+                             @endforelse
+                            </td>
+                               @forelse($planAccomplishment->Kpi->kpiChildOnes as $chone)
+                               <tr>
+                               <td>
+                                 @forelse($chone->kpiChildOneTranslations as $choneT)
+                                  @if(app()->getLocale() == $choneT->locale) 
+                                        {{$choneT->name}}
+                                @endif
+                                  @empty
+                             @endforelse
+                            </td>
+                            </tr>
+                              @empty
+                             @endforelse
+                            <td>
+                            @forelse($planAccomplishment->reportingPeriod->reportingPeriodTs as $rperiod)
+                                @if(app()->getLocale() == $rperiod->locale) 
+                                        {{$rperiod->name}}
+                                @endif
+                                @empty
+                             @endforelse
+                             </td>
+                             
+                            <td>
+                                {{ $planAccomplishment->plan_value ?? '-' }}
                             </td>
                             <td>
-                                {{ $keyPeformanceIndicatorT->out_put ?? '-' }}
+                                {{ $planAccomplishment->accom_value ?? '-' }}
                             </td>
                             <td>
-                                {{ $keyPeformanceIndicatorT->out_come ?? '-' }}
+                                {{ $planAccomplishment->plan_status ?? '-' }}
                             </td>
                             <td>
-                                {{
-                                optional($keyPeformanceIndicatorT->keyPeformanceIndicator)->id
-                                ?? '-' }}
+                                {{ $planAccomplishment->accom_status ?? '-' }}
                             </td>
                             <td class="text-center" style="width: 134px;">
                                 <div
@@ -95,9 +132,9 @@
                                     aria-label="Row Actions"
                                     class="btn-group"
                                 >
-                                    @can('update', $keyPeformanceIndicatorT)
+                                    @can('update', $planAccomplishment)
                                     <a
-                                        href="{{ route('key-peformance-indicator-ts.edit', $keyPeformanceIndicatorT) }}"
+                                        href="{{ route('plan-accomplishments.edit', $planAccomplishment) }}"
                                     >
                                         <button
                                             type="button"
@@ -106,10 +143,9 @@
                                             <i class="icon ion-md-create"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('view',
-                                    $keyPeformanceIndicatorT)
+                                    @endcan @can('view', $planAccomplishment)
                                     <a
-                                        href="{{ route('key-peformance-indicator-ts.show', $keyPeformanceIndicatorT) }}"
+                                        href="{{ route('plan-accomplishments.show', $planAccomplishment) }}"
                                     >
                                         <button
                                             type="button"
@@ -118,10 +154,9 @@
                                             <i class="icon ion-md-eye"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('delete',
-                                    $keyPeformanceIndicatorT)
+                                    @endcan @can('delete', $planAccomplishment)
                                     <form
-                                        action="{{ route('key-peformance-indicator-ts.destroy', $keyPeformanceIndicatorT) }}"
+                                        action="{{ route('plan-accomplishments.destroy', $planAccomplishment) }}"
                                         method="POST"
                                         onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                     >
@@ -139,7 +174,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6">
+                            <td colspan="7">
                                 @lang('crud.common.no_items_found')
                             </td>
                         </tr>
@@ -147,8 +182,8 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="6">
-                                {!! $keyPeformanceIndicatorTs->render() !!}
+                            <td colspan="7">
+                                {!! $planAccomplishments->render() !!}
                             </td>
                         </tr>
                     </tfoot>

@@ -40,7 +40,11 @@
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"style="color:white;">
               <span class="hidden-xs glyphicon glyphicon-user ">   
-                     {{ Auth::user()->name }}</span>
+                     {{ Auth::user()->name }}
+                     @if(!Auth::user()->offices->isEmpty())
+                         {{"("}} {{Auth::user()->offices[0]->officetranslations[0]->name}}{{")"}}
+                      @endif
+                     </span>
             </a>
             <ul class="dropdown-menu">
                

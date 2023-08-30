@@ -10,7 +10,7 @@
         {{ $one->kpiChildOneTranslations[0]->name }}
     </td>
 @endforeach
-<th>Sum</th>
+{{-- <th>Sum</th> --}}
 </tr>
     @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
          @php
@@ -21,7 +21,7 @@
             }
             $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
             $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id, $office);
-            $narration = $planAcc->getReportNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
+            $narration = $planAcc->getNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
         @endphp 
         <tr>
             <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
@@ -36,11 +36,11 @@
                         @php
                             $planOneTwo = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id, $office, $period->id);
                         @endphp
-                        {{ $planOneTwo }}
+                        {{ $planOneTwo[1] }}
                     </td>
                 @endforeach
                 {{-- total ch2 --}}
-                <td>
+                {{-- <td>
                     @php
                         $planSumch2_array = [];
                         $planSumch2 = $office->offices;
@@ -52,14 +52,14 @@
                         $planSumch2Total = $planAcc->planIndividualChTwoSum($planAcc->Kpi->id, $two->id, $planSumch2_array,$period->id);
                     @endphp
                     {{ $planSumch2Total }}
-                </td>
+                </td> --}}
                 {{-- end total ch2 --}}
         </tr>
     @endforeach
 @empty
     @endforelse
     {{-- total ch1ch3 --}}
-    <tr>
+    {{-- <tr>
         <th colspan='2' style="background:#ffeecc;">
             {{ 'Total' }}
             </td>
@@ -79,7 +79,7 @@
         </td>
         @endforeach
         <td> {{ $planKpiOfficeYear }}</td>
-    </tr>
+    </tr> --}}
     <tr>
        <td>
         Major Activities
@@ -91,6 +91,6 @@
               echo "<br/>"  
               @endphp
         @endforeach
-</td>
+    </td>
     </tr>
     {{-- end total ch1ch3 --}}
