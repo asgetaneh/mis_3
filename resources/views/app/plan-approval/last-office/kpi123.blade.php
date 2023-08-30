@@ -5,7 +5,7 @@
 <tr style ="background:#fff7e6;width:100%">
 
     {{-- check if current office is approved or not so that show the select or an APPROVED badge --}}
-    @if(planStatusOffice(auth()->user()->offices[0], $planAcc->kpi_id, $planning_year[0]->id) == auth()->user()->offices[0]->level)
+    @if(planStatusOffice(auth()->user()->offices[0], $planAcc->kpi_id, $planning_year[0]->id) !== auth()->user()->offices[0]->level)
         <th class="bg-light">
             <input class="hidden-self-input-{{ $planAcc->Kpi->id }}" type ="hidden" name="approve[]" value="{{$planAcc->Kpi->id}}-{{auth()->user()->offices[0]->id}}-{{$planning_year[0]->id}}"
             title="Appove for {{auth()->user()->offices[0]->officeTranslations[0]->name}}"/>

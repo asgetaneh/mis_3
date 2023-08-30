@@ -65,9 +65,9 @@ class OfficeTranslationController extends Controller
         $language = Language::all();
          try {
             $office = new Office;
-            if(isset($_POST['parent_name'])){
-                $parentLevel = Office::where('id', $data['parent_name'])->first();
-                $office->parent_office_id = $data['parent_name'];
+            if(isset($request->parent_name)){
+                $parentLevel = Office::where('id', $request->parent_name)->first();
+                $office->parent_office_id = $request->parent_name;
                 $office->level =  $parentLevel ? $parentLevel->level + 1 : null;
             }else{
                 $office->level = 0;
@@ -204,9 +204,7 @@ class OfficeTranslationController extends Controller
         }
 
         return redirect()
-            ->route('office-translations.index2
-            
-            ', $officeTranslation)
+            ->route('office-translations.index', $officeTranslation)
             ->withSuccess(__('crud.common.updated'));
     }
 
