@@ -65,9 +65,9 @@ class OfficeTranslationController extends Controller
         $language = Language::all();
          try {
             $office = new Office;
-            if(isset($_POST['parent_name'])){
-                $parentLevel = Office::where('id', $data['parent_name'])->first();
-                $office->parent_office_id = $data['parent_name'];
+            if(isset($request->parent_name)){
+                $parentLevel = Office::where('id', $request->parent_name)->first();
+                $office->parent_office_id = $request->parent_name;
                 $office->level =  $parentLevel ? $parentLevel->level + 1 : null;
             }else{
                 $office->level = 0;
@@ -148,23 +148,47 @@ class OfficeTranslationController extends Controller
         $data = $request->input();
         $language = Language::all();
 
-        // dd(isset($_POST['parent_name']));
-        if(isset($_POST['parent_name'])){
-            $parentLevel = Office::where('id', $data['parent_name'])->first();
-            $officeTranslation->office->update([
-                'parent_office_id' => $data['parent_name'],
-                'level' => $parentLevel ? $parentLevel->level + 1 : null,
-                'updated_at' => new \DateTime(),
-            ]);
+        $currentOffice = (int)$request->officeId;
+        $parentOfficeId = $request->parentOfficeId;
+        // dd($parentOfficeId);
+
+        // check if parent office is changed
+        if($parentOfficeId !== $request->parent_name){
+
+            // according to the selected parent office value update the level of each office recursively
+            if(isset($request->parent_name)){
+
+                $parentLevel = Office::where('id', $request->parent_name)->first();
+
+                $levelCurrentOffice = $parentLevel->level + 1;
+                $officeTranslation->office->update([
+                    'parent_office_id' => $request->parent_name,
+                    'level' => $levelCurrentOffice,
+                    'updated_at' => new \DateTime(),
+                ]);
+
+                $updateRecursively = updateLevels($officeTranslation->office, $levelCurrentOffice);
+
+            }else{
+
+                $changedLevel = 1;
+                $officeTranslation->office->update([
+                    'parent_office_id' => null,
+                    'level' => $changedLevel,
+                    'updated_at' => new \DateTime(),
+                ]);
+
+                $updateRecursively = updateLevels($officeTranslation->office, $changedLevel);
+
+            }
 
         }else{
             $officeTranslation->office->update([
-                'level' => 0,
                 'updated_at' => new \DateTime(),
             ]);
         }
 
-        foreach ($request->except('_token', '_method', 'parent_name') as $key => $value) {
+        foreach ($request->except('_token', '_method', 'parent_name', 'parentOfficeId' , 'officeId') as $key => $value) {
 
             $locale = str_replace(['name_', 'description_'], '', $key);
 

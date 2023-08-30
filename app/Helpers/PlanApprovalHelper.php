@@ -993,3 +993,18 @@ function commentorTextStatus($office, $commentorId, $kpi, $year, $suffix){
     // dd($status);
     return $status ?? '';
 }
+
+
+// below function is used for the Update functionality of office CRUD, it's out of this helper file purpose
+function updateLevels($officeTranslation, $changedLevel) {
+    if ($officeTranslation->offices->count() > 0) {
+        foreach ($officeTranslation->offices as $childOne) {
+            $childOne->update([
+                'level' => $changedLevel + 1
+            ]);
+            updateLevels($childOne, $changedLevel + 1);
+        }
+    }
+
+    return 1;
+}

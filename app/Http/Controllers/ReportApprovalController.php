@@ -116,7 +116,7 @@ class ReportApprovalController extends Controller
         $planning_year = PlaningYear::where('is_active', true)->get();
 
         $planAccomplishmentsLastOffice = [];
-        if(auth()->user()->offices[0]->parent_office_id === null){
+        if(auth()->user()->offices[0]->level === 1){
             $planAccomplishmentsLastOffice = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
             ->where('reporting_periods.slug', "=", 1)
             ->where('office_id', auth()->user()->offices[0]->id)
@@ -167,7 +167,7 @@ class ReportApprovalController extends Controller
                                 ->where('kpi_id', $singleOfficePlan[0])
                                 ->whereIn('reporting_period_id', $activeReportingPeriodList)
                                 ->update([
-                                    'accom_status' => 0, // decide what value it is later.
+                                    'accom_status' => 1, // decide what value it is later.
                                     'approved_by_id' => auth()->user()->id
                                 ]);
                     }
