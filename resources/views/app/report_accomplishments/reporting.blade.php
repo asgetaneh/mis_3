@@ -522,7 +522,8 @@
                                     id="summernote" placeholder="Narration here" required></textarea>
                             @endif
 
-                        {{-- </div> --}}
+                        </div>
+                                        </div>
                     @else
                     <h5>{{"No Plan for Keyperformance indicator"}}</h5>
                     @endif
@@ -532,8 +533,8 @@
                         <button type="submit" class="btn btn-primary">Submit</button>
                                         </div>
                         </form>
-                    </div>
-                </div>
+                    {{-- </div>
+                </div> --}}
 
             @empty
                 {{-- <p>ugyftrdy</p> --}}
@@ -591,7 +592,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
             $('.summernote').summernote({
-                height: 150
+                height: 230
             });
             $('.dropdown-toggle').dropdown()
         });

@@ -479,13 +479,13 @@
                                             $disabled = '';
                                         @endphp
                                         @if ($plan)
-                                             @if($off_level ===1) 
+                                             @if($off_level ===1)
                                                 @if ($off_level === $plan->plan_status)
                                                     @php $disabled ="disabled"; @endphp
                                                 @endif
                                             @elseif ($off_level != $plan->plan_status)
                                                 @php $disabled ="disabled"; @endphp
-                                             @endif  
+                                             @endif
                                             <td>
                                                 <input type="hidden" name="type" value="yes">
                                                 <input name="{{ $kpi->id }}-{{ $period->id }}"
@@ -606,7 +606,8 @@
                                     class="form-control summernote" id="summernote" placeholder="Narration here" required></textarea>
                             @endif
 
-                        {{-- </div> --}}
+                        </div>
+                                            </div>
 
                     @empty
                         <h4>No KPI registered for this Goal and Objective!</h4>
@@ -614,8 +615,8 @@
                         <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
                         </form>
-                    </div>
-                </div>
+                    {{-- </div>
+                </div> --}}
 
             @empty
                 {{-- <p>ugyftrdy</p> --}}
@@ -672,7 +673,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
             $('.summernote').summernote({
-                height: 150
+                height: 230
             });
             $('.dropdown-toggle').dropdown()
         });
