@@ -118,7 +118,7 @@ class ReportApprovalController extends Controller
         $planAccomplishmentsLastOffice = [];
         if(auth()->user()->offices[0]->level === 1){
             $planAccomplishmentsLastOffice = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
-            ->where('reporting_periods.slug', "=", 1)
+            // ->where('reporting_periods.slug', "=", 1)
             ->where('office_id', auth()->user()->offices[0]->id)
             ->select('*', DB::raw('SUM(accom_value) AS sum'))
             ->whereNotNull('accom_value')

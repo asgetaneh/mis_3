@@ -44,7 +44,7 @@
     @forelse(getReportingQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
         <td>
             @php
-                $planOne = reportOne($planAcc->Kpi->id, $one->id, auth()->user()->offices[0], $period->id, 1);
+                $planOne = reportOne($planAcc->Kpi->id, $one->id, auth()->user()->offices[0], $period->id, 7);
                 $narration = getReportNarrationSelfOffice($planAcc->Kpi->id, $planning_year[0]->id, auth()->user()->offices[0], $period->id);
             @endphp
             {{ $planOne }}

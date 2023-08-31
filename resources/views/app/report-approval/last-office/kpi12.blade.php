@@ -50,7 +50,7 @@
                 @foreach ($planAcc->Kpi->kpiChildOnes as $one)
                     <td>
                         @php
-                            $planOneTwo = reportOneTwo($planAcc->Kpi->id, $one->id, $two->id, auth()->user()->offices[0], $period->id, 1);
+                            $planOneTwo = reportOneTwo($planAcc->Kpi->id, $one->id, $two->id, auth()->user()->offices[0], $period->id, 7);
                         @endphp
                         {{ $planOneTwo }}
                     </td>
@@ -66,7 +66,7 @@
                         $planSumch2_array = array_merge($planSumch2_array, [auth()->user()->offices[0]->id]);
 
                         // $planSumch2Total = planIndividualChTwoSum($planAcc->Kpi->id, $two->id, $planSumch2_array,$period->id);
-                        $planSumch2Total = reportIndividualChTwoSum($planAcc->Kpi->id, $two->id, auth()->user()->offices[0],$period->id, 1);
+                        $planSumch2Total = reportIndividualChTwoSum($planAcc->Kpi->id, $two->id, auth()->user()->offices[0],$period->id, 7);
                     @endphp
                     {{ $planSumch2Total }}
                 </td>
@@ -91,7 +91,7 @@
                 $offices_array = array_merge($offices_array, [auth()->user()->offices[0]->id]);
 
                 // $planSumch1ch3 = planIndividualChOnech($planAcc->Kpi->id, $one->id, $two->id, $offices_array);
-                $planSumch1ch3 = reportIndividualChOnech($planAcc->Kpi->id, $one->id, $two->id, auth()->user()->offices[0], 1);
+                $planSumch1ch3 = reportIndividualChOnech($planAcc->Kpi->id, $one->id, $two->id, auth()->user()->offices[0], 7);
             @endphp
             {{ $planSumch1ch3 }}
         </td>

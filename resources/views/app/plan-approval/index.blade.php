@@ -96,7 +96,7 @@
                                                 @endif
                                                 <tr>
                                                     <td colspan="8">
-                                                        <button type="submit" class="btn btn-primary float-right"
+                                                        <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-primary float-right"
                                                             id="approve-for-self-{{ $planAcc->kpi_id }}"><i
                                                                 class="fa fa-check nav-icon"></i> Approve Self</button>
                                                     </td>

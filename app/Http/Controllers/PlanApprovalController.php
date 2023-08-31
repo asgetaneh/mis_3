@@ -50,7 +50,8 @@ class PlanApprovalController extends Controller
             //dd($value->planacc);
         }
         // dd($all_office_list);
-        $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $all_office_list)->select('*', DB::raw('SUM(plan_value) AS sum'))->where('reporting_periods.slug', "=", 1)
+        $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $all_office_list)->select('*', DB::raw('SUM(plan_value) AS sum'))
+            // ->where('reporting_periods.slug', "=", 1)
             ->groupBy('kpi_id')
             ->get();
         //  dd($planAccomplishments);
@@ -65,7 +66,7 @@ class PlanApprovalController extends Controller
         $planAccomplishmentsLastOffice = [];
         if(auth()->user()->offices[0]->level === 1){
             $planAccomplishmentsLastOffice = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
-            ->where('reporting_periods.slug', "=", 1)
+            // ->where('reporting_periods.slug', "=", 1)
             ->where('office_id', auth()->user()->offices[0]->id)
             ->select('*', DB::raw('SUM(plan_value) AS sum'))
             ->groupBy('kpi_id')

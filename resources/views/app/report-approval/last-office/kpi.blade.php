@@ -33,7 +33,7 @@
         @forelse(getReportingQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @php
                 $planOfOfficePlan
-                = reportSum($planAcc->Kpi->id,auth()->user()->offices[0], $period->id, 1);
+                = reportSum($planAcc->Kpi->id,auth()->user()->offices[0], $period->id, 7);
                $narration = getReportNarrationSelfOffice($planAcc->Kpi->id,$planning_year[0]->id, auth()->user()->offices[0], $period->id);
             @endphp
             <td>

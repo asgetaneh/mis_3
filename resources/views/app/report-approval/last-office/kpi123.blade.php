@@ -69,7 +69,7 @@
                 $childAndHim_array[$key] = $value->id;
                 }
                 $childAndHim_array = array_merge($childAndHim_array,array(auth()->user()->offices[0]->id));
-                $plan123 = reportIndividual($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,auth()->user()->offices[0],$period->id, 1);
+                $plan123 = reportIndividual($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,auth()->user()->offices[0],$period->id, 7);
                 $narration = getReportNarrationSelfOffice($planAcc->Kpi->id,$planning_year[0]->id, auth()->user()->offices[0], $period->id);
 
             @endphp
@@ -88,7 +88,7 @@
             $planSumch2_array = array_merge( $planSumch2_array, array(auth()->user()->offices[0]->id));
 
             // $planSumch2Total = planIndividualChTwoSum($planAcc->Kpi->id,  $two->id,$planSumch2_array,$period->id);
-            $planSumch2Total = reportIndividualChTwoSum($planAcc->Kpi->id,  $two->id,auth()->user()->offices[0],$period->id, 1);
+            $planSumch2Total = reportIndividualChTwoSum($planAcc->Kpi->id,  $two->id,auth()->user()->offices[0],$period->id, 7);
             @endphp
             {{$planSumch2Total}}
             </td>
@@ -115,7 +115,7 @@
                 $offices_array = array_merge($offices_array, array(auth()->user()->offices[0]->id));
 
                 // $planSumch1ch3 = planIndividualChOnechThreeSum($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,$offices_array);
-                $planSumch1ch3 = reportIndividualChOnechThreeSum($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,auth()->user()->offices[0], 1);
+                $planSumch1ch3 = reportIndividualChOnechThreeSum($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,auth()->user()->offices[0], 7);
                 @endphp
                     {{$planSumch1ch3}}
             </td>
