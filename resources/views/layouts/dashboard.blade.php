@@ -206,34 +206,126 @@
                     </a>
                     <!-- /.info-box-content -->
                 </div>
+            </div>
         @endif
         <!-- /.info-box -->
     </div>
-    <!-- /.col -->
 
-    <!-- /.col -->
-    </div>
+    @if (auth()->user()->is_admin === true)
+        {{-- <section class="content"> --}}
+        <div class="">
+            <div class="row">
 
-    {{-- <section class="content"> --}}
-    <div class="">
-        <div class="row">
+                <div class="col-md-6">
 
-            <div class="col-md-6">
-
-                <div class="card card-success">
-                    <div class="card-header">
-                        <h3 class="card-title">Bar Chart</h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                <i class="fas fa-times"></i>
-                            </button>
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">Bar Chart</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
                         </div>
+                        <div class="card-body">
+                            <div class="chart">
+                                <div class="chartjs-size-monitor">
+                                    <div class="chartjs-size-monitor-expand">
+                                        <div class=""></div>
+                                    </div>
+                                    <div class="chartjs-size-monitor-shrink">
+                                        <div class=""></div>
+                                    </div>
+                                </div>
+                                <canvas id="barChart"
+                                    style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 442px;"
+                                    width="442" height="250" class="chartjs-render-monitor"></canvas>
+                            </div>
+                        </div>
+
                     </div>
-                    <div class="card-body">
-                        <div class="chart">
+
+
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">Stacked Bar Chart</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart">
+                                <div class="chartjs-size-monitor">
+                                    <div class="chartjs-size-monitor-expand">
+                                        <div class=""></div>
+                                    </div>
+                                    <div class="chartjs-size-monitor-shrink">
+                                        <div class=""></div>
+                                    </div>
+                                </div>
+                                <canvas id="stackedBarChart"
+                                    style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 442px;"
+                                    width="442" height="250" class="chartjs-render-monitor"></canvas>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="card card-info">
+                        <div class="card-header">
+                            <h3 class="card-title">Line Chart</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart">
+                                <div class="chartjs-size-monitor">
+                                    <div class="chartjs-size-monitor-expand">
+                                        <div class=""></div>
+                                    </div>
+                                    <div class="chartjs-size-monitor-shrink">
+                                        <div class=""></div>
+                                    </div>
+                                </div>
+                                <canvas id="lineChart"
+                                    style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 442px;"
+                                    width="442" height="250" class="chartjs-render-monitor"></canvas>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="card card-danger">
+                        <div class="card-header">
+                            <h3 class="card-title">Donut Chart</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
                             <div class="chartjs-size-monitor">
                                 <div class="chartjs-size-monitor-expand">
                                     <div class=""></div>
@@ -242,29 +334,27 @@
                                     <div class=""></div>
                                 </div>
                             </div>
-                            <canvas id="barChart"
+                            <canvas id="donutChart"
                                 style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 442px;"
                                 width="442" height="250" class="chartjs-render-monitor"></canvas>
                         </div>
+
                     </div>
 
-                </div>
 
-
-                <div class="card card-success">
-                    <div class="card-header">
-                        <h3 class="card-title">Stacked Bar Chart</h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                <i class="fas fa-times"></i>
-                            </button>
+                    <div class="card card-danger">
+                        <div class="card-header">
+                            <h3 class="card-title">Pie Chart</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="chart">
+                        <div class="card-body">
                             <div class="chartjs-size-monitor">
                                 <div class="chartjs-size-monitor-expand">
                                     <div class=""></div>
@@ -273,131 +363,41 @@
                                     <div class=""></div>
                                 </div>
                             </div>
-                            <canvas id="stackedBarChart"
+                            <canvas id="pieChart"
                                 style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 442px;"
                                 width="442" height="250" class="chartjs-render-monitor"></canvas>
                         </div>
+
                     </div>
 
-                </div>
-
-                <div class="card card-info">
-                    <div class="card-header">
-                        <h3 class="card-title">Line Chart</h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                <i class="fas fa-times"></i>
-                            </button>
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Area Chart</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="chart">
-                            <div class="chartjs-size-monitor">
-                                <div class="chartjs-size-monitor-expand">
-                                    <div class=""></div>
+                        <div class="card-body">
+                            <div class="chart">
+                                <div class="chartjs-size-monitor">
+                                    <div class="chartjs-size-monitor-expand">
+                                        <div class=""></div>
+                                    </div>
+                                    <div class="chartjs-size-monitor-shrink">
+                                        <div class=""></div>
+                                    </div>
                                 </div>
-                                <div class="chartjs-size-monitor-shrink">
-                                    <div class=""></div>
-                                </div>
-                            </div>
-                            <canvas id="lineChart"
-                                style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 442px;"
-                                width="442" height="250" class="chartjs-render-monitor"></canvas>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="col-md-6">
-
-                <div class="card card-danger">
-                    <div class="card-header">
-                        <h3 class="card-title">Donut Chart</h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="chartjs-size-monitor">
-                            <div class="chartjs-size-monitor-expand">
-                                <div class=""></div>
-                            </div>
-                            <div class="chartjs-size-monitor-shrink">
-                                <div class=""></div>
+                                <canvas id="areaChart"
+                                    style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 442px;"
+                                    width="442" height="250" class="chartjs-render-monitor"></canvas>
                             </div>
                         </div>
-                        <canvas id="donutChart"
-                            style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 442px;"
-                            width="442" height="250" class="chartjs-render-monitor"></canvas>
-                    </div>
 
-                </div>
-
-
-                <div class="card card-danger">
-                    <div class="card-header">
-                        <h3 class="card-title">Pie Chart</h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="chartjs-size-monitor">
-                            <div class="chartjs-size-monitor-expand">
-                                <div class=""></div>
-                            </div>
-                            <div class="chartjs-size-monitor-shrink">
-                                <div class=""></div>
-                            </div>
-                        </div>
-                        <canvas id="pieChart"
-                            style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 442px;"
-                            width="442" height="250" class="chartjs-render-monitor"></canvas>
-                    </div>
-
-                </div>
-
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">Area Chart</h3>
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="chart">
-                            <div class="chartjs-size-monitor">
-                                <div class="chartjs-size-monitor-expand">
-                                    <div class=""></div>
-                                </div>
-                                <div class="chartjs-size-monitor-shrink">
-                                    <div class=""></div>
-                                </div>
-                            </div>
-                            <canvas id="areaChart"
-                                style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 442px;"
-                                width="442" height="250" class="chartjs-render-monitor"></canvas>
-                        </div>
                     </div>
 
                 </div>
@@ -405,9 +405,8 @@
             </div>
 
         </div>
-
-    </div>
-    {{-- </section> --}}
+        {{-- </section> --}}
+    @endif
 
     <script src="{{ asset('assets/plugins/chart.js/Chart.min.js') }}"></script>
     <script>
