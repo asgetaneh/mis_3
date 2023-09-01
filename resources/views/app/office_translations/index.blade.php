@@ -32,6 +32,11 @@
                 <div style="display: flex; justify-content: space-between;">
                     <h4 class="card-title">
                         @lang('crud.offices.index_title')
+                        @if (auth()->user()->is_admin === true)
+                            <span>
+                                <a href="{{ route('office.hierarchy') }}" class="btn btn-outline-primary ml-3">Tree View</a>
+                            </span>
+                        @endif
                     </h4>
                     <a href="{{ route('office-assign.index') }}" class="btn btn-outline-success">
                         Assign Manager
