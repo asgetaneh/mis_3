@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand navbar-light navbar-info" style="background: #3074a4;">
+<nav class="navbar navbar-expand navbar-light navbar-info" style="background: #086098;">
 
     <ul class="navbar-nav">
         <li class="nav-item">

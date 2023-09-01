@@ -58,7 +58,7 @@ Route::get('/', function () {
         return redirect('/dashboard');
     }
 
-    return view('auth.login');
+    return view('landing.index');
 });
 Route::get('/dashboard', [HomeController::class, 'index'])->name('home');
 
