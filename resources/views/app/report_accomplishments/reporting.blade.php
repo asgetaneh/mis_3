@@ -154,8 +154,8 @@
                                             $checkPlanedForKpi = checkPlanedForKpi($planning_year[0]->id, $kpi->id, auth()->user()->offices[0]->id);
                                         @endphp
                                         @if($checkPlanedForKpi)
-                                        <div class="card p-2">
-                                            <div class="card-header">
+                                        <div class="card p-2" style="border: 1px solid #b1b1b1;">
+                                            <div class="card-header bg-light">
                                                 <h3 class="card-title">KPI:
                                                     {{ $kpi->KeyPeformanceIndicatorTs[0]->name }}
                                                     @php
