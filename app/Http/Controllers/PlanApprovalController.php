@@ -55,11 +55,47 @@ class PlanApprovalController extends Controller
             ->groupBy('kpi_id')
             ->get();
         //  dd($planAccomplishments);
+
+        // $allKpisListChildren = getKpiImmediateChilds($all_office_list);
+        // $allKpisListChildren = array_unique($allKpisListChildren);
+        // // dd($allKpisListChildren);
+
+        $allKpisListChildren = [];
+        if($planAccomplishments->count() > 0){
+            foreach($planAccomplishments as $kpi){
+                array_push($allKpisListChildren, $kpi->kpi_id);
+            }
+        }
+        // dd($all_office_list);
+
         if ($obj_office->offices->isEmpty()) {  // office with no child
             return redirect()
                 ->route('plan-accomplishment', $obj_office);
         }
         $planning_year = PlaningYear::where('is_active', true)->get();
+
+        // if last office worked on the kpi, add its sum to show total
+        if($planAccomplishments->count() > 0){
+            foreach($planAccomplishments as $plan){
+                if(auth()->user()->offices[0]->level === 1){
+                    // if he belongs to the kpi
+                    if(isLastOfficeBelongToKpi(auth()->user()->offices[0], $plan->kpi_id)->count() > 0){
+                        // if he has record for the current kpi
+                        if(getOfficePlanRecord($plan->kpi_id, auth()->user()->offices[0], $planning_year[0]->id)->count() > 0){
+                            $planAccomplishmentsLastOffice = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
+                            // ->where('reporting_periods.slug', "=", 1)
+                            ->where('office_id', auth()->user()->offices[0]->id)
+                            ->select('*', DB::raw('SUM(plan_value) AS sum'))
+                            ->where('kpi_id', $plan->kpi_id)
+                            ->get();
+
+                            // last office's sum added up so that to display the total sum in the kpi header view
+                            $plan->sum = $plan->sum + $planAccomplishmentsLastOffice[0]->sum;
+                        }
+                    }
+                }
+            }
+        }
 
         // Own plan approval, last office
 
@@ -76,7 +112,7 @@ class PlanApprovalController extends Controller
         }
         return view(
             'app.plan-approval.index',
-            compact('planAccomplishments', 'planAccomplishment_all', 'all_office_list', 'only_child_array', 'planning_year', 'obj_office', 'search', 'planAccomplishmentsLastOffice')
+            compact('planAccomplishments', 'planAccomplishment_all', 'all_office_list', 'only_child_array', 'planning_year', 'obj_office', 'search', 'planAccomplishmentsLastOffice', 'allKpisListChildren')
         );
     }
 

@@ -34,10 +34,13 @@ use App\Models\ReportNarrationReport;
 // // get if the child office of the current father has a plan for the kpi provided
 function getOfficeReportRecord($kpi, $office, $year) : bool
 {
+    $activeReportingPeriodList = getReportingPeriod();
+
     $reportRecord = PlanAccomplishment::select()
         ->where('kpi_id', $kpi)
         ->where('office_id', $office->id)
         ->where('planning_year_id', $year)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
         ->get();
 
     $hasReport = false;

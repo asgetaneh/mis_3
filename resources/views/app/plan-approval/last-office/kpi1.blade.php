@@ -1,12 +1,28 @@
 <tr>
         {{-- check if current office is approved or not so that show the select or an APPROVED badge --}}
         @if(planStatusOffice(auth()->user()->offices[0], $planAcc->kpi_id, $planning_year[0]->id) !== auth()->user()->offices[0]->level)
-            <th class="bg-light">
-                <input class="hidden-self-input-{{ $planAcc->Kpi->id }}" type ="hidden" name="approve[]" value="{{$planAcc->Kpi->id}}-{{auth()->user()->offices[0]->id}}-{{$planning_year[0]->id}}"
-                title="Appove for {{auth()->user()->offices[0]->officeTranslations[0]->name}}"/>
+            @if (isset($setter))
+                <th class="bg-light">
+                    {{-- <input class="form-check" type ="checkbox" name="approve[]" value="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}"
+                title="Appove for {{$office->officeTranslations[0]->name}}"/> --}}
 
-                <p class="badge badge-warning d-inline">NOT APPROVED</p>
-            </td>
+                    <div class="icheck-success d-inline">
+                        <input class="office-checkbox-kpi-{{ $planAcc->kpi_id }}" name="approve[]" type="checkbox"
+                            id="{{ $planAcc->kpi_id }}-{{ auth()->user()->offices[0]->id }}"
+                            value="{{ $planAcc->Kpi->id }}-{{ auth()->user()->offices[0]->id }}-{{ $planning_year[0]->id }}">
+                        <label for="{{ $planAcc->kpi_id }}-{{ auth()->user()->offices[0]->id }}">
+                            Select Office
+                        </label>
+                    </div>
+                </th>
+            @else
+                <th class="bg-light">
+                    <input class="hidden-self-input-{{ $planAcc->Kpi->id }}" type ="hidden" name="approve[]" value="{{$planAcc->Kpi->id}}-{{auth()->user()->offices[0]->id}}-{{$planning_year[0]->id}}"
+                    title="Appove for {{auth()->user()->offices[0]->officeTranslations[0]->name}}"/>
+
+                    <p class="badge badge-warning d-inline">NOT APPROVED</p>
+                </td>
+            @endif
 
         @else
             <th class="bg-light">
@@ -14,7 +30,7 @@
             </th>
         @endif
     <th colspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 1 }} ">
-        Offices: {{ auth()->user()->offices[0]->officeTranslations[0]->name }}
+        Offices: {{ auth()->user()->offices[0]->officeTranslations[0]->name }}  <span class="mark">{{ isset($setter) ? '(Own Plan)' : '' }}</span>
         </td>
 
 </tr>
