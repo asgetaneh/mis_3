@@ -37,44 +37,40 @@ class ReportApprovalController extends Controller
         //re-enable ONLY_FULL_GROUP_BY
         //DB::statement("SET sql_mode=(SELECT CONCAT(@@sql_mode, ',ONLY_FULL_GROUP_BY'));");
 
-        $is_admin = auth()->user()->isSuperAdmin();
-
-        if (isset($request->search))
-        {   $kpi_array = [];
+        if (isset($request->search)) {
+            $kpi_array = [];
             if ($request->input('kpi')) {
-                $kpi = $request->input('kpi');//dd($kpi);
-                $kpi_array = array_merge($kpi_array,array($kpi));
-            }else {
+                $kpi = $request->input('kpi'); //dd($kpi);
+                $kpi_array = array_merge($kpi_array, array($kpi));
+            } else {
                 $all_kpis = getAllKpi();
-                 foreach ($all_kpis as $key => $value) {
-                $kpi_array = array_merge($kpi_array,array($value->id));
-            }
+                foreach ($all_kpis as $key => $value) {
+                    $kpi_array = array_merge($kpi_array, array($value->id));
+                }
             }
             if ($request->input('office')) {
                 $office_id = $request->input('office');
-                $office =Office::find($office_id);
+                $office = Office::find($office_id);
                 $all_office_list = office_all_childs_ids($office);
-                $only_child_array = array_merge($all_office_list,array($office_id));
+                $only_child_array = array_merge($all_office_list, array($office_id));
             }
 
             $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
-            ->whereIn('office_id', $only_child_array)->whereIn('kpi_id', $kpi_array)
-            ->whereNotNull('accom_value')
-            ->select('*', DB::raw('SUM(accom_value) AS sum'))
+                ->whereIn('office_id', $only_child_array)->whereIn('kpi_id', $kpi_array)
+                ->whereNotNull('accom_value')
+                ->select('*', DB::raw('SUM(accom_value) AS sum'))
                 //-> where('reporting_periods.slug',"=", 1)
-                ->groupBy('kpi_id')  ->get();
-        }
-        else{
+                ->groupBy('kpi_id')->get();
+        } else {
             $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
-            ->whereIn('office_id', $all_office_list)
-            ->select('*', DB::raw('SUM(accom_value) AS sum'))
-            ->whereNotNull('accom_value')
-            //-> where('reporting_periods.slug',"=", 1)
-           ->groupBy('kpi_id')  ->get();
+                ->whereIn('office_id', $all_office_list)
+                ->select('*', DB::raw('SUM(accom_value) AS sum'))
+                ->whereNotNull('accom_value')
+                //-> where('reporting_periods.slug',"=", 1)
+                ->groupBy('kpi_id')->get();
 
-        //    dd($planAccomplishments);
-
-            //  if( $is_admin){
+            // $is_admin = auth()->user()->is_admin;
+            // if( $is_admin){
             //     $all_offices = getAllOffices();
             //     $only_child_array = [];
             //     foreach ($all_offices as $key => $value) {
@@ -82,8 +78,8 @@ class ReportApprovalController extends Controller
             //     }
             //     $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
             //         ->join('offices', 'offices.id', '=', 'plan_accomplishments.office_id')
-            //          ->join('key_peformance_indicators', 'plan_accomplishments.kpi_id', '=', 'key_peformance_indicators.id')
-            //             ->join('objectives', 'key_peformance_indicators.objective_id', '=', 'objectives.id')
+            //         ->join('key_peformance_indicators', 'plan_accomplishments.kpi_id', '=', 'key_peformance_indicators.id')
+            //         ->join('objectives', 'key_peformance_indicators.objective_id', '=', 'objectives.id')
             //         ->select('*', DB::raw('SUM(accom_value) AS sum'))
             //         //-> where('reporting_periods.slug',"=", 2)
             //         ->groupBy('objective_id')->groupBy('kpi_id') ->get();
@@ -91,59 +87,34 @@ class ReportApprovalController extends Controller
         }
 
 
-        // $planAccomplishment_all = DB::table('plan_accomplishments')
-        //     ->whereIn('office_id', $all_office_list)->groupBy('kpi_id')
-        //     ->sum('plan_accomplishments.accom_value');
-
-        // $kpii = KeyPeformanceIndicator::select('key_peformance_indicators.*')
-        //     ->join('kpi_office', 'key_peformance_indicators.id', '=', 'kpi_office.kpi_id')
-        //     ->join('offices', 'offices.id', '=', 'kpi_office.office_id')
-        //     ->whereIn('office_id', $all_office_list)
-        //     ->get();
-        // foreach ($kpii as $key => $value) {
-        //     //dd($value->planacc);
-        // }
-        // // dd($all_office_list);
-        // $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $all_office_list)->select('*', DB::raw('SUM(accom_value) AS sum'))
-        //     ->groupBy('kpi_id')
-        //     ->get();
-        // //  dd($planAccomplishments);
-        // if ($obj_office->offices->isEmpty()) {  // office with no child
-        //     return redirect()
-        //         ->route('plan-accomplishment', $obj_office);
-        // }
-
-
         // $allKpisListChildren = getKpiImmediateChilds($all_office_list);
         // $allKpisListChildren = array_unique($allKpisListChildren);
         // // dd($allKpisListChildren);
 
         $allKpisListChildren = [];
-        if($planAccomplishments->count() > 0){
-            foreach($planAccomplishments as $kpi){
+        if ($planAccomplishments->count() > 0) {
+            foreach ($planAccomplishments as $kpi) {
                 array_push($allKpisListChildren, $kpi->kpi_id);
             }
         }
-        // dd($all_office_list);
-
 
         $activeReportingPeriodList = getReportingPeriod();
         $planning_year = PlaningYear::where('is_active', true)->get();
 
-        if($planAccomplishments->count() > 0){
-            foreach($planAccomplishments as $plan){
-                if(auth()->user()->offices[0]->level === 1){
+        if ($planAccomplishments->count() > 0) {
+            foreach ($planAccomplishments as $plan) {
+                if (auth()->user()->offices[0]->level === 1) {
                     // if he belongs to the kpi
-                    if(isLastOfficeBelongToKpi(auth()->user()->offices[0], $plan->kpi_id)->count() > 0){
+                    if (isLastOfficeBelongToKpi(auth()->user()->offices[0], $plan->kpi_id)->count() > 0) {
                         // if he has record for the current kpi
-                        if(getOfficePlanRecord($plan->kpi_id, auth()->user()->offices[0], $planning_year[0]->id)->count() > 0){
+                        if (getOfficePlanRecord($plan->kpi_id, auth()->user()->offices[0], $planning_year[0]->id)->count() > 0) {
                             $planAccomplishmentsLastOffice = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
-                            // ->where('reporting_periods.slug', "=", 1)
-                            ->where('office_id', auth()->user()->offices[0]->id)
-                            ->select('*', DB::raw('SUM(accom_value) AS sum'))
-                            ->whereIn('reporting_period_id', $activeReportingPeriodList)
-                            ->where('kpi_id', $plan->kpi_id)
-                            ->get();
+                                // ->where('reporting_periods.slug', "=", 1)
+                                ->where('office_id', auth()->user()->offices[0]->id)
+                                ->select('*', DB::raw('SUM(accom_value) AS sum'))
+                                ->whereIn('reporting_period_id', $activeReportingPeriodList)
+                                ->where('kpi_id', $plan->kpi_id)
+                                ->get();
 
                             // last office's sum added up so that to display the total sum in the kpi header view
                             $plan->sum = $plan->sum + $planAccomplishmentsLastOffice[0]->sum;
@@ -155,14 +126,14 @@ class ReportApprovalController extends Controller
 
 
         $planAccomplishmentsLastOffice = [];
-        if(auth()->user()->offices[0]->level === 1){
+        if (auth()->user()->offices[0]->level === 1) {
             $planAccomplishmentsLastOffice = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
-            // ->where('reporting_periods.slug', "=", 1)
-            ->where('office_id', auth()->user()->offices[0]->id)
-            ->select('*', DB::raw('SUM(accom_value) AS sum'))
-            ->whereNotNull('accom_value')
-            ->groupBy('kpi_id')
-            ->get();
+                // ->where('reporting_periods.slug', "=", 1)
+                ->where('office_id', auth()->user()->offices[0]->id)
+                ->select('*', DB::raw('SUM(accom_value) AS sum'))
+                ->whereNotNull('accom_value')
+                ->groupBy('kpi_id')
+                ->get();
 
             // dd($planAccomplishmentsLastOffice);
         }
@@ -199,18 +170,17 @@ class ReportApprovalController extends Controller
                     // }
 
                     // check and approve self approver office
-                    if(auth()->user()->offices[0]->id === (int)$singleOfficePlan[1]){
+                    if (auth()->user()->offices[0]->id === (int)$singleOfficePlan[1]) {
                         $approvedSelfOffice = DB::table('plan_accomplishments')
-                                ->where('planning_year_id', $singleOfficePlan[2])
-                                ->where('office_id', auth()->user()->offices[0]->id)
-                                ->where('kpi_id', $singleOfficePlan[0])
-                                ->whereIn('reporting_period_id', $activeReportingPeriodList)
-                                ->update([
-                                    'accom_status' => 1, // decide what value it is later.
-                                    'approved_by_id' => auth()->user()->id
-                                ]);
-                    }
-                    else{
+                            ->where('planning_year_id', $singleOfficePlan[2])
+                            ->where('office_id', auth()->user()->offices[0]->id)
+                            ->where('kpi_id', $singleOfficePlan[0])
+                            ->whereIn('reporting_period_id', $activeReportingPeriodList)
+                            ->update([
+                                'accom_status' => 1, // decide what value it is later.
+                                'approved_by_id' => auth()->user()->id
+                            ]);
+                    } else {
                         $office = (int)$singleOfficePlan[1];
                         $findOffice = Office::find($office);
                         $allChildren = office_all_childs_ids($findOffice);
@@ -220,13 +190,11 @@ class ReportApprovalController extends Controller
 
                         // Prevent immediate child from changing its status if it was first approved
                         if (count($allChildrenApproved) > 0) {
-                            if(!(empty($isCurrentChildAlreadyApproved)) && $isCurrentChildAlreadyApproved->accom_status < auth()->user()->offices[0]->level){
+                            if (!(empty($isCurrentChildAlreadyApproved)) && $isCurrentChildAlreadyApproved->accom_status < auth()->user()->offices[0]->level) {
                                 $mergedOffices = $allChildrenApproved;
-                            }
-                            else{
+                            } else {
                                 $mergedOffices = array_merge($allChildrenApproved, array($office));
                             }
-
                         } else {
                             $mergedOffices = array($office);
                         }
@@ -252,10 +220,10 @@ class ReportApprovalController extends Controller
 
         // dd("Approved");
         return redirect()->back()->withSuccess(__('crud.common.approved'));
-
     }
 
-    public function reportDisapproved(Request $request){
+    public function reportDisapproved(Request $request)
+    {
         // dd($request->all());
 
         $requestData = explode('-', $request->input('disapprove-office-info'));
@@ -285,8 +253,8 @@ class ReportApprovalController extends Controller
             // dd($allChildrenApproved);
 
             $officeIdList = [];
-            if($allChildrenApproved->count() > 0){
-                foreach ($allChildrenApproved as $officer){
+            if ($allChildrenApproved->count() > 0) {
+                foreach ($allChildrenApproved as $officer) {
                     array_push($officeIdList, $officer->office_id);
                 }
             }
@@ -296,9 +264,9 @@ class ReportApprovalController extends Controller
 
 
             $officeDisapproved = DB::table('plan_accomplishments')
-                    ->where('planning_year_id', $planningYear)
-                    ->whereIn('office_id', $officeIdList)
-                    ->where('kpi_id', $kpi)
+                ->where('planning_year_id', $planningYear)
+                ->whereIn('office_id', $officeIdList)
+                ->where('kpi_id', $kpi)
                 // ->where('reporting_period_id', '=', $index[1])
                 ->update([
                     'accom_status' => $officeLevel->level,
@@ -349,7 +317,8 @@ class ReportApprovalController extends Controller
         return redirect()->back()->withSuccess(__('crud.common.disapproved'));
     }
 
-    public function reportComment(Request $request){
+    public function reportComment(Request $request)
+    {
         // dd($request->all());
 
         $loggedInUserOfficeLevel = Office::where('id', auth()->user()->offices[0]->id)->first();
@@ -363,20 +332,20 @@ class ReportApprovalController extends Controller
         $reportingPeriod = 3; // static for now, think on it later
 
         $isCurrentOfficePlanned = getOfficeReportRecord($kpi, $officeId, $planningYear);
-        $isOfficeLast= office_all_childs_ids($officeId);
+        $isOfficeLast = office_all_childs_ids($officeId);
         // dd(count($isOfficeLast));
         // dd($isCurrentOfficePlanned);
 
         // dd($isCurrentOfficePlanned->count() > 0 && count($isOfficeLast) == 0);
         // make current office's accom_status downgrade so that KPI plan form will be editable
-        if($isCurrentOfficePlanned && count($isOfficeLast) == 0){
+        if ($isCurrentOfficePlanned && count($isOfficeLast) == 0) {
             $changePlanStatus = DB::table('plan_accomplishments')
                 ->where('planning_year_id', $planningYear)
                 ->where('office_id', $office)
                 ->where('kpi_id', $kpi)
                 // ->where('reporting_period_id', $reportingPeriod)
                 ->update([
-                    'accom_status' => $loggedInUserOfficeLevel->level+1, // or the current office's level
+                    'accom_status' => $loggedInUserOfficeLevel->level + 1, // or the current office's level
                     // 'approved_by_id' => auth()->user()->id
                 ]);
         }
@@ -402,11 +371,10 @@ class ReportApprovalController extends Controller
         ]);
 
         return redirect()->back()->withSuccess(__('crud.common.commented'));
-
-
     }
 
-    public function replyComment(Request $request){
+    public function replyComment(Request $request)
+    {
         // dd($request->all());
 
         $requestData = explode('-', $request->input('view-commented-office-info'));
@@ -432,7 +400,8 @@ class ReportApprovalController extends Controller
     }
 
     // AJAX responses
-    public function getOfficeKpiInfo($data){
+    public function getOfficeKpiInfo($data)
+    {
         $requestArray = explode('-', $data);
         // error_log($requestArray[1]);
 
@@ -454,10 +423,10 @@ class ReportApprovalController extends Controller
         $responseData['kpi'] = $kpiName;
 
         return response()->json($responseData);
-
     }
 
-    public function getCommentInfo($data){
+    public function getCommentInfo($data)
+    {
         $requestArray = explode('-', $data);
         // error_log($requestArray[0]);
 
@@ -469,16 +438,16 @@ class ReportApprovalController extends Controller
 
         $officeName = getReportCommentorInfo(auth()->user()->offices[0]->id, $kpi, $planningYear)->name ?? '-';
 
-        $commentText = hasOfficeActiveReportComment(auth()->user()->offices[0]->id,$kpi, $planningYear);
+        $commentText = hasOfficeActiveReportComment(auth()->user()->offices[0]->id, $kpi, $planningYear);
         $commentTextString = '';
 
-        if($commentText->count() > 0){
-            foreach($commentText as $comment){
-                $commentTextString = $commentTextString.' '.$comment->report_comment;
+        if ($commentText->count() > 0) {
+            foreach ($commentText as $comment) {
+                $commentTextString = $commentTextString . ' ' . $comment->report_comment;
             }
         }
 
-        $commentTextString = '<div id="view-comment-paragraph">'.$commentTextString.'</div>';
+        $commentTextString = '<div id="view-comment-paragraph">' . $commentTextString . '</div>';
         error_log($commentTextString);
 
         $responseData = [];
@@ -489,7 +458,8 @@ class ReportApprovalController extends Controller
         return response()->json($responseData);
     }
 
-    public function disapproveInfo($data){
+    public function disapproveInfo($data)
+    {
         $requestArray = explode('-', $data);
         // error_log($requestArray[1]);
 
@@ -523,7 +493,7 @@ class ReportApprovalController extends Controller
             $onlyChildArray[$office->office_id] = $office->office->officeTranslations[0]->name;
         }
 
-       $onlyChildArray[$office->id] = $office->officeTranslations[0]->name;
+        $onlyChildArray[$office->id] = $office->officeTranslations[0]->name;
 
         // error_log(($onlyChildArray[1]));
 
@@ -531,10 +501,10 @@ class ReportApprovalController extends Controller
         $responseData['offices'] = $onlyChildArray;
 
         return response()->json($responseData);
-
     }
 
-    public function replyInfo($data){
+    public function replyInfo($data)
+    {
         $requestArray = explode('-', $data);
         // error_log($requestArray[1]);
 
@@ -554,6 +524,5 @@ class ReportApprovalController extends Controller
         $responseData['replyText'] = $replyText;
 
         return response()->json($responseData);
-
     }
 }

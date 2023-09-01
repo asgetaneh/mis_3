@@ -20,6 +20,56 @@
 
 @section('content')
 
+    {{-- <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card card-primary card-outline card-outline-tabs fillable-objective">
+                <div class="card-body">
+                    <form role="form" class="form-horizontal" method="get"
+                        action="{{ route('plan-approve.index') }}">
+
+                        <div class="row">
+                            <div class="col-md-5">
+                                <label class="label" for="filters">Office:</label>
+                                <select class="form-control select2" name="office">
+                                    <option disabled selected value="">Select Office</option>
+                                    @if (auth()->user()->is_admin === true)
+                                        @forelse(getAllOffices() as $office)
+                                            <option value="{{ $office->id }}">{{ $office->officeTranslations[0]->name }}
+                                            </option>
+                                        @empty
+                                        @endforelse
+                                    @else
+                                        @forelse(auth()->user()->offices[0]->offices as $office)
+                                            <option value="{{ $office->id }}">{{ $office->officeTranslations[0]->name }}
+                                            </option>
+                                        @empty
+                                        @endforelse
+                                    @endif
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class=" " for="filters">KPI:</label>
+                                <select class="form-control select2" name="kpi">
+                                    <option disabled selected value="">Select KPI</option>
+                                    @forelse(getAllKpi() as $kpi)
+                                        <option value="{{ $kpi->id }}">{{ $kpi->keyPeformanceIndicatorTs[0]->name }}
+                                        </option>
+                                    @empty
+                                    @endforelse
+                                </select>
+
+                            </div>
+                            <div class="col-md-1"><br />
+                                <button class="btn btn-flat btn-info" value="search" name="search" type="submit">Filter</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div> --}}
+
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="card card-primary card-outline card-outline-tabs fillable-objective">

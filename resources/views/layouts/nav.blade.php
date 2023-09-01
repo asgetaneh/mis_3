@@ -21,7 +21,7 @@
         </li>
 
         <li class="nav-item dropdown">
-            <a class="dropdown-toggle text-white" data-toggle="dropdown" href="#">
+            {{-- <a class="dropdown-toggle text-white" data-toggle="dropdown" href="#"> --}}
                 <span class="hidden-xs glyphicon glyphicon-user text-white">
                     {{ Auth::user()->name }}
                     @if (!Auth::user()->offices->isEmpty())
@@ -29,12 +29,8 @@
                     @endif
                 </span>
 
-            </a>
-            <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right" style="left: inherit; right: 0px;">
-                {{-- <a href="#" class="dropdown-item">
-                    <i class="fas fa-user mr-2"></i> My Profile
-                </a>
-                <div class="dropdown-divider"></div> --}}
+            {{-- </a> --}}
+            {{-- <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right" style="left: inherit; right: 0px;">
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
@@ -48,7 +44,23 @@
                     </x-responsive-nav-link>
                 </form>
 
-            </ul>
+            </ul> --}}
+        </li>
+
+        <li class="nav-item">
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <span>
+                    <x-responsive-nav-link :href="route('logout')"
+                        onclick="event.preventDefault();
+                                        this.closest('form').submit();"
+                        class="text-white">
+                        <u><i class="fas fa-power-off"></i>
+                            {{ __('Log Out') }}</u>
+
+                    </x-responsive-nav-link>
+                </span>
+            </form>
         </li>
 
 
