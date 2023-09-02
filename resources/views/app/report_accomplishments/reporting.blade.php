@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Reporting')
 
 @section('style')
     <style>

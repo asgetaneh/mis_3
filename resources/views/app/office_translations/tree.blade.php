@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Office Hierarchy')
 
 @section('style')
     <style>

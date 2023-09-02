@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'View Report')
 
 @section('style')
     <style>
@@ -73,7 +74,7 @@
                         @forelse($planAccomplishments as $planAcc)
                             @php
                                 $offices = $planAcc->getOfficeFromKpiAndOfficeList($only_child_array,$off_level);
-                                
+
                             @endphp
 
                             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
@@ -99,9 +100,9 @@
                                                     </tr>
                                                     <tr style="background:#21212121;">
                                                         <th></th>
-                                                         <th style="width:100%;"> KPI: 
+                                                         <th style="width:100%;"> KPI:
                                                             {{ $kpiT->name }}
-                                                        </th> 
+                                                        </th>
                                                         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                                                             @php
                                                                 $planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $imagen_off, $period->id);//dump($planOfOfficePlan);
@@ -112,7 +113,7 @@
                                                             </td>
                                                         @empty
                                                         @endforelse
-                                                         
+
                                                         <th>
                                                             <button type="button" class="btn btn-tool"
                                                                 data-card-widget="collapse"><i class="fas fa-plus"></i>
@@ -121,7 +122,7 @@
                                                     </tr>
                                                     <tr>
                                                          <th></th>
-                                                         
+
                                                         <td colspan="7">
                                                          <h6>
                                                             Major Activities
@@ -180,7 +181,7 @@
                                 @php
                                     $kpi_repeat[$c] = $planAcc->Kpi->id;
                                     $c++;
-                                    
+
                                 @endphp
                             @endif
                         @empty

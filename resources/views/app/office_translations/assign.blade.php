@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Office Assign')
 
 @section('content')
     <div class="container">

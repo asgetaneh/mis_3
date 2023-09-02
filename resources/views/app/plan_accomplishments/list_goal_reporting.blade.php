@@ -1,4 +1,6 @@
 @extends('layouts.app')
+@section('title', 'Reporting Goals')
+
 @section('content')
 
 <div class="row justify-content-center mt-3">

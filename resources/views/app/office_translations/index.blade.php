@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Office Index')
 
 @section('content')
     <div class="container-fluid">
