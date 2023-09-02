@@ -11,9 +11,9 @@
                                 <div class="icon d-flex align-items-center justify-content-center">
                                     <!-- Change below img tag to use the image from the project folder -->
                                     <img src="{{ asset('images/logo.png') }}" alt=""
-                                        class="img-fluid d-block mx-auto mb-5" width="150" height="150">
+                                        class="img-fluid d-block mx-auto mb-4" width="150" height="150">
                                 </div>
-                                {{-- <h5 class="text-center mb-4">JU MIS</h5> --}}
+                                <h4 class="text-center text-secondary mb-4">JU MIS</h4>
                                 <form action="{{ route('login') }}" method="post">
                                     @csrf
                                     <div class="form-floating mb-3">
@@ -46,7 +46,7 @@
                             </div>
                             <br>
                             <div class="text-secondary text-center" style="display: flex; justify-content: space-between;">
-                                <p style="text-decoration: underline;">
+                                <p style="">
                                     <script>
                                         document.write(new Date().getFullYear());
                                     </script> - JU MIS
