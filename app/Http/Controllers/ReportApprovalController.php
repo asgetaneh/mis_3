@@ -21,7 +21,8 @@ class ReportApprovalController extends Controller
         $all_office_list = $all_child_and_subchild;
         //$all_office_list = array_merge( $all_child_and_subchild,array($office));
         $only_child = $obj_office->offices;
-        // dd($only_child);
+        $active_reporting_period = getReportingPeriod();
+        // dd($active_reporting_period);
         $only_child_array = [];
         foreach ($only_child as $key => $value) {
             $only_child_array[$key] = $value->id;
@@ -61,18 +62,18 @@ class ReportApprovalController extends Controller
             ->whereIn('office_id', $only_child_array)->whereIn('kpi_id', $kpi_array)
             ->whereNotNull('accom_value')
             ->select('*', DB::raw('SUM(accom_value) AS sum'))
-                //-> where('reporting_periods.slug',"=", 1)
-                ->groupBy('kpi_id')  ->get();
+            -> whereIn('reporting_periods.id', $active_reporting_period)
+                 ->groupBy('kpi_id')  ->get();
         }
         else{
             $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
             ->whereIn('office_id', $all_office_list)
             ->select('*', DB::raw('SUM(accom_value) AS sum'))
             ->whereNotNull('accom_value')
-            //-> where('reporting_periods.slug',"=", 1)
+            -> whereIn('reporting_periods.id', $active_reporting_period)
            ->groupBy('kpi_id')  ->get();
 
-        //    dd($planAccomplishments);
+           // dd($planAccomplishments);
 
             //  if( $is_admin){
             //     $all_offices = getAllOffices();
@@ -118,8 +119,8 @@ class ReportApprovalController extends Controller
         $planAccomplishmentsLastOffice = [];
         if(auth()->user()->offices[0]->level === 1){
             $planAccomplishmentsLastOffice = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
-            ->where('reporting_periods.slug', "=", 1)
-            ->where('office_id', auth()->user()->offices[0]->id)
+            -> whereIn('reporting_periods.id', $active_reporting_period)
+             ->where('office_id', auth()->user()->offices[0]->id)
             ->select('*', DB::raw('SUM(accom_value) AS sum'))
             ->whereNotNull('accom_value')
             ->groupBy('kpi_id')
@@ -130,7 +131,7 @@ class ReportApprovalController extends Controller
 
         return view(
             'app.report-approval.index',
-            compact('planAccomplishments', 'all_office_list', 'only_child_array', 'planning_year', 'obj_office', 'search', 'planAccomplishmentsLastOffice')
+            compact('planAccomplishments', 'all_office_list', 'only_child_array', 'planning_year', 'obj_office', 'search', 'planAccomplishmentsLastOffice','active_reporting_period')
         );
     }
 

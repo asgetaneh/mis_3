@@ -21,7 +21,7 @@
             $childAndHimOffKpi_array[$key] = $value->id;
         }
         $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
-        $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id, $office);
+       // $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id, $office);
         $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
     @endphp
     <tr>
@@ -35,7 +35,9 @@
             @foreach ($planAcc->Kpi->kpiChildOnes as $one)
                 <td>
                     @php
-                        $planOneTwo = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id, $office, $period->id);
+                        //$planOneTwo = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id, $office, $period->id,false);
+                        $planOneTwo = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year[0]->id ,$one->id, $two->id,null);
+
                     @endphp
                     {{ $planOneTwo[0] }}
                 </td>
@@ -59,7 +61,7 @@
     <td>
         @if (!$office->offices->isEmpty())
             <p>
-                <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}" role="button"
+                <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}{{$planAcc->Kpi->id}}" role="button"
                     aria-expanded="false" aria-controls="collapseExample0">
                     Details
                 </a>

@@ -28,13 +28,17 @@ class ObjectiveController extends Controller
                 }
 
         $search = $request->get('search', '');
-
+        $goals = Goal::search($search)
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+        
         $objective_ts = ObjectiveTranslation::search($search)
             ->latest()
             ->paginate(15)
             ->withQueryString();
 
-        return view('app.objectives.index', compact('objective_ts', 'search'));
+        return view('app.objectives.index', compact('goals','objective_ts', 'search'));
     }
 
     /**

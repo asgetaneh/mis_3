@@ -29,7 +29,7 @@
     @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
         <td>
             @php
-                $planOne = $planAcc->planOne($planAcc->Kpi->id, $one->id, $office, $period->id);
+                $planOne = $planAcc->planOne($planAcc->Kpi->id, $one->id, $office, $period->id, true);
                 $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
             @endphp
             {{ $planOne[1] }}

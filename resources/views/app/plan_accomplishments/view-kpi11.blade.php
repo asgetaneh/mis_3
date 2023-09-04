@@ -18,7 +18,7 @@
                     $childAndHimOffKpi_array[$key] = $value->id;
                 }
                 $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
-                $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id, $office);
+                //$planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id, $office);
             @endphp
         @empty
         @endforelse
@@ -31,7 +31,8 @@
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             <td>
                 @php
-                    $planOne = $planAcc->planOne($planAcc->Kpi->id, $one->id, $office, $period->id);
+                   // $planOne = $planAcc->planOne($planAcc->Kpi->id, $one->id, $office, $period->id,false);
+                     $planOne = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year[0]->id ,$one->id,null,null);
                     $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
                 @endphp
                 {{ $planOne[0] }}
@@ -55,7 +56,7 @@
         <td>
             @if (!$office->offices->isEmpty())
                 <p>
-                    <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}" role="button"
+                    <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}{{$planAcc->Kpi->id}}" role="button"
                         aria-expanded="false" aria-controls="collapseExample0">
                         Details
                     </a>

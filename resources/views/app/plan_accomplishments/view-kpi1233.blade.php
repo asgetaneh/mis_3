@@ -44,7 +44,8 @@
                                     $childAndHim_array[$key] = $value->id;
                                 }
                                 $childAndHim_array = array_merge($childAndHim_array, [$office->id]);
-                                $plan123 = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id, $kpiThree->id, $office, $period->id);
+                               // $plan123 = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id, $kpiThree->id, $office, $period->id,false);
+                                  $plan123 = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year[0]->id ,$one->id, $two->id, $kpiThree->id);
                                 $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
                                 
                             @endphp
@@ -71,7 +72,7 @@
         <td>
             @if (!$office->offices->isEmpty())
                 <p>
-                    <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}" role="button"
+                    <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}{{$planAcc->Kpi->id}}" role="button"
                         aria-expanded="false" aria-controls="collapseExample0">
                         Details
                     </a>

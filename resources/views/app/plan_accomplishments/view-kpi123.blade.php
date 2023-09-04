@@ -58,7 +58,8 @@
                                     $childAndHim_array[$key] = $value->id;
                                 }
                                 $childAndHim_array = array_merge($childAndHim_array, [$office->id]);
-                                $plan123 = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id, $kpiThree->id, $office, $period->id);
+                               // $plan123 = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id, $kpiThree->id, $office, $period->id,false);
+                                 $plan123 = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year[0]->id ,$one->id, $two->id, $kpiThree->id);
                                 $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
                                 
                             @endphp
@@ -125,7 +126,7 @@
         <td>
             @if (!$office->offices->isEmpty())
                 <p>
-                    <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}" role="button"
+                    <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}{{$planAcc->Kpi->id}}" role="button"
                         aria-expanded="false" aria-controls="collapseExample0">
                         Details
                     </a>
@@ -138,7 +139,7 @@
 </table>
 {{-- end total ch1ch3 --}}
 {{-- level two (directores and same level) --}}
-<div class="collapse" id="off{{ $office->id }}">
+<div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
     <div class="card card-body">
         @php
             $offices_twos = $office->offices;
@@ -146,35 +147,35 @@
         @forelse ($offices_twos as $office)
 
             @include('app.plan_accomplishments.view-kpi1233')
-            <div class="collapse" id="off{{ $office->id }}">
+            <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
                 <div class="card card-body">
                     @php
                         $offices_threes = $office->offices;
                     @endphp
                     @forelse ($offices_threes as $office)
                         @include('app.plan_accomplishments.view-kpi1233')
-                        <div class="collapse" id="off{{ $office->id }}">
+                        <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
                             <div class="card card-body">
                                 @php
                                     $offices_fours = $office->offices;
                                 @endphp
                                 @forelse ($offices_fours as $office)
                                     @include('app.plan_accomplishments.view-kpi1233')
-                                    <div class="collapse" id="off{{ $office->id }}">
+                                    <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
                                         <div class="card card-body">
                                             @php
                                                 $offices_fives = $office->offices;
                                             @endphp
                                             @forelse ($offices_fives as $office)
                                                 @include('app.plan_accomplishments.view-kpi1233')
-                                                <div class="collapse" id="off{{ $office->id }}">
+                                                <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
                                                     <div class="card card-body">
                                                         @php
                                                             $offices_sixs = $office->offices;
                                                         @endphp
                                                         @forelse ($offices_sixs as $office)
                                                             @include('app.plan_accomplishments.view-kpi1233')
-                                                            <div class="collapse" id="off{{ $office->id }}">
+                                                            <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
                                                                 <div class="card card-body">
 
                                                                 </div>

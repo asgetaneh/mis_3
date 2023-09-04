@@ -140,8 +140,8 @@
                                                 $isContented = true;
                                             @endphp
                                 @endif
-
-                                <form action="{{ route('plan.save') }}" method="POST">
+                                
+                                <form action="{{ route('plan.save') }}" method="POST" onsubmit="return validateTheForm()">
                                     @csrf
 
                                     {{-- @if ($objective) --}}
@@ -248,9 +248,13 @@
                                                                                         $disabled = '';
                                                                                     @endphp
                                                                                     @if ($plan)
-                                                                                        @if ($off_level != $plan->plan_status)
+                                                                                        @if($off_level ===1) 
+                                                                                            @if ($off_level === $plan->plan_status)
+                                                                                                @php $disabled ="disabled"; @endphp
+                                                                                            @endif
+                                                                                        @elseif ($off_level != $plan->plan_status)
                                                                                             @php $disabled ="disabled"; @endphp
-                                                                                        @endif
+                                                                                        @endif 
                                                                                         <td>
                                                                                             <input type="hidden"
                                                                                                 name="type"
@@ -327,9 +331,13 @@
                                                                                     $disabled = '';
                                                                                 @endphp
 
-                                                                                @if ($off_level != $plan12->plan_status)
+                                                                               @if($off_level ===1) 
+                                                                                    @if ($off_level === $plan12->plan_status)
+                                                                                        @php $disabled ="disabled"; @endphp
+                                                                                    @endif
+                                                                                @elseif ($off_level != $plan12->plan_status)
                                                                                     @php $disabled ="disabled"; @endphp
-                                                                                @endif
+                                                                                @endif 
                                                                                 <td>
                                                                                     <input type="hidden" name="type"
                                                                                         value="yes">
@@ -408,9 +416,13 @@
                                                                 $disabled = '';
                                                             @endphp
                                                             @if ($plan1)
-                                                                @if ($off_level != $plan1->plan_status)
+                                                                @if($off_level ===1) 
+                                                                    @if ($off_level === $plan1->plan_status)
+                                                                        @php $disabled ="disabled"; @endphp
+                                                                    @endif
+                                                                @elseif ($off_level != $plan1->plan_status)
                                                                     @php $disabled ="disabled"; @endphp
-                                                                @endif
+                                                                @endif 
                                                                 <td>
                                                                     <input type="hidden" name="type" value="yes">
                                                                     <input
@@ -492,7 +504,7 @@
                                                     class="form-control" value="{{ $plan->plan_value }}"
                                                     id="{{ $kpi->id }}{{ $period->slug }}" type="number"
                                                     required {{ $disabled }}>
-                                                <span id="s{{ $period->slug }}"></span>
+                                                 <span id="s{{ $kpi->id }}{{ $period->slug }}"></span>
                                             </td>
 
                                     @else
@@ -508,8 +520,16 @@
                                 @endforelse
                                 </tr>
                             </table>
-
-                            <script>
+                                    
+                             <script>
+                                /* function validateTheForm(){
+                                        var validation = (document.getElementById('{{ $kpi->id }}{{ $period->slug }}').value == 'gmail');
+                                        if(!validation){
+                                            alert('Something went wrong...Plese write gmail intext box and click');
+                                            return false;
+                                        }
+                                        return true;
+                                    }*/
                                 $(function() {
                                     $('input[id={{ $inputid }}]').on('change', function() {
                                         var sum = 0;
@@ -527,6 +547,10 @@
                                             if (yearly != sum) {
                                                 document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
                                                     "Period plan not matched with yearly";
+                                                for (var i = loop; i > 1; i--) {
+                                                    var idd = String({{ $kpi->id }}) + String(i);
+                                                    $('#' + idd).val("");
+                                                 }
                                                 $('#' + idd_y).val("");
                                             }
                                         }

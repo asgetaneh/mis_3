@@ -21,7 +21,7 @@
             }
             $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
             $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id, $office);
-            $narration = $planAcc->getNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
+            $narration = $planAcc->getReportNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
         @endphp 
         <tr>
             <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
@@ -34,7 +34,7 @@
                 @foreach ($planAcc->Kpi->kpiChildOnes as $one)
                     <td>
                         @php
-                            $planOneTwo = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id, $office, $period->id);
+                            $planOneTwo = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id, $office, $period->id,true);
                         @endphp
                         {{ $planOneTwo }}
                     </td>
