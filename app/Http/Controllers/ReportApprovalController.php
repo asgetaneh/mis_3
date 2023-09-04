@@ -21,6 +21,9 @@ class ReportApprovalController extends Controller
         $all_office_list = $all_child_and_subchild;
         //$all_office_list = array_merge( $all_child_and_subchild,array($office));
         $only_child = $obj_office->offices;
+
+        $activeReportingPeriodList = getReportingPeriod();
+
         // dd($only_child);
         $only_child_array = [];
         foreach ($only_child as $key => $value) {
@@ -66,6 +69,7 @@ class ReportApprovalController extends Controller
                 ->whereIn('office_id', $all_office_list)
                 ->select('*', DB::raw('SUM(accom_value) AS sum'))
                 ->whereNotNull('accom_value')
+                ->whereIn('reporting_period_id', $activeReportingPeriodList)
                 //-> where('reporting_periods.slug',"=", 1)
                 ->groupBy('kpi_id')->get();
 
@@ -131,6 +135,7 @@ class ReportApprovalController extends Controller
                 // ->where('reporting_periods.slug', "=", 1)
                 ->where('office_id', auth()->user()->offices[0]->id)
                 ->select('*', DB::raw('SUM(accom_value) AS sum'))
+                ->whereIn('reporting_period_id', $activeReportingPeriodList)
                 ->whereNotNull('accom_value')
                 ->groupBy('kpi_id')
                 ->get();

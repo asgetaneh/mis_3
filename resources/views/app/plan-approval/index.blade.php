@@ -83,10 +83,14 @@
                             $kpiList = [];
                         @endphp
 
+                        @php
+                            $ownPlanVisible = false;
+                        @endphp
+
 
                         {{-- Own Plan of last office if exists --}}
                         @if (count($planAccomplishmentsLastOffice) > 0)
-                            <div class="p-3 bg-light mb-3 rounded shadow-sm" style="border: 1px solid #d3d2d2;">
+                            <div class="p-3 bg-light mb-3 rounded shadow-sm own-plan-div" style="border: 1px solid #d3d2d2;">
                                 <h5 class=""><u>Own Plan Approval</u></h5>
                                 @forelse ($planAccomplishmentsLastOffice as $planAcc)
                                     @php
@@ -99,6 +103,9 @@
                                     @if (!in_array($planAcc->kpi_id, $allKpisListChildren))
                                         @if ($isOfficeBelongToKpi->count() > 0)
                                             {{-- @if (!in_array($planAcc->Kpi->id, $kpi_repeat)) --}}
+                                            @php
+                                                $ownPlanVisible = true;
+                                            @endphp
                                             <div class="card collapsed-card">
                                                 <div class="card-header pb-0">
                                                     @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
@@ -660,6 +667,12 @@
                 height: 200
             });
             $('.dropdown-toggle').dropdown();
+
+            let ownPlanVisisble = {{ json_encode($ownPlanVisible) }}
+
+            if(ownPlanVisisble == false){
+                $('.own-plan-div').hide();
+            }
 
             let kpiList = {{ json_encode($kpiList) }};
 
