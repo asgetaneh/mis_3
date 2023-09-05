@@ -105,7 +105,9 @@
                                                         </th>
                                                         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                                                             @php
-                                                                $planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $imagen_off, $period->id);//dump($planOfOfficePlan);
+                                                                //  $planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $imagen_off, $period->id,false,$planning_year);  
+                                                                $planOfOfficePlan = $planAcc->ForKpi($planAcc->Kpi->id, $imagen_off, $period->id,false,$planning_year[0]->id);
+                                                                 //dump($planOfOfficePlan);
                                                                 $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $imagen_off, $period->id);
                                                             @endphp
                                                             <td>

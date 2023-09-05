@@ -47,6 +47,10 @@
             <div class="table-responsive mt-3">
                 <table class="table table-bordered table-hover">
                     <thead>
+                     @forelse($goals as $goal)
+                         <tr style="background:#96fffd45;">
+                            <th colspan="7">{{ $goal->goalTranslations[0]->name }}</th>
+                        </tr>
                         <tr>
                             <th>#</th>
                             <th class="text-left">
@@ -73,57 +77,37 @@
                         @php
                             $count = 1;
                         @endphp
-
-                        @forelse($objective_ts as $objective_t)
-                        @if(app()->getLocale() ==$objective_t->locale)
+                      
+                        @forelse($goal->objectives as $objective)
+                        @if(app()->getLocale() ==$objective->objectiveTranslations[0]->locale)
 
                         <tr>
                             <td>{{ $count++ }}</td>
                             <td>
-                                {{ $objective_t->name ?? '-' }}
-
-                                <div class="bg-light mt-2 p-2">
-
-                                    @forelse($objective_t->objective->goal->goalTranslations as $key => $goal)
-                                        @if(app()->getLocale() == $goal->locale)
-                                            <p class="text-primary d-inline"><span class="text-secondary">Goal:</span> {{ $goal->name }}</p>
-                                            <br>
-                                        @endif
-                                    @empty
-                                        <p>-</p>
-                                    @endforelse
-
-                                    @forelse($objective_t->objective->perspective->perspectiveTranslations as $key => $perspective)
-                                        @if(app()->getLocale() == $perspective->locale)
-                                            <p class="text-primary d-inline"><span class="text-secondary">Perspective:</span> {{ $perspective->name }}</p>
-                                        @endif
-                                    @empty
-                                        <p>-</p>
-                                    @endforelse
-
-                                </div>
+                                {{ $objective->objectiveTranslations[0]->name ?? '-' }}
+ 
 
                             </td>
                             <td>
-                                {{ $objective_t->description ?? '-'
+                                {{ $objective->objectiveTranslations[0]->description ?? '-'
                                 }}
                             </td>
                             <td>
-                                {{ $objective_t->out_put ?? '-' }}
+                                {{ $objective->objectiveTranslations[0]->out_put ?? '-' }}
                             </td>
                             <td>
-                                {{ $objective_t->out_come ?? '-' }}
+                                {{ $objective->objectiveTranslations[0]->out_come ?? '-' }}
                             </td>
-                            <td>{{ $objective_t->objective->weight ?? '-' }}</td>
+                            <td>{{ $objective->objectiveTranslations[0]->objective->weight ?? '-' }}</td>
                             <td class="text-center" style="width: 134px;">
                                 <div
                                     role="group"
                                     aria-label="Row Actions"
                                     class="btn-group"
                                 >
-                                    @can('update', $objective_t)
+                                    @can('update', $objective->objectiveTranslations[0])
                                     <a
-                                        href="{{ route('objectives.edit', $objective_t->translation_id) }}"
+                                        href="{{ route('objectives.edit', $objective->objectiveTranslations[0]->translation_id) }}"
                                     >
                                         <button
                                             type="button"
@@ -132,9 +116,9 @@
                                             <i class="icon ion-md-create"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('view', $objective_t)
+                                    @endcan @can('view', $objective->objectiveTranslations[0])
                                     <a
-                                        href="{{ route('objectives.show', $objective_t->translation_id) }}"
+                                        href="{{ route('objectives.show', $objective->objectiveTranslations[0]->translation_id) }}"
                                     >
                                         <button
                                             type="button"
@@ -143,9 +127,9 @@
                                             <i class="icon ion-md-eye"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('delete', $objective_t)
+                                    @endcan @can('delete', $objective->objectiveTranslations[0])
                                     <form
-                                        action="{{ route('objectives.destroy', $objective_t->translation_id) }}"
+                                        action="{{ route('objectives.destroy', $objective->objectiveTranslations[0]->translation_id) }}"
                                         method="POST"
                                         onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                     >
@@ -169,11 +153,18 @@
                             </td>
                         </tr>
                         @endforelse
+                         @empty
+                        <tr>
+                            <td colspan="7">
+                                @lang('crud.common.no_items_found')
+                            </td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
-                <div class="float-right">
-                    {!! $objective_ts->render() !!}
-                </div>
+                {{-- <div class="float-right">
+                    {!! $objective->objectiveTranslations[0]->render() !!}
+                </div> --}}
             </div>
         </div>
     </div>

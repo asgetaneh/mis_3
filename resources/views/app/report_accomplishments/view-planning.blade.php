@@ -70,7 +70,6 @@
                                                         <tr>
                                                             <th rowspan="2">#</th>
                                                             @foreach ($planAcc->Kpi->kpiChildOnes as $one)
-                                                            
                                                                 <th colspan="{{ $planAcc->Kpi->kpiChildThrees ->count() }}" >{{ $one->kpiChildOneTranslations[0]->name }}
                                                                 </th>
                                                             @endforeach
@@ -93,7 +92,7 @@
                                                                     @foreach ($planAcc->Kpi->kpiChildThrees as $kpiThree)
                                                                     <td>
                                                                     @php 
-                                                                    $plan123 = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,$office->id);
+                                                                    $plan123 = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,$office->id,true);
                                                                     @endphp
                                                                     {{$plan123}}
                                                                     </td>
@@ -128,7 +127,7 @@
                                                                 <td> 
                                                                 @php 
                                                                     $planOneTwo
-                                                                     = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id,$office->id);
+                                                                     = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id,$office->id,true);
                                                                     @endphp
                                                                     {{$planOneTwo}}
                                                             </td>
@@ -157,7 +156,7 @@
                                                     <td>
                                                       @php 
                                                         $planOne
-                                                            = $planAcc->planOne($planAcc->Kpi->id, $one->id,$office->id);
+                                                            = $planAcc->planOne($planAcc->Kpi->id, $one->id,$office->id, true);
                                                         @endphp
                                                         {{$planOne}}
                                                     </td>
@@ -175,7 +174,7 @@
                                                 </th>
                                                 @php 
                                                     $planOfOfficePlan
-                                                        = $planAcc->planSum($planAcc->Kpi->id,$office->id);
+                                                        = $planAcc->planSum($planAcc->Kpi->id,$office->id,true,$planning_year);
                                                     @endphp
                                                 <th> <input name="sum"    type="number" value="{{$planOfOfficePlan}}"> 
                                                 </th>

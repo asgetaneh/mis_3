@@ -20,12 +20,11 @@ class ReportApprovalController extends Controller
         $all_child_and_subchild = office_all_childs_ids($obj_office);
         $all_office_list = $all_child_and_subchild;
         //$all_office_list = array_merge( $all_child_and_subchild,array($office));
-        $only_child = $obj_office->offices;
-
+        $only_child = $obj_office->offices; 
         $activeReportingPeriodList = getReportingPeriod();
 
         // dd($only_child);
-        $only_child_array = [];
+         $only_child_array = [];
         foreach ($only_child as $key => $value) {
             $only_child_array[$key] = $value->id;
         }
@@ -146,7 +145,7 @@ class ReportApprovalController extends Controller
         return view(
             'app.report-approval.index',
             compact('planAccomplishments', 'all_office_list', 'only_child_array', 'planning_year', 'obj_office', 'search', 'planAccomplishmentsLastOffice', 'allKpisListChildren')
-        );
+         );
     }
 
     public function reportApproved(Request $request)

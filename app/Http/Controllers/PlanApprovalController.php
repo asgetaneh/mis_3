@@ -357,7 +357,6 @@ class PlanApprovalController extends Controller
         $office = (int)$requestArray[1];
         $officeId = Office::find($office);
         $planningYear = (int)$requestArray[2];
-        $reportingPeriod = 3; // static for now, think on it later
 
         $isCurrentOfficePlanned = getOfficePlanRecord($kpi, $officeId, $planningYear);
         $isOfficeLast = office_all_childs_ids($officeId);
@@ -392,8 +391,7 @@ class PlanApprovalController extends Controller
         $planCommented = PlanComment::create([
             'plan_comment' => $planComment,
             'kpi_id' => $kpi,
-            // 'reporting_period_id' => $reportingPeriod,
-            'planning_year_id' => $planningYear,
+             'planning_year_id' => $planningYear,
             'office_id' => $office,
             'commented_by' => $loggedInUserOfficeLevel->id
         ]);

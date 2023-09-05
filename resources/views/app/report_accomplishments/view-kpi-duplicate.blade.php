@@ -12,7 +12,9 @@
         <td rowspan="2">{{ $office->officeTranslations[0]->name }}</td>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @php
-                $planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $office, $period->id);
+               // $planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $office, $period->id,true,$planning_year);
+                $planOfOfficePlan =$planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year[0]->id ,null,null,null);
+
                 $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
             @endphp
             <td>
@@ -35,7 +37,7 @@
         <td>
             @if (!$office->offices->isEmpty())
                 <p>
-                    <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}" role="button"
+                    <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}{{$planAcc->Kpi->id}}" role="button"
                         aria-expanded="false" aria-controls="collapseExample2">
                         Details
                     </a>

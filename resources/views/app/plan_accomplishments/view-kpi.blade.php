@@ -10,13 +10,28 @@
             </th>
             @empty
             @endforelse
+             <td rowspan="3">
+            @if(!$office->offices->isEmpty())
+            <p>
+                <a class="btn btn-info" data-toggle="collapse"
+                    href="#off{{ $office->id }}{{$planAcc->Kpi->id}}" role="button"
+                    aria-expanded="false" aria-controls="collapseExample0">
+                     Details
+                </a>
+            </p>
+             @else
+                {{"no child "}}
+            @endif
+        </td>
         </tr>
     @endif
     <tr>
         <td rowspan="2">{{ $office->officeTranslations[0]->name }}</td>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @php
-                $planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $office, $period->id);//dump($planOfOfficePlan);
+                //$planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $office, $period->id,false,$planning_year);
+                $planOfOfficePlan =$planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year[0]->id ,null,null,null);
+                //dump($planOfOfficePlan[0]);
                 $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
             @endphp
             <td>
@@ -36,58 +51,45 @@
                 </p>
             @endforeach
         </td>
-        <td>
-        @if(!$office->offices->isEmpty())
-            <p>
-                <a class="btn btn-info" data-toggle="collapse"
-                    href="#off{{ $office->id }}" role="button"
-                    aria-expanded="false" aria-controls="collapseExample0">
-                     Details
-                </a>
-            </p>
-             @else
-                {{"no child "}}
-            @endif
-        </td>
     </tr>
 </table>
 {{-- level two (directores and same level) --}}
-<div class="collapse" id="off{{ $office->id }}">
+<div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
     <div class="card card-body" style="background:#12cd4322;" >
         @php
             $offices_twos = $office->offices;
         @endphp
         @forelse ($offices_twos as $office)
             @include('app.plan_accomplishments.view-kpi-duplicate')
-            <div class="collapse" id="off{{ $office->id }}">
+            <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
                 <div class="card card-body">
                     @php
                         $offices_threes = $office->offices;
                     @endphp
                     @forelse ($offices_threes as $office)
                         @include('app.plan_accomplishments.view-kpi-duplicate')
-                        <div class="collapse" id="off{{ $office->id }}">
+                        <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
                             <div class="card card-body">
                                 @php
                                     $offices_fours = $office->offices;
                                 @endphp
                                 @forelse ($offices_fours as $office)
                                     @include('app.plan_accomplishments.view-kpi-duplicate')
-                                    <div class="collapse" id="off{{ $office->id }}">
+                                    <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
                                         <div class="card card-body">
                                             @php
                                                 $offices_fives = $office->offices;
                                             @endphp
                                             @forelse ($offices_fives as $office)
                                                 @include('app.plan_accomplishments.view-kpi-duplicate')
-                                                <div class="collapse" id="off{{ $office->id }}">
+                                                <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
                                                     <div class="card card-body">
                                                         @php
                                                             $offices_sixs = $office->offices;
                                                         @endphp
                                                         @forelse ($offices_sixs as $office)
                                                             @include('app.plan_accomplishments.view-kpi-duplicate')
-                                                            <div class="collapse" id="off{{ $office->id }}">
+                                                            <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
                                                                 <div class="card card-body">
 
                                                                 </div>

@@ -246,9 +246,13 @@
                                                                                         $disabled ="";
                                                                                     @endphp
                                                                                     @if ($plan && $plan->accom_value)
-                                                                                     @if ($off_level!=$plan->accom_status)
+                                                                                    @if($off_level ===1) 
+                                                                                        @if ($off_level === $plan->accom_status)
+                                                                                            @php $disabled ="disabled"; @endphp
+                                                                                        @endif
+                                                                                    @elseif ($off_level != $plan->accom_status)
                                                                                         @php $disabled ="disabled"; @endphp
-                                                                                     @endif
+                                                                                    @endif 
                                                                                         <td>
                                                                                             <input
                                                                                                 name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
@@ -319,9 +323,13 @@
                                                                                     $disabled ="";
 
                                                                                 @endphp
-                                                                                @if ($off_level!=$plan12->accom_status)
-                                                                                    @php $disabled ="disabled"; @endphp
-                                                                                @endif
+                                                                                @if($off_level ===1) 
+                                                                                        @if ($off_level === $plan12->accom_status)
+                                                                                            @php $disabled ="disabled"; @endphp
+                                                                                        @endif
+                                                                                    @elseif ($off_level != $plan12->accom_status)
+                                                                                        @php $disabled ="disabled"; @endphp
+                                                                                    @endif 
                                                                                 <td>
                                                                                     <input
                                                                                         name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}"
@@ -389,7 +397,11 @@
 
                                                             @endphp
                                                             @if ($plan1 && $plan1->accom_value)
-                                                             @if ($off_level!=$plan1->accom_status)
+                                                             @if($off_level ===1) 
+                                                                @if ($off_level === $plan1->accom_status)
+                                                                    @php $disabled ="disabled"; @endphp
+                                                                @endif
+                                                                @elseif ($off_level != $plan1->accom_status)
                                                                     @php $disabled ="disabled"; @endphp
                                                                 @endif
                                                                 <td>
@@ -450,14 +462,18 @@
                                         @php
                                         $inputname = '{{ $kpi->id }}-{{ $period->id }}';
                                         $planP = getSavedPlanIndividual($planning_year[0]->id, $kpi->id,
-                                        $period->id, auth()->user()->offices[0]->id);
+                                        $period->id, auth()->user()->offices[0]->id,true);
                                         $off_level = auth()->user()->offices[0]->level;
                                         $disabled ="";
                                         @endphp
                                         @if ($planP && $planP->accom_value)
-                                         @if ($off_level!=$planP->accom_status)
-                                            @php $disabled ="disabled"; @endphp
-                                         @endif
+                                        @if($off_level ===1) 
+                                                @if ($off_level === $planP->accom_status)
+                                                    @php $disabled ="disabled"; @endphp
+                                                @endif
+                                            @elseif ($off_level != $planP->accom_status)
+                                                @php $disabled ="disabled"; @endphp
+                                             @endif 
                                              <td>
                                                  <input name="{{ $kpi->id }}-{{ $period->id }}"
                                                     class="form-control" value="{{ $planP->accom_value }}"
