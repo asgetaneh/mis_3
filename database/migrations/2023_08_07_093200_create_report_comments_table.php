@@ -14,14 +14,14 @@ return new class extends Migration
         Schema::create('report_comments', function (Blueprint $table) {
             $table->id();
 
-            $table->text('report_comment');
+            $table->text('report_comment')->nullable();
             $table->unsignedBigInteger('kpi_id');
             $table->unsignedBigInteger('reporting_period_id');
             $table->unsignedBigInteger('planning_year_id');
             $table->unsignedBigInteger('office_id');
             $table->boolean('status')->default(1);
             $table->text('reply_comment')->nullable();
-            $table->integer('commented_by');
+            $table->integer('commented_by')->nullable();
             $table->boolean('replied_active')->nullable();
 
             $table->timestamps();

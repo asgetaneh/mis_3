@@ -18,7 +18,7 @@
                         @forelse($kpis['goal'] as $goal)
                         <tr>
                             {{-- <td> --}}
-                                 <a class="border btn btn-light btn-block text-left {{ Request::is('smis/report/get-objectives/'.$goal->id) ? 'bg-primary' : '' }}" href="{{ route('get-objectives-reporting', $goal->id) }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                 <a style="background-color: #f5f5f5;" class="border border-secondary btn btn-light btn-block text-left {{ Request::is('smis/report/get-objectives/'.$goal->id) ? 'bg-primary' : '' }}" href="{{ route('get-objectives-reporting', $goal->id) }}" role="button" aria-expanded="false" aria-controls="collapseExample">
                                 {{
                                 optional($goal->goalTranslations[0])->name
                                 ?? '-' }}

@@ -242,6 +242,8 @@ class ReportApprovalController extends Controller
 
         $officeLogged = Office::find($loggedInOffice);
 
+        $activeReportingPeriodList = getReportingPeriod();
+
         // dd($officeLogged);
         foreach ($selectedOfficeList as $key => $office) {
 
@@ -253,7 +255,8 @@ class ReportApprovalController extends Controller
                 ->where('kpi_id', $kpi)
                 ->whereIn('office_id', $childrenoffices)
                 ->where('planning_year_id', $planningYear)
-                ->where('plan_status', '=', $officeLogged->level)->distinct('office_id')
+                ->whereIn('reporting_period_id', $activeReportingPeriodList)
+                ->where('accom_status', '=', $officeLogged->level)->distinct('office_id')
                 ->get();
             // dd($allChildrenApproved);
 
@@ -272,16 +275,24 @@ class ReportApprovalController extends Controller
                 ->where('planning_year_id', $planningYear)
                 ->whereIn('office_id', $officeIdList)
                 ->where('kpi_id', $kpi)
-                // ->where('reporting_period_id', '=', $index[1])
+                ->whereIn('reporting_period_id', $activeReportingPeriodList)
                 ->update([
                     'accom_status' => $officeLevel->level,
                     // 'approved_by_id' => $loggedInOffice
                 ]);
 
+            $reportingPeriodId = PlanAccomplishment::select()
+                ->where('kpi_id', $kpi)
+                ->whereIn('office_id', $childrenoffices)
+                ->where('planning_year_id', $planningYear)
+                ->whereIn('reporting_period_id', $activeReportingPeriodList)
+                ->where('accom_status', '=', $officeLogged->level)->distinct('office_id')
+                ->first();
+
             $officeCommented = ReportComment::updateOrCreate([
                 'report_comment' => $writtenComment,
                 'kpi_id' => $kpi,
-                'reporting_period_id' => $reportingPeriod,
+                'reporting_period_id' => $reportingPeriodId->reporting_period_id,
                 'planning_year_id' => $planningYear,
                 'office_id' => (int)$office,
                 'commented_by' => $loggedInOffice
@@ -366,10 +377,20 @@ class ReportApprovalController extends Controller
         //     ]);
         // }
 
+        $activeReportingPeriodList = getReportingPeriod();
+
+        // dd((int)$singleOfficePlan[0]);
+        $reportingPeriodId = PlanAccomplishment::select()
+            ->where('office_id', $office)
+            ->where('planning_year_id', $planningYear)
+            ->where('kpi_id', $kpi)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
+            ->first();
+
         $planCommented = ReportComment::create([
             'report_comment' => $planComment,
             'kpi_id' => $kpi,
-            'reporting_period_id' => $reportingPeriod,
+            'reporting_period_id' => $reportingPeriodId->reporting_period_id,
             'planning_year_id' => $planningYear,
             'office_id' => $office,
             'commented_by' => $loggedInUserOfficeLevel->id
@@ -484,10 +505,13 @@ class ReportApprovalController extends Controller
             $onlyChildArray[$key] = $office->id;
         }
 
+        $activeReportingPeriodList = getReportingPeriod();
+
         $onlyApprovedOffices = PlanAccomplishment::select()
             ->whereIn('office_id', $onlyChildArray)
             ->where('kpi_id', $kpi)
             ->where('planning_year_id', $planningYear)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where(function ($q) {
                 $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
             })

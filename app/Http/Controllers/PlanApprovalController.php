@@ -392,7 +392,7 @@ class PlanApprovalController extends Controller
         $planCommented = PlanComment::create([
             'plan_comment' => $planComment,
             'kpi_id' => $kpi,
-            'reporting_period_id' => $reportingPeriod,
+            // 'reporting_period_id' => $reportingPeriod,
             'planning_year_id' => $planningYear,
             'office_id' => $office,
             'commented_by' => $loggedInUserOfficeLevel->id

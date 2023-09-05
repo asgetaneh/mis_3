@@ -978,6 +978,9 @@ function reportStatusOffice($office, $kpi, $year)
 
 function isCurrentOfficeReportApproved($kpi, $office, $year)
 {
+
+    $activeReportingPeriodList = getReportingPeriod();
+
     $status = PlanAccomplishment::select('accom_status')
         ->where('office_id', $office->id)
         ->where('kpi_id', $kpi)
@@ -985,6 +988,7 @@ function isCurrentOfficeReportApproved($kpi, $office, $year)
             $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
         })
         ->where('planning_year_id', $year)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
         ->first();
 
     // dd($status);
@@ -993,10 +997,13 @@ function isCurrentOfficeReportApproved($kpi, $office, $year)
 
 function hasOfficeActiveReportComment($office, $kpi, $year){
 
+    $activeReportingPeriodList = getReportingPeriod();
+
     $comment = ReportComment::select()
         ->where('kpi_id', $kpi)
         ->where('office_id', $office)
         ->where('planning_year_id', $year)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
         ->where('status', 1)
         ->get();
 
@@ -1005,10 +1012,14 @@ function hasOfficeActiveReportComment($office, $kpi, $year){
 }
 
 function getReportCommentorInfo($office, $kpi, $year){
+
+    $activeReportingPeriodList = getReportingPeriod();
+
     $info = ReportComment::select()
         ->where('kpi_id', $kpi)
         ->where('office_id', $office)
         ->where('planning_year_id', $year)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
         ->first();
 
     $officeName = $info ? OfficeTranslation::where('translation_id', $info->commented_by)->first() : null;
@@ -1018,6 +1029,8 @@ function getReportCommentorInfo($office, $kpi, $year){
 
 function reportCommentorTextStatus($office, $commentorId, $kpi, $year, $suffix){
 
+    $activeReportingPeriodList = getReportingPeriod();
+
     // dd($office->id);
     if($suffix == 1){
         $status = ReportComment::select()
@@ -1025,6 +1038,7 @@ function reportCommentorTextStatus($office, $commentorId, $kpi, $year, $suffix){
         ->where('commented_by', $commentorId)
         ->where('office_id', $office->id)
         ->where('planning_year_id', $year)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
         ->where('replied_active', 1)
         ->get();
     }elseif($suffix == 2){
@@ -1033,6 +1047,7 @@ function reportCommentorTextStatus($office, $commentorId, $kpi, $year, $suffix){
         ->where('commented_by', $commentorId)
         ->where('office_id', $office->id)
         ->where('planning_year_id', $year)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
         ->where('status', 1)
         ->get();
     }else{
@@ -1041,6 +1056,7 @@ function reportCommentorTextStatus($office, $commentorId, $kpi, $year, $suffix){
         ->where('commented_by', $commentorId)
         ->where('office_id', $office->id)
         ->where('planning_year_id', $year)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
         ->first();
     }
 
