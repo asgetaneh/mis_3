@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\BehaviorController;
+use App\Models\Office;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GoalController;
@@ -9,6 +9,8 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\GenderController;
 use App\Http\Controllers\OfficeController;
+use App\Http\Controllers\KpiTypeController;
+use App\Http\Controllers\BehaviorController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\StrategyController;
 use App\Http\Controllers\InititiveController;
@@ -19,7 +21,9 @@ use App\Http\Controllers\KpiChildTwoController;
 use App\Http\Controllers\PerspectiveController;
 use App\Http\Controllers\PlaningYearController;
 use App\Http\Controllers\SuitableKpiController;
+use App\Http\Controllers\PlanApprovalController;
 use App\Http\Controllers\KpiChildThreeController;
+use App\Http\Controllers\ReportApprovalController;
 use App\Http\Controllers\GoalTranslationController;
 use App\Http\Controllers\ReportingPeriodController;
 use App\Http\Controllers\ReportingPeriodTController;
@@ -38,9 +42,6 @@ use App\Http\Controllers\PerspectiveTranslationController;
 use App\Http\Controllers\PlaningYearTranslationController;
 use App\Http\Controllers\KeyPeformanceIndicatorTController;
 use App\Http\Controllers\KpiChildThreeTranslationController;
-use App\Http\Controllers\KpiTypeController;
-use App\Http\Controllers\PlanApprovalController;
-use App\Http\Controllers\ReportApprovalController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,7 +59,7 @@ Route::get('/', function () {
         return redirect('/dashboard');
     }
 
-    return view('auth.login');
+    return view('landing.index');
 });
 Route::get('/dashboard', [HomeController::class, 'index'])->name('home');
 
@@ -145,6 +146,13 @@ Route::prefix('/')
 
                 Route::resource('objectives', ObjectiveController::class);
                 Route::resource('office_translations', OfficeTranslationController::class);
+
+                Route::get('/office-hierarchy',
+                    function () {
+                        $officesList = Office::where('parent_office_id')->latest()->get();
+                        return view('app.office_translations.tree', ['officesList' => $officesList]);
+                    })->name('office.hierarchy');
+
                 Route::resource('perspectives', PerspectiveController::class);
                 Route::resource('planing-years', PlaningYearController::class);
                 Route::resource('reporting-periods', ReportingPeriodController::class);

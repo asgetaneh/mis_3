@@ -48,6 +48,7 @@
         <x-inputs.select
             name="reporting_period_type_id"
             label="Reporting Period Type"
+            class="form-control select2"
             required
         >
             @php $selected = old('reporting_period_type_id', ($editing ? $reportingPeriod->reporting_period_type_id : '')) @endphp

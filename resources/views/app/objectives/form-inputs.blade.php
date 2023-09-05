@@ -2,7 +2,7 @@
 
 <div class="row">
     <x-inputs.group class="col-sm-12">
-        <x-inputs.select name="goal_id" label="Goal" required>
+        <x-inputs.select name="goal_id" label="Goal" class="form-control select2" required>
             @php $selected = old('goal_id', ($editing ? $objective->goal_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }} value="">Please select the Goal</option>
 
@@ -15,7 +15,7 @@
     </x-inputs.group>
 
     <x-inputs.group class="col-sm-12">
-        <x-inputs.select name="perspective_id" label="Perspective" required>
+        <x-inputs.select name="perspective_id" label="Perspective" class="form-control select2" required>
             @php $selected = old('perspective_id', ($editing ? $objective->perspective_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }} value="">Please select the Perspective</option>
             @foreach($perspectives as $value => $label)

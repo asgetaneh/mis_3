@@ -3,7 +3,7 @@
         <thead>
             <tr>
                 <th class="text-left">
-                   sub office  
+                   Sub-office
                 </th>
                 <th class="text-left">
                                 #
@@ -34,7 +34,7 @@
                     <tr>
                         <td>
                             <p>
-                                <a class="btn btn-info" data-toggle="collapse" href="#off{{ $officeTranslation->id }}"
+                                <a class="btn btn-info btn-flat" data-toggle="collapse" href="#off{{ $officeTranslation->translation_id }}"
                                     role="button" aria-expanded="false" aria-controls="collapseExample0">
                                     >>
                                 </a>
@@ -77,15 +77,16 @@
                                             <i class="icon ion-md-eye"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('delete', $officeTranslation)
-                                    <form action="{{ route('office-translations.destroy', $officeTranslation) }}"
-                                        method="POST" onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-light text-danger">
-                                            <i class="icon ion-md-trash"></i>
-                                        </button>
-                                    </form>
-                                @endcan
+                                    @endcan
+                                    {{-- @can('delete', $officeTranslation)
+                                        <form action="{{ route('office-translations.destroy', $officeTranslation) }}"
+                                            method="POST" onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="btn btn-light text-danger">
+                                                <i class="icon ion-md-trash"></i>
+                                            </button>
+                                        </form>
+                                    @endcan --}}
                             </div>
                         </td>
                     </tr>
@@ -98,5 +99,5 @@
                 </tr>
             @endforelse
         </tbody>
-    </table>     
+    </table>
 </div>

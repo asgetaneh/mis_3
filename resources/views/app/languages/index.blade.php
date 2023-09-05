@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Language Index')
 
 @section('content')
 <div class="container">

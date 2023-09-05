@@ -6,18 +6,38 @@
 
     {{-- check if current office is approved or not so that show the select or an APPROVED badge --}}
     @if(reportStatusOffice(auth()->user()->offices[0], $planAcc->kpi_id, $planning_year[0]->id) !== auth()->user()->offices[0]->level)
-        <th class="bg-light">
-            <input class="hidden-self-input-{{ $planAcc->Kpi->id }}" type ="hidden" name="approve[]" value="{{$planAcc->Kpi->id}}-{{auth()->user()->offices[0]->id}}-{{$planning_year[0]->id}}"
-            title="Appove for {{auth()->user()->offices[0]->officeTranslations[0]->name}}"/>
+        @if (isset($setter))
+            <th class="bg-light">
+                {{-- <input class="form-check" type ="checkbox" name="approve[]" value="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}"
+            title="Appove for {{$office->officeTranslations[0]->name}}"/> --}}
 
-            <p class="badge badge-warning d-inline">NOT APPROVED</p>
-        </td>
+                <div class="icheck-success d-inline">
+                    <input class="office-checkbox-kpi-{{ $planAcc->kpi_id }}" name="approve[]" type="checkbox"
+                        id="{{ $planAcc->kpi_id }}-{{ auth()->user()->offices[0]->id }}"
+                        value="{{ $planAcc->Kpi->id }}-{{ auth()->user()->offices[0]->id }}-{{ $planning_year[0]->id }}">
+                    <label for="{{ $planAcc->kpi_id }}-{{ auth()->user()->offices[0]->id }}">
+                        Select Office
+                    </label>
+                </div>
+            </th>
+        @else
+            <th class="bg-light">
+                <input class="hidden-self-input-{{ $planAcc->Kpi->id }}" type ="hidden" name="approve[]" value="{{$planAcc->Kpi->id}}-{{auth()->user()->offices[0]->id}}-{{$planning_year[0]->id}}"
+                title="Appove for {{auth()->user()->offices[0]->officeTranslations[0]->name}}"/>
+
+                <p class="badge badge-warning d-inline">NOT APPROVED</p>
+            </td>
+        @endif
 
     @else
         <th class="bg-light">
             <p class="badge badge-success d-inline">APPROVED</p>
         </th>
     @endif
+
+    <th colspan="{{$ospan }} ">
+        Offices: {{auth()->user()->offices[0]->officeTranslations[0]->name}} <span class="mark">{{ isset($setter) ? '(Own Report)' : '' }}</span>
+</td>
 </tr>
 <tr>
     <td rowspan="2" colspan="2">#</td>
@@ -69,7 +89,7 @@
                 $childAndHim_array[$key] = $value->id;
                 }
                 $childAndHim_array = array_merge($childAndHim_array,array(auth()->user()->offices[0]->id));
-                $plan123 = reportIndividual($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,auth()->user()->offices[0],$period->id, 1);
+                $plan123 = reportIndividual($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,auth()->user()->offices[0],$period->id, 7);
                 $narration = getReportNarrationSelfOffice($planAcc->Kpi->id,$planning_year[0]->id, auth()->user()->offices[0], $period->id);
 
             @endphp
@@ -88,7 +108,7 @@
             $planSumch2_array = array_merge( $planSumch2_array, array(auth()->user()->offices[0]->id));
 
             // $planSumch2Total = planIndividualChTwoSum($planAcc->Kpi->id,  $two->id,$planSumch2_array,$period->id);
-            $planSumch2Total = reportIndividualChTwoSum($planAcc->Kpi->id,  $two->id,auth()->user()->offices[0],$period->id, 1);
+            $planSumch2Total = reportIndividualChTwoSum($planAcc->Kpi->id,  $two->id,auth()->user()->offices[0],$period->id, 7);
             @endphp
             {{$planSumch2Total}}
             </td>
@@ -115,7 +135,7 @@
                 $offices_array = array_merge($offices_array, array(auth()->user()->offices[0]->id));
 
                 // $planSumch1ch3 = planIndividualChOnechThreeSum($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,$offices_array);
-                $planSumch1ch3 = reportIndividualChOnechThreeSum($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,auth()->user()->offices[0], 1);
+                $planSumch1ch3 = reportIndividualChOnechThreeSum($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,auth()->user()->offices[0], 7);
                 @endphp
                     {{$planSumch1ch3}}
             </td>

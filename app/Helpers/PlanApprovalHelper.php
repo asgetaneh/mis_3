@@ -14,6 +14,18 @@ use App\Models\PlanComment;
  * @return response()
  */
 
+function isLastOfficeBelongToKpi($office, $kpi)
+{
+
+     $data = KeyPeformanceIndicator::select('key_peformance_indicators.*')
+         ->join('kpi_office', 'key_peformance_indicators.id', '=', 'kpi_office.kpi_id')
+         ->join('offices', 'offices.id', '=', 'kpi_office.office_id')
+         ->where('kpi_office.kpi_id', '=', $kpi)
+         ->where('kpi_office.office_id', $office->id)
+         ->get();
+
+     return $data;
+}
 function isOfficeBelongToKpi($office, $kpi)
 {
 
@@ -154,10 +166,13 @@ function getOfficeChildrenApprovedList($kpi, $office, $year, $suffix)
 // ----------------------------------------------------------------
 function getOfficeFromKpiAndOfficeList($kpi, $only_child_array)
 { //dump($off_list);
+
+    $only_child_array = array_merge($only_child_array, array(auth()->user()->offices[0]->id));
     $offices = Office::select('offices.*')
         ->whereIn('id', $only_child_array)
         //               ->where('kpi_id' , '=', $kpi->id)
         ->get();
+        // dd($offices);
 
     // $offices = Office::select('offices.*')
     //     ->join('kpi_office', 'offices.id', '=', 'kpi_office.office_id')

@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Reporting')
 
 @section('style')
     <style>
@@ -154,8 +155,8 @@
                                             $checkPlanedForKpi = checkPlanedForKpi($planning_year[0]->id, $kpi->id, auth()->user()->offices[0]->id);
                                         @endphp
                                         @if($checkPlanedForKpi)
-                                        <div class="card p-2">
-                                            <div class="card-header">
+                                        <div class="card p-2" style="border: 1px solid #b1b1b1;">
+                                            <div class="card-header bg-light">
                                                 <h3 class="card-title">KPI:
                                                     {{ $kpi->KeyPeformanceIndicatorTs[0]->name }}
                                                     @php
@@ -175,10 +176,10 @@
 
                                             @if (hasOfficeActiveReportComment(auth()->user()->offices[0]->id, $kpi_id, $planning_year[0]->id)->count() > 0)
                                                 <div class="bg-light w-5 float-right p-3">
-                                                    <p class="m-auto">You have comment from <u>{{ getReportCommentorInfo(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)->name ?? '-' }}</u>
+                                                    <p class="m-auto">You have comment from <u>{{ getReportCommentorInfo(auth()->user()->offices[0]->id, $kpi->id, $planning_year[0]->id)->name ?? '-' }}</u>
                                                         <a  class="btn btn-sm btn-flat btn-info text-white view-comment"
                                                             data-toggle="modal" data-target="#view-comment-modal"
-                                                            data-id="{{ getReportCommentorInfo(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)->translation_id ?? '-' }}-{{$kpi_id}}-{{$planning_year[0]->id}}">
+                                                            data-id="{{ getReportCommentorInfo(auth()->user()->offices[0]->id, $kpi->id, $planning_year[0]->id)->translation_id ?? '-' }}-{{$kpi_id}}-{{$planning_year[0]->id}}">
                                                             <i class="fas fa fa-eye mr-1"></i>View Comment
                                                         </a>
                                                     </p>
@@ -538,7 +539,8 @@
                                     id="summernote" placeholder="Narration here" required></textarea>
                             @endif
 
-                        {{-- </div> --}}
+                        </div>
+                                        </div>
                     @else
                     <h5>{{"No Plan for Keyperformance indicator"}}</h5>
                     @endif
@@ -548,8 +550,8 @@
                         <button type="submit" class="btn btn-primary">Submit</button>
                                         </div>
                         </form>
-                    </div>
-                </div>
+                    {{-- </div>
+                </div> --}}
 
             @empty
                 {{-- <p>ugyftrdy</p> --}}
@@ -607,7 +609,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
             $('.summernote').summernote({
-                height: 150
+                height: 230
             });
             $('.dropdown-toggle').dropdown()
         });

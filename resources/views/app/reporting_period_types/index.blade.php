@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Reporting Period Type Index')
 
 @section('content')
 <div class="container-fluid">

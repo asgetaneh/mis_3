@@ -1,7 +1,7 @@
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-light-primary elevation-1">
     <!-- Brand Logo -->
-    <a href="{{ url('/') }}" class="brand-link" style="background: #3074a4; color: white;">
+    <a href="{{ url('/') }}" class="brand-link" style="background: #086098; color: white;">
         <img src="{{ asset('images/logo.png') }}" alt="Vemto Logo" class="brand-image">
         <span class="brand-text">JU MIS</span>
     </a>

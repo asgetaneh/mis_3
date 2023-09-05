@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'KPI Level Two Index')
 
 @section('content')
 <div class="container-fluid">
