@@ -16,7 +16,7 @@
                 $office = $user->offices[0];
                 $childAndHimOffKpi = $office->offices;
             }
-
+            
         @endphp
         <!-- Sidebar Menu -->
         <nav class="mt-2">
@@ -85,7 +85,7 @@
                                     </a>
 
                                     <ul class="nav nav-treeview">
-                                     @can('view-any', App\Models\Language::class)
+                                        @can('view-any', App\Models\Language::class)
                                             <li class="nav-item">
                                                 <a href="{{ route('languages.index') }}"
                                                     class="nav-link {{ Request::is('smis/setting/languages') || Request::is('smis/setting/languages/*') ? 'active' : '' }}">
@@ -142,6 +142,8 @@
                                                     </p>
                                                 </a>
                                                 <ul class="nav nav-treeview">
+                                                    
+
                                                     <li class="nav-item">
                                                         <a href="{{ route('key-peformance-indicators.index') }}"
                                                             class="nav-link
@@ -338,92 +340,92 @@
                                             $office = $user->offices[0];
                                             $childAndHimOffKpi = $office->offices;
                                         @endphp
-                                             @if (!$office->offices->isEmpty())
-                                                <li class="nav-item">
-                                                    <a href="{{ route('report-approve.index') }}"
-                                                        class="nav-link {{ Request::is('smis/report/approve/*') || Request::is('smis/report/approve') ? 'active' : '' }}">
-                                                        <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                                        <p>Report Approval</p>
-                                                    </a>
-                                                </li>
-                                            @endif
-
+                                        @if (!$office->offices->isEmpty())
                                             <li class="nav-item">
-                                                <a href="{{ route('view-report-accomplishment') }}" class="nav-link">
+                                                <a href="{{ route('report-approve.index') }}"
+                                                    class="nav-link {{ Request::is('smis/report/approve/*') || Request::is('smis/report/approve') ? 'active' : '' }}">
                                                     <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                                    <p>View Report </p>
+                                                    <p>Report Approval</p>
                                                 </a>
                                             </li>
                                         @endif
-                                    </ul>
-                                </li>
 
-
-
-                            </ul>
-                        </li>
-
-                        @if (Auth::user()->can('view-any', Spatie\Permission\Models\Role::class) ||
-                                Auth::user()->can('view-any', Spatie\Permission\Models\Permission::class))
-                            <li class="nav-item {{ Request::is('access/management/*') ? 'menu-open' : '' }}">
-                                <a href="#" class="nav-link">
-                                    <i class="nav-icon fas fa-key"></i>
-                                    <p>
-                                        User Management
-                                        <i class="right fas fa-angle-left"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    @can('view-any', App\Models\User::class)
                                         <li class="nav-item">
-                                            <a href="{{ route('users.index') }}"
-                                                class="nav-link {{ Request::is('access/management/users') || Request::is('access/management/users/*') ? 'active' : '' }}">
+                                            <a href="{{ route('view-report-accomplishment') }}" class="nav-link">
                                                 <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                                <p>Users</p>
+                                                <p>View Report </p>
                                             </a>
                                         </li>
-                                    @endcan
-                                    @can('view-any', Spatie\Permission\Models\Role::class)
-                                        <li class="nav-item">
-                                            <a href="{{ route('roles.index') }}"
-                                                class="nav-link {{ Request::is('access/management/roles') || Request::is('access/management/roles/*') ? 'active' : '' }}">
-                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                                <p>Roles</p>
-                                            </a>
-                                        </li>
-                                    @endcan
-
-                                    @can('view-any', Spatie\Permission\Models\Permission::class)
-                                        <li class="nav-item">
-                                            <a href="{{ route('permissions.index') }}"
-                                                class="nav-link {{ Request::is('access/management/permissions') || Request::is('access/management/permissions/*') ? 'active' : '' }}">
-                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                                <p>Permissions</p>
-                                            </a>
-                                        </li>
-                                    @endcan
+                                    @endif
                                 </ul>
                             </li>
-                        @endif
-                    @endif
-                @endauth
 
-                @auth
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('logout') }}"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="nav-icon icon ion-md-exit"></i>
-                            <p>{{ __('Logout') }}</p>
-                        </a>
 
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
+
+                        </ul>
                     </li>
-                @endauth
-            </ul>
-        </nav>
-        <!-- /.sidebar-menu -->
-    </div>
-    <!-- /.sidebar -->
+
+                    @if (Auth::user()->can('view-any', Spatie\Permission\Models\Role::class) ||
+                            Auth::user()->can('view-any', Spatie\Permission\Models\Permission::class))
+                        <li class="nav-item {{ Request::is('access/management/*') ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-key"></i>
+                                <p>
+                                    User Management
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                @can('view-any', App\Models\User::class)
+                                    <li class="nav-item">
+                                        <a href="{{ route('users.index') }}"
+                                            class="nav-link {{ Request::is('access/management/users') || Request::is('access/management/users/*') ? 'active' : '' }}">
+                                            <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                            <p>Users</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('view-any', Spatie\Permission\Models\Role::class)
+                                    <li class="nav-item">
+                                        <a href="{{ route('roles.index') }}"
+                                            class="nav-link {{ Request::is('access/management/roles') || Request::is('access/management/roles/*') ? 'active' : '' }}">
+                                            <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                            <p>Roles</p>
+                                        </a>
+                                    </li>
+                                @endcan
+
+                                @can('view-any', Spatie\Permission\Models\Permission::class)
+                                    <li class="nav-item">
+                                        <a href="{{ route('permissions.index') }}"
+                                            class="nav-link {{ Request::is('access/management/permissions') || Request::is('access/management/permissions/*') ? 'active' : '' }}">
+                                            <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                            <p>Permissions</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
+                    @endif
+                @endif
+            @endauth
+
+            @auth
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('logout') }}"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <i class="nav-icon icon ion-md-exit"></i>
+                        <p>{{ __('Logout') }}</p>
+                    </a>
+
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                </li>
+            @endauth
+        </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
+</div>
+<!-- /.sidebar -->
 </aside>

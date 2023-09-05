@@ -3,7 +3,7 @@
 <div class="row">
 
     <x-inputs.group class="col-sm-12">
-        <x-inputs.select name="objective_id" label="Objective" required>
+        <x-inputs.select name="objective_id" class="form-control select2" label="Objective" required>
             @php $selected = old('objective_id', ($editing ? $keyPeformanceIndicator->objective_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Objective</option>
             @foreach($objectives as $value => $label)
@@ -15,7 +15,7 @@
     </x-inputs.group>
 
     <x-inputs.group class="col-sm-12">
-        <x-inputs.select name="strategy_id" label="Strategy" required>
+        <x-inputs.select name="strategy_id" class="form-control select2" label="Strategy" required>
             @php $selected = old('strategy_id', ($editing ? $keyPeformanceIndicator->strategy_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Strategy</option>
             @foreach($strategies as $value => $label)
@@ -45,6 +45,7 @@
         <x-inputs.select
             name="behavior_id"
             label="Behavior Type"
+            class="form-control select2"
             required
         >
             @php $selected = old('behavior_id', ($editing ? $keyPeformanceIndicator->behavior_id : '')) @endphp
@@ -88,6 +89,7 @@
         <x-inputs.select
             name="reporting_period_type_id"
             label="Reporting Period Type"
+            class="form-control select2"
             required
         >
             @php $selected = old('reporting_period_type_id', ($editing ? $keyPeformanceIndicator->reporting_period_type_id : '')) @endphp
@@ -104,6 +106,7 @@
         <x-inputs.select
             name="kpi_type_id"
             label="KPI Type"
+            class="form-control select2"
             required
         >
             @php $selected = old('kpi_type_id', ($editing ? $keyPeformanceIndicator->kpi_type_id : '')) @endphp

@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Edit KPI Level Three')
 
 @section('content')
 <div class="container">

@@ -3,7 +3,19 @@
     <tr>
         <th colspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 1 }} ">
             Offices: {{ $office->officeTranslations[0]->name }}
-            </td>
+        </td>
+         <td rowspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 3 }}">
+            @if (!$office->offices->isEmpty())
+                <p>
+                    <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}{{$planAcc->Kpi->id}}" role="button"
+                        aria-expanded="false" aria-controls="collapseExample0">
+                        Details
+                    </a>
+                </p>
+            @else
+                {{ 'no child ' }}
+            @endif
+        </td>
     </tr>
     <tr>
         <th>#</th>
@@ -18,7 +30,7 @@
                     $childAndHimOffKpi_array[$key] = $value->id;
                 }
                 $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
-                $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id, $office);
+               // $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id, $office);
             @endphp
         @empty
         @endforelse
@@ -31,7 +43,8 @@
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             <td>
                 @php
-                    $planOne = $planAcc->planOne($planAcc->Kpi->id, $one->id, $office, $period->id);
+                   // $planOne = $planAcc->planOne($planAcc->Kpi->id, $one->id, $office, $period->id,false);
+                    $planOne = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year[0]->id ,$one->id,null,null);
                     $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
                 @endphp
                 {{ $planOne[0] }}
@@ -42,9 +55,9 @@
     @endforeach
     <tr>
         <td>
-            Major Activities
+            Major Activities 
         </td>
-        <td colspan="2">
+        <td colspan="{{count(getQuarter($planAcc->Kpi->reportingPeriodType->id))}}">
             @foreach ($narration as $key => $plannaration)
                 {!! html_entity_decode($plannaration->plan_naration) !!}
                 @php
@@ -52,22 +65,10 @@
                 @endphp
             @endforeach
         </td>
-        <td>
-            @if (!$office->offices->isEmpty())
-                <p>
-                    <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}" role="button"
-                        aria-expanded="false" aria-controls="collapseExample0">
-                        Details
-                    </a>
-                </p>
-            @else
-                {{ 'no child ' }}
-            @endif
-        </td>
     </tr>
 </table>
 {{-- level two (directores and same level) --}}
-<div class="collapse" id="off{{ $office->id }}">
+<div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
     <div class="card card-body">
         @php
             $offices_twos = $office->offices;
@@ -75,35 +76,35 @@
         @forelse ($offices_twos as $office)
 
             @include('app.plan_accomplishments.view-kpi11')
-            <div class="collapse" id="off{{ $office->id }}">
+            <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
                 <div class="card card-body">
                     @php
                         $offices_threes = $office->offices;
                     @endphp
                     @forelse ($offices_threes as $office)
                         @include('app.plan_accomplishments.view-kpi11')
-                        <div class="collapse" id="off{{ $office->id }}">
+                        <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
                             <div class="card card-body">
                                 @php
                                     $offices_fours = $office->offices;
                                 @endphp
                                 @forelse ($offices_fours as $office)
                                     @include('app.plan_accomplishments.view-kpi11')
-                                    <div class="collapse" id="off{{ $office->id }}">
+                                    <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
                                         <div class="card card-body">
                                             @php
                                                 $offices_fives = $office->offices;
                                             @endphp
                                             @forelse ($offices_fives as $office)
                                                 @include('app.plan_accomplishments.view-kpi11')
-                                                <div class="collapse" id="off{{ $office->id }}">
+                                                <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
                                                     <div class="card card-body">
                                                         @php
                                                             $offices_sixs = $office->offices;
                                                         @endphp
                                                         @forelse ($offices_sixs as $office)
                                                             @include('app.plan_accomplishments.view-kpi11')
-                                                            <div class="collapse" id="off{{ $office->id }}">
+                                                            <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
                                                                 <div class="card card-body">
 
                                                                 </div>

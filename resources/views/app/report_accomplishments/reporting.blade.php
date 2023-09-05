@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Reporting')
 
 @section('style')
     <style>
@@ -34,7 +35,7 @@
                                     @forelse($kpis['goal'] as $goal)
                                         <tr>
                                             {{-- <td class="rounded "> --}}
-                                            <a class="border btn btn-light btn-block text-left {{ Request::is('smis/report/get-objectives-reporting/' . $goal->id) ? 'bg-primary' : '' }}"
+                                            <a style="background-color: #f5f5f5;" class="border border-secondary btn btn-light btn-block text-left {{ Request::is('smis/report/get-objectives-reporting/' . $goal->id) ? 'bg-primary' : '' }}"
                                                 href='{{ route('get-objectives-reporting', $goal->id) }}' role="button"
                                                 aria-expanded="false" aria-controls="collapseExample">
                                                 {{ optional($goal->goalTranslations[0])->name ?? '-' }}
@@ -154,8 +155,8 @@
                                             $checkPlanedForKpi = checkPlanedForKpi($planning_year[0]->id, $kpi->id, auth()->user()->offices[0]->id);
                                         @endphp
                                         @if($checkPlanedForKpi)
-                                        <div class="card p-2">
-                                            <div class="card-header">
+                                        <div class="card p-2" style="border: 1px solid #b1b1b1;">
+                                            <div class="card-header bg-light">
                                                 <h3 class="card-title">KPI:
                                                     {{ $kpi->KeyPeformanceIndicatorTs[0]->name }}
                                                     @php
@@ -175,10 +176,10 @@
 
                                             @if (hasOfficeActiveReportComment(auth()->user()->offices[0]->id, $kpi_id, $planning_year[0]->id)->count() > 0)
                                                 <div class="bg-light w-5 float-right p-3">
-                                                    <p class="m-auto">You have comment from <u>{{ getReportCommentorInfo(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)->name ?? '-' }}</u>
+                                                    <p class="m-auto">You have comment from <u>{{ getReportCommentorInfo(auth()->user()->offices[0]->id, $kpi->id, $planning_year[0]->id)->name ?? '-' }}</u>
                                                         <a  class="btn btn-sm btn-flat btn-info text-white view-comment"
                                                             data-toggle="modal" data-target="#view-comment-modal"
-                                                            data-id="{{ getReportCommentorInfo(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)->translation_id ?? '-' }}-{{$kpi_id}}-{{$planning_year[0]->id}}">
+                                                            data-id="{{ getReportCommentorInfo(auth()->user()->offices[0]->id, $kpi->id, $planning_year[0]->id)->translation_id ?? '-' }}-{{$kpi_id}}-{{$planning_year[0]->id}}">
                                                             <i class="fas fa fa-eye mr-1"></i>View Comment
                                                         </a>
                                                     </p>
@@ -245,9 +246,13 @@
                                                                                         $disabled ="";
                                                                                     @endphp
                                                                                     @if ($plan && $plan->accom_value)
-                                                                                     @if ($off_level!=$plan->accom_status)
+                                                                                    @if($off_level ===1) 
+                                                                                        @if ($off_level === $plan->accom_status)
+                                                                                            @php $disabled ="disabled"; @endphp
+                                                                                        @endif
+                                                                                    @elseif ($off_level != $plan->accom_status)
                                                                                         @php $disabled ="disabled"; @endphp
-                                                                                     @endif
+                                                                                    @endif 
                                                                                         <td>
                                                                                             <input
                                                                                                 name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
@@ -318,9 +323,13 @@
                                                                                     $disabled ="";
 
                                                                                 @endphp
-                                                                                @if ($off_level!=$plan12->accom_status)
-                                                                                    @php $disabled ="disabled"; @endphp
-                                                                                @endif
+                                                                                @if($off_level ===1) 
+                                                                                        @if ($off_level === $plan12->accom_status)
+                                                                                            @php $disabled ="disabled"; @endphp
+                                                                                        @endif
+                                                                                    @elseif ($off_level != $plan12->accom_status)
+                                                                                        @php $disabled ="disabled"; @endphp
+                                                                                    @endif 
                                                                                 <td>
                                                                                     <input
                                                                                         name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}"
@@ -388,7 +397,11 @@
 
                                                             @endphp
                                                             @if ($plan1 && $plan1->accom_value)
-                                                             @if ($off_level!=$plan1->accom_status)
+                                                             @if($off_level ===1) 
+                                                                @if ($off_level === $plan1->accom_status)
+                                                                    @php $disabled ="disabled"; @endphp
+                                                                @endif
+                                                                @elseif ($off_level != $plan1->accom_status)
                                                                     @php $disabled ="disabled"; @endphp
                                                                 @endif
                                                                 <td>
@@ -449,14 +462,18 @@
                                         @php
                                         $inputname = '{{ $kpi->id }}-{{ $period->id }}';
                                         $planP = getSavedPlanIndividual($planning_year[0]->id, $kpi->id,
-                                        $period->id, auth()->user()->offices[0]->id);
+                                        $period->id, auth()->user()->offices[0]->id,true);
                                         $off_level = auth()->user()->offices[0]->level;
                                         $disabled ="";
                                         @endphp
                                         @if ($planP && $planP->accom_value)
-                                         @if ($off_level!=$planP->accom_status)
-                                            @php $disabled ="disabled"; @endphp
-                                         @endif
+                                        @if($off_level ===1) 
+                                                @if ($off_level === $planP->accom_status)
+                                                    @php $disabled ="disabled"; @endphp
+                                                @endif
+                                            @elseif ($off_level != $planP->accom_status)
+                                                @php $disabled ="disabled"; @endphp
+                                             @endif 
                                              <td>
                                                  <input name="{{ $kpi->id }}-{{ $period->id }}"
                                                     class="form-control" value="{{ $planP->accom_value }}"

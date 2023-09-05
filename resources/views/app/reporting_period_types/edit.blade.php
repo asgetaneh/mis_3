@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Edit Reporting Period Type')
 
 @section('content')
 <div class="container">

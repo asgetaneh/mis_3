@@ -61,7 +61,7 @@
                 $childAndHim_array[$key] = $value->id;
                 } 
                 $childAndHim_array = array_merge($childAndHim_array,array($office->id));
-                $plan123 = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,$office,$period->id);
+                $plan123 = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,$office,$period->id,false);
                 $narration = $planAcc->getNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
 
             @endphp

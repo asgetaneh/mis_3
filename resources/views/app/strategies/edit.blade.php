@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Edit Strategy')
 
 @section('content')
 <div class="container">
@@ -44,4 +45,11 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+
+        $('.select2').select2();
+
+    });
+</script>
 @endsection

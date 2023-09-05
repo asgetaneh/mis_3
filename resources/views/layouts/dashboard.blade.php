@@ -1,4 +1,6 @@
 @extends('layouts.app')
+@section('title', 'Dashboard')
+
 @section('content')
     <!-- Small boxes (Stat box) -->
     {{-- <div class="row">

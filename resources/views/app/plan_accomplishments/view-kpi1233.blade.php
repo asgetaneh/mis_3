@@ -3,11 +3,23 @@
         $ospan = $planAcc->Kpi->kpiChildThrees->count() * $planAcc->Kpi->kpiChildOnes->count() + 2;
     @endphp
     <!-- <tr id="child-ones"> -->
-    <tr style="background:#fff7e6;width:100%">
+    <tr>
 
-        <th colspan="{{ $ospan }} ">
+        <th colspan="{{ $ospan }} "  style="background:#fff7e6;width:100%">
             Offices: {{ $office->officeTranslations[0]->name }}
-            </td>
+        </td>
+         <td rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() *count(getQuarter($planAcc->Kpi->reportingPeriodType->id))+4}}">
+        @if (!$office->offices->isEmpty())
+            <p>
+                <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}{{$planAcc->Kpi->id}}" role="button"
+                    aria-expanded="false" aria-controls="collapseExample0">
+                    Details
+                </a>
+            </p>
+        @else
+            {{ 'no child ' }}
+        @endif
+    </td>
     </tr>
     <tr>
         <td rowspan="2" colspan="2">#</td>
@@ -44,7 +56,8 @@
                                     $childAndHim_array[$key] = $value->id;
                                 }
                                 $childAndHim_array = array_merge($childAndHim_array, [$office->id]);
-                                $plan123 = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id, $kpiThree->id, $office, $period->id);
+                               // $plan123 = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id, $kpiThree->id, $office, $period->id,false);
+                                  $plan123 = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year[0]->id ,$one->id, $two->id, $kpiThree->id);
                                 $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
                                 
                             @endphp
@@ -60,25 +73,13 @@
         <td>
             Major Activities
         </td>
-        <td colspan="4">
+        <td colspan="{{ $planAcc->Kpi->kpiChildOnes->count() *$planAcc->Kpi->kpiChildThrees->count()+1}}">
             @foreach ($narration as $key => $plannaration)
                 {!! html_entity_decode($plannaration->plan_naration) !!}
                 @php
                     echo '<br/>';
                 @endphp
             @endforeach
-        </td>
-        <td>
-            @if (!$office->offices->isEmpty())
-                <p>
-                    <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}" role="button"
-                        aria-expanded="false" aria-controls="collapseExample0">
-                        Details
-                    </a>
-                </p>
-            @else
-                {{ 'no child ' }}
-            @endif
-        </td>
+        </td> 
     </tr>
 </table>

@@ -16,11 +16,11 @@
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @php
                 $planOfOfficePlan
-                = $planAcc->planSum($planAcc->Kpi->id,$office, $period->id);
-               $narration = $planAcc->getNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
+                = $planAcc->planSum($planAcc->Kpi->id,$office, $period->id,true,$planning_year);
+               $narration = $planAcc->getReportNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
             @endphp
             <td>
-               {{$planOfOfficePlan}} 
+               {{$planOfOfficePlan[1]}} 
             </td>
         @empty
         @endforelse

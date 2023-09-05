@@ -75,6 +75,8 @@ function getOfficeReportRecord($kpi, $office, $year) : bool
 function getOfficeChildrenReportApprovedList($kpi, $office, $year, $suffix)
 {
 
+    $activeReportingPeriodList = getReportingPeriod();
+
     if ($suffix == 1) {
         $childAndHimOffKpi = office_all_childs_ids($office);
 
@@ -83,6 +85,7 @@ function getOfficeChildrenReportApprovedList($kpi, $office, $year, $suffix)
             // ->whereIn('office_id', $childOffices)
             ->whereIn('office_id', $childAndHimOffKpi)
             ->where('planning_year_id', $year)->distinct('office_id')
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where('accom_status', $office->level)
             ->get();
 
@@ -103,6 +106,7 @@ function getOfficeChildrenReportApprovedList($kpi, $office, $year, $suffix)
             // ->whereIn('office_id', $childOffices)
             ->whereIn('office_id', $merged)
             ->where('planning_year_id', $year)->distinct('office_id')
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where(function ($q) {
                 $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
             })
@@ -155,6 +159,7 @@ function reportIndividual($kkp, $one, $two, $three, $office, $period, $suffix)
     $childAndHimOffKpi = office_all_childs_ids($office);
     $planAccomplishmentsCurrent = '';
     $planAccomplishmentsChildren = '';
+    $activeReportingPeriodList = getReportingPeriod();
 
     if ($suffix == 1) {
 
@@ -166,7 +171,7 @@ function reportIndividual($kkp, $one, $two, $three, $office, $period, $suffix)
             ->where('kpi_child_one_id', $one)
             ->where('kpi_child_two_id', '=', $two)
             ->where('kpi_child_three_id', '=', $three)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where(function ($q) {
                 $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
             })
@@ -179,7 +184,7 @@ function reportIndividual($kkp, $one, $two, $three, $office, $period, $suffix)
             ->where('kpi_child_one_id', $one)
             ->where('kpi_child_two_id', '=', $two)
             ->where('kpi_child_three_id', '=', $three)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->get();
 
         // Current office children record if exists
@@ -190,7 +195,7 @@ function reportIndividual($kkp, $one, $two, $three, $office, $period, $suffix)
             ->where('kpi_child_two_id', '=', $two)
             ->where('kpi_child_three_id', '=', $three)
             ->where('accom_status', $office->level)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->get();
 
         $sum1 = 0;
@@ -215,7 +220,7 @@ function reportIndividual($kkp, $one, $two, $three, $office, $period, $suffix)
             ->where('kpi_child_one_id', $one)
             ->where('kpi_child_two_id', '=', $two)
             ->where('kpi_child_three_id', '=', $three)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where(function ($q) {
                 $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
             })
@@ -235,7 +240,14 @@ function reportIndividual($kkp, $one, $two, $three, $office, $period, $suffix)
     $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
     $sum_of_sub_office = 0;
     // $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $childAndHimOffKpi_array)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_two_id' , '=', $two)->where('kpi_child_three_id' , '=', $three)->where('reporting_period_id' , '=', $period)->get();//dd($planAccomplishments);
-    $planAccomplishments = PlanAccomplishment::select('accom_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('kpi_child_one_id', '=', $one)->where('kpi_child_two_id', '=', $two)->where('kpi_child_three_id', '=', $three)->where('reporting_period_id', '=', $period)->get(); //dd($planAccomplishments);
+    $planAccomplishments = PlanAccomplishment::select('accom_value')
+        ->where('office_id', $office->id)
+        ->where('kpi_id', '=', $kkp)
+        ->where('kpi_child_one_id', '=', $one)
+        ->where('kpi_child_two_id', '=', $two)
+        ->where('kpi_child_three_id', '=', $three)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
+        ->get(); //dd($planAccomplishments);
     foreach ($planAccomplishments as $key => $planAccomplishment) {
         $sum_of_sub_office = $sum_of_sub_office + $planAccomplishment->accom_value;
     }
@@ -247,6 +259,7 @@ function reportIndividualChOnechThreeSum($kkp, $one, $two, $three, $office, $suf
     $childAndHimOffKpi = office_all_childs_ids($office);
     $planAccomplishmentsCurrent = '';
     $planAccomplishmentsChildren = '';
+    $activeReportingPeriodList = getReportingPeriod();
 
     if ($suffix == 1) {
 
@@ -257,7 +270,7 @@ function reportIndividualChOnechThreeSum($kkp, $one, $two, $three, $office, $suf
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', '=', $two)
             ->where('kpi_child_three_id', '=', $three)
-            // ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where(function ($q) {
                 $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
             })
@@ -269,7 +282,7 @@ function reportIndividualChOnechThreeSum($kkp, $one, $two, $three, $office, $suf
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', '=', $two)
             ->where('kpi_child_three_id', '=', $three)
-            // ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->get();
 
         // Current office children record if exists
@@ -279,7 +292,7 @@ function reportIndividualChOnechThreeSum($kkp, $one, $two, $three, $office, $suf
             ->where('accom_status', $office->level)
             ->where('kpi_child_one_id', '=', $two)
             ->where('kpi_child_three_id', '=', $three)
-            // ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->get();
 
         $sum1 = 0;
@@ -303,7 +316,7 @@ function reportIndividualChOnechThreeSum($kkp, $one, $two, $three, $office, $suf
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', '=', $two)
             ->where('kpi_child_three_id', '=', $three)
-            // ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where(function ($q) {
                 $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
             })
@@ -320,7 +333,13 @@ function reportIndividualChOnechThreeSum($kkp, $one, $two, $three, $office, $suf
 
     $sumch1ch3_value = 0;
     // $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id' , $office)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_three_id' , '=', $three)->get();
-    $planAccomplishments = PlanAccomplishment::select('accom_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('kpi_child_one_id', '=', $one)->where('kpi_child_three_id', '=', $three)->get();
+    $planAccomplishments = PlanAccomplishment::select('accom_value')
+        ->where('office_id', $office->id)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
+        ->where('kpi_id', '=', $kkp)
+        ->where('kpi_child_one_id', '=', $one)
+        ->where('kpi_child_three_id', '=', $three)
+        ->get();
     foreach ($planAccomplishments as $key => $planAccomplishment) {
 
         $sumch1ch3_value = $sumch1ch3_value + $planAccomplishment->accom_value;
@@ -333,6 +352,7 @@ function reportIndividualChOnech($kkp, $one, $two, $office, $suffix)
     $childAndHimOffKpi = office_all_childs_ids($office);
     $planAccomplishmentsCurrent = '';
     $planAccomplishmentsChildren = '';
+    $activeReportingPeriodList = getReportingPeriod();
 
     if ($suffix == 1) {
 
@@ -342,7 +362,7 @@ function reportIndividualChOnech($kkp, $one, $two, $office, $suffix)
             ->whereIn('office_id', $childAndHimOffKpi)
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', '=', $two)
-            // ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where(function ($q) {
                 $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
             })
@@ -353,7 +373,7 @@ function reportIndividualChOnech($kkp, $one, $two, $office, $suffix)
             ->where('office_id', $office->id)
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', '=', $two)
-            // ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->get();
 
         // Current office children record if exists
@@ -362,7 +382,7 @@ function reportIndividualChOnech($kkp, $one, $two, $office, $suffix)
             ->where('kpi_id', '=', $kkp)
             ->where('accom_status', $office->level)
             ->where('kpi_child_one_id', '=', $two)
-            // ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->get();
 
         $sum1 = 0;
@@ -385,7 +405,7 @@ function reportIndividualChOnech($kkp, $one, $two, $office, $suffix)
             ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', '=', $two)
-            // ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where(function ($q) {
                 $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
             })
@@ -402,7 +422,12 @@ function reportIndividualChOnech($kkp, $one, $two, $office, $suffix)
 
     $sumch1ch3_value = 0;
     // $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id' , $office)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->get();
-    $planAccomplishments = PlanAccomplishment::select('accom_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('kpi_child_one_id', '=', $one)->get();
+    $planAccomplishments = PlanAccomplishment::select('accom_value')
+        ->where('office_id', $office->id)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
+        ->where('kpi_id', '=', $kkp)
+        ->where('kpi_child_one_id', '=', $one)
+        ->get();
     foreach ($planAccomplishments as $key => $planAccomplishment) {
 
         $sumch1ch3_value = $sumch1ch3_value + $planAccomplishment->accom_value;
@@ -415,6 +440,7 @@ function reportIndividualChTwoSum($kkp, $two, $office, $period, $suffix)
     $childAndHimOffKpi = office_all_childs_ids($office);
     $planAccomplishmentsCurrent = '';
     $planAccomplishmentsChildren = '';
+    $activeReportingPeriodList = getReportingPeriod();
 
     if ($suffix == 1) {
 
@@ -424,7 +450,7 @@ function reportIndividualChTwoSum($kkp, $two, $office, $period, $suffix)
             ->whereIn('office_id', $childAndHimOffKpi)
             ->where('kpi_id', $kkp)
             ->where('kpi_child_two_id', '=', $two)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where(function ($q) {
                 $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
             })
@@ -435,7 +461,7 @@ function reportIndividualChTwoSum($kkp, $two, $office, $period, $suffix)
             ->where('office_id', $office->id)
             ->where('kpi_id', $kkp)
             ->where('kpi_child_two_id', '=', $two)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->get();
 
         // Current office children record if exists
@@ -444,7 +470,7 @@ function reportIndividualChTwoSum($kkp, $two, $office, $period, $suffix)
             ->where('kpi_id', '=', $kkp)
             ->where('accom_status', $office->level)
             ->where('kpi_child_two_id', '=', $two)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->get();
 
         $sum1 = 0;
@@ -467,7 +493,7 @@ function reportIndividualChTwoSum($kkp, $two, $office, $period, $suffix)
             ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
             ->where('kpi_id', $kkp)
             ->where('kpi_child_two_id', '=', $two)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where(function ($q) {
                 $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
             })
@@ -484,7 +510,8 @@ function reportIndividualChTwoSum($kkp, $two, $office, $period, $suffix)
 
     $sumch1ch3_value = 0;
     // $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id' , $office)->where('kpi_id' , '=', $kkp)->where('kpi_child_two_id' , '=', $two)->where('reporting_period_id' , '=', $period)->get();
-    $planAccomplishments = PlanAccomplishment::select('accom_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('kpi_child_two_id', '=', $two)->where('reporting_period_id', '=', $period)->get();
+    $planAccomplishments = PlanAccomplishment::select('accom_value')->where('office_id', $office->id)->whereIn('reporting_period_id', $activeReportingPeriodList)
+    ->where('kpi_id', '=', $kkp)->where('kpi_child_two_id', '=', $two)->where('reporting_period_id', '=', $period)->get();
     foreach ($planAccomplishments as $key => $planAccomplishment) {
 
         $sumch1ch3_value = $sumch1ch3_value + $planAccomplishment->accom_value;
@@ -509,6 +536,7 @@ function reportSumOfKpi($kkp, $office, $suffix)
     $childAndHimOffKpi = office_all_childs_ids($office);
     $planAccomplishmentsCurrent = '';
     $planAccomplishmentsChildren = '';
+    $activeReportingPeriodList = getReportingPeriod();
 
     if ($suffix == 1) {
 
@@ -517,7 +545,7 @@ function reportSumOfKpi($kkp, $office, $suffix)
             // ->where('office_id', $office->id)
             ->whereIn('office_id', $childAndHimOffKpi)
             ->where('kpi_id', $kkp)
-            // ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where(function ($q) {
                 $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
             })
@@ -527,7 +555,7 @@ function reportSumOfKpi($kkp, $office, $suffix)
         $planAccomplishmentsCurrent = PlanAccomplishment::select()
             ->where('office_id', $office->id)
             ->where('kpi_id', $kkp)
-            // ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->get();
 
         // Current office children record if exists
@@ -535,7 +563,7 @@ function reportSumOfKpi($kkp, $office, $suffix)
             ->whereIn('office_id', $childAndHimOffKpi)
             ->where('kpi_id', '=', $kkp)
             ->where('accom_status', $office->level)
-            // ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->get();
 
         $sum1 = 0;
@@ -557,7 +585,7 @@ function reportSumOfKpi($kkp, $office, $suffix)
             // ->where('office_id', $office->id)
             ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
             ->where('kpi_id', $kkp)
-            // ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where(function ($q) {
                 $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
             })
@@ -578,7 +606,10 @@ function reportSumOfKpi($kkp, $office, $suffix)
     // dd($childAndHimOffKpi_array);
     $sumch1ch3_value = 0;
     // $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $childAndHimOffKpi_array)->where('kpi_id' , '=', $kkp)->get();
-    $planAccomplishments = PlanAccomplishment::select('accom_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->get();
+    $planAccomplishments = PlanAccomplishment::select('accom_value')
+        ->where('office_id', $office->id)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
+        ->where('kpi_id', '=', $kkp)->get();
     foreach ($planAccomplishments as $key => $planAccomplishment) {
         $sumch1ch3_value = $sumch1ch3_value + $planAccomplishment->accom_value;
     } //dd($sumch1ch3_value);
@@ -591,6 +622,8 @@ function reportOne($kkp, $one, $office, $period, $suffix)
     $childAndHimOffKpi = office_all_childs_ids($office);
     $planAccomplishmentsCurrent = '';
     $planAccomplishmentsChildren = '';
+    $activeReportingPeriodList = getReportingPeriod();
+
 
     if ($suffix == 1) {
 
@@ -600,7 +633,7 @@ function reportOne($kkp, $one, $office, $period, $suffix)
             ->whereIn('office_id', $childAndHimOffKpi)
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', $one)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where(function ($q) {
                 $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
             })
@@ -611,7 +644,7 @@ function reportOne($kkp, $one, $office, $period, $suffix)
             ->where('office_id', $office->id)
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', $one)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->get();
 
         // Current office children record if exists
@@ -620,7 +653,7 @@ function reportOne($kkp, $one, $office, $period, $suffix)
             ->where('kpi_id', '=', $kkp)
             ->where('kpi_child_one_id', '=', $one)
             ->where('accom_status', $office->level)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->get();
 
         $sum1 = 0;
@@ -643,7 +676,7 @@ function reportOne($kkp, $one, $office, $period, $suffix)
             ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', $one)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where(function ($q) {
                 $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
             })
@@ -662,7 +695,11 @@ function reportOne($kkp, $one, $office, $period, $suffix)
     $childAndHimOffKpi = office_all_childs_ids($office);
     $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
     $sum1 = 0;
-    $planAccomplishments = PlanAccomplishment::select('accom_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('kpi_child_one_id', '=', $one)->where('reporting_period_id', '=', $period)->get();
+    $planAccomplishments = PlanAccomplishment::select('accom_value')
+        ->where('office_id', $office->id)->where('kpi_id', '=', $kkp)
+        ->where('kpi_child_one_id', '=', $one)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
+        ->get();
     foreach ($planAccomplishments as $key => $planAccomplishment) {
         $sum1 = $sum1 + $planAccomplishment->accom_value;
     }
@@ -674,6 +711,8 @@ function reportOneTwo($kkp, $one, $two, $office, $period, $suffix)
     $childAndHimOffKpi = office_all_childs_ids($office);
     $planAccomplishmentsCurrent = '';
     $planAccomplishmentsChildren = '';
+    $activeReportingPeriodList = getReportingPeriod();
+
 
     if ($suffix == 1) {
 
@@ -684,7 +723,7 @@ function reportOneTwo($kkp, $one, $two, $office, $period, $suffix)
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', $one)
             ->where('kpi_child_two_id', '=', $two)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where(function ($q) {
                 $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
             })
@@ -696,7 +735,7 @@ function reportOneTwo($kkp, $one, $two, $office, $period, $suffix)
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', $one)
             ->where('kpi_child_two_id', '=', $two)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->get();
 
         // Current office children record if exists
@@ -706,7 +745,7 @@ function reportOneTwo($kkp, $one, $two, $office, $period, $suffix)
             ->where('kpi_child_one_id', '=', $one)
             ->where('kpi_child_two_id', '=', $two)
             ->where('accom_status', $office->level)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->get();
 
         $sum1 = 0;
@@ -730,7 +769,7 @@ function reportOneTwo($kkp, $one, $two, $office, $period, $suffix)
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', $one)
             ->where('kpi_child_two_id', '=', $two)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where(function ($q) {
                 $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
             })
@@ -750,7 +789,13 @@ function reportOneTwo($kkp, $one, $two, $office, $period, $suffix)
     $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
     $sum12 = 0;
     // $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $childAndHimOffKpi_array)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_two_id' , '=', $two)->where('reporting_period_id' , '=', $period)->get();//dd($planAccomplishments);
-    $planAccomplishments = PlanAccomplishment::select('accom_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('kpi_child_one_id', '=', $one)->where('kpi_child_two_id', '=', $two)->where('reporting_period_id', '=', $period)->get(); //dd($planAccomplishments);
+    $planAccomplishments = PlanAccomplishment::select('accom_value')
+        ->where('office_id', $office->id)
+        ->where('kpi_id', '=', $kkp)
+        ->where('kpi_child_one_id', '=', $one)
+        ->where('kpi_child_two_id', '=', $two)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
+        ->get(); //dd($planAccomplishments);
     foreach ($planAccomplishments as $key => $planAccomplishment) {
         $sum12 = $sum12 + $planAccomplishment->accom_value;
     }
@@ -762,6 +807,8 @@ function reportSum($kkp, $office, $period, $suffix)
     $childAndHimOffKpi = office_all_childs_ids($office);
     $planAccomplishmentsCurrent = '';
     $planAccomplishmentsChildren = '';
+    $activeReportingPeriodList = getReportingPeriod();
+
 
     if ($suffix == 1) {
 
@@ -770,7 +817,7 @@ function reportSum($kkp, $office, $period, $suffix)
             // ->where('office_id', $office->id)
             ->whereIn('office_id', $childAndHimOffKpi)
             ->where('kpi_id', $kkp)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where(function ($q) {
                 $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
             })
@@ -780,7 +827,7 @@ function reportSum($kkp, $office, $period, $suffix)
         $planAccomplishmentsCurrent = PlanAccomplishment::select()
             ->where('office_id', $office->id)
             ->where('kpi_id', $kkp)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->get();
 
         // Current office children record if exists
@@ -788,7 +835,7 @@ function reportSum($kkp, $office, $period, $suffix)
             ->whereIn('office_id', $childAndHimOffKpi)
             ->where('kpi_id', '=', $kkp)
             ->where('accom_status', $office->level)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->get();
 
         $sum1 = 0;
@@ -810,7 +857,7 @@ function reportSum($kkp, $office, $period, $suffix)
             // ->where('office_id', $office->id)
             ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
             ->where('kpi_id', $kkp)
-            ->where('reporting_period_id', '=', $period)
+            ->whereIn('reporting_period_id', $activeReportingPeriodList)
             ->where(function ($q) {
                 $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
             })
@@ -829,7 +876,11 @@ function reportSum($kkp, $office, $period, $suffix)
     $childAndHimOffKpi = office_all_childs_ids($office);
     $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
     $sum = 0;
-    $planAccomplishments = PlanAccomplishment::select('accom_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('reporting_period_id', '=', $period)->get();
+    $planAccomplishments = PlanAccomplishment::select('accom_value')
+        ->where('office_id', $office->id)
+        ->where('kpi_id', '=', $kkp)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
+        ->get();
     foreach ($planAccomplishments as $key => $planAccomplishment) {
         $sum = $sum + $planAccomplishment->accom_value;
     }
@@ -927,6 +978,9 @@ function reportStatusOffice($office, $kpi, $year)
 
 function isCurrentOfficeReportApproved($kpi, $office, $year)
 {
+
+    $activeReportingPeriodList = getReportingPeriod();
+
     $status = PlanAccomplishment::select('accom_status')
         ->where('office_id', $office->id)
         ->where('kpi_id', $kpi)
@@ -934,6 +988,7 @@ function isCurrentOfficeReportApproved($kpi, $office, $year)
             $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
         })
         ->where('planning_year_id', $year)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
         ->first();
 
     // dd($status);
@@ -942,10 +997,13 @@ function isCurrentOfficeReportApproved($kpi, $office, $year)
 
 function hasOfficeActiveReportComment($office, $kpi, $year){
 
+    $activeReportingPeriodList = getReportingPeriod();
+
     $comment = ReportComment::select()
         ->where('kpi_id', $kpi)
         ->where('office_id', $office)
         ->where('planning_year_id', $year)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
         ->where('status', 1)
         ->get();
 
@@ -954,10 +1012,14 @@ function hasOfficeActiveReportComment($office, $kpi, $year){
 }
 
 function getReportCommentorInfo($office, $kpi, $year){
+
+    $activeReportingPeriodList = getReportingPeriod();
+
     $info = ReportComment::select()
         ->where('kpi_id', $kpi)
         ->where('office_id', $office)
         ->where('planning_year_id', $year)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
         ->first();
 
     $officeName = $info ? OfficeTranslation::where('translation_id', $info->commented_by)->first() : null;
@@ -967,6 +1029,8 @@ function getReportCommentorInfo($office, $kpi, $year){
 
 function reportCommentorTextStatus($office, $commentorId, $kpi, $year, $suffix){
 
+    $activeReportingPeriodList = getReportingPeriod();
+
     // dd($office->id);
     if($suffix == 1){
         $status = ReportComment::select()
@@ -974,6 +1038,7 @@ function reportCommentorTextStatus($office, $commentorId, $kpi, $year, $suffix){
         ->where('commented_by', $commentorId)
         ->where('office_id', $office->id)
         ->where('planning_year_id', $year)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
         ->where('replied_active', 1)
         ->get();
     }elseif($suffix == 2){
@@ -982,6 +1047,7 @@ function reportCommentorTextStatus($office, $commentorId, $kpi, $year, $suffix){
         ->where('commented_by', $commentorId)
         ->where('office_id', $office->id)
         ->where('planning_year_id', $year)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
         ->where('status', 1)
         ->get();
     }else{
@@ -990,6 +1056,7 @@ function reportCommentorTextStatus($office, $commentorId, $kpi, $year, $suffix){
         ->where('commented_by', $commentorId)
         ->where('office_id', $office->id)
         ->where('planning_year_id', $year)
+        ->whereIn('reporting_period_id', $activeReportingPeriodList)
         ->first();
     }
 

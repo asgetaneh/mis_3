@@ -43,7 +43,7 @@
                         <a class="btn btn-sm view-reply-comment text-primary float-right"
                             data-toggle="modal" data-target="#view-reply-comment"
                             data-id="{{ $office->id }}-{{ 1 }}-{{$planAcc->Kpi->id}}-{{$planning_year[0]->id}}">
-                            <u>View Reply</u>
+                            <u id="view-reply-tag"><mark>You've a reply! Click to view</mark></u>
                         </a>
                     @endif
                 @endif

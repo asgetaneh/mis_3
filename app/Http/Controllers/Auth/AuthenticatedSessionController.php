@@ -32,7 +32,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $credentials = $request->input(); 
+        $credentials = $request->input();
 
         // Finding a user:
         //$user = Adldap::search()->users()->find('john doe');
@@ -60,7 +60,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/login');
     }
 
  public static function authenticate($credentials)

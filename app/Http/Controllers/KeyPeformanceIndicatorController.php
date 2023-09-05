@@ -40,8 +40,11 @@ class KeyPeformanceIndicatorController extends Controller
         if (! Gate::allows('view keypeformanceindicators', KeyPeformanceIndicator::class)) {
                     abort(403);
                 }
-
         $search = $request->get('search', '');
+        $objectives = Objective::search($search)
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
         $keyPeformanceIndicator_ts = KeyPeformanceIndicatorT::search($search)
             ->latest()
             ->paginate(15)
@@ -64,7 +67,7 @@ class KeyPeformanceIndicatorController extends Controller
 
         return view(
             'app.key_peformance_indicators.index',
-            compact('keyPeformanceIndicator_ts','kpiChildOneTranslations', 'kpiChildTwoTranslations','kpiChildThreeTranslations','search')
+            compact('objectives','keyPeformanceIndicator_ts','kpiChildOneTranslations', 'kpiChildTwoTranslations','kpiChildThreeTranslations','search')
         );
     }
 

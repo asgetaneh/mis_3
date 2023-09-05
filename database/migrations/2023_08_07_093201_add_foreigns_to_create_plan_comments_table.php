@@ -22,14 +22,14 @@ return new class extends Migration
             $table
                 ->foreign('reporting_period_id')
                 ->references('id')
-                ->on('plan_accomplishments')
+                ->on('reporting_periods')
                 ->onUpdate('CASCADE')
                 ->onDelete('CASCADE');
 
             $table
                 ->foreign('planning_year_id')
-                ->references('planning_year_id')
-                ->on('plan_accomplishments')
+                ->references('id')
+                ->on('planing_years')
                 ->onUpdate('CASCADE')
                 ->onDelete('CASCADE');
 

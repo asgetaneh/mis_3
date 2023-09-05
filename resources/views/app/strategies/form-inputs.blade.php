@@ -3,7 +3,7 @@
 <div class="row">
 
     <x-inputs.group class="col-sm-12">
-        <x-inputs.select name="objective_id" label="Objective" required>
+        <x-inputs.select name="objective_id" label="Objective" class="form-control select2" required>
             @php $selected = old('objective_id', ($editing ? $strategy->objective_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }} value="">Please select the Objective</option>
             @foreach($objectives as $value => $label)

@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Office Assign')
 
 @section('content')
     <div class="container">
@@ -14,7 +15,7 @@
 
                     <div class="row mt-5">
                         <x-inputs.group class="col-sm-12">
-                            <x-inputs.select name="office" label="Office" required>
+                            <x-inputs.select name="office" class="form-control select2" label="Office" required>
                                 {{-- @php $selected = old('translation_id', ($editing ? $officeTranslation->translation_id : '')) @endphp --}}
 
                                 <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Office</option>
@@ -28,7 +29,7 @@
 
                         </x-inputs.group>
                         <x-inputs.group class="col-sm-12">
-                            <x-inputs.select name="user" label="User" required>
+                            <x-inputs.select name="user" class="form-control select2" label="User" required>
                                 {{-- @php $selected = old('translation_id', ($editing ? $officeTranslation->translation_id : '')) @endphp --}}
 
                                 <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the User</option>
@@ -60,4 +61,11 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function() {
+
+            $('.select2').select2();
+
+        });
+    </script>
 @endsection

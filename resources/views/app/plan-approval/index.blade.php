@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Plan Approval')
 
 @section('style')
     <style>
@@ -15,6 +16,26 @@
         #view-comment-paragraph * {
             margin-bottom: 0 !important;
         }
+        #view-reply-tag {
+            text-align: center;
+            font-size: 18px;
+            animation: animate
+                2s linear infinite;
+            }
+
+            @keyframes animate {
+                0% {
+                    opacity: 0;
+                }
+
+                50% {
+                    opacity: 1;
+                }
+
+                100% {
+                    opacity: 0;
+                }
+            }
     </style>
 @endsection
 
@@ -80,12 +101,17 @@
                             $c = 1;
                             $first = 1;
                             $kpiList = [];
+                            $objective_array = [];
+                        @endphp
+
+                        @php
+                            $ownPlanVisible = false;
                         @endphp
 
 
                         {{-- Own Plan of last office if exists --}}
                         @if (count($planAccomplishmentsLastOffice) > 0)
-                            <div class="p-3 bg-light mb-3 rounded shadow-sm" style="border: 1px solid #d3d2d2;">
+                            <div class="p-3 bg-light mb-3 rounded shadow-sm own-plan-div" style="border: 1px solid #d3d2d2;">
                                 <h5 class=""><u>Own Plan Approval</u></h5>
                                 @forelse ($planAccomplishmentsLastOffice as $planAcc)
                                     @php
@@ -98,6 +124,9 @@
                                     @if (!in_array($planAcc->kpi_id, $allKpisListChildren))
                                         @if ($isOfficeBelongToKpi->count() > 0)
                                             {{-- @if (!in_array($planAcc->Kpi->id, $kpi_repeat)) --}}
+                                            @php
+                                                $ownPlanVisible = true;
+                                            @endphp
                                             <div class="card collapsed-card">
                                                 <div class="card-header pb-0">
                                                     @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
@@ -190,6 +219,21 @@
                                         @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
                                             @if (app()->getLocale() == $kpiT->locale)
                                                 <table class="table">
+                                                    <tr style="background-color: #e8f1ff;" class="border">
+                                                        {{-- @if (!in_array($planAcc->Kpi->objective->id, $objective_array)) --}}
+                                                            @forelse ($planAcc->Kpi->objective->objectiveTranslations as $objective)
+                                                                @if (app()->getLocale() == $objective->locale)
+                                                                    <th colspan="2" style="width:100%;"> Objective:
+                                                                        {{ $objective->name }}
+                                                                    </th>
+                                                                    <th></th>
+                                                                @endif
+                                                            @empty
+                                                                <th>No objective name!</th>
+                                                                <th></th>
+                                                            @endforelse
+                                                        {{-- @endif --}}
+                                                    </tr>
                                                     <tr style="" class="border">
                                                         <th style="width:75%;" class="">
                                                             <p class="m-auto py-2 px-1">KPI: {{ $kpiT->name }}</p>
@@ -255,6 +299,7 @@
                                                     @php
                                                         $setter = true;
                                                         $hasOfficePlan = getOfficePlanRecord($planAcc->kpi_id, $office, $planAcc->planning_year_id);
+                                                        $isLastOfficeBelongToKpi = isLastOfficeBelongToKpi($office, $planAcc->Kpi->id);
                                                     @endphp
 
                                                     @if ($hasOfficePlan->count() > 0)
@@ -283,8 +328,12 @@
                                                             @endif
                                                         </div>
                                                     @else
-                                                        <p class="mark p-3">You are assigned on this KPI but not planned
+                                                        @if ($isLastOfficeBelongToKpi->count() > 0)
+                                                            <p class="mark p-3">You are assigned on this KPI but not planned
                                                             yet!</p>
+                                                        @else
+                                                            {{-- Last office not belong to KPI. --}}
+                                                        @endif
                                                     @endif
                                                 @else
                                                     @if ($office->level !== auth()->user()->offices[0]->level)
@@ -489,8 +538,8 @@
                         <p class="text-danger comment-error" style="display: none;">Please fill the form!</p>
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Send</button>
                     </div>
                 </form>
             </div>
@@ -561,7 +610,7 @@
 
                     </div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary">Disapprove</button>
                     </div>
                 </form>
@@ -659,6 +708,12 @@
                 height: 200
             });
             $('.dropdown-toggle').dropdown();
+
+            let ownPlanVisisble = {{ json_encode($ownPlanVisible) }}
+
+            if(ownPlanVisisble == false){
+                $('.own-plan-div').hide();
+            }
 
             let kpiList = {{ json_encode($kpiList) }};
 

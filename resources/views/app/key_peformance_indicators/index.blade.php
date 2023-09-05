@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'KPI Index')
 
 @section('content')
 <div class="container-fluid">
@@ -48,6 +49,10 @@
             <div class="table-responsive">
                 <table class="table table-bordered table-hover mt-3">
                     <thead>
+                        @forelse($objectives as $objective)
+                         <tr style="background:#96fffd45;">
+                            <th colspan="6">Objective: {{ $objective->objectiveTranslations[0]->name }} (kpi:  {{count($objective->keyPeformanceIndicators)}}) </th>
+                        </tr>
                         <tr>
                             <th>#</th>
                             <th class="text-left">
@@ -71,9 +76,6 @@
                             <th class="text-left">
                                 Reporting Period Type
                             </th>
-                            <th class="text-left">
-                               Objective
-                            </th>
                             <th class="text-center">
                                 @lang('crud.common.actions')
                             </th>
@@ -83,19 +85,19 @@
                         @php
                             $count = 1;
                         @endphp
-                        @forelse($keyPeformanceIndicator_ts as $keyPeformanceIndicator_t)
-                        @if(app()->getLocale() == $keyPeformanceIndicator_t->locale)
+                        @forelse($objective->keyPeformanceIndicators as $keyPeformanceIndicator)
+                        @if(app()->getLocale() == $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->locale)
                         <tr>
                             <td>{{ $count++ }}</td>
-                            {{-- <td>{{ $keyPeformanceIndicator_t->id }}</td> --}}
+                            {{-- <td>{{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->id }}</td> --}}
                             <td>
                                 {{
-                                $keyPeformanceIndicator_t->name
+                                $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->name
                                 ?? '-' }}
                             </td>
                             @php
                             $kpiType = '';
-                                foreach ($keyPeformanceIndicator_t->keyPeformanceIndicator->kpiType->kpiTypeTranslations as $key => $value) {
+                                foreach ($keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->keyPeformanceIndicator->kpiType->kpiTypeTranslations as $key => $value) {
                                     if (app()->getLocale() == $value->locale){
                                         $kpiType = $value->name;
                                     }
@@ -106,23 +108,23 @@
                             </td>
                             <td>
                                 {{
-                                $keyPeformanceIndicator_t->description
+                                $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->description
                                 ?? '-' }}
                             </td>
                             {{-- <td>
                                 {{
-                                $keyPeformanceIndicator_t->out_put
+                                $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->out_put
                                 ?? '-' }}
                             </td>
                             <td>
                                 {{
-                                $keyPeformanceIndicator_t->out_come
+                                $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->out_come
                                 ?? '-' }}
                             </td> --}}
 
                             @php
                                 $strategy = '';
-                                foreach ($keyPeformanceIndicator_t->keyPeformanceIndicator->strategy->strategyTranslations as $key => $value) {
+                                foreach ($keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->keyPeformanceIndicator->strategy->strategyTranslations as $key => $value) {
                                     if (app()->getLocale() == $value->locale){
                                         $strategy = $value->name;
                                     }
@@ -131,7 +133,7 @@
 
                             @php
                             $reportingPeriodType = '';
-                                foreach ($keyPeformanceIndicator_t->keyPeformanceIndicator->reportingPeriodType->reportingPeriodTypeTs as $key => $value) {
+                                foreach ($keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->keyPeformanceIndicator->reportingPeriodType->reportingPeriodTypeTs as $key => $value) {
                                     if (app()->getLocale() == $value->locale){
                                         $reportingPeriodType = $value->name;
                                     }
@@ -148,44 +150,14 @@
                                 $reportingPeriodType
                                 ?? '-' }}
                             </td>
-                            <td>
-                                <div class="bg-light mt-2 p-2">
-
-                                    {{-- @forelse($keyPeformanceIndicator_t->keyPeformanceIndicator->objective->goal->goalTranslations as $key => $goal)
-                                        @if(app()->getLocale() == $goal->locale)
-                                            <p class="text-primary d-inline"><span class="text-secondary">Goal:</span> {{ $goal->name }}</p>
-                                            <br>
-                                        @endif
-                                    @empty
-                                        <p>-</p>
-                                    @endforelse --}}
-
-                                    @forelse($keyPeformanceIndicator_t->keyPeformanceIndicator->objective->objectiveTranslations as $key => $objective)
-                                        @if(app()->getLocale() == $objective->locale)
-                                            <p class="text-primary d-inline"><span class="text-secondary">Objective:</span> {{ $objective->name }}</p>
-                                            <br>
-                                        @endif
-                                    @empty
-                                        <p>-</p>
-                                    @endforelse
-
-                                    {{-- @forelse($keyPeformanceIndicator_t->keyPeformanceIndicator->strategy->strategyTranslations as $key => $strategy)
-                                        @if(app()->getLocale() == $strategy->locale)
-                                            <p class="text-primary d-inline"><span class="text-secondary">Strategy:</span> {{ $strategy->name }}</p>
-                                        @endif
-                                    @empty
-                                        <p>-</p>
-                                    @endforelse --}}
-
-                                </div>
-                            </td>
+                           
                             <td class="text-center" style="width: 134px;">
                                 <div
                                 >
                                 <div class="d-flex">
-                                    @can('update', $keyPeformanceIndicator_t)
+                                    @can('update', $keyPeformanceIndicator->keyPeformanceIndicatorTs[0])
                                     <a
-                                        href="{{ route('kpi-Chain',$keyPeformanceIndicator_t->keyPeformanceIndicator) }}"
+                                        href="{{ route('kpi-Chain',$keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->keyPeformanceIndicator) }}"
                                     >
                                         <button
                                             type="button"
@@ -196,7 +168,7 @@
                                         </button>
                                     </a>
                                     <a
-                                        href="{{ route('kpi-chain-two.create',$keyPeformanceIndicator_t->keyPeformanceIndicator) }}"
+                                        href="{{ route('kpi-chain-two.create',$keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->keyPeformanceIndicator) }}"
                                     >
                                         <button
                                             type="button"
@@ -207,7 +179,7 @@
                                         </button>
                                     </a>
                                     <a
-                                        href="{{ route('kpi-chain-three.create',$keyPeformanceIndicator_t->keyPeformanceIndicator) }}"
+                                        href="{{ route('kpi-chain-three.create',$keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->keyPeformanceIndicator) }}"
                                     >
                                         <button
                                             type="button"
@@ -222,9 +194,9 @@
                                 </div>
 
                                 <div class="d-flex mt-2">
-                                    @can('update', $keyPeformanceIndicator_t)
+                                    @can('update', $keyPeformanceIndicator->keyPeformanceIndicatorTs[0])
                                     <a
-                                        href="{{ route('key-peformance-indicators.edit', $keyPeformanceIndicator_t->translation_id) }}"
+                                        href="{{ route('key-peformance-indicators.edit', $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->translation_id) }}"
                                     >
                                         <button
                                             type="button"
@@ -234,9 +206,9 @@
                                         </button>
                                     </a>
                                     @endcan @can('view',
-                                    $keyPeformanceIndicator_t)
+                                    $keyPeformanceIndicator->keyPeformanceIndicatorTs[0])
                                     <a
-                                        href="{{ route('key-peformance-indicators.show', $keyPeformanceIndicator_t->translation_id) }}"
+                                        href="{{ route('key-peformance-indicators.show', $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->translation_id) }}"
                                     >
                                         <button
                                             type="button"
@@ -246,9 +218,9 @@
                                         </button>
                                     </a>
                                     @endcan @can('delete',
-                                    $keyPeformanceIndicator_t)
+                                    $keyPeformanceIndicator->keyPeformanceIndicatorTs[0])
                                     <form
-                                        action="{{ route('key-peformance-indicators.destroy', $keyPeformanceIndicator_t->translation_id) }}"
+                                        action="{{ route('key-peformance-indicators.destroy', $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->translation_id) }}"
                                         method="POST"
                                         onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                     >
@@ -266,6 +238,13 @@
                             </td>
                         </tr>
                         @endif
+                        @empty
+                        <tr>
+                            <td colspan="7">
+                                @lang('crud.common.no_items_found')
+                            </td>
+                        </tr>
+                        @endforelse
                         @empty
                         <tr>
                             <td colspan="7">
