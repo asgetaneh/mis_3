@@ -237,7 +237,7 @@ Route::prefix('/')
                 Route::get('/view/comment/{data}', [ReportApprovalController::class, 'getCommentInfo'])->name('report-comment.view-comment')->where('data', '.*');
                 Route::post('/reply-comment', [ReportApprovalController::class, 'replyComment'])->name('replyreport-comment.store');
                 Route::post('/report-disapproval',[ReportApprovalController::class, 'reportDisapproved'])->name('disapprove-report.store');
-                Route::get('/disapprove/fetch/{data}', [ReportApprovalController::class, 'disapproveInfo'])->name('disapprove-report.ajax')->where('data', '.*');
+                Route::get('/disapprove/report/fetch/{data}', [ReportApprovalController::class, 'disapproveInfo'])->name('disapprove-report.ajax')->where('data', '.*');
                 Route::get('/reply/fetch/{data}', [ReportApprovalController::class, 'replyInfo'])->name('replyreport-comment.ajax')->where('data', '.*');
 
                 // Route::match(array('GET', 'POST'),'approve-plan', [PlanAccomplishmentController::class, 'approvePlanAccomplishment'])->name('approve-plan');
