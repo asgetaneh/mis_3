@@ -21,7 +21,11 @@
 
                         <option disabled value="" selected>Please select the Office</option>
                         @foreach($offices as $value => $label)
-                        <option value="{{ $label->id }}"  >{{ $label->officeTranslations[0]->name }}</option>
+                            @if ($label->translation_id == 1)
+                                @continue
+                            @else
+                                <option value="{{ $label->id }}"  >{{ $label->officeTranslations[0]->name }}</option>
+                            @endif
                         @endforeach
                     </x-inputs.select>
                     @if (session()->has('error'))
