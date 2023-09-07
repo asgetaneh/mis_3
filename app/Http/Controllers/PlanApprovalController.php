@@ -517,8 +517,10 @@ class PlanApprovalController extends Controller
             ->get();
 
         $onlyChildArray = [];
-        foreach ($onlyApprovedOffices as $key => $office) {
-            $onlyChildArray[$office->office_id] = $office->office->officeTranslations[0]->name;
+        if($onlyApprovedOffices->count() > 0){
+            foreach ($onlyApprovedOffices as $key => $office) {
+                $onlyChildArray[$office->office_id] = $office->office->officeTranslations[0]->name;
+            }
         }
 
         // error_log(($onlyChildArray[1]));
