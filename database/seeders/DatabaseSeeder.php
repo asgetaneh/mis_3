@@ -3,11 +3,14 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
+use App\Models\Office;
 use Illuminate\Database\Seeder;
+use App\Models\OfficeTranslation;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
-use App\Models\User;
 
 class DatabaseSeeder extends Seeder
 {
@@ -179,7 +182,7 @@ class DatabaseSeeder extends Seeder
 
         // Create user role and assign existing permissions
         $currentPermissions = Permission::all();
-        $userRole = Role::create(['name' => 'user']);
+        $userRole = Role::create(['name' => 'staff']);
         $userRole->givePermissionTo($currentPermissions);
 
         // Create admin exclusive permissions
@@ -206,32 +209,45 @@ class DatabaseSeeder extends Seeder
         $adminRole = Role::create(['name' => 'super-admin']);
         $adminRole->givePermissionTo($allPermissions);
 
-        $user = \App\Models\User::whereEmail('assefa.getaneh@ju.edu.et')->first();
+        $user = \App\Models\User::whereEmail('admin@admin')->first();
 
         if ($user) {
             $user->assignRole($adminRole);
+        }else{
+
+            // Admin User Seeder
+            $adminUser = User::create([
+                'username' => 'admin',
+                'name' => 'Super Admin',
+                'email' => 'admin@admin',
+                'is_admin'=> '1',
+                'password' => bcrypt('admin')
+            ]);
+
+            $adminUser->assignRole($adminRole);
+
         }
 
-        // Admin User Seeder
-        $user = User::create([
-            'name' => 'Assefa Getaneh',
-            'email' => 'assefa.getaneh@ju.edu.et',
-            'is_admin'=> '1',
-            'password' => bcrypt('123456')
-        ]);
+        // create imaginary office and assign admin
+        $officeExists = Office::find(1);
+        if($officeExists) {
+            // nothing to do
+        }else{
+            $office = new Office;
+            $office->parent_office_id = null;
+            $office->level = 0;
+            $office->created_at = new \DateTime();
+            $office->updated_at = new \DateTime();
+            $office->save();
 
-        // $role = Role::create(['name' => 'super-admin']);
-        // $permissions = Permission::pluck('id','id')->all();
+            $office_translation = new OfficeTranslation;
+            $office_translation->translation_id = $office->id;
+            $office_translation->name = 'Jimma University';
+            $office_translation->locale = 'en';
+            $office_translation->description = 'This office will be used as a starting point to relate and create other sub offices. There is nothing to operate on this office.';
+            $office_translation->save();
 
-        $user->assignRole($adminRole);
-
-        $adminUser = User::create([
-            'name' => 'Admin',
-            'email' => 'admin',
-            'is_admin' => 1,
-            'password' => bcrypt('admin')
-        ]);
-
-        $adminUser->assignRole($adminRole);
+            $assignOfficeToAdmin = DB::insert('insert into manager (user_id, office_id) values (?, ?)', [$adminUser->id, $office->id]);
+        }
     }
 }

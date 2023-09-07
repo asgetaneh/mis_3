@@ -100,24 +100,31 @@
                                         <td>
                                             {!! $officeTranslation->office->users[0]->name ?? '<span class="badge badge-secondary">Not assigned</span>' !!}
                                             @if ($officeTranslation->office->users->count() > 0)
-                                                <form
-                                                    action="{{ route('office-manager.remove', $officeTranslation->office->users[0]->id) }}"
-                                                    class="d-inline" method="POST">
-                                                    @csrf
-                                                    <button
-                                                        class="btn btn-sm btn-outline-danger ml-3 float-right">Revoke</button>
-                                                </form>
+
+                                                @if ($officeTranslation->translation_id == 1)
+                                                @else
+                                                    <form
+                                                        action="{{ route('office-manager.remove', $officeTranslation->office->users[0]->id) }}"
+                                                        class="d-inline" method="POST">
+                                                        @csrf
+                                                        <button
+                                                            class="btn btn-sm btn-outline-danger ml-3 float-right">Remove</button>
+                                                    </form>
+                                                @endif
                                             @endif
                                         </td>
 
                                         <td class="text-center" style="width: 134px;">
                                             <div role="group" aria-label="Row Actions" class="btn-group">
                                                 @can('update', $officeTranslation)
-                                                    <a href="{{ route('office-translations.edit', $officeTranslation) }}">
-                                                        <button type="button" class="btn btn-light">
-                                                            <i class="icon ion-md-create"></i>
-                                                        </button>
-                                                    </a>
+                                                    @if ($officeTranslation->translation_id == 1)
+                                                    @else
+                                                        <a href="{{ route('office-translations.edit', $officeTranslation) }}">
+                                                            <button type="button" class="btn btn-light">
+                                                                <i class="icon ion-md-create"></i>
+                                                            </button>
+                                                        </a>
+                                                    @endif
                                                     @endcan @can('view', $officeTranslation)
                                                     <a href="{{ route('office-translations.show', $officeTranslation) }}">
                                                         <button type="button" class="btn btn-light">

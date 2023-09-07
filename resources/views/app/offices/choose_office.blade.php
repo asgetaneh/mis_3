@@ -5,8 +5,8 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">
-                
-                @lang('crud.offices.create_title')
+
+                {{-- @lang('crud.offices.create_title') --}}
             </h4>
 
             <x-form
@@ -14,12 +14,12 @@
                 action="{{ route('assign-office') }}"
                 class="mt-4"
             >
-                     <input type="hidden" value="{{ $user->id }}" name="user"> 
+                     <input type="hidden" value="{{ $user->id }}" name="user">
 
                  <x-inputs.group class="col-sm-12">
-                    <x-inputs.select name="urofficel" label="Office">
-                        
-                        <option>Please select the Office</option>
+                    <x-inputs.select name="urofficel" class="form-control select2" label="Office" required>
+
+                        <option disabled value="" selected>Please select the Office</option>
                         @foreach($offices as $value => $label)
                         <option value="{{ $label->id }}"  >{{ $label->officeTranslations[0]->name }}</option>
                         @endforeach
@@ -30,7 +30,7 @@
                 </x-inputs.group>
                  {{-- <x-inputs.group class="col-sm-12">
                     <x-inputs.select name="urofficell" label="Office">
-                        
+
                         <option>Please select the Office</option>
                         @foreach($ll_offices as $value => $label)
                         <option value="{{ $label->id }}"  >{{ $label->officeTranslations[0]->name }}</option>
@@ -39,7 +39,7 @@
                 </x-inputs.group>
                  <x-inputs.group class="col-sm-12">
                     <x-inputs.select name="urofficelll" label="Office">
-                        
+
                         <option>Please select the Office</option>
                          @foreach($lll_offices as $value => $label)
                         <option value="{{ $label->id }}"  >{{ $label->officeTranslations[0]->name }}</option>
@@ -48,13 +48,13 @@
                 </x-inputs.group> --}}
 
                 <div class="mt-4">
-                    <a
+                    {{-- <a
                         href="{{ route('login') }}"
                         class="btn btn-light"
                     >
                         <i class="icon ion-md-return-left text-primary"></i>
                         @lang('crud.common.back')
-                    </a>
+                    </a> --}}
 
                     <button type="submit" class="btn btn-primary float-right">
                         <i class="icon ion-md-save"></i>
@@ -65,4 +65,13 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+
+        $('.select2').select2();
+
+    });
+</script>
+
 @endsection
