@@ -21,7 +21,7 @@
         <x-inputs.select name="parent_name" label="Parent Office" class="form-control select2" required>
             @php $selected = old('translation_id', ($editing ? $officeTranslation->office->parent_office_id : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }} value="">Please select the Office</option>
-            <option value="">NO PARENT</option>
+            {{-- <option value="">NO PARENT</option> --}}
 
             @foreach($offices as $value => $label)
                 @if(app()->getLocale() == $label->locale)
