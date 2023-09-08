@@ -113,7 +113,7 @@
                             <div class="col-md-9 md-auto">
                                 <ul id="tree1" class="tree">
 
-                                    @foreach ($officesList as $office)
+                                    @forelse ($officesList as $office)
                                         <li class="closed">
 
                                             @if ($office->parent_office_id == null)
@@ -138,7 +138,8 @@
                                             @endif
 
                                         </li>
-                                    @endforeach
+                                    @empty
+                                    @endforelse
 
                                 </ul>
 
