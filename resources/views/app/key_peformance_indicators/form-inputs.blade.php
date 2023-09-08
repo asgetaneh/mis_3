@@ -33,7 +33,11 @@
             {{-- <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Office</option> --}}
             @foreach($offices as $value => $label)
                 @if(app()->getLocale() == $label->locale)
-                    <option value="{{ $label->translation_id }}" {{ $selected == $label->translation_id ? 'selected' : '' }} >{{ $label->name }}</option>
+                    @if ($label->translation_id == 1)
+                        @continue
+                    @else
+                        <option value="{{ $label->translation_id }}" {{ $selected == $label->translation_id ? 'selected' : '' }} >{{ $label->name }}</option>
+                    @endif
                 @endif
             @endforeach
         </x-inputs.select>

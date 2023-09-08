@@ -25,11 +25,11 @@
             >
         </x-inputs.group>
 
-        
+
 
     @endforeach
      <x-inputs.group class="col-sm-12">
-        <x-inputs.select name="slug_" label="Slug" required>
+        <x-inputs.select name="slug_" label="Slug" class="form-control select2" required>
             @php $selected = old('slug_', ($editing ? $behavior->slug : '')) @endphp
             <option disabled {{ empty($selected) ? 'selected' : '' }} value="">Please select the behavior</option>
                      <option value="{{ 1 }}" >{{ "Addtive" }} </option>

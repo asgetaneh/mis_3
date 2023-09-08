@@ -220,7 +220,7 @@
 
                 <div class="col-md-6">
 
-                    <div class="card card-success">
+                    <div class="card border card-light">
                         <div class="card-header">
                             <h3 class="card-title">Bar Chart</h3>
                             <div class="card-tools">
@@ -251,7 +251,7 @@
                     </div>
 
 
-                    <div class="card card-success">
+                    <div class="card border card-light">
                         <div class="card-header">
                             <h3 class="card-title">Stacked Bar Chart</h3>
                             <div class="card-tools">
@@ -281,7 +281,7 @@
 
                     </div>
 
-                    <div class="card card-info">
+                    <div class="card border card-light">
                         <div class="card-header">
                             <h3 class="card-title">Line Chart</h3>
                             <div class="card-tools">
@@ -315,7 +315,7 @@
 
                 <div class="col-md-6">
 
-                    <div class="card card-danger">
+                    <div class="card border card-light">
                         <div class="card-header">
                             <h3 class="card-title">Donut Chart</h3>
                             <div class="card-tools">
@@ -344,7 +344,7 @@
                     </div>
 
 
-                    <div class="card card-danger">
+                    <div class="card border card-light">
                         <div class="card-header">
                             <h3 class="card-title">Pie Chart</h3>
                             <div class="card-tools">
@@ -372,7 +372,7 @@
 
                     </div>
 
-                    <div class="card card-primary">
+                    <div class="card border card-light">
                         <div class="card-header">
                             <h3 class="card-title">Area Chart</h3>
                             <div class="card-tools">
