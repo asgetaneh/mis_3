@@ -21,8 +21,13 @@
                                 <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Office</option>
                                 @foreach ($offices as $value => $office)
                                     @if (app()->getLocale() == $office->locale)
-                                        <option value="{{ $office->translation_id }}">
-                                            {{ $office->name }}</option>
+                                        @if ($office->translation_id == 1)
+                                            @continue
+                                        @else
+                                            <option value="{{ $office->translation_id }}">
+                                                {{ $office->name }}</option>
+                                        @endif
+
                                     @endif
                                 @endforeach
                             </x-inputs.select>

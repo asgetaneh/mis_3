@@ -1,8 +1,7 @@
 <ul>
 
-    @foreach ($childs as $office)
+    @forelse ($childs as $office)
         <li>
-
 
             @if ($office->subordinate == true)
                 &nbsp; &nbsp;
@@ -21,26 +20,10 @@
 
             @if (count($office->offices))
                 @include('app.office_translations.manageChild', ['childs' => $office->offices])
-
-                {{-- @foreach ($office->positions as $position)
-                    @if (count($office->positions))
-                        &nbsp;&nbsp;&nbsp;
-                        <i class="la la-caret-right"> </i>
-                        {{ $position->name }}-
-
-                        @foreach ($position->positionCodes as $positionCode)
-                            {{ $positionCode->code }}-[ {{ ucfirst($positionCode->employee->name ?? '-') }} ]
-
-
-
-
-                            <br>
-                        @endforeach
-                    @endif
-                @endforeach --}}
             @endif
 
         </li>
-    @endforeach
+    @empty
+    @endforelse
 
 </ul>

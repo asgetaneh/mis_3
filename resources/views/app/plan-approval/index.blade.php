@@ -127,12 +127,27 @@
                                             @php
                                                 $ownPlanVisible = true;
                                             @endphp
-                                            <div class="card collapsed-card">
-                                                <div class="card-header pb-0">
+                                            <div class="card collapsed-card" style="border: 1px solid #d3d2d2;">
+                                                <div class="card-header p-0">
                                                     @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
                                                         @if (app()->getLocale() == $kpiT->locale)
-                                                            <table class="table">
-                                                                <tr class="bg-light">
+                                                            <table class="table p-0 m-0">
+                                                                <tr style="background-color: #e8f1ff;" class="border">
+                                                                    {{-- @if (!in_array($planAcc->Kpi->objective->id, $objective_array)) --}}
+                                                                        @forelse ($planAcc->Kpi->objective->objectiveTranslations as $objective)
+                                                                            @if (app()->getLocale() == $objective->locale)
+                                                                                <th colspan="2" style="width:100%;"> Objective:
+                                                                                    {{ $objective->name }}
+                                                                                </th>
+                                                                                <th></th>
+                                                                            @endif
+                                                                        @empty
+                                                                            <th>No objective name!</th>
+                                                                            <th></th>
+                                                                        @endforelse
+                                                                    {{-- @endif --}}
+                                                                </tr>
+                                                                <tr class="bg-light border">
                                                                     <th style="width:75%;"> KPI: {{ $kpiT->name }}</th>
                                                                     <th style="width: 25%;" class="bg-light border">
                                                                         <p class="m-auto py-2 px-1">Total:
@@ -214,11 +229,11 @@
 
                             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
                                 <div class="card collapsed-card" style="border: 1px solid #d3d2d2;">
-                                    <div class="card-header pb-0">
+                                    <div class="card-header p-0">
 
                                         @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
                                             @if (app()->getLocale() == $kpiT->locale)
-                                                <table class="table">
+                                                <table class="table m-0 p-0">
                                                     <tr style="background-color: #e8f1ff;" class="border">
                                                         {{-- @if (!in_array($planAcc->Kpi->objective->id, $objective_array)) --}}
                                                             @forelse ($planAcc->Kpi->objective->objectiveTranslations as $objective)

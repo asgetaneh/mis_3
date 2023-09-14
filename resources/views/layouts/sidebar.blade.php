@@ -16,7 +16,7 @@
                 $office = $user->offices[0];
                 $childAndHimOffKpi = $office->offices;
             }
-            
+
         @endphp
         <!-- Sidebar Menu -->
         <nav class="mt-2">
@@ -131,6 +131,48 @@
                                                 </a>
                                             </li>
                                         @endif
+
+
+                                        @can('view-any', App\Models\Office::class)
+                                            <li class="nav-item">
+                                                <a href="{{ route('office_translations.index') }}"
+                                                    class="nav-link
+                                            {{ Request::is('smis/setting/office_translations') || Request::is('smis/setting/office_translations/*') || Request::is('smis/setting/office-translations') || Request::is('smis/setting/office-translations/*') ? 'active' : '' }}
+                                            ">
+                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <p>Offices</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+
+                                        @can('view-any', App\Models\PlaningYear::class)
+                                            <li class="nav-item">
+                                                <a href="{{ route('planing-years.index') }}"
+                                                    class="nav-link {{ Request::is('smis/setting/planing-years') || Request::is('smis/setting/planing-years/*') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <p>Planing Years</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                        @can('view-any', App\Models\ReportingPeriodType::class)
+                                            <li class="nav-item">
+                                                <a href="{{ route('reporting-period-types.index') }}"
+                                                    class="nav-link {{ Request::is('smis/setting/reporting-period-types') || Request::is('smis/setting/reporting-period-types/*') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <p>Reporting Period Types</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                        @can('view-any', App\Models\ReportingPeriod::class)
+                                            <li class="nav-item">
+                                                <a href="{{ route('reporting-periods.index') }}"
+                                                    class="nav-link {{ Request::is('smis/setting/reporting-periods') || Request::is('smis/setting/reporting-periods/*') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <p>Reporting Periods</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+
                                         @if ($user->hasPermission('view keypeformanceindicators'))
                                             <li
                                                 class="nav-item {{ Request::is('smis/setting/kpi/*') ? 'menu-open' : '' }}">
@@ -142,19 +184,26 @@
                                                     </p>
                                                 </a>
                                                 <ul class="nav nav-treeview">
-                                                    
 
-                                                    <li class="nav-item">
-                                                        <a href="{{ route('key-peformance-indicators.index') }}"
-                                                            class="nav-link
-                                {{ Request::is('smis/setting/kpi/key-peformance-indicators/*') || Request::is('smis/setting/kpi/key-peformance-indicators') || Request::is('smis/setting/kpi//kpi_chain/*') || Request::is('smis/setting/kpi/kpi-chain-two/*') || Request::is('smis/setting/kpi/kpi-chain-three/*') ? 'active' : '' }}
 
-                                ">
-                                                            <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                                            <p>Key Peformance Indicators</p>
-                                                        </a>
-                                                    </li>
-
+                                                    @can('view-any', App\Models\Behavior::class)
+                                                        <li class="nav-item">
+                                                            <a href="{{ route('types.index') }}"
+                                                                class="nav-link {{ Request::is('smis/setting/kpi/types/*') || Request::is('smis/setting/kpi/types') ? 'active' : '' }}">
+                                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                                <p>KPI Type</p>
+                                                            </a>
+                                                        </li>
+                                                    @endcan
+                                                    @can('view-any', App\Models\Behavior::class)
+                                                        <li class="nav-item">
+                                                            <a href="{{ route('behaviors.index') }}"
+                                                                class="nav-link {{ Request::is('smis/setting/kpi/behaviors/*') || Request::is('smis/setting/kpi/behaviors') ? 'active' : '' }}">
+                                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                                <p>KPI Behavior</p>
+                                                            </a>
+                                                        </li>
+                                                    @endcan
                                                     @can('view-any', App\Models\Inititive::class)
                                                         <li class="nav-item">
                                                             <a href="{{ route('kpi-child-one-translations.index') }}"
@@ -182,68 +231,21 @@
                                                             </a>
                                                         </li>
                                                     @endcan
-                                                    @can('view-any', App\Models\Behavior::class)
-                                                        <li class="nav-item">
-                                                            <a href="{{ route('types.index') }}"
-                                                                class="nav-link {{ Request::is('smis/setting/kpi/types/*') || Request::is('smis/setting/kpi/types') ? 'active' : '' }}">
-                                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                                                <p>KPI Type</p>
-                                                            </a>
-                                                        </li>
-                                                    @endcan
-                                                    @can('view-any', App\Models\Behavior::class)
-                                                        <li class="nav-item">
-                                                            <a href="{{ route('behaviors.index') }}"
-                                                                class="nav-link {{ Request::is('smis/setting/kpi/behaviors/*') || Request::is('smis/setting/kpi/behaviors') ? 'active' : '' }}">
-                                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                                                <p>KPI Behavior</p>
-                                                            </a>
-                                                        </li>
-                                                    @endcan
+
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('key-peformance-indicators.index') }}"
+                                                            class="nav-link
+                                {{ Request::is('smis/setting/kpi/key-peformance-indicators/*') || Request::is('smis/setting/kpi/key-peformance-indicators') || Request::is('smis/setting/kpi//kpi_chain/*') || Request::is('smis/setting/kpi/kpi-chain-two/*') || Request::is('smis/setting/kpi/kpi-chain-three/*') ? 'active' : '' }}
+
+                                ">
+                                                            <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                            <p>Key Peformance Indicators</p>
+                                                        </a>
+                                                    </li>
                                                 </ul>
                                             </li>
                                         @endcan
 
-
-                                        @can('view-any', App\Models\Office::class)
-                                            <li class="nav-item">
-                                                <a href="{{ route('office_translations.index') }}"
-                                                    class="nav-link
-                                            {{ Request::is('smis/setting/office_translations') || Request::is('smis/setting/office_translations/*') || Request::is('smis/setting/office-translations') || Request::is('smis/setting/office-translations/*') ? 'active' : '' }}
-                                            ">
-                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                                    <p>Offices</p>
-                                                </a>
-                                            </li>
-                                        @endcan
-
-                                        @can('view-any', App\Models\PlaningYear::class)
-                                            <li class="nav-item">
-                                                <a href="{{ route('planing-years.index') }}"
-                                                    class="nav-link {{ Request::is('smis/setting/planing-years') || Request::is('smis/setting/planing-years/*') ? 'active' : '' }}">
-                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                                    <p>Planing Years</p>
-                                                </a>
-                                            </li>
-                                        @endcan
-                                        @can('view-any', App\Models\ReportingPeriod::class)
-                                            <li class="nav-item">
-                                                <a href="{{ route('reporting-periods.index') }}"
-                                                    class="nav-link {{ Request::is('smis/setting/reporting-periods') || Request::is('smis/setting/reporting-periods/*') ? 'active' : '' }}">
-                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                                    <p>Reporting Periods</p>
-                                                </a>
-                                            </li>
-                                        @endcan
-                                        @can('view-any', App\Models\ReportingPeriodType::class)
-                                            <li class="nav-item">
-                                                <a href="{{ route('reporting-period-types.index') }}"
-                                                    class="nav-link {{ Request::is('smis/setting/reporting-period-types') || Request::is('smis/setting/reporting-period-types/*') ? 'active' : '' }}">
-                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
-                                                    <p>Reporting Period Types</p>
-                                                </a>
-                                            </li>
-                                        @endcan
                                         {{--
                             @can('view-any', App\Models\SuitableKpi::class)
                             <li class="nav-item">

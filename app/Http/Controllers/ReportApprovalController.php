@@ -20,7 +20,7 @@ class ReportApprovalController extends Controller
         $all_child_and_subchild = office_all_childs_ids($obj_office);
         $all_office_list = $all_child_and_subchild;
         //$all_office_list = array_merge( $all_child_and_subchild,array($office));
-        $only_child = $obj_office->offices; 
+        $only_child = $obj_office->offices;
         $activeReportingPeriodList = getReportingPeriod();
 
         // dd($only_child);
@@ -282,10 +282,10 @@ class ReportApprovalController extends Controller
 
             $reportingPeriodId = PlanAccomplishment::select()
                 ->where('kpi_id', $kpi)
-                ->whereIn('office_id', $childrenoffices)
+                // ->whereIn('office_id', $childrenoffices)
                 ->where('planning_year_id', $planningYear)
                 ->whereIn('reporting_period_id', $activeReportingPeriodList)
-                ->where('accom_status', '=', $officeLogged->level)->distinct('office_id')
+                // ->where('accom_status', '=', $officeLogged->level)->distinct('office_id')
                 ->first();
 
             $officeCommented = ReportComment::updateOrCreate([
@@ -380,7 +380,7 @@ class ReportApprovalController extends Controller
 
         // dd((int)$singleOfficePlan[0]);
         $reportingPeriodId = PlanAccomplishment::select()
-            ->where('office_id', $office)
+            // ->where('office_id', $office)
             ->where('planning_year_id', $planningYear)
             ->where('kpi_id', $kpi)
             ->whereIn('reporting_period_id', $activeReportingPeriodList)
@@ -517,11 +517,12 @@ class ReportApprovalController extends Controller
             ->get();
 
         $onlyChildArray = [];
-        foreach ($onlyApprovedOffices as $key => $office) {
-            $onlyChildArray[$office->office_id] = $office->office->officeTranslations[0]->name;
-        }
 
-        $onlyChildArray[$office->id] = $office->officeTranslations[0]->name;
+        if($onlyApprovedOffices->count() > 0){
+            foreach ($onlyApprovedOffices as $key => $office) {
+                $onlyChildArray[$office->office_id] = $office->office->officeTranslations[0]->name;
+            }
+        }
 
         // error_log(($onlyChildArray[1]));
 

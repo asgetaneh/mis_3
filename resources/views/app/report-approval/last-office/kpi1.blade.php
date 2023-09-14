@@ -47,7 +47,7 @@
                 $childAndHimOffKpi_array[$key] = $value->id;
             }
             $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [auth()->user()->offices[0]->id]);
-            $planKpiOfficeYear = reportSumOfKpi($planAcc->Kpi->id, auth()->user()->offices[0], 1);
+            $planKpiOfficeYear = reportSumOfKpi($planAcc->Kpi->id, auth()->user()->offices[0], 7);
         @endphp
     @empty
     @endforelse

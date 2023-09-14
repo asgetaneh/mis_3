@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\KeyPeformanceIndicator;
 use App\Models\Perspective;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 class HomeController extends Controller
 {
@@ -85,6 +86,12 @@ class HomeController extends Controller
         }
         else{
              $manager = DB::insert('insert into manager (office_id, user_id) values (?, ?)', [$data['urofficel'], $data['user']]);
+
+             $role = Role::where('name', '=', 'staff')->first();
+
+             $staffUser = User::find($data['user']);
+             $staffUser->assignRole($role);
+
 
         } return redirect()
                 ->route('home')
