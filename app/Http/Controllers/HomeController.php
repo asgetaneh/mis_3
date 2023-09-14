@@ -45,18 +45,18 @@ class HomeController extends Controller
         $activeUsers = '';
         $inactiveUsers = '';
 
-        if($user_office->isEmpty()){
-            $search = $request->get('search', '');
-            $offices = Office::search($search)
-                ->latest()
-                ->paginate(500)
-                ->withQueryString();
-             $l_offices=$offices->where("parent_office_id",null);
-             $ll_offices=$offices->where("parent_office_id",1);
-             $lll_offices=$offices->where("parent_office_id",2);
-             return view('app.offices.choose_office', compact('user','l_offices', 'll_offices', 'lll_offices','offices','search'));
-        }
-        else{
+        // if($user_office->isEmpty()){
+        //     $search = $request->get('search', '');
+        //     $offices = Office::search($search)
+        //         ->latest()
+        //         ->paginate(500)
+        //         ->withQueryString();
+        //      $l_offices=$offices->where("parent_office_id",null);
+        //      $ll_offices=$offices->where("parent_office_id",1);
+        //      $lll_offices=$offices->where("parent_office_id",2);
+        //      return view('app.offices.choose_office', compact('user','l_offices', 'll_offices', 'lll_offices','offices','search'));
+        // }
+        // else{
             return view('layouts.dashboard', [
                 'totalUsers' => $totalUsers,
                 'totalKpis' => $totalKpis,
@@ -65,7 +65,7 @@ class HomeController extends Controller
                 'totalPerspectives' => $totalPerspectives,
                 'totalOffices' => $totalOffices,
             ]);
-        }
+      //  }
 
         // return view('home');
     }
@@ -77,6 +77,7 @@ class HomeController extends Controller
                 ->latest()
                 ->paginate(500)
                 ->withQueryString();
+                dd($data);
         $manager = DB::select('select * from manager where office_id='.$data['urofficel']);
         if($manager){
              return redirect()->back()->with('error', 'Office  has already been assigned for Manager');
