@@ -45,18 +45,18 @@ class HomeController extends Controller
         $activeUsers = '';
         $inactiveUsers = '';
 
-        if($user_office->isEmpty()){
-            $search = $request->get('search', '');
-            $offices = Office::search($search)
-                ->latest()
-                ->paginate(500)
-                ->withQueryString();
-             $l_offices=$offices->where("parent_office_id",null);
-             $ll_offices=$offices->where("parent_office_id",1);
-             $lll_offices=$offices->where("parent_office_id",2);
-             return view('app.offices.choose_office', compact('user','l_offices', 'll_offices', 'lll_offices','offices','search'));
-        }
-        else{
+        // if($user_office->isEmpty()){
+        //     $search = $request->get('search', '');
+        //     $offices = Office::search($search)
+        //         ->latest()
+        //         ->paginate(500)
+        //         ->withQueryString();
+        //      $l_offices=$offices->where("parent_office_id",null);
+        //      $ll_offices=$offices->where("parent_office_id",1);
+        //      $lll_offices=$offices->where("parent_office_id",2);
+        //      return view('app.offices.choose_office', compact('user','l_offices', 'll_offices', 'lll_offices','offices','search'));
+        // }
+        // else{
             return view('layouts.dashboard', [
                 'totalUsers' => $totalUsers,
                 'totalKpis' => $totalKpis,
@@ -65,7 +65,7 @@ class HomeController extends Controller
                 'totalPerspectives' => $totalPerspectives,
                 'totalOffices' => $totalOffices,
             ]);
-        }
+      //  }
 
         // return view('home');
     }

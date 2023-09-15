@@ -287,6 +287,8 @@
                                                     class="nav-link {{ Request::is('smis/plan/plan-accomplishment/*') || Request::is('smis/plan/plan-accomplishment') || Request::is('smis/plan/get-objectives/*') || Request::is('smis/plan/get-objectives') ? 'active' : '' }}">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Planning</p>
+                                                        <span class="badge rounded-pill   bg-danger">9</span>
+
                                                 </a>
                                             @endif
                                         </li>

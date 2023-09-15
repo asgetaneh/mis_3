@@ -10,6 +10,19 @@
             </th>
             @empty
             @endforelse
+            <td rowspan="3">
+            @if(!$office->offices->isEmpty())
+            <p>
+                <a class="btn btn-info" data-toggle="collapse"
+                    href="#off{{ $office->id }}{{$planAcc->Kpi->id}}" role="button"
+                    aria-expanded="false" aria-controls="collapseExample0">
+                     Details
+                </a>
+            </p>
+             @else
+                {{"no child "}}
+            @endif
+        </td>
         </tr>
     @endif
     <tr>
@@ -37,19 +50,6 @@
                     {!! html_entity_decode($plannaration->plan_naration) !!}
                 </p>
             @endforeach
-        </td>
-        <td>
-        @if(!$office->offices->isEmpty())
-            <p>
-                <a class="btn btn-info" data-toggle="collapse"
-                    href="#off{{ $office->id }}{{$planAcc->Kpi->id}}" role="button"
-                    aria-expanded="false" aria-controls="collapseExample0">
-                     Details
-                </a>
-            </p>
-             @else
-                {{"no child "}}
-            @endif
         </td>
     </tr>
 </table>

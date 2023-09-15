@@ -3,11 +3,23 @@
         $ospan = $planAcc->Kpi->kpiChildThrees->count() * $planAcc->Kpi->kpiChildOnes->count() + 2;
     @endphp
     <!-- <tr id="child-ones"> -->
-    <tr style="background:#fff7e6;width:100%">
+    <tr>
 
-        <th colspan="{{ $ospan }} ">
+        <th colspan="{{ $ospan }} "  style="background:#fff7e6;width:100%">
             Offices: {{ $office->officeTranslations[0]->name }}
-            </td>
+        </th>
+        <td rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() *count(getQuarter($planAcc->Kpi->reportingPeriodType->id))+4}}">
+        @if (!$office->offices->isEmpty())
+            <p>
+                <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}{{$planAcc->Kpi->id}}" role="button"
+                    aria-expanded="false" aria-controls="collapseExample0">
+                    Details
+                </a>
+            </p>
+        @else
+            {{ 'no child ' }}
+        @endif
+    </td>
     </tr>
     <tr>
         <td rowspan="2" colspan="2">#</td>
@@ -122,18 +134,6 @@
                     echo '<br/>';
                 @endphp
             @endforeach
-        </td>
-        <td>
-            @if (!$office->offices->isEmpty())
-                <p>
-                    <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}{{$planAcc->Kpi->id}}" role="button"
-                        aria-expanded="false" aria-controls="collapseExample0">
-                        Details
-                    </a>
-                </p>
-            @else
-                {{ 'no child ' }}
-            @endif
         </td>
     </tr>
 </table>

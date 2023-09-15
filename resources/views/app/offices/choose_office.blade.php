@@ -24,7 +24,7 @@
                             @if ($label->id == 1)
                                 @continue
                             @else
-                                <option value="{{ $label->id }}"  >{{ $label->officeTranslations[0]->name }}</option>
+                                <option value="{{ $label->translation_id }}"  >{{ $label->officeTranslations[0]->name }}</option>
                             @endif
                         @endforeach
                     </x-inputs.select>
