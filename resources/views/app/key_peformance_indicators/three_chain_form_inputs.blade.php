@@ -16,7 +16,7 @@
 
         <input type="hidden" value="{{ $keyPeformanceIndicator->id }}" name="kpiId">
 
-        <x-inputs.select class="select2" multiple="multiple" name="kpiThreeLists[]" data-placeholder="Select disaggregation level three" label="Disaggregation Three">
+        <x-inputs.select required class="select2" multiple="multiple" name="kpiThreeLists[]" data-placeholder="Select disaggregation level three" label="Disaggregation Three">
             @forelse($KpiChildThree_t as $key => $label)
                 @if(app()->getLocale() == $label->locale)
                     <option value="{{ $label->kpiChildThree_id }}">{{ $label->name }}</option>
