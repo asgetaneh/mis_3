@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\OfficeTranslationStoreRequest;
 use App\Http\Requests\OfficeTranslationUpdateRequest;
+use Spatie\Permission\Models\Role;
 
 
 class OfficeTranslationController extends Controller
@@ -225,8 +226,24 @@ class OfficeTranslationController extends Controller
     }
 
     public function assignIndex(){
-        $offices = OfficeTranslation::all();
-        $users = User::all();
+        // $offices = OfficeTranslation::all();
+        // $users = User::all();
+
+        $assigned = DB::table('manager')->get();
+
+        $assignedOfficesList = [];
+        foreach ($assigned as $office){
+            array_push($assignedOfficesList, $office->office_id);
+        }
+
+        $assignedUsersList = [];
+        foreach ($assigned as $user){
+            array_push($assignedUsersList, $user->user_id);
+        }
+
+
+        $offices = OfficeTranslation::whereNotIn('translation_id', $assignedOfficesList)->get();
+        $users = User::whereNotIn('id', $assignedUsersList)->get();
 
         return view('app.office_translations.assign', compact('offices', 'users'));
     }
@@ -242,6 +259,11 @@ class OfficeTranslationController extends Controller
         }
 
         $store = DB::insert('insert into manager (user_id, office_id) values (?, ?)', [$data['user'], $data['office']]);
+
+        $role = Role::where('name', '=', 'staff')->first();
+
+        $staffUser = User::find($data['user']);
+        $staffUser->assignRole($role);
 
         return redirect()
         ->route('office-translations.index')

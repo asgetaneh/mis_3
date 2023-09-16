@@ -15,10 +15,10 @@
 
                     <div class="row mt-5">
                         <x-inputs.group class="col-sm-12">
-                            <x-inputs.select name="office" class="form-control select2" label="Office" required>
+                            <x-inputs.select id="office" name="office" class="form-control select2" label="Office" required>
                                 {{-- @php $selected = old('translation_id', ($editing ? $officeTranslation->translation_id : '')) @endphp --}}
 
-                                <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Office</option>
+                                <option disabled {{ empty($selected) ? 'selected' : '' }} value="">Please select the Office</option>
                                 @foreach ($offices as $value => $office)
                                     @if (app()->getLocale() == $office->locale)
                                         @if ($office->translation_id == 1)
@@ -34,10 +34,10 @@
 
                         </x-inputs.group>
                         <x-inputs.group class="col-sm-12">
-                            <x-inputs.select name="user" class="form-control select2" label="User" required>
+                            <x-inputs.select id="user" name="user" class="form-control select2" label="User" required>
                                 {{-- @php $selected = old('translation_id', ($editing ? $officeTranslation->translation_id : '')) @endphp --}}
 
-                                <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the User</option>
+                                <option disabled {{ empty($selected) ? 'selected' : '' }} value="">Please select the User</option>
                                 @foreach ($users as $value => $user)
                                     <option value="{{ $user->id }}">
                                         {{ $user->name }}</option>
@@ -69,7 +69,37 @@
     <script>
         $(document).ready(function() {
 
-            $('.select2').select2();
+            $('#office').select2({
+                language: {
+                    noResults: () => "<p class='text-danger'>No Office found! Or all offices are assigned a Manager!</p>",
+                },
+
+                escapeMarkup: function(markup) {
+                    return markup;
+                },
+
+                placeholder: {
+                    id: '', // the value of the option
+                    text: '<p class="text-secondary">Select Office</p>'
+                },
+
+            });
+
+            $('#user').select2({
+                language: {
+                    noResults: () => "<p class='text-danger'>No User found! Or all Users are assigned an Office!</p>",
+                },
+
+                escapeMarkup: function(markup) {
+                    return markup;
+                },
+
+                placeholder: {
+                    id: '', // the value of the option
+                    text: '<p class="text-secondary">Select User</p>'
+                },
+
+            });
 
         });
     </script>
