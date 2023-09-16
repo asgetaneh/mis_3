@@ -71,6 +71,7 @@
             $isContented = false;
             $objCounter = null;
             $appended = false;
+            $kpiList = [];
         @endphp
 
         <div class="col-md-10">
@@ -142,7 +143,7 @@
                                             @endphp
                                 @endif
 
-                                <form action="{{ route('report.save') }}" method="POST">
+                                <form action="{{ route('report.save') }}" method="POST" id="reporting-form">
                                     @csrf
 
                                     {{-- @if ($objective) --}}
@@ -155,6 +156,9 @@
                                             $checkPlanedForKpi = checkPlanedForKpi($planning_year[0]->id, $kpi->id, auth()->user()->offices[0]->id);
                                         @endphp
                                         @if($checkPlanedForKpi)
+                                            @php
+                                                array_push($kpiList, $kpi->id)
+                                            @endphp
                                         <div class="card p-2" style="border: 1px solid #b1b1b1;">
                                             <div class="card-header bg-light">
                                                 <h3 class="card-title">KPI:
@@ -246,13 +250,13 @@
                                                                                         $disabled ="";
                                                                                     @endphp
                                                                                     @if ($plan && $plan->accom_value)
-                                                                                    @if($off_level ===1) 
+                                                                                    @if($off_level ===1)
                                                                                         @if ($off_level === $plan->accom_status)
                                                                                             @php $disabled ="disabled"; @endphp
                                                                                         @endif
                                                                                     @elseif ($off_level != $plan->accom_status)
                                                                                         @php $disabled ="disabled"; @endphp
-                                                                                    @endif 
+                                                                                    @endif
                                                                                         <td>
                                                                                             <input
                                                                                                 name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
@@ -323,13 +327,13 @@
                                                                                     $disabled ="";
 
                                                                                 @endphp
-                                                                                @if($off_level ===1) 
+                                                                                @if($off_level ===1)
                                                                                         @if ($off_level === $plan12->accom_status)
                                                                                             @php $disabled ="disabled"; @endphp
                                                                                         @endif
                                                                                     @elseif ($off_level != $plan12->accom_status)
                                                                                         @php $disabled ="disabled"; @endphp
-                                                                                    @endif 
+                                                                                    @endif
                                                                                 <td>
                                                                                     <input
                                                                                         name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}"
@@ -397,7 +401,7 @@
 
                                                             @endphp
                                                             @if ($plan1 && $plan1->accom_value)
-                                                             @if($off_level ===1) 
+                                                             @if($off_level ===1)
                                                                 @if ($off_level === $plan1->accom_status)
                                                                     @php $disabled ="disabled"; @endphp
                                                                 @endif
@@ -467,13 +471,13 @@
                                         $disabled ="";
                                         @endphp
                                         @if ($planP && $planP->accom_value)
-                                        @if($off_level ===1) 
+                                        @if($off_level ===1)
                                                 @if ($off_level === $planP->accom_status)
                                                     @php $disabled ="disabled"; @endphp
                                                 @endif
                                             @elseif ($off_level != $planP->accom_status)
                                                 @php $disabled ="disabled"; @endphp
-                                             @endif 
+                                             @endif
                                              <td>
                                                  <input name="{{ $kpi->id }}-{{ $period->id }}"
                                                     class="form-control" value="{{ $planP->accom_value }}"
@@ -532,11 +536,13 @@
                                 <label for="summernote">Major Activities</label>
                                 <input type="hidden" name="type" value="yes">
                                  <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote"
-                                    id="summernote" placeholder="Narration here" required>{!! $report_naration !!}</textarea>
+                                    id="narration-field-{{ $kpi->id }}" placeholder="Narration here">{!! $report_naration !!}</textarea>
+                                    <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>
                             @else
                                 <label for="summernote">Major Activities</label>
                                 <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote"
-                                    id="summernote" placeholder="Narration here" required></textarea>
+                                    id="narration-field-{{ $kpi->id }}" placeholder="Narration here"></textarea>
+                                    <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>
                             @endif
 
                         </div>
@@ -614,6 +620,33 @@
             $('.dropdown-toggle').dropdown()
         });
     </script>
+
+    <script>
+        $('#reporting-form').on('submit', function(e) {
+
+            let kpiList = {{ json_encode($kpiList) }};
+
+            for (let i = 0; i < kpiList.length; i++) {
+                $(`.narration-field-${kpiList[i]}`).css("display", "none");
+                let summernoteSelector = `#narration-field-${kpiList[i]}`;
+
+                if ($(summernoteSelector).summernote('isEmpty')) {
+                    console.log(`${kpiList[i]} is empty`);
+
+                    // focus on the empty field
+                    $(`#narration-field-${kpiList[i]}`).focus();
+                    $(`#narration-field-${kpiList[i]}`).summernote('focus');
+
+                    $(`.narration-field-${kpiList[i]}`).css("display", "block");
+
+                    // cancel submit
+                    e.preventDefault();
+                }
+
+            }
+        })
+    </script>
+
     {{-- <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script> --}}
 
     {{-- <script>

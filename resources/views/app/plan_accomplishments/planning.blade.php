@@ -71,6 +71,7 @@
             $isContented = false;
             $objCounter = null;
             $appended = false;
+            $kpiList = [];
         @endphp
 
         <div class="col-md-10">
@@ -141,8 +142,8 @@
                                                 $isContented = true;
                                             @endphp
                                 @endif
-                                
-                                <form action="{{ route('plan.save') }}" method="POST" onsubmit="return validateTheForm()">
+
+                                <form action="{{ route('plan.save') }}" method="POST" id="planning-form" onsubmit="return validateTheForm()">
                                     @csrf
 
                                     {{-- @if ($objective) --}}
@@ -150,6 +151,9 @@
                                         $KeyPeformanceIndicators = getKeyperormanceIndicators($objective, $user_offices);
                                     @endphp
                                     @forelse($KeyPeformanceIndicators as $kpi)
+                                        @php
+                                            array_push($kpiList, $kpi->id)
+                                        @endphp
                                         <div class="card p-2" style="border: 1px solid #b1b1b1;">
                                             <div class="card-header bg-light">
                                                 <h3 class="card-title">KPI:
@@ -249,13 +253,13 @@
                                                                                         $disabled = '';
                                                                                     @endphp
                                                                                     @if ($plan)
-                                                                                        @if($off_level ===1) 
+                                                                                        @if($off_level ===1)
                                                                                             @if ($off_level === $plan->plan_status)
                                                                                                 @php $disabled ="disabled"; @endphp
                                                                                             @endif
                                                                                         @elseif ($off_level != $plan->plan_status)
                                                                                             @php $disabled ="disabled"; @endphp
-                                                                                        @endif 
+                                                                                        @endif
                                                                                         <td>
                                                                                             <input type="hidden"
                                                                                                 name="type"
@@ -332,13 +336,13 @@
                                                                                     $disabled = '';
                                                                                 @endphp
 
-                                                                               @if($off_level ===1) 
+                                                                               @if($off_level ===1)
                                                                                     @if ($off_level === $plan12->plan_status)
                                                                                         @php $disabled ="disabled"; @endphp
                                                                                     @endif
                                                                                 @elseif ($off_level != $plan12->plan_status)
                                                                                     @php $disabled ="disabled"; @endphp
-                                                                                @endif 
+                                                                                @endif
                                                                                 <td>
                                                                                     <input type="hidden" name="type"
                                                                                         value="yes">
@@ -417,13 +421,13 @@
                                                                 $disabled = '';
                                                             @endphp
                                                             @if ($plan1)
-                                                                @if($off_level ===1) 
+                                                                @if($off_level ===1)
                                                                     @if ($off_level === $plan1->plan_status)
                                                                         @php $disabled ="disabled"; @endphp
                                                                     @endif
                                                                 @elseif ($off_level != $plan1->plan_status)
                                                                     @php $disabled ="disabled"; @endphp
-                                                                @endif 
+                                                                @endif
                                                                 <td>
                                                                     <input type="hidden" name="type" value="yes">
                                                                     <input
@@ -521,7 +525,7 @@
                                 @endforelse
                                 </tr>
                             </table>
-                                    
+
                              <script>
                                 /* function validateTheForm(){
                                         var validation = (document.getElementById('{{ $kpi->id }}{{ $period->slug }}').value == 'gmail');
@@ -624,11 +628,13 @@
                                 <label for="summernote">Major Activities</label>
                                 <input type="hidden" name="type" value="yes">
                                 <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;"
-                                    class="form-control summernote" id="summernote" placeholder="Narration here" required>{!! $plan_naration !!}</textarea>
+                                    class="form-control summernote" placeholder="Narration here" id="narration-field-{{ $kpi->id }}">{!! $plan_naration !!}</textarea>
+                                    <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>
                             @else
                                 <label for="summernote">Major Activities</label>
                                 <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;"
-                                    class="form-control summernote" id="summernote" placeholder="Narration here" required></textarea>
+                                    class="form-control summernote" placeholder="Narration here" id="narration-field-{{ $kpi->id }}"></textarea>
+                                    <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>
                             @endif
 
                         </div>
@@ -703,6 +709,33 @@
             $('.dropdown-toggle').dropdown()
         });
     </script>
+
+    <script>
+        $('#planning-form').on('submit', function(e) {
+
+            let kpiList = {{ json_encode($kpiList) }};
+
+            for (let i = 0; i < kpiList.length; i++) {
+                $(`.narration-field-${kpiList[i]}`).css("display", "none");
+                let summernoteSelector = `#narration-field-${kpiList[i]}`;
+
+                if ($(summernoteSelector).summernote('isEmpty')) {
+                    console.log(`${kpiList[i]} is empty`);
+
+                    // focus on the empty field
+                    $(`#narration-field-${kpiList[i]}`).focus();
+                    $(`#narration-field-${kpiList[i]}`).summernote('focus');
+
+                    $(`.narration-field-${kpiList[i]}`).css("display", "block");
+
+                    // cancel submit
+                    e.preventDefault();
+                }
+
+            }
+        })
+    </script>
+
     {{-- <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script> --}}
 
     {{-- <script>
