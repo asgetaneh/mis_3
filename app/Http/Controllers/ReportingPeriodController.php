@@ -106,7 +106,7 @@ class ReportingPeriodController extends Controller
             $no_r_period = ReportingPeriod::select('reporting_periods.id')
                       ->where('reporting_period_type_id','=', $reportingPeriod->reporting_period_type_id)->get();
             $reportingPeriodslug =count($no_r_period);
-            $updated = tap(DB::table('reporting_periods') 
+            $updated = tap(DB::table('reporting_periods')
             ->where('reporting_periods.id' , '=',$reportingPeriod->id))
             ->update(['slug' => (string)$reportingPeriodslug])
             ->first();
@@ -183,33 +183,34 @@ class ReportingPeriodController extends Controller
         $startDate = $data['start_date'];
         $endDate = $data['end_date'];
 
-        if(str_contains($startDate, '-')){
+        // if(str_contains($startDate, '-')){
 
-        }else{
+        // }else{
             $startDate = explode('/', $startDate);
             $startDate = DateTimeFactory::of($startDate[2], $startDate[1], $startDate[0]);
             $startDate = $startDate->format('Y-m-d');
 
-            $reportingPeriod->update([
-                'start_date' => $startDate,
-            ]);
-        }
+            // $reportingPeriod->update([
+            //     'start_date' => $startDate,
+            // ]);
+        // }
 
-        if(str_contains($endDate, '-')){
+        // if(str_contains($endDate, '-')){
 
-        }else{
+        // }else{
             $endDate = explode('/', $data['end_date']);
             $endDate = DateTimeFactory::of($endDate[2], $endDate[1], $endDate[0]);
             $endDate = $endDate->format('Y-m-d');
 
-            $reportingPeriod->update([
-                'end_date' => $endDate,
-            ]);
-        }
+            // $reportingPeriod->update([
+            //     'end_date' => $endDate,
+            // ]);
+        // }
+
 
         $reportingPeriod->update([
-            // 'start_date' => $startDate,
-            // 'end_date' => $endDate,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
             'reporting_period_type_id' => $request->reporting_period_type_id,
             'updated_at' => new \DateTime(),
         ]);
