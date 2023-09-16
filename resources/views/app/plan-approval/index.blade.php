@@ -155,7 +155,7 @@
                                                                         </p>
                                                                     </th>
                                                                     <th>
-                                                                        <button type="button"
+                                                                        <button type="button" title="Expand"
                                                                             class="btn btn-flat btn-tool bg-primary m-auto py-2 px-4"
                                                                             data-card-widget="collapse"><i
                                                                                 class="fas fa-plus"></i>
@@ -258,7 +258,7 @@
                                                             </p>
                                                         </th>
                                                         <th>
-                                                            <button type="button"
+                                                            <button type="button" title="Expand"
                                                                 class="btn btn-flat btn-tool bg-primary m-auto py-2 px-4"
                                                                 data-card-widget="collapse"><i class="fas fa-plus"></i>
                                                             </button>
@@ -450,17 +450,33 @@
 
                                                                     @if ($isOfficeBelongToKpi->count() > 0)
                                                                         @if (count(office_all_childs_ids($office)) > 0)
-                                                                            <p>Office
+                                                                            {{-- <p>Office
                                                                                 <u>{{ $office->officeTranslations[0]->name }}</u>
                                                                                 has
                                                                                 no plan or not approved its offices yet!
-                                                                            </p>
+                                                                            </p> --}}
+
+                                                                            <div class="alert alert-warning alert-dismissible">
+                                                                                {{-- <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> --}}
+                                                                                <h5><i class="icon fas fa-info-circle"></i> Office
+                                                                                    <u>{{ $office->officeTranslations[0]->name }}</u>
+                                                                                    has
+                                                                                    no plan or not approved its offices yet!</h5>
+                                                                            </div>
                                                                         @else
-                                                                            <p>Office
+                                                                            {{-- <p class="mark p-3">Office
                                                                                 <u>{{ $office->officeTranslations[0]->name }}</u>
                                                                                 has
                                                                                 not planned for this KPI yet!
-                                                                            </p>
+                                                                            </p> --}}
+
+                                                                            <div class="alert alert-warning alert-dismissible">
+                                                                                {{-- <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> --}}
+                                                                                <h5><i class="icon fas fa-info-circle"></i> Office
+                                                                                    <u>{{ $office->officeTranslations[0]->name }}</u>
+                                                                                    has
+                                                                                    not planned for this KPI yet!</h5>
+                                                                            </div>
                                                                         @endif
                                                                     @else
                                                                     @endif
