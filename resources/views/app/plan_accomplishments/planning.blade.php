@@ -72,6 +72,7 @@
             $objCounter = null;
             $appended = false;
             $kpiList = [];
+            $objectiveList = [];
         @endphp
 
         <div class="col-md-10">
@@ -81,6 +82,9 @@
                     <div class="card-header p-0 border-bottom-0 objectives-list-tab">
                         <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
                             @forelse ($objectives as $objective)
+                                @php
+                                    array_push($objectiveList, $objective->id);
+                                @endphp
                                 {{-- @dd($objective->objectiveTranslations) --}}
 
 
@@ -154,6 +158,9 @@
                                         @php
                                             array_push($kpiList, $kpi->id)
                                         @endphp
+
+                                        <p class="kpi-under-obj-{{ $objective->id }}"></p>
+
                                         <div class="card p-2" style="border: 1px solid #b1b1b1;">
                                             <div class="card-header bg-light">
                                                 <h3 class="card-title">KPI:
@@ -360,8 +367,7 @@
                                                                                         id="koneT{{ $one->id }}{{ $two->id }}{{ $period->slug }}"
                                                                                         class="form-control" type="number"
                                                                                         required>
-                                                                                    <span
-                                                                                        id="spankOneT{{ $one->id }}{{ $period->slug }}"></span>
+                                                                                    <span class="text-danger" id="spankOneT{{ $one->id }}{{ $period->slug }}"></span>
                                                                                 </td>
                                                                             @endif
                                                                         @endforeach
@@ -391,6 +397,9 @@
                                                                         document.getElementById("spankOneT{{ $one->id }}{{ $two->id }}1")
                                                                             .innerHTML = "Period plan not matched with yearly";
                                                                         $('#koneT{{ $one->id }}{{ $two->id }}1').val("");
+                                                                    }else{
+                                                                        document.getElementById("spankOneT{{ $one->id }}{{ $two->id }}1")
+                                                                            .innerHTML = "";
                                                                     }
 
 
@@ -442,8 +451,7 @@
                                                                         name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}"
                                                                         id="kone{{ $one->id }}{{ $period->slug }}"
                                                                         class="form-control" type="number" required>
-                                                                    <span
-                                                                        id="spankOne{{ $one->id }}{{ $period->slug }}"></span>
+                                                                    <span class="text-danger" id="spankOne{{ $one->id }}{{ $period->slug }}"></span>
                                                                 </td>
                                                             @endif
                                                         @empty
@@ -463,6 +471,9 @@
                                                                         document.getElementById("spankOne{{ $one->id }}1").innerHTML =
                                                                             "Period plan not matched with yearly";
                                                                         $('#kone{{ $one->id }}1').val("");
+                                                                    }else{
+                                                                        document.getElementById("spankOne{{ $one->id }}1").innerHTML =
+                                                                            "";
                                                                     }
 
 
@@ -517,7 +528,7 @@
                                             <input class="form-control" type="number" placeholder="Enter KPI value"
                                                 id="{{ $kpi->id }}{{ $period->slug }}"
                                                 name="{{ $kpi->id }}-{{ $period->id }}" required>
-                                            <span id="s{{ $kpi->id }}{{ $period->slug }}"></span>
+                                            <span class="text-danger" id="s{{ $kpi->id }}{{ $period->slug }}"></span>
                                         </td>
                                     @endif
 
@@ -557,6 +568,9 @@
                                                     $('#' + idd).val("");
                                                  }
                                                 $('#' + idd_y).val("");
+                                            }else{
+                                                document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
+                                                    "";
                                             }
                                         }
                                         // constant
@@ -571,6 +585,9 @@
                                                 document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
                                                     "Plan should be constant";
                                                 $('#' + idd_y).val("");
+                                            }else{
+                                                document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
+                                                    "";
                                             }
                                         }
                                         // incremental
@@ -585,6 +602,9 @@
                                                     document.getElementById("s{{ $kpi->id }}{{ 1 }}")
                                                         .innerHTML = "Plan should be incremental";
                                                     $('#' + idd_y).val("");
+                                                }else{
+                                                document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
+                                                    "";
                                                 }
                                             }
                                         }
@@ -643,7 +663,7 @@
                     @empty
                         <h4>No KPI registered for this Goal and Objective!</h4>
                         @endforelse
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary" id="submit-for-{{ $objective->id }}">Submit</button>
                         </div>
                         </form>
                     {{-- </div>
@@ -734,6 +754,20 @@
 
             }
         })
+    </script>
+
+    <script>
+        let objectiveList = {{ json_encode($objectiveList) }};
+
+        for (let i = 0; i < objectiveList.length; i++) {
+            let selector = `.kpi-under-obj-${objectiveList[i]}`;
+            var pTag = $(selector);
+
+            if (pTag.length <= 0) {
+                $(`#submit-for-${objectiveList[i]}`).css("display", "none");
+            }
+
+        }
     </script>
 
     {{-- <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script> --}}

@@ -72,6 +72,7 @@
             $objCounter = null;
             $appended = false;
             $kpiList = [];
+            $objectiveList = [];
         @endphp
 
         <div class="col-md-10">
@@ -81,6 +82,9 @@
                     <div class="card-header p-0 border-bottom-0 objectives-list-tab">
                         <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
                             @forelse ($objectives as $objective)
+                            @php
+                                array_push($objectiveList, $objective->id);
+                            @endphp
                                 {{-- @dd($objective->objectiveTranslations) --}}
 
 
@@ -159,6 +163,9 @@
                                             @php
                                                 array_push($kpiList, $kpi->id)
                                             @endphp
+
+                                            <p class="kpi-under-obj-{{ $objective->id }}"></p>
+
                                         <div class="card p-2" style="border: 1px solid #b1b1b1;">
                                             <div class="card-header bg-light">
                                                 <h3 class="card-title">KPI:
@@ -548,12 +555,12 @@
                         </div>
                                         </div>
                     @else
-                    <h5>{{"No Plan for Keyperformance indicator"}}</h5>
+                    <h5>{{"No Report for Keyperformance indicator"}}</h5>
                     @endif
                     @empty
                         <h4>No KPI exit with active  reporting period in this office and Objective!</h4>
                         @endforelse
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary" id="submit-for-{{ $objective->id }}">Submit</button>
                                         </div>
                         </form>
                     {{-- </div>
@@ -645,6 +652,20 @@
 
             }
         })
+    </script>
+
+    <script>
+        let objectiveList = {{ json_encode($objectiveList) }};
+
+        for (let i = 0; i < objectiveList.length; i++) {
+            let selector = `.kpi-under-obj-${objectiveList[i]}`;
+            var pTag = $(selector);
+
+            if (pTag.length <= 0) {
+                $(`#submit-for-${objectiveList[i]}`).css("display", "none");
+            }
+
+        }
     </script>
 
     {{-- <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script> --}}
