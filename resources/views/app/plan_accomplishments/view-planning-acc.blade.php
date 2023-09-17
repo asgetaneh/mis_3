@@ -17,7 +17,7 @@
 
 @section('content')
     @php     $first=1; @endphp
-    <div class="row justify-content-center mt-5">
+    <div class="row justify-content-center">
         <div class="col-12">
             <div class="card card-primary card-outline card-outline-tabs fillable-objective">
                 <div class="card-body">
@@ -26,8 +26,8 @@
                         <div class="row">
                             <div class="col-md-5">
                                 <label class="label" for="filters">Offices:</label>
-                                <select class="form-control" name="office">
-                                    <option value=" ">Select Office</option>
+                                <select class="form-control select2" name="office">
+                                    <option disabled selected value="">Select Office</option>
                                     @forelse(getAllOffices() as $office)
                                         <option value="{{ $office->id }}">{{ $office->officeTranslations[0]->name }}
                                         </option>
@@ -37,8 +37,8 @@
                             </div>
                             <div class="col-md-6">
                                 <label class=" " for="filters">KPI:</label>
-                                <select class="form-control" name="kpi">
-                                    <option value=" ">Select KPI</option>
+                                <select class="form-control select2" name="kpi">
+                                    <option disabled selected value="">Select KPI</option>
                                     @forelse(getAllKpi() as $kpi)
                                         <option value="{{ $kpi->id }}">{{ $kpi->keyPeformanceIndicatorTs[0]->name }}
                                         </option>
@@ -61,7 +61,7 @@
 
 
 
-    <div class="row justify-content-center mt-5">
+    <div class="row justify-content-center">
         <div class="col-12">
             <div class="card card-primary card-outline card-outline-tabs fillable-objective">
                 <div class="card-body">
@@ -105,7 +105,7 @@
                                                         </th>
                                                         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                                                             @php
-                                                                //  $planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $imagen_off, $period->id,false,$planning_year);  
+                                                                //  $planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $imagen_off, $period->id,false,$planning_year);
                                                                 $planOfOfficePlan = $planAcc->ForKpi($planAcc->Kpi->id, $imagen_off, $period->id,false,$planning_year[0]->id);
                                                                  //dump($planOfOfficePlan);
                                                                 $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $imagen_off, $period->id);
@@ -197,6 +197,14 @@
     </div>
 
     <script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+
+            $('.select2').select2();
+
+        });
+    </script>
+
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script> --}}
 
