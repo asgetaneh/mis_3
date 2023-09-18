@@ -28,7 +28,7 @@
                     <div>
                         @forelse ($user->roles as $role)
                         <div class="badge badge-primary">{{ $role->name }}</div>
-                        <br />
+                        {{-- <br /> --}}
                         @empty - @endforelse
                     </div>
                 </div>
@@ -40,11 +40,11 @@
                     @lang('crud.common.back')
                 </a>
 
-                @can('create', App\Models\User::class)
+                {{-- @can('create', App\Models\User::class)
                 <a href="{{ route('users.create') }}" class="btn btn-light">
                     <i class="icon ion-md-add"></i> @lang('crud.common.create')
                 </a>
-                @endcan
+                @endcan --}}
             </div>
         </div>
     </div>

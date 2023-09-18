@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
     <div class="searchbar mt-0 mb-4">
         <div class="row">
             <div class="col-md-6">
@@ -40,38 +40,70 @@
                 <h4 class="card-title">@lang('crud.roles.index_title')</h4>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-borderless table-hover">
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th class="text-left">
                                 @lang('crud.roles.inputs.name')
                             </th>
+                            {{-- <th>Total users</th> --}}
                             <th class="text-center">
                                 @lang('crud.common.actions')
                             </th>
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $count = 1;
+                        @endphp
                         @forelse($roles as $role)
                         <tr>
+                            <td>{{ $count++ }}</td>
                             <td>{{ $role->name ?? '-' }}</td>
+                            {{-- <td>
+                                <span class="badge badge-primary badge-pill"> {{ $role->users->count() }}</span>
+                            </td> --}}
                             <td class="text-center" style="width: 134px;">
                                 <div
                                     role="group"
                                     aria-label="Row Actions"
                                     class="btn-group"
                                 >
+                                    @can('view', $role)
+                                        <a href="{{ route('roles.permissions', $role) }}" title="Add Permission">
+                                            <button
+                                                type="button"
+                                                class="btn btn-light"
+                                            >
+                                                <i class="icon fas fa-check-double fa-sm"></i>
+                                            </button>
+                                        </a>
+                                    @endcan
+
+                                    @can('view', $role)
+                                        <a href="{{ route('roles.users', $role) }}" title="Add Users">
+                                            <button
+                                                type="button"
+                                                class="btn btn-light"
+                                            >
+                                                <i class="icon fas fa-users fa-sm"></i>
+                                            </button>
+                                        </a>
+                                    @endcan
+
                                     @can('update', $role)
-                                    <a href="{{ route('roles.edit', $role) }}">
+                                    <a href="{{ route('roles.edit', $role) }}" title="Edit role">
                                         <button
                                             type="button"
                                             class="btn btn-light"
                                         >
-                                            <i class="icon ion-md-create"></i>
+                                            <i class="icon fas fa-pen fa-sm"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('view', $role)
+                                    @endcan
+                                    {{-- @can('view', $role)
                                     <a href="{{ route('roles.show', $role) }}">
                                         <button
                                             type="button"
@@ -80,7 +112,8 @@
                                             <i class="icon ion-md-eye"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('delete', $role)
+                                    @endcan --}}
+                                    {{-- @can('delete', $role)
                                     <form
                                         action="{{ route('roles.destroy', $role) }}"
                                         method="POST"
@@ -94,7 +127,7 @@
                                             <i class="icon ion-md-trash"></i>
                                         </button>
                                     </form>
-                                    @endcan
+                                    @endcan --}}
                                 </div>
                             </td>
                         </tr>
@@ -106,12 +139,10 @@
                         </tr>
                         @endforelse
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="2">{!! $roles->render() !!}</td>
-                        </tr>
-                    </tfoot>
                 </table>
+                <div class="float-right">
+                    {!! $roles->render() !!}
+                </div>
             </div>
         </div>
     </div>

@@ -27,14 +27,14 @@
                     @lang('crud.common.back')
                 </a>
 
-                @can('create', App\Models\Permission::class)
+                {{-- @can('create', App\Models\Permission::class)
                 <a
                     href="{{ route('permissions.create') }}"
                     class="btn btn-light"
                 >
                     <i class="icon ion-md-add"></i> @lang('crud.common.create')
                 </a>
-                @endcan
+                @endcan --}}
             </div>
         </div>
     </div>

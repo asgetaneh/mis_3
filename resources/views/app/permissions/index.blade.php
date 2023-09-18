@@ -45,10 +45,11 @@
                 </h4>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-borderless table-hover">
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th class="text-left">
                                 @lang('crud.permissions.inputs.name')
                             </th>
@@ -58,8 +59,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($permissions as $permission)
+                        @forelse($permissions as $key => $permission)
                         <tr>
+                            <td>{{ $key+1 }}</td>
                             <td>{{ $permission->name ?? '-' }}</td>
                             <td class="text-center" style="width: 134px;">
                                 <div
@@ -89,7 +91,8 @@
                                             <i class="icon ion-md-eye"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('delete', $permission)
+                                    @endcan
+                                    {{-- @can('delete', $permission)
                                     <form
                                         action="{{ route('permissions.destroy', $permission) }}"
                                         method="POST"
@@ -103,7 +106,7 @@
                                             <i class="icon ion-md-trash"></i>
                                         </button>
                                     </form>
-                                    @endcan
+                                    @endcan --}}
                                 </div>
                             </td>
                         </tr>
@@ -115,12 +118,15 @@
                         </tr>
                         @endforelse
                     </tbody>
-                    <tfoot>
+                    {{-- <tfoot>
                         <tr>
                             <td colspan="2">{!! $permissions->render() !!}</td>
                         </tr>
-                    </tfoot>
+                    </tfoot> --}}
                 </table>
+                <div class="float-right">
+                    {!! $permissions->render() !!}
+                </div>
             </div>
         </div>
     </div>

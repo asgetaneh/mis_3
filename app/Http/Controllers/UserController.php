@@ -36,6 +36,7 @@ class UserController extends Controller
     public function create(Request $request): View
     {
         $this->authorize('create', User::class);
+        abort(404);
 
         $roles = Role::get();
 
@@ -46,19 +47,19 @@ class UserController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(UserStoreRequest $request): RedirectResponse
-    { 
+    {
         $this->authorize('create', User::class);
 
         $validated = $request->validated();
 
-        $validated['password'] = Hash::make($validated['password']);
-        
+        // $validated['password'] = Hash::make($validated['password']);
+
         $user = User::create($validated);
 
         $user->syncRoles($request->roles);
 
         return redirect()
-            ->route('users.edit', $user)
+            ->route('users.index', $user)
             ->withSuccess(__('crud.common.created'));
     }
 
@@ -95,19 +96,19 @@ class UserController extends Controller
 
         $validated = $request->validated();
 
-        if (empty($validated['password'])) {
-            unset($validated['password']);
-        } else {
-            $validated['password'] = Hash::make($validated['password']);
-        }
+        // if (empty($validated['password'])) {
+        //     unset($validated['password']);
+        // } else {
+        //     $validated['password'] = Hash::make($validated['password']);
+        // }
 
         $user->update($validated);
 
         $user->syncRoles($request->roles);
 
         return redirect()
-            ->route('users.edit', $user)
-            ->withSuccess(__('crud.common.saved'));
+            ->route('users.index', $user)
+            ->withSuccess(__('crud.common.updated'));
     }
 
     /**

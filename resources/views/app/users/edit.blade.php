@@ -24,10 +24,10 @@
                         @lang('crud.common.back')
                     </a>
 
-                    <a href="{{ route('users.create') }}" class="btn btn-light">
+                    {{-- <a href="{{ route('users.create') }}" class="btn btn-light">
                         <i class="icon ion-md-add text-primary"></i>
                         @lang('crud.common.create')
-                    </a>
+                    </a> --}}
 
                     <button type="submit" class="btn btn-primary float-right">
                         <i class="icon ion-md-save"></i>
@@ -38,4 +38,12 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+
+        $('.select2').select2();
+
+    });
+</script>
 @endsection

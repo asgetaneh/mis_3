@@ -23,7 +23,18 @@
         ></x-inputs.text>
     </x-inputs.group>
 
-    <x-inputs.group class="col-sm-12">
+    {{-- <x-inputs.group class="col-sm-12">
+        <x-inputs.text
+            name="username"
+            label="Username"
+            :value="old('username', ($editing ? $user->username : ''))"
+            maxlength="255"
+            placeholder="Username"
+            required
+        ></x-inputs.text>
+    </x-inputs.group> --}}
+
+    {{-- <x-inputs.group class="col-sm-12">
         <x-inputs.password
             name="password"
             label="Password"
@@ -31,10 +42,10 @@
             placeholder="Password"
             :required="!$editing"
         ></x-inputs.password>
-    </x-inputs.group>
+    </x-inputs.group> --}}
 
-    <div class="form-group col-sm-12 mt-4">
-        <h4>Assign @lang('crud.roles.name')</h4>
+    <div class="form-group col-sm-12">
+        {{-- <h4>Assign @lang('crud.roles.name')</h4>
 
         @foreach ($roles as $role)
         <div>
@@ -47,6 +58,20 @@
                 :add-hidden-value="false"
             ></x-inputs.checkbox>
         </div>
-        @endforeach
+        @endforeach --}}
+
+        <x-inputs.select
+        name="roles[]"
+        label="Role"
+        multiple="multiple"
+        class="form-control select2"
+        required
+    >
+    <option value="" disabled>Select role</option>
+    @foreach ($roles as $role)
+        <option {{ isset($user) ? 'selected' : '' }} value="{{ $role->id }}">{{ $role->name }}</option>
+    @endforeach
+</x-inputs.select>
+
     </div>
 </div>
