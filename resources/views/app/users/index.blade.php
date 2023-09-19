@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
     <div class="searchbar mt-0 mb-4">
         <div class="row">
             <div class="col-md-6">
@@ -24,13 +24,13 @@
                     </div>
                 </form>
             </div>
-            <div class="col-md-6 text-right">
+            {{-- <div class="col-md-6 text-right">
                 @can('create', App\Models\User::class)
                 <a href="{{ route('users.create') }}" class="btn btn-primary">
                     <i class="icon ion-md-add"></i> @lang('crud.common.create')
                 </a>
                 @endcan
-            </div>
+            </div> --}}
         </div>
     </div>
 
@@ -40,15 +40,21 @@
                 <h4 class="card-title">@lang('crud.users.index_title')</h4>
             </div>
 
+            <p class="mt-2">Total: <u>{{ App\Models\User::count()}}</u> users.</p>
+
             <div class="table-responsive">
-                <table class="table table-borderless table-hover">
+                <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
+                            <th>#</th>
                             <th class="text-left">
                                 @lang('crud.users.inputs.name')
                             </th>
                             <th class="text-left">
                                 @lang('crud.users.inputs.email')
+                            </th>
+                            <th>
+                                Username
                             </th>
                             <th class="text-center">
                                 @lang('crud.common.actions')
@@ -56,10 +62,20 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $count = 1;
+                        @endphp
                         @forelse($users as $user)
                         <tr>
+                            <td>{{ $count++ }}</td>
                             <td>{{ $user->name ?? '-' }}</td>
                             <td>{{ $user->email ?? '-' }}</td>
+                            <td>{{ $user->username ?? '-' }}</td>
+                            {{-- <td>
+                                @forelse ($user->roles as $role)
+                                    <span class="badge badge-primary">{{ $role->name }}</span>
+                                @empty - @endforelse
+                            </td> --}}
                             <td class="text-center" style="width: 134px;">
                                 <div
                                     role="group"
@@ -84,7 +100,8 @@
                                             <i class="icon ion-md-eye"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('delete', $user)
+                                    @endcan
+                                    {{-- @can('delete', $user)
                                     <form
                                         action="{{ route('users.destroy', $user) }}"
                                         method="POST"
@@ -98,7 +115,7 @@
                                             <i class="icon ion-md-trash"></i>
                                         </button>
                                     </form>
-                                    @endcan
+                                    @endcan --}}
                                 </div>
                             </td>
                         </tr>
@@ -110,12 +127,10 @@
                         </tr>
                         @endforelse
                     </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="3">{!! $users->render() !!}</td>
-                        </tr>
-                    </tfoot>
                 </table>
+                <div class="float-right">
+                    {!! $users->render() !!}
+                </div>
             </div>
         </div>
     </div>

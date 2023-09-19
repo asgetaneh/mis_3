@@ -77,8 +77,7 @@ class HomeController extends Controller
                 ->latest()
                 ->paginate(500)
                 ->withQueryString();
-                dd($data);
-        $manager = DB::select('select * from manager where office_id='.$data['urofficel']);
+        $manager = DB::select('select * from manager where office_id=:id', ['id' => $data['urofficel']]);
         if($manager){
              return redirect()->back()->with('error', 'Office  has already been assigned for Manager');
              return redirect()

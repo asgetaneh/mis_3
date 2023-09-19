@@ -15,7 +15,17 @@
     @endforeach
     <div class="w-100 row pl-2">
     <x-inputs.group class="col">
+
         <x-inputs.date
+            label="Start Date"
+            autocomplete="off" class="form-control col" data-inputmask-alias="dd/mm/yyyy"
+            data-inputmask="'yearrange': { 'minyear': '{{ \Andegna\DateTimeFactory::now()->getYear() }}'}"
+            data-val="true" data-val-required="Required" id="start_date" name="start_date"
+            placeholder="date/month/year" type="text" :value="old('start_date', ($editing ? date('d/m/Y', strtotime($reportingPeriod->start_date)) : ''))"
+            spellcheck="false" required pattern="[0-9\/]*" oninvalid="setCustomValidity('Please enter a valid date!')" onchange="try{setCustomValidity('')}catch(e){}">
+        </x-inputs.date>
+
+        {{-- <x-inputs.date
             id="start_date"
             inputmode='none'
             type="text"
@@ -25,11 +35,21 @@
             maxlength="255"
             placeholder="Start Date"
             required
-        ></x-inputs.date>
+        ></x-inputs.date> --}}
     </x-inputs.group>
 
     <x-inputs.group class="col">
+
         <x-inputs.date
+            label="End Date"
+            autocomplete="off" class="form-control col" data-inputmask-alias="dd/mm/yyyy"
+            data-inputmask="'yearrange': { 'minyear': '{{ \Andegna\DateTimeFactory::now()->getYear() }}'}"
+            data-val="true" data-val-required="Required" id="end_date" name="end_date"
+            placeholder="date/month/year" type="text" :value="old('end_date', ($editing ? date('d/m/Y', strtotime($reportingPeriod->end_date)) : ''))"
+            spellcheck="false" required pattern="[0-9\/]*" oninvalid="setCustomValidity('Please enter a valid date!')" onchange="try{setCustomValidity('')}catch(e){}">
+        </x-inputs.date>
+
+        {{-- <x-inputs.date
 
              id="end_date"
             inputmode='none'
@@ -40,7 +60,7 @@
             maxlength="255"
             placeholder="End Date"
             required
-        ></x-inputs.date>
+        ></x-inputs.date> --}}
     </x-inputs.group>
 </div>
 

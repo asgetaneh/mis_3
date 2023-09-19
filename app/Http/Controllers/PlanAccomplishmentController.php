@@ -429,15 +429,9 @@ class PlanAccomplishmentController extends Controller
             ->latest()
             ->paginate(15)
             ->withQueryString(); //dd("o");
-            return Redirect::back();
             return redirect()
-            ->route('view-plan-accomplishment')
-            ->withSuccess(__('crud.common.created'));
-
-         return view(
-            'app.plan_accomplishments.index',
-            compact('planAccomplishments', 'search')
-        );
+            ->back()
+            ->withSuccess(__('crud.common.saved'));
 
    }
 
@@ -499,7 +493,7 @@ class PlanAccomplishmentController extends Controller
         $office =Office::find($office_id);
         $imagen_off = $office;
         $off_level = $office->level;
-        $planning_year = PlaningYear::where('is_active',true)->get();  
+        $planning_year = PlaningYear::where('is_active',true)->get();
         $all_office_list = $this->allChildAndChildChild($office);
         $only_child_array = array_merge($all_office_list,array($office_id));
 
@@ -527,14 +521,14 @@ class PlanAccomplishmentController extends Controller
 
             $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $only_child_array)->whereIn('kpi_id', $kpi_array)->select('*', DB::raw('SUM(plan_value) AS sum'))
             -> where('reporting_periods.slug',"=", 1)
-            -> where('planning_year_id','=', $planning_year[0]->id) 
+            -> where('planning_year_id','=', $planning_year[0]->id)
             ->groupBy('kpi_id')  ->get();
-                
+
         }
         else{
         $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $only_child_array)->select('*', DB::raw('SUM(plan_value) AS sum'))
         -> where('reporting_periods.slug',"=", 1)
-        -> where('planning_year_id','=', $planning_year[0]->id) 
+        -> where('planning_year_id','=', $planning_year[0]->id)
        ->groupBy('kpi_id')  ->get();
          if( $is_admin){
             $imagen_off = Office::find(1); //immaginery office of which contain all office kpi plan
@@ -550,9 +544,9 @@ class PlanAccomplishmentController extends Controller
             //      ->join('key_peformance_indicators', 'plan_accomplishments.kpi_id', '=', 'key_peformance_indicators.id')
             //     ->join('objectives', 'key_peformance_indicators.objective_id', '=', 'objectives.id')
                // select('*', DB::raw('SUM(plan_value) AS sum'))
-                // -> where('reporting_periods.slug',"=", 1) 
-                // -> where('plan_status',"=", 2) 
-                  where('planning_year_id','=', $planning_year[0]->id) 
+                // -> where('reporting_periods.slug',"=", 1)
+                // -> where('plan_status',"=", 2)
+                  where('planning_year_id','=', $planning_year[0]->id)
                 //->groupBy('reporting_period_id')
                 //->groupBy('objective_id')
                 ->groupBy('kpi_id')
@@ -754,15 +748,9 @@ class PlanAccomplishmentController extends Controller
             ->latest()
             ->paginate(15)
             ->withQueryString(); //dd("o");
-            return Redirect::back();
             return redirect()
-            ->route('view-plan-accomplishment')
-            ->withSuccess(__('crud.common.created'));
-
-         return view(
-            'app.report_accomplishments.index',
-            compact('planAccomplishments', 'search')
-        );
+            ->back()
+            ->withSuccess(__('crud.common.saved'));
 
    }
    public function viewReportAccomplishment(Request $request){
@@ -772,7 +760,7 @@ class PlanAccomplishmentController extends Controller
         $imagen_off = $office;
         $off_level = $office->level;
        $all_office_list = $this->allChildAndChildChild($office);
-       $planning_year = PlaningYear::where('is_active',true)->get();  
+       $planning_year = PlaningYear::where('is_active',true)->get();
        $only_child_array = array_merge($all_office_list,array($office_id));
 
       DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
@@ -801,7 +789,7 @@ class PlanAccomplishmentController extends Controller
             ->whereIn('office_id', $only_child_array)
             ->whereIn('kpi_id', $kpi_array)
             ->select('*', DB::raw('SUM(accom_value) AS sum'))
-            -> where('planning_year_id','=', $planning_year[0]->id) 
+            -> where('planning_year_id','=', $planning_year[0]->id)
                 //-> where('reporting_periods.slug',"=", 1)
             ->groupBy('kpi_id')
             ->get();
@@ -810,7 +798,7 @@ class PlanAccomplishmentController extends Controller
         $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
         ->whereIn('office_id', $only_child_array)
         ->select('*', DB::raw('SUM(accom_value) AS sum'))
-        -> where('planning_year_id','=', $planning_year[0]->id) 
+        -> where('planning_year_id','=', $planning_year[0]->id)
         //-> where('reporting_periods.slug',"=", 1)
        ->groupBy('kpi_id')
        ->get();
@@ -828,7 +816,7 @@ class PlanAccomplishmentController extends Controller
                     ->join('objectives', 'key_peformance_indicators.objective_id', '=', 'objectives.id')
                 ->select('*', DB::raw('SUM(accom_value) AS sum'))
                 //-> where('reporting_periods.slug',"=", 2)
-                -> where('planning_year_id','=', $planning_year[0]->id) 
+                -> where('planning_year_id','=', $planning_year[0]->id)
                 ->groupBy('objective_id')->groupBy('kpi_id') ->get();
         }
         }

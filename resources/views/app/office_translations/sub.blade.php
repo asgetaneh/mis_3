@@ -58,7 +58,7 @@
                                     action="{{ route('office-manager.remove', $officeTranslation->office->users[0]->id) }}"
                                     class="d-inline" method="POST">
                                     @csrf
-                                    <button class="btn btn-sm btn-outline-danger ml-3 float-right">Revoke</button>
+                                    <button class="btn btn-sm btn-outline-danger ml-3 float-right" title="Remove manager from Office">Remove</button>
                                 </form>
                             @endif
                         </td>

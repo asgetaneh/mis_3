@@ -15,6 +15,8 @@
             <x-form
                 method="POST"
                 action="{{ route('reporting-periods.store') }}"
+                autocomplete="off"
+                spellcheck="false"
                 class="mt-4"
             >
                 @include('app.reporting_periods.form-inputs')
@@ -57,5 +59,16 @@
 
     });
 </script>
+
+    <script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/inputmask/jquery.inputmask.bundle.js') }}"></script>
+
+    <script>
+
+        $(":input[data-inputmask-mask]").inputmask();
+        $(":input[data-inputmask-alias]").inputmask();
+        $(":input[data-inputmask-regex]").inputmask("Regex");
+
+    </script>
 
 @endsection

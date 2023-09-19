@@ -36,6 +36,14 @@
 
         <link rel="stylesheet" href="{{ asset('assets/dist/css/AdminLTE.min.css') }}">
 
+        {{-- Datatables --}}
+        <link rel="stylesheet" href="{{ asset('assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
+
+        {{-- Duallistbox for permissions and other stuff --}}
+        <link rel="stylesheet" href="{{ asset('assets/plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css') }}">
+
         {{-- Calender Styles --}}
         <link href="{{ asset('assets/plugins/custom/prismjs/prismjs.bundle.css') }}" rel="stylesheet" type="text/css" />
         <link href="{{ asset('assets/plugins/custom/prismjs/prismjs.bundle.css') }}" rel="stylesheet" type="text/css" />
@@ -95,12 +103,10 @@
 
         @livewireScripts
 
-        @stack('scripts')
-
-        {{-- <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script> --}}
+        @stack('script_before')
+        <script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('assets/dist/js/notyf.min.js') }}"></script>
         <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
-        <script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('assets/plugins/summernote/summernote-bs4.min.js') }}"></script>
         {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script> --}}
 
@@ -113,6 +119,11 @@
         <script src=" {{ asset('assets/calendar/js/jquery.calendars.ethiopian.js') }}"></script>
         <script src=" {{ asset('assets/calendar/js/jquery.calendars.ethiopian-am.js') }}"></script>
         <script src=" {{ asset('assets/calendar/js/jquery.calendars.picker-am.js') }}"></script>
+
+        @stack('scripts')
+
+        {{-- <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script> --}}
+
 
         @if (session()->has('success'))
         <script>

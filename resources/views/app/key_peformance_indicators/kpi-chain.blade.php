@@ -4,7 +4,7 @@
     <x-inputs.group class="col-sm-12">
      <input type="hidden" value="{{ $keyPeformanceIndicator->id }}" name="keyPeformanceIndicator">
 
-        <x-inputs.select class="select2 {{ $errors->has('locations') ? 'is-invalid' : '' }}" data-placeholder="Select disaggregation level one" name="kpi_one_child[]" id="locations" label="Disaggregation One" multiple>
+        <x-inputs.select required class="select2 {{ $errors->has('locations') ? 'is-invalid' : '' }}" data-placeholder="Select disaggregation level one" name="kpi_one_child[]" id="locations" label="Disaggregation One" multiple>
                     @foreach($KpiChildOne as $key => $value)
                     @if(app()->getLocale() == $value->locale)
                         <option value="{{ $value->kpiChildOne_id }}" {{ in_array($key, old('locations', [])) ? 'selected' : '' }}>{{ $value->name }}</option>

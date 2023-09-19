@@ -255,6 +255,12 @@ Route::prefix('/')
 
         Route::prefix('/access/management')->group(function () {
             Route::resource('roles', RoleController::class);
+            Route::get('roles/{role}/permission', [RoleController::class, 'rolePermissions'])->name('roles.permissions');
+            Route::post('roles/permission/update', [RoleController::class, 'rolePermissionsUpdate'])->name('roles.permissions.update');
+
+            Route::get('roles/{role}/user', [RoleController::class, 'roleUsers'])->name('roles.users');
+            Route::post('roles/user/update', [RoleController::class, 'roleUsersUpdate'])->name('roles.users.update');
+
             Route::resource('permissions', PermissionController::class);
             Route::resource('users', UserController::class);
         });

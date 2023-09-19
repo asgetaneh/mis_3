@@ -39,7 +39,7 @@
                             </span>
                         @endif
                     </h4>
-                    <a href="{{ route('office-assign.index') }}" class="btn btn-outline-success">
+                    <a href="{{ route('office-assign.index') }}" class="btn btn-outline-success" title="Assign Manager for Office">
                         Assign Manager
                     </a>
                 </div>

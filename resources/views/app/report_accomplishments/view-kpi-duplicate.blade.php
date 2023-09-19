@@ -37,7 +37,7 @@
                 {{ $planOfOfficePlan[1] }}
             </td>
             @else
-            <td style="background:#C9cdc9;">
+            <td style="background:#99cd99;">
                 <span> {{ $planOfOfficePlan[1] }}</span>
             </td>
             @endif

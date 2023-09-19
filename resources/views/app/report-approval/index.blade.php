@@ -340,8 +340,7 @@
                                                         </div>
                                                     @else
                                                         @if ($isLastOfficeBelongToKpi->count() > 0)
-                                                            <p class="mark p-3">You are assigned on this KPI but not reported
-                                                            yet!</p>
+                                                            <p class="mark p-3">You have not reported for this KPI yet!</p>
                                                         @else
                                                             {{-- Last office not belong to KPI. --}}
                                                         @endif
@@ -443,17 +442,31 @@
 
                                                                     @if ($isOfficeBelongToKpi->count() > 0)
                                                                         @if (count(office_all_childs_ids($office)) > 0)
-                                                                            <p>Office
+                                                                            {{-- <p>Office
                                                                                 <u>{{ $office->officeTranslations[0]->name }}</u>
                                                                                 has
                                                                                 no report or not approved its offices yet!
-                                                                            </p>
+                                                                            </p> --}}
+                                                                            <div class="alert alert-warning alert-dismissible">
+                                                                                {{-- <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> --}}
+                                                                                <h5><i class="icon fas fa-info-circle"></i> Office
+                                                                                    <u>{{ $office->officeTranslations[0]->name }}</u>
+                                                                                    has
+                                                                                    no report or not approved its offices yet!</h5>
+                                                                            </div>
                                                                         @else
-                                                                            <p>Office
+                                                                            {{-- <p>Office
                                                                                 <u>{{ $office->officeTranslations[0]->name }}</u>
                                                                                 has
                                                                                 not reported for this KPI yet!
-                                                                            </p>
+                                                                            </p> --}}
+                                                                            <div class="alert alert-warning alert-dismissible">
+                                                                                {{-- <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> --}}
+                                                                                <h5><i class="icon fas fa-info-circle"></i> Office
+                                                                                    <u>{{ $office->officeTranslations[0]->name }}</u>
+                                                                                    has
+                                                                                    not reported for this KPI yet!</h5>
+                                                                            </div>
                                                                         @endif
                                                                     @else
                                                                     @endif

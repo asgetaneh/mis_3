@@ -14,6 +14,8 @@
 
             <x-form
                 method="PUT"
+                autocomplete="off"
+                spellcheck="false"
                 action="{{ route('reporting-periods.update', $reportingPeriod) }}"
                 class="mt-4"
             >
@@ -65,5 +67,16 @@
 
     });
 </script>
+
+    <script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/inputmask/jquery.inputmask.bundle.js') }}"></script>
+
+    <script>
+
+        $(":input[data-inputmask-mask]").inputmask();
+        $(":input[data-inputmask-alias]").inputmask();
+        $(":input[data-inputmask-regex]").inputmask("Regex");
+
+    </script>
 
 @endsection

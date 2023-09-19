@@ -46,8 +46,8 @@
                 </h4>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-bordered mt-3 table-hover">
+            <div class="table-responsive" id="example1_wrapper">
+                <table class="table table-bordered mt-3 table-hover" id="reporting-periods">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -160,3 +160,67 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+
+    <!-- jQuery -->
+    <script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
+
+    <!-- Bootstrap 4 -->
+    <script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+    <!-- DataTables  & Plugins -->
+    <script src="{{ asset('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/jszip/jszip.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/pdfmake/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/pdfmake/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
+
+    <!-- AdminLTE App -->
+    <script src="{{ asset('assets/dist/js/adminlte.min.js') }}"></script>
+
+    <script>
+        $("#reporting-periods").DataTable({
+            "ordering" : true,
+            // "paging" : false,
+            "pageLength" : 10,
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+        //     buttons: [
+        //     {
+        //         extend: 'excelHtml5',
+        //         exportOptions: {
+        //             columns: [ 0, 1, 2, 3, 4 ]
+        //         }
+        //     },
+        //     {
+        //         extend: 'pdfHtml5',
+        //         exportOptions: {
+        //             columns: [ 0, 1, 2, 3, 4 ]
+        //         }
+        //     },
+        //     {
+        //         extend: 'csvHtml5',
+        //         exportOptions: {
+        //             columns: [0,1,2,3,4]
+        //         }
+        //     },
+        //     {
+        //         extend: 'print',
+        //         exportOptions: {
+        //             columns: [0,1,2,3,4]
+        //         }
+        //     },
+        // ]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    </script>
+
+@endpush

@@ -45,7 +45,7 @@
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     <a href="#" class="nav-link">
-                                        <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                        <i class="nav-icon icon fas fa fa-caret-right"></i>
                                         <p>
                                             Setting
                                             <i class="right fas fa-angle-left"></i>
@@ -56,7 +56,7 @@
                                         @can('view-any', App\Models\User::class)
                                             <li class="nav-item">
                                                 <a href="{{ route('users.index') }}" class="nav-link">
-                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Users</p>
                                                 </a>
                                             </li>
@@ -89,7 +89,7 @@
                                             <li class="nav-item">
                                                 <a href="{{ route('languages.index') }}"
                                                     class="nav-link {{ Request::is('smis/setting/languages') || Request::is('smis/setting/languages/*') ? 'active' : '' }}">
-                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Languages</p>
                                                 </a>
                                             </li>
@@ -98,7 +98,7 @@
                                             <li class="nav-item">
                                                 <a href="{{ route('perspectives.index') }}"
                                                     class="nav-link {{ Request::is('smis/setting/perspectives/*') || Request::is('smis/setting/perspectives') ? 'active' : '' }}">
-                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Perspectives</p>
                                                 </a>
                                             </li>
@@ -107,7 +107,7 @@
                                             <li class="nav-item">
                                                 <a href="{{ route('goals.index') }}"
                                                     class="nav-link {{ Request::is('smis/setting/goals/*') || Request::is('smis/setting/goals') ? 'active' : '' }}">
-                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Goals</p>
                                                 </a>
                                             </li>
@@ -117,7 +117,7 @@
                                             <li class="nav-item">
                                                 <a href="{{ route('objectives.index') }}"
                                                     class="nav-link {{ Request::is('smis/setting/objectives/*') || Request::is('smis/setting/objectives') ? 'active' : '' }}">
-                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Objectives</p>
                                                 </a>
                                             </li>
@@ -126,7 +126,7 @@
                                             <li class="nav-item">
                                                 <a href="{{ route('strategies.index') }}"
                                                     class="nav-link {{ Request::is('smis/setting/strategies/*') || Request::is('smis/setting/strategies') ? 'active' : '' }}">
-                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Strategies</p>
                                                 </a>
                                             </li>
@@ -139,7 +139,7 @@
                                                     class="nav-link
                                             {{ Request::is('smis/setting/office_translations') || Request::is('smis/setting/office_translations/*') || Request::is('smis/setting/office-translations') || Request::is('smis/setting/office-translations/*') ? 'active' : '' }}
                                             ">
-                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Offices</p>
                                                 </a>
                                             </li>
@@ -149,7 +149,7 @@
                                             <li class="nav-item">
                                                 <a href="{{ route('planing-years.index') }}"
                                                     class="nav-link {{ Request::is('smis/setting/planing-years') || Request::is('smis/setting/planing-years/*') ? 'active' : '' }}">
-                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Planing Years</p>
                                                 </a>
                                             </li>
@@ -158,7 +158,7 @@
                                             <li class="nav-item">
                                                 <a href="{{ route('reporting-period-types.index') }}"
                                                     class="nav-link {{ Request::is('smis/setting/reporting-period-types') || Request::is('smis/setting/reporting-period-types/*') ? 'active' : '' }}">
-                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Reporting Period Types</p>
                                                 </a>
                                             </li>
@@ -167,7 +167,7 @@
                                             <li class="nav-item">
                                                 <a href="{{ route('reporting-periods.index') }}"
                                                     class="nav-link {{ Request::is('smis/setting/reporting-periods') || Request::is('smis/setting/reporting-periods/*') ? 'active' : '' }}">
-                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Reporting Periods</p>
                                                 </a>
                                             </li>
@@ -190,7 +190,7 @@
                                                         <li class="nav-item">
                                                             <a href="{{ route('types.index') }}"
                                                                 class="nav-link {{ Request::is('smis/setting/kpi/types/*') || Request::is('smis/setting/kpi/types') ? 'active' : '' }}">
-                                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                                 <p>KPI Type</p>
                                                             </a>
                                                         </li>
@@ -199,7 +199,7 @@
                                                         <li class="nav-item">
                                                             <a href="{{ route('behaviors.index') }}"
                                                                 class="nav-link {{ Request::is('smis/setting/kpi/behaviors/*') || Request::is('smis/setting/kpi/behaviors') ? 'active' : '' }}">
-                                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                                 <p>KPI Behavior</p>
                                                             </a>
                                                         </li>
@@ -208,7 +208,7 @@
                                                         <li class="nav-item">
                                                             <a href="{{ route('kpi-child-one-translations.index') }}"
                                                                 class="nav-link {{ Request::is('smis/setting/kpi/kpi-child-one-translations/*') || Request::is('smis/setting/kpi/kpi-child-one-translations') ? 'active' : '' }}">
-                                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                                 <p>Disaggregation Level One</p>
                                                             </a>
                                                         </li>
@@ -217,7 +217,7 @@
                                                         <li class="nav-item">
                                                             <a href="{{ route('kpi-child-two-translations.index') }}"
                                                                 class="nav-link {{ Request::is('smis/setting/kpi/kpi-child-two-translations/*') || Request::is('smis/setting/kpi/kpi-child-two-translations') ? 'active' : '' }}">
-                                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                                 <p>Disaggregation Level Two</p>
                                                             </a>
                                                         </li>
@@ -226,7 +226,7 @@
                                                         <li class="nav-item">
                                                             <a href="{{ route('kpi-child-three-translations.index') }}"
                                                                 class="nav-link {{ Request::is('smis/setting/kpi/kpi-child-three-translations/*') || Request::is('smis/setting/kpi/kpi-child-three-translations') ? 'active' : '' }}">
-                                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                                 <p>Disaggregation Level Three</p>
                                                             </a>
                                                         </li>
@@ -238,7 +238,7 @@
                                 {{ Request::is('smis/setting/kpi/key-peformance-indicators/*') || Request::is('smis/setting/kpi/key-peformance-indicators') || Request::is('smis/setting/kpi//kpi_chain/*') || Request::is('smis/setting/kpi/kpi-chain-two/*') || Request::is('smis/setting/kpi/kpi-chain-three/*') ? 'active' : '' }}
 
                                 ">
-                                                            <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                            <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                             <p>Key Peformance Indicators</p>
                                                         </a>
                                                     </li>
@@ -250,7 +250,7 @@
                             @can('view-any', App\Models\SuitableKpi::class)
                             <li class="nav-item">
                                 <a href="{{ route('suitable-kpis.index') }}" class="nav-link">
-                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
                                     <p>Suitable Kpis</p>
                                 </a>
                             </li>
@@ -258,7 +258,7 @@
                             @can('view-any', App\Models\GenderTranslation::class)
                             <li class="nav-item">
                                 <a href="{{ route('gender-translations.index') }}" class="nav-link">
-                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
                                     <p>Gender Translations</p>
                                 </a>
                             </li>
@@ -285,7 +285,7 @@
                                             @if (Auth::user() != [])
                                                 <a href="{{ route('plan-accomplishment', Auth::user()->id) }}"
                                                     class="nav-link {{ Request::is('smis/plan/plan-accomplishment/*') || Request::is('smis/plan/plan-accomplishment') || Request::is('smis/plan/get-objectives/*') || Request::is('smis/plan/get-objectives') ? 'active' : '' }}">
-                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Planning</p>
                                                         <span class="badge rounded-pill   bg-danger">9</span>
 
@@ -299,7 +299,7 @@
                                             <li class="nav-item">
                                                 <a href="{{ route('plan-approve.index') }}"
                                                     class="nav-link {{ Request::is('smis/plan/approve/*') || Request::is('smis/plan/approve') ? 'active' : '' }}">
-                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Plan Approval</p>
                                                 </a>
                                             </li>
@@ -311,7 +311,7 @@
                                         <li class="nav-item">
                                             <a href="{{ route('view-plan-accomplishment') }}"
                                                 class="nav-link {{ Request::is('smis/plan/view-plan-accomplishment/*') || Request::is('smis/plan/view-plan-accomplishment') ? 'active' : '' }}">
-                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>View Plan</p>
                                             </a>
                                         </li>
@@ -332,7 +332,7 @@
                                         <li class="nav-item">
                                             <a href="{{ route('reporting', Auth::user()->id) }}"
                                                 class="nav-link {{ Request::is('smis/report/reporting/*') || Request::is('smis/report/reporting') || Request::is('smis/report/get-objectives-reporting/*') || Request::is('smis/report/get-objectives-reporting') ? 'active' : '' }}">
-                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>Reporting</p>
                                             </a>
 
@@ -348,15 +348,16 @@
                                             <li class="nav-item">
                                                 <a href="{{ route('report-approve.index') }}"
                                                     class="nav-link {{ Request::is('smis/report/approve/*') || Request::is('smis/report/approve') ? 'active' : '' }}">
-                                                    <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Report Approval</p>
                                                 </a>
                                             </li>
                                         @endif
 
                                         <li class="nav-item">
-                                            <a href="{{ route('view-report-accomplishment') }}" class="nav-link">
-                                                <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                            <a href="{{ route('view-report-accomplishment') }}"
+                                                class="nav-link {{ Request::is('smis/report/view-report-accomplishment/*') || Request::is('smis/report/view-report-accomplishment') ? 'active' : '' }}">
+                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>View Report </p>
                                             </a>
                                         </li>
@@ -384,7 +385,7 @@
                                     <li class="nav-item">
                                         <a href="{{ route('users.index') }}"
                                             class="nav-link {{ Request::is('access/management/users') || Request::is('access/management/users/*') ? 'active' : '' }}">
-                                            <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                            <i class="nav-icon icon fas fa fa-caret-right"></i>
                                             <p>Users</p>
                                         </a>
                                     </li>
@@ -393,7 +394,7 @@
                                     <li class="nav-item">
                                         <a href="{{ route('roles.index') }}"
                                             class="nav-link {{ Request::is('access/management/roles') || Request::is('access/management/roles/*') ? 'active' : '' }}">
-                                            <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                            <i class="nav-icon icon fas fa fa-caret-right"></i>
                                             <p>Roles</p>
                                         </a>
                                     </li>
@@ -403,7 +404,7 @@
                                     <li class="nav-item">
                                         <a href="{{ route('permissions.index') }}"
                                             class="nav-link {{ Request::is('access/management/permissions') || Request::is('access/management/permissions/*') ? 'active' : '' }}">
-                                            <i class="nav-icon icon ion-md-radio-button-off"></i>
+                                            <i class="nav-icon icon fas fa fa-caret-right"></i>
                                             <p>Permissions</p>
                                         </a>
                                     </li>

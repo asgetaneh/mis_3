@@ -9,7 +9,7 @@
         ></x-inputs.text>
     </x-inputs.group>
 
-    <div class="form-group col-sm-12 mt-4">
+    {{-- <div class="form-group col-sm-12 mt-4">
         <h4>Assign @lang('crud.permissions.name')</h4>
 
         @foreach ($permissions as $permission)
@@ -24,5 +24,5 @@
             ></x-inputs.checkbox>
         </div>
         @endforeach
-    </div>
+    </div> --}}
 </div>

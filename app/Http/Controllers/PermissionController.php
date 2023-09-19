@@ -18,7 +18,7 @@ class PermissionController extends Controller
         $this->authorize('list', Permission::class);
 
         $search = $request->get('search', '');
-        $permissions = Permission::where('name', 'like', "%{$search}%")->paginate(20);
+        $permissions = Permission::where('name', 'like', "%{$search}%")->paginate(10);
 
         return view('app.permissions.index')
             ->with('permissions', $permissions)
@@ -46,16 +46,16 @@ class PermissionController extends Controller
 
         $data = $this->validate($request, [
             'name' => 'required|max:64',
-            'roles' => 'array'
+            // 'roles' => 'array'
         ]);
 
         $permission = Permission::create($data);
-        
-        $roles = Role::find($request->roles);
-        $permission->syncRoles($roles);
+
+        // $roles = Role::find($request->roles);
+        // $permission->syncRoles($roles);
 
         return redirect()
-            ->route('permissions.edit', $permission->id)
+            ->route('permissions.index', $permission->id)
             ->withSuccess(__('crud.common.created'));
     }
 
@@ -92,17 +92,17 @@ class PermissionController extends Controller
 
         $data = $this->validate($request, [
             'name' => 'required|max:40',
-            'roles' => 'array'
+            // 'roles' => 'array'
         ]);
 
         $permission->update($data);
-        
-        $roles = Role::find($request->roles);
-        $permission->syncRoles($roles);
+
+        // $roles = Role::find($request->roles);
+        // $permission->syncRoles($roles);
 
         return redirect()
-            ->route('permissions.edit', $permission->id)
-            ->withSuccess(__('crud.common.saved'));
+            ->route('permissions.index')
+            ->withSuccess(__('crud.common.updated'));
     }
 
     /**
