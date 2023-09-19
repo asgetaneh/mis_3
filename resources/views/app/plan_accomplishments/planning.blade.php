@@ -147,7 +147,7 @@
                                             @endphp
                                 @endif
 
-                                <form action="{{ route('plan.save') }}" method="POST" id="planning-form" onsubmit="return validateTheForm()">
+                                <form action="{{ route('plan.save') }}" method="POST" id="planning-form" onsubmit="return validateForm()">
                                     @csrf
 
                                     {{-- @if ($objective) --}}
@@ -547,7 +547,7 @@
                                         return true;
                                     }*/
                                 $(function() {
-                                    $('input[id={{ $inputid }}]').on('change', function() {
+                                    $('input[id={{ $inputid }}]').on( 'change', function() {
                                         var sum = 0;
                                         var loop = {{ $last_period }};
                                         var behavior = String({{ $behavior }});
@@ -731,29 +731,34 @@
     </script>
 
     <script>
-        $('#planning-form').on('submit', function(e) {
 
-            let kpiList = {{ json_encode($kpiList) }};
+        function validateForm(){
+            // $('.tab-pane.active #planning-form').on('submit', function(e) {
 
-            for (let i = 0; i < kpiList.length; i++) {
-                $(`.narration-field-${kpiList[i]}`).css("display", "none");
-                let summernoteSelector = `#narration-field-${kpiList[i]}`;
+                let kpiList = {{ json_encode($kpiList) }};
+                // console.log(kpiList.length);
 
-                if ($(summernoteSelector).summernote('isEmpty')) {
-                    console.log(`${kpiList[i]} is empty`);
+                for (let i = 0; i < kpiList.length; i++) {
+                    $(`.tab-pane.active .narration-field-${kpiList[i]}`).css("display", "none");
+                    let summernoteSelector = `.tab-pane.active #narration-field-${kpiList[i]}`;
 
-                    // focus on the empty field
-                    $(`#narration-field-${kpiList[i]}`).focus();
-                    $(`#narration-field-${kpiList[i]}`).summernote('focus');
 
-                    $(`.narration-field-${kpiList[i]}`).css("display", "block");
+                    if ($(summernoteSelector).length > 0 && $(summernoteSelector).summernote('isEmpty')) {
 
-                    // cancel submit
-                    e.preventDefault();
+                        // focus on the empty field
+                        $(`.tab-pane.active #narration-field-${kpiList[i]}`).focus();
+                        $(`.tab-pane.active #narration-field-${kpiList[i]}`).summernote('focus');
+
+                        $(`.tab-pane.active .narration-field-${kpiList[i]}`).css("display", "block");
+
+                        // cancel submit
+                        return false;
+                        preventDefault();
+                    }
+
                 }
-
-            }
-        })
+            // })
+        }
     </script>
 
     <script>

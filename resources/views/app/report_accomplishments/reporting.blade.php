@@ -140,14 +140,14 @@
                                     <div class="tab-pane fade" id="{{ 'objective-' . $objective->id }}" role="tabpanel"
                                         aria-labelledby="{{ $objective->id . '-tab' }}">
                                     @else
-                                        <div class="tab-pane fade active show" id="{{ 'objective-' . $objective->id }}"
+                                        <div class="active-objective tab-pane fade active show" id="{{ 'objective-' . $objective->id }}"
                                             role="tabpanel" aria-labelledby="{{ $objective->id . '-tab' }}">
                                             @php
                                                 $isContented = true;
                                             @endphp
                                 @endif
 
-                                <form action="{{ route('report.save') }}" method="POST" id="reporting-form">
+                                <form action="{{ route('report.save') }}" method="POST" id="reporting-form" onsubmit="return validateReportForm()">
                                     @csrf
 
                                     {{-- @if ($objective) --}}
@@ -629,29 +629,34 @@
     </script>
 
     <script>
-        $('#reporting-form').on('submit', function(e) {
 
-            let kpiList = {{ json_encode($kpiList) }};
+        function validateReportForm(){
+            // $('.tab-pane.active #reporting-form').on('submit', function(e) {
 
-            for (let i = 0; i < kpiList.length; i++) {
-                $(`.narration-field-${kpiList[i]}`).css("display", "none");
-                let summernoteSelector = `#narration-field-${kpiList[i]}`;
+                let kpiList = {{ json_encode($kpiList) }};
+                // console.log(kpiList);
 
-                if ($(summernoteSelector).summernote('isEmpty')) {
-                    console.log(`${kpiList[i]} is empty`);
+                for (let i = 0; i < kpiList.length; i++) {
+                    $(`.tab-pane.active .narration-field-${kpiList[i]}`).css("display", "none");
+                    let summernoteSelector = `.tab-pane.active #narration-field-${kpiList[i]}`;
+                    // console.log($(summernoteSelector).length)
 
-                    // focus on the empty field
-                    $(`#narration-field-${kpiList[i]}`).focus();
-                    $(`#narration-field-${kpiList[i]}`).summernote('focus');
+                    if ($(summernoteSelector).length > 0 && $(summernoteSelector).summernote('isEmpty')) {
 
-                    $(`.narration-field-${kpiList[i]}`).css("display", "block");
+                        // focus on the empty field
+                        $(`.tab-pane.active #narration-field-${kpiList[i]}`).focus();
+                        $(`.tab-pane.active #narration-field-${kpiList[i]}`).summernote('focus');
 
-                    // cancel submit
-                    e.preventDefault();
+                        $(`.tab-pane.active .narration-field-${kpiList[i]}`).css("display", "block");
+
+                        // cancel submit
+                        return false;
+                        preventDefault();
+                    }
+
                 }
-
-            }
-        })
+            // })
+        }
     </script>
 
     <script>
