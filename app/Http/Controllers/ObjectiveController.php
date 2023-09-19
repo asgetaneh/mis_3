@@ -32,7 +32,7 @@ class ObjectiveController extends Controller
             ->latest()
             ->paginate(15)
             ->withQueryString();
-        
+
         $objective_ts = ObjectiveTranslation::search($search)
             ->latest()
             ->paginate(15)
@@ -169,6 +169,9 @@ class ObjectiveController extends Controller
             // 'created_by_id' => $goal->created_by_id || '',
         ]);
 
+        $isNewLangAdded = false;
+        $localeArray = [];
+
         foreach ($request->except('_token', '_method', 'goal_id', 'perspective_id', 'weight') as $key => $value) {
 
             $locale = str_replace(['name_', 'description_', 'out_put_', 'out_come_'], '', $key);
@@ -181,6 +184,37 @@ class ObjectiveController extends Controller
                 $objectiveTranslation->update([
                     $column => $value
                 ]);
+            }else{
+                $isNewLangAdded = true;
+                array_push($localeArray, $locale);
+            }
+        }
+
+        // handle editing if new language was added but translation has no recored for the new language
+        if($isNewLangAdded){
+            $localeArray = array_unique($localeArray);
+            foreach($localeArray as $locale){
+                // dd($locale);
+
+                $loc = $locale;
+                $inputName = 'name_'.$loc;
+                $inputDescription = 'description_'.$loc;
+                $inputOutcome = 'out_come_'.$loc;
+                $inputOutput = 'out_put_'.$loc;
+
+                $name = $request->input($inputName);
+                $description = $request->input($inputDescription);
+                $output = $request->input($inputOutput);
+                $outcome = $request->input($inputOutcome);
+
+                $goalTranslation = new ObjectiveTranslation;
+                $goalTranslation->translation_id = $objective->id;
+                $goalTranslation->name = $name;
+                $goalTranslation->locale = $locale;
+                $goalTranslation->description = $description;
+                $goalTranslation->out_put = $output;
+                $goalTranslation->out_come = $outcome;
+                $goalTranslation->save();
             }
         }
 

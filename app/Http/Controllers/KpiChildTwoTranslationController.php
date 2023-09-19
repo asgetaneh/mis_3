@@ -132,6 +132,9 @@ class KpiChildTwoTranslationController extends Controller
     ): RedirectResponse {
         $this->authorize('update', $kpiChildTwoTranslation);
 
+        $isNewLangAdded = false;
+        $localeArray = [];
+
         foreach ($request->except('_token', '_method') as $key => $value) {
 
             $locale = str_replace(['name_', 'description_'], '', $key);
@@ -144,7 +147,33 @@ class KpiChildTwoTranslationController extends Controller
                 $childTwoTranslation->update([
                     $column => $value
                 ]);
+            }else{
+                $isNewLangAdded = true;
+                array_push($localeArray, $locale);
             }
+        }
+
+        // handle editing if new language was added but translation has no recored for the new language
+        if($isNewLangAdded){
+            $localeArray = array_unique($localeArray);
+            foreach($localeArray as $locale){
+                // dd($localeArray);
+
+                $loc = $locale;
+                $inputName = 'name_'.$loc;
+                $inputDescription = 'description_'.$loc;
+
+                $name = $request->input($inputName);
+                $description = $request->input($inputDescription);
+
+                $kpiChildTwoT = new KpiChildTwoTranslation;
+                $kpiChildTwoT->kpi_child_two_id = $kpiChildTwoTranslation->kpi_child_two_id;
+                $kpiChildTwoT->name = $name;
+                $kpiChildTwoT->locale = $locale;
+                $kpiChildTwoT->description = $description;
+                $kpiChildTwoT->save();
+            }
+
         }
 
         return redirect()

@@ -189,6 +189,9 @@ class OfficeTranslationController extends Controller
             ]);
         }
 
+        $isNewLangAdded = false;
+        $localeArray = [];
+
         foreach ($request->except('_token', '_method', 'parent_name', 'parentOfficeId' , 'officeId') as $key => $value) {
 
             $locale = str_replace(['name_', 'description_'], '', $key);
@@ -201,6 +204,31 @@ class OfficeTranslationController extends Controller
                 $officeTranslations->update([
                     $column => $value
                 ]);
+            }else{
+                $isNewLangAdded = true;
+                array_push($localeArray, $locale);
+            }
+        }
+
+        // handle editing if new language was added but translation has no recored for the new language
+        if($isNewLangAdded){
+            $localeArray = array_unique($localeArray);
+            foreach($localeArray as $locale){
+                // dd($locale);
+
+                $loc = $locale;
+                $inputName = 'name_'.$loc;
+                $inputDescription = 'description_'.$loc;
+
+                $name = $request->input($inputName);
+                $description = $request->input($inputDescription);
+
+                $officeT = new OfficeTranslation;
+                $officeT->translation_id = $officeTranslation->translation_id;
+                $officeT->name = $name;
+                $officeT->locale = $locale;
+                $officeT->description = $description;
+                $officeT->save();
             }
         }
 

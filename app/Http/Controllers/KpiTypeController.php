@@ -114,6 +114,9 @@ class KpiTypeController extends Controller
             'updated_at' => new \DateTime(),
         ]);
 
+        $isNewLangAdded = false;
+        $localeArray = [];
+
         foreach ($request->except('_token', '_method') as $key => $value) {
 
             $locale = str_replace(['name_', 'description_'], '', $key);
@@ -126,6 +129,31 @@ class KpiTypeController extends Controller
                 $kpiTypeTranslation->update([
                     $column => $value
                 ]);
+            }else{
+                $isNewLangAdded = true;
+                array_push($localeArray, $locale);
+            }
+        }
+
+        // handle editing if new language was added but translation has no recored for the new language
+        if($isNewLangAdded){
+            $localeArray = array_unique($localeArray);
+            foreach($localeArray as $locale){
+                // dd($locale);
+
+                $loc = $locale;
+                $inputName = 'name_'.$loc;
+                $inputDescription = 'description_'.$loc;
+
+                $name = $request->input($inputName);
+                $description = $request->input($inputDescription);
+
+                $typeTranslation = new KpiTypeTranslation;
+                $typeTranslation->type_id = $type->id;
+                $typeTranslation->name = $name;
+                $typeTranslation->locale = $locale;
+                $typeTranslation->description = $description;
+                $typeTranslation->save();
             }
         }
 

@@ -144,6 +144,9 @@ class PerspectiveController extends Controller
             // 'created_by_id' => $goal->created_by_id || '',
         ]);
 
+        $isNewLangAdded = false;
+        $localeArray = [];
+
         foreach ($request->except('_token', '_method') as $key => $value) {
 
             $locale = str_replace(['name_', 'description_'], '', $key);
@@ -156,6 +159,31 @@ class PerspectiveController extends Controller
                 $perspectiveTranslation->update([
                     $column => $value
                 ]);
+            }else{
+                $isNewLangAdded = true;
+                array_push($localeArray, $locale);
+            }
+        }
+
+        // handle editing if new language was added but translation has no recored for the new language
+        if($isNewLangAdded){
+            $localeArray = array_unique($localeArray);
+            foreach($localeArray as $locale){
+                // dd($locale);
+
+                $loc = $locale;
+                $inputName = 'name_'.$loc;
+                $inputDescription = 'description_'.$loc;
+
+                $name = $request->input($inputName);
+                $description = $request->input($inputDescription);
+
+                $perspectiveTranslation = new PerspectiveTranslation;
+                $perspectiveTranslation->translation_id = $perspective->id;
+                $perspectiveTranslation->name = $name;
+                $perspectiveTranslation->locale = $locale;
+                $perspectiveTranslation->description = $description;
+                $perspectiveTranslation->save();
             }
         }
 
