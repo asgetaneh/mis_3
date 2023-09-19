@@ -29,10 +29,20 @@
                 $planOfOfficePlan =$planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year[0]->id ,null,null,null);
 
                 $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
+                $activeQuarter = getReportingQuarter($planAcc->Kpi->reportingPeriodType->id);
             @endphp
+            @forelse($activeQuarter as $aQ)
+            @if($period->id!= $aQ->id)
             <td>
                 {{ $planOfOfficePlan[1] }}
             </td>
+            @else
+            <td style="background:#C9cdc9;">
+                <span> {{ $planOfOfficePlan[1] }}</span>
+            </td>
+            @endif
+            @empty
+            @endforelse
         @empty
         @endforelse
     </tr>

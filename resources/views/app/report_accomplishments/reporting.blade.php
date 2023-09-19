@@ -509,7 +509,7 @@
                                         </div>
                                     </div>
                                     @else
-                                    <h5>{{"Plan is approvement is not completed"}}</h5>
+                                    <h5>{{"Plan approvement is not completed"}}</h5>
                                     @endif
                                     @else
                                     <h5>{{"No Plan for Keyperformance indicator"}}</h5>
