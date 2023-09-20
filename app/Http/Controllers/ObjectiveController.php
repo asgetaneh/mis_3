@@ -28,8 +28,7 @@ class ObjectiveController extends Controller
                 }
 
         $search = $request->get('search', '');
-        $goals = Goal::search($search)
-            ->latest()
+        $goals = Goal::latest()
             ->paginate(15)
             ->withQueryString();
 
@@ -38,7 +37,13 @@ class ObjectiveController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return view('app.objectives.index', compact('goals','objective_ts', 'search'));
+        $objAllCount = ObjectiveTranslation::latest()
+        ->paginate(15)
+        ->withQueryString();
+
+        $objAllCount = $objAllCount->total();
+
+        return view('app.objectives.index', compact('goals','objective_ts', 'search', 'objAllCount'));
     }
 
     /**
