@@ -295,7 +295,7 @@
                                     @endif
 
                                     @if ($user->hasPermission('create planaccomplishments'))
-                                        @if (!$office->offices->isEmpty())
+                                        @if (!$office->offices->isEmpty() || $office->level == 1)
                                             <li class="nav-item">
                                                 <a href="{{ route('plan-approve.index') }}"
                                                     class="nav-link {{ Request::is('smis/plan/approve/*') || Request::is('smis/plan/approve') ? 'active' : '' }}">

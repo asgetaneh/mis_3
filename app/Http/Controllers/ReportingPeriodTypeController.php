@@ -138,6 +138,9 @@ class ReportingPeriodTypeController extends Controller
     ): RedirectResponse {
         $this->authorize('update', $reportingPeriodType);
 
+        $isNewLangAdded = false;
+        $localeArray = [];
+
         foreach ($request->except('_token', '_method') as $key => $value) {
 
             $locale = str_replace(['name_', 'description_'], '', $key);
@@ -150,6 +153,30 @@ class ReportingPeriodTypeController extends Controller
                 $reportingTypeTranslation->update([
                     $column => $value
                 ]);
+            }else{
+                $isNewLangAdded = true;
+                array_push($localeArray, $locale);
+            }
+        }
+
+        if($isNewLangAdded){
+            $localeArray = array_unique($localeArray);
+            foreach($localeArray as $locale){
+                // dd($locale);
+
+                $loc = $locale;
+                $inputName = 'name_'.$loc;
+                $inputDescription = 'description_'.$loc;
+
+                $name = $request->input($inputName);
+                $description = $request->input($inputDescription);
+
+                $periodTranslation = new ReportingPeriodTypeT;
+                $periodTranslation->reporting_period_type_id = $reportingPeriodType->id;
+                $periodTranslation->name = $name;
+                $periodTranslation->locale = $locale;
+                $periodTranslation->description = $description;
+                $periodTranslation->save();
             }
         }
 

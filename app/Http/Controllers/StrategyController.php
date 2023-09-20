@@ -74,7 +74,7 @@ class StrategyController extends Controller
             $strategy = new Strategy;
             $strategy->updated_by_id= auth()->user()->id;
             $strategy->created_by_id= auth()->user()->id;
-            $strategy->objective_id= $data['objective_id']; 
+            $strategy->objective_id= $data['objective_id'];
             $strategy->save();
             // $strategy->created_at= new \DateTime();
             // $strategy->updated_at =new \DateTime();
@@ -151,6 +151,9 @@ class StrategyController extends Controller
             // 'created_by_id' => $goal->created_by_id || '',
         ]);
 
+        $isNewLangAdded = false;
+        $localeArray = [];
+
         foreach ($request->except('_token', '_method', 'objective_id') as $key => $value) {
 
             $locale = str_replace(['name_', 'discription_'], '', $key);
@@ -163,6 +166,31 @@ class StrategyController extends Controller
                 $strategyTranslation->update([
                     $column => $value
                 ]);
+            }else{
+                $isNewLangAdded = true;
+                array_push($localeArray, $locale);
+            }
+        }
+
+        // handle editing if new language was added but translation has no recored for the new language
+        if($isNewLangAdded){
+            $localeArray = array_unique($localeArray);
+            foreach($localeArray as $locale){
+                // dd($locale);
+
+                $loc = $locale;
+                $inputName = 'name_'.$loc;
+                $inputDescription = 'discription_'.$loc;
+
+                $name = $request->input($inputName);
+                $description = $request->input($inputDescription);
+
+                $strategyTranslation = new StrategyTranslation;
+                $strategyTranslation->translation_id = $strategy->id;
+                $strategyTranslation->name = $name;
+                $strategyTranslation->locale = $locale;
+                $strategyTranslation->discription = $description;
+                $strategyTranslation->save();
             }
         }
 

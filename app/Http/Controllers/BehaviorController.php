@@ -115,9 +115,12 @@ class BehaviorController extends Controller
             'updated_at' => new \DateTime(),
         ]);
 
-        foreach ($request->except('_token', '_method') as $key => $value) {
+        $isNewLangAdded = false;
+        $localeArray = [];
 
-            $locale = str_replace(['name_', 'description_', 'slug_'], '', $key);
+        foreach ($request->except('_token', '_method', 'slug_') as $key => $value) {
+
+            $locale = str_replace(['name_', 'description_'], '', $key);
 
             $behaviorTranslation = $behavior->behaviorTranslations->where('locale', $locale)->first();
 
@@ -127,7 +130,33 @@ class BehaviorController extends Controller
                 $behaviorTranslation->update([
                     $column => $value
                 ]);
+            }else{
+                $isNewLangAdded = true;
+                array_push($localeArray, $locale);
             }
+        }
+
+        // handle editing if new language was added but translation has no recored for the new language
+        if($isNewLangAdded){
+            $localeArray = array_unique($localeArray);
+            foreach($localeArray as $locale){
+                // dd($localeArray);
+
+                $loc = $locale;
+                $inputName = 'name_'.$loc;
+                $inputDescription = 'description_'.$loc;
+
+                $name = $request->input($inputName);
+                $description = $request->input($inputDescription);
+
+                $behaviorT = new BehaviorTranslation;
+                $behaviorT->translation_id = $behavior->id;
+                $behaviorT->name = $name;
+                $behaviorT->locale = $locale;
+                $behaviorT->description = $description;
+                $behaviorT->save();
+            }
+
         }
 
         return redirect()

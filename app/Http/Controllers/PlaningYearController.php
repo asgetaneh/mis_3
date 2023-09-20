@@ -134,6 +134,9 @@ class PlaningYearController extends Controller
         //     'updated_at' => new \DateTime() ,
         // ]);
 
+        $isNewLangAdded = false;
+        $localeArray = [];
+
         foreach ($request->except('_token', '_method') as $key => $value) {
 
             $locale = str_replace(['name_', 'description_'], '', $key);
@@ -146,6 +149,30 @@ class PlaningYearController extends Controller
                 $planingTranslations->update([
                     $column => $value
                 ]);
+            }else{
+                $isNewLangAdded = true;
+                array_push($localeArray, $locale);
+            }
+        }
+
+        if($isNewLangAdded){
+            $localeArray = array_unique($localeArray);
+            foreach($localeArray as $locale){
+                // dd($locale);
+
+                $loc = $locale;
+                $inputName = 'name_'.$loc;
+                $inputDescription = 'description_'.$loc;
+
+                $name = $request->input($inputName);
+                $description = $request->input($inputDescription);
+
+                $strategyTranslation = new PlaningYearTranslation;
+                $strategyTranslation->planing_year_id = $planingYear->id;
+                $strategyTranslation->name = $name;
+                $strategyTranslation->locale = $locale;
+                $strategyTranslation->description = $description;
+                $strategyTranslation->save();
             }
         }
 

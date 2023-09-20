@@ -19,7 +19,7 @@
         <x-inputs.date
             label="Start Date"
             autocomplete="off" class="form-control col" data-inputmask-alias="dd/mm/yyyy"
-            data-inputmask="'yearrange': { 'minyear': '{{ \Andegna\DateTimeFactory::now()->getYear() }}'}"
+            data-inputmask="'yearrange': { 'minyear': '{{ \Andegna\DateTimeFactory::now()->getYear() - 1 }}'}"
             data-val="true" data-val-required="Required" id="start_date" name="start_date"
             placeholder="date/month/year" type="text" :value="old('start_date', ($editing ? date('d/m/Y', strtotime($reportingPeriod->start_date)) : ''))"
             spellcheck="false" required pattern="[0-9\/]*" oninvalid="setCustomValidity('Please enter a valid date!')" onchange="try{setCustomValidity('')}catch(e){}">
@@ -43,7 +43,7 @@
         <x-inputs.date
             label="End Date"
             autocomplete="off" class="form-control col" data-inputmask-alias="dd/mm/yyyy"
-            data-inputmask="'yearrange': { 'minyear': '{{ \Andegna\DateTimeFactory::now()->getYear() }}'}"
+            data-inputmask="'yearrange': { 'minyear': '{{ \Andegna\DateTimeFactory::now()->getYear() - 1 }}'}"
             data-val="true" data-val-required="Required" id="end_date" name="end_date"
             placeholder="date/month/year" type="text" :value="old('end_date', ($editing ? date('d/m/Y', strtotime($reportingPeriod->end_date)) : ''))"
             spellcheck="false" required pattern="[0-9\/]*" oninvalid="setCustomValidity('Please enter a valid date!')" onchange="try{setCustomValidity('')}catch(e){}">

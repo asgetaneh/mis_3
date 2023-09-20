@@ -117,7 +117,8 @@ class PlanApprovalController extends Controller
         }
         // dd($all_office_list);
 
-        if ($obj_office->offices->isEmpty()) {  // office with no child
+        // redirect if office has no child and it has parent office
+        if ($obj_office->offices->isEmpty() && $obj_office->level > 1) {  // office with no child
             return redirect()
                 ->route('plan-accomplishment', $obj_office);
         }
