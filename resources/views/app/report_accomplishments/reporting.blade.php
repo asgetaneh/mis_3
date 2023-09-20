@@ -71,6 +71,8 @@
     $isContented = false;
     $objCounter = null;
     $appended = false;
+    $kpiList = [];
+    $objectiveList = [];
     @endphp
 
     <div class="col-md-10">
@@ -80,6 +82,9 @@
                 <div class="card-header p-0 border-bottom-0 objectives-list-tab">
                     <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
                         @forelse ($objectives as $objective)
+                            @php
+                                array_push($objectiveList, $objective->id);
+                            @endphp
                         {{-- @dd($objective->objectiveTranslations) --}}
 
 
@@ -134,7 +139,7 @@
                                 @endphp
                                 @endif
 
-                                <form action="{{ route('report.save') }}" method="POST">
+                                <form action="{{ route('report.save') }}" method="POST" id="reporting-form" onsubmit="return validateReportForm()">
                                     @csrf
 
                                     {{-- @if ($objective) --}}
@@ -148,6 +153,11 @@
                                     @endphp
                                     @if($checkPlanedForKpi)
                                     @if($checkPlanedForKpi->plan_status==1)
+                                            @php
+                                                array_push($kpiList, $kpi->id)
+                                            @endphp
+                                        <p class="kpi-under-obj-{{ $objective->id }}"></p>
+
                                     <div class="card p-2" style="border: 1px solid #b1b1b1;">
                                         <div class="card-header bg-light">
                                             <h3 class="card-title">KPI:
@@ -500,24 +510,26 @@
                                             @if ($report_naration)
                                             <label for="summernote">Major Activities</label>
                                             <input type="hidden" name="type" value="yes">
-                                            <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote" id="summernote" placeholder="Narration here" required>{!! $report_naration !!}</textarea>
+                                            <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote" id="narration-field-{{ $kpi->id }}" placeholder="Narration here">{!! $report_naration !!}</textarea>
+                                            <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>
                                             @else
                                             <label for="summernote">Major Activities</label>
-                                            <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote" id="summernote" placeholder="Narration here" required></textarea>
+                                            <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote" id="narration-field-{{ $kpi->id }}" placeholder="Narration here"></textarea>
+                                            <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>
                                             @endif
 
                                         </div>
                                     </div>
                                     @else
-                                    <h5>{{"Plan approvement is not completed"}}</h5>
+                                    <h5>{{"Plan approvement is not completed"}} for kpi: <u>{{ $kpi->KeyPeformanceIndicatorTs[0]->name }}</u></h5>
                                     @endif
                                     @else
-                                    <h5>{{"No Plan for Keyperformance indicator"}}</h5>
+                                    <h5>{{"No Plan for Keyperformance indicator"}}: <u>{{ $kpi->KeyPeformanceIndicatorTs[0]->name }}</u></h5>
                                     @endif
                                     @empty
                                     <h4>No KPI exit with active reporting period in this office and Objective!</h4>
                                     @endforelse
-                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    <button type="submit" class="btn btn-primary" id="submit-for-{{ $objective->id }}">Submit</button>
                             </div>
                             </form>
                             {{-- </div>
@@ -585,6 +597,52 @@
         });
 
     </script>
+
+    <script>
+
+        function validateReportForm(){
+            // $('.tab-pane.active #reporting-form').on('submit', function(e) {
+
+                let kpiList = {{ json_encode($kpiList) }};
+                console.log(kpiList);
+
+                for (let i = 0; i < kpiList.length; i++) {
+                    $(`.tab-pane.active .narration-field-${kpiList[i]}`).css("display", "none");
+                    let summernoteSelector = `.tab-pane.active #narration-field-${kpiList[i]}`;
+                    // console.log($(summernoteSelector).length)
+
+                    if ($(summernoteSelector).length > 0 && $(summernoteSelector).summernote('isEmpty')) {
+
+                        // focus on the empty field
+                        $(`.tab-pane.active #narration-field-${kpiList[i]}`).focus();
+                        $(`.tab-pane.active #narration-field-${kpiList[i]}`).summernote('focus');
+
+                        $(`.tab-pane.active .narration-field-${kpiList[i]}`).css("display", "block");
+
+                        // cancel submit
+                        return false;
+                        preventDefault();
+                    }
+
+                }
+            // })
+        }
+    </script>
+
+    <script>
+        let objectiveList = {{ json_encode($objectiveList) }};
+
+        for (let i = 0; i < objectiveList.length; i++) {
+            let selector = `.kpi-under-obj-${objectiveList[i]}`;
+            var pTag = $(selector);
+
+            if (pTag.length <= 0) {
+                $(`#submit-for-${objectiveList[i]}`).css("display", "none");
+            }
+
+        }
+    </script>
+
     {{-- <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script> --}}
 
     {{-- <script>
