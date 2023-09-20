@@ -288,7 +288,7 @@ class OfficeTranslationController extends Controller
 
         $store = DB::insert('insert into manager (user_id, office_id) values (?, ?)', [$data['user'], $data['office']]);
 
-        $role = Role::where('name', '=', 'staff')->first();
+        $role = Role::where('id', 1)->first(); // get staff role
 
         $staffUser = User::find($data['user']);
         $staffUser->assignRole($role);
