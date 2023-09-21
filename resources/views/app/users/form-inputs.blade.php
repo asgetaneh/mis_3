@@ -69,7 +69,7 @@
     >
     <option value="" disabled>Select role</option>
     @foreach ($roles as $role)
-        <option {{ isset($user) ? 'selected' : '' }} value="{{ $role->id }}">{{ $role->name }}</option>
+            <option @if(in_array($role->id, $user->roles->pluck('id')->toArray())) selected @endif {{-- isset($user)?'selected':'' --}} value="{{ $role->id }}">{{ $role->name }}</option>
     @endforeach
 </x-inputs.select>
 
