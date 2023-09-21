@@ -279,6 +279,86 @@
                                 {{-- dd(Auth::user()->getPermissionsViaRoles()->pluck('name'));
                                 dd($user->hasAnyRole(['writer', 'reader'])); --}}
 
+                                {{-- Badges to be shown on planning and plan approval menus --}}
+                                @php
+                                    $currentLoggedInOffice = auth()->user()->offices[0]->id;
+                                    $planCommentCounter = 0;
+                                    $planCounter = 0;
+                                    $kpiPlanName = '';
+
+                                    $obj_office = App\Models\Office::find($currentLoggedInOffice);
+                                    $all_child_and_subchild = office_all_childs_ids($obj_office);
+                                    $all_office_list = $all_child_and_subchild;
+                                    $only_child = $obj_office->offices;
+                                    $only_child_array = [];
+
+                                    foreach ($only_child as $key => $value) {
+                                        $only_child_array[$key] = $value->id;
+                                    }
+
+                                    if ($obj_office->offices->isEmpty()) {
+                                        $all_office_list = array($currentLoggedInOffice);
+                                    }
+
+                                    $planAccomplishments = App\Models\PlanAccomplishment::select('kpi_id')
+                                        ->where('office_id', $currentLoggedInOffice)
+                                        ->distinct('kpi_id')
+                                        ->get();
+
+                                    $planStatus = App\Models\PlanAccomplishment::select('kpi_id', 'office_id', 'plan_status')
+                                        ->whereIn('office_id', $all_office_list)
+                                        ->distinct('kpi_id')
+                                        ->get();
+
+                                    $planning_year = App\Models\PlaningYear::where('is_active', true)->get();
+
+                                @endphp
+
+                                {{-- @dump($planAccomplishments) --}}
+
+                                {{-- If comment exist for current office --}}
+                                @forelse ($planAccomplishments as $planAcc)
+                                    @php
+                                        $hasOfficeComment = hasOfficeActiveComment($currentLoggedInOffice, $planAcc->kpi_id, $planning_year[0]->id);
+                                    @endphp
+
+                                    @if ($hasOfficeComment->count() > 0)
+                                        @php
+                                            $planCommentCounter++;
+                                        @endphp
+                                    @endif
+                                @empty
+
+                                @endforelse
+
+                                @if($planCommentCounter == 1)
+                                    @forelse ($planAccomplishments as $planAcc)
+
+                                        @php
+                                            $hasOfficeComment = hasOfficeActiveComment($currentLoggedInOffice, $planAcc->kpi_id, $planning_year[0]->id);
+                                        @endphp
+
+                                        @if ($hasOfficeComment->count() > 0)
+                                             @php
+                                                $kpiPlanName = App\Models\KeyPeformanceIndicator::find($planAcc->kpi_id);
+                                            @endphp
+                                        @endif
+                                    @empty
+                                    @endforelse
+                                @endif
+
+                                {{-- If office exist to be approved --}}
+                                @forelse ($planStatus as $planAcc)
+
+                                    @if ($planAcc->plan_status == auth()->user()->offices[0]->level+1)
+                                        @php
+                                            $planCounter++;
+                                        @endphp
+                                    @endif
+                                @empty
+
+                                @endforelse
+
                                 <ul class="nav nav-treeview">
                                     @if ($user->hasPermission('create planaccomplishments'))
                                         <li class="nav-item">
@@ -286,8 +366,27 @@
                                                 <a href="{{ route('plan-accomplishment', Auth::user()->id) }}"
                                                     class="nav-link {{ Request::is('smis/plan/plan-accomplishment/*') || Request::is('smis/plan/plan-accomplishment') || Request::is('smis/plan/get-objectives/*') || Request::is('smis/plan/get-objectives') ? 'active' : '' }}">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                    <p>Planning</p>
-                                                        <span class="badge rounded-pill   bg-danger">9</span>
+                                                    <p>Planning
+                                                        @if ($planCommentCounter > 0)
+                                                                @if ($planCommentCounter == 1)
+                                                                    @forelse ($kpiPlanName->KeyPeformanceIndicatorTs as $kpi)
+                                                                        @if (app()->getLocale() == $kpi->locale)
+                                                                            <span class="badge bg-info ml-2 rounded-circle px-2 py-1" title="You've comment on '{{ $kpi->name }}' KPI">
+                                                                                {{ $planCommentCounter }}
+                                                                            </span>
+                                                                        @endif
+                                                                    @empty
+
+                                                                    @endforelse
+                                                                @else
+                                                                    <span class="badge bg-info ml-2 rounded-circle px-2 py-1" title="You've {{ $planCommentCounter }} comment">
+                                                                        {{ $planCommentCounter }}
+                                                                    </span>
+                                                                @endif
+
+                                                            @endif
+                                                    </p>
+                                                        {{-- <span class="badge rounded-pill   bg-danger">9</span> --}}
 
                                                 </a>
                                             @endif
@@ -300,7 +399,13 @@
                                                 <a href="{{ route('plan-approve.index') }}"
                                                     class="nav-link {{ Request::is('smis/plan/approve/*') || Request::is('smis/plan/approve') ? 'active' : '' }}">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                    <p>Plan Approval</p>
+                                                    <p>Plan Approval
+                                                        @if ($planCounter > 0)
+                                                                <span class="badge bg-info ml-2 rounded-circle px-2 py-1" title="You've {{ $planCounter }} unapproved office">
+                                                                    {{ $planCounter }}
+                                                                </span>
+                                                            @endif
+                                                    </p>
                                                 </a>
                                             </li>
                                         @endif
@@ -327,13 +432,117 @@
                                     </p>
                                 </a>
 
+                                {{-- Badges to be shown on planning and plan approval menus --}}
+                                @php
+                                    $currentLoggedInOffice = auth()->user()->offices[0]->id;
+                                    $reportCommentCounter = 0;
+                                    $reportCounter = 0;
+                                    $kpireportName = '';
+
+                                    $obj_office = App\Models\Office::find($currentLoggedInOffice);
+                                    $all_child_and_subchild = office_all_childs_ids($obj_office);
+                                    $all_office_list = $all_child_and_subchild;
+                                    $only_child = $obj_office->offices;
+                                    $only_child_array = [];
+
+                                    foreach ($only_child as $key => $value) {
+                                        $only_child_array[$key] = $value->id;
+                                    }
+
+                                    if ($obj_office->offices->isEmpty()) {
+                                        $all_office_list = array($currentLoggedInOffice);
+                                    }
+
+                                    $activeReportingPeriodList = getReportingPeriod();
+
+                                    $reportAccomplishments = App\Models\PlanAccomplishment::select('kpi_id')
+                                        ->where('office_id', $currentLoggedInOffice)
+                                        ->distinct('kpi_id')
+                                        ->whereIn('reporting_period_id', $activeReportingPeriodList)
+                                        ->get();
+
+                                    $reportStatus = App\Models\PlanAccomplishment::select('kpi_id', 'office_id', 'accom_status')
+                                        ->whereIn('office_id', $all_office_list)
+                                        ->whereIn('reporting_period_id', $activeReportingPeriodList)
+                                        ->whereNotNull('accom_value')
+                                        ->distinct('office_id')
+                                        ->get();
+
+                                    $planning_year = App\Models\PlaningYear::where('is_active', true)->get();
+
+                                @endphp
+
+                                {{-- @dump($reportStatus) --}}
+
+                                {{-- If comment exist for current office --}}
+                                @forelse ($reportAccomplishments as $reportAcc)
+                                    @php
+                                        $hasOfficeComment = hasOfficeActiveReportComment($currentLoggedInOffice, $reportAcc->kpi_id, $planning_year[0]->id);
+                                    @endphp
+
+                                    @if ($hasOfficeComment->count() > 0)
+                                        @php
+                                            $reportCommentCounter++;
+                                        @endphp
+                                    @endif
+                                @empty
+
+                                @endforelse
+
+                                @if($reportCommentCounter == 1)
+                                    @forelse ($reportAccomplishments as $reportAcc)
+
+                                        @php
+                                            $hasOfficeComment = hasOfficeActiveReportComment($currentLoggedInOffice, $reportAcc->kpi_id, $planning_year[0]->id);
+                                        @endphp
+
+                                        @if ($hasOfficeComment->count() > 0)
+                                             @php
+                                                $kpireportName = App\Models\KeyPeformanceIndicator::find($reportAcc->kpi_id);
+                                            @endphp
+                                        @endif
+                                    @empty
+                                    @endforelse
+                                @endif
+
+                                {{-- If office exist to be approved --}}
+                                @forelse ($reportStatus as $reportAcc)
+
+                                    @if ($reportAcc->accom_status == auth()->user()->offices[0]->level+1)
+                                        @php
+                                            $reportCounter++;
+                                        @endphp
+                                    @endif
+                                @empty
+
+                                @endforelse
+
                                 <ul class="nav nav-treeview">
                                     @if ($user->hasPermission('create planaccomplishments'))
                                         <li class="nav-item">
                                             <a href="{{ route('reporting', Auth::user()->id) }}"
                                                 class="nav-link {{ Request::is('smis/report/reporting/*') || Request::is('smis/report/reporting') || Request::is('smis/report/get-objectives-reporting/*') || Request::is('smis/report/get-objectives-reporting') ? 'active' : '' }}">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>Reporting</p>
+                                                <p>Reporting
+                                                    @if ($reportCommentCounter > 0)
+                                                                @if ($reportCommentCounter == 1)
+                                                                    @forelse ($kpireportName->KeyPeformanceIndicatorTs as $kpi)
+                                                                        @if (app()->getLocale() == $kpi->locale)
+                                                                            <span class="badge bg-info ml-2 rounded-circle px-2 py-1" title="You've comment on '{{ $kpi->name }}' KPI">
+                                                                                {{ $reportCommentCounter }}
+                                                                            </span>
+                                                                        @endif
+                                                                    @empty
+
+                                                                    @endforelse
+                                                                @else
+                                                                    <span class="badge bg-info ml-2 rounded-circle px-2 py-1" title="You've {{ $reportCommentCounter }} comment">
+                                                                        {{ $reportCommentCounter }}
+                                                                    </span>
+                                                                @endif
+
+                                                            @endif
+                                                </p>
                                             </a>
 
                                         </li>
@@ -344,12 +553,18 @@
                                             $office = $user->offices[0];
                                             $childAndHimOffKpi = $office->offices;
                                         @endphp
-                                        @if (!$office->offices->isEmpty())
+                                        @if (!$office->offices->isEmpty() || $office->level == 1)
                                             <li class="nav-item">
                                                 <a href="{{ route('report-approve.index') }}"
                                                     class="nav-link {{ Request::is('smis/report/approve/*') || Request::is('smis/report/approve') ? 'active' : '' }}">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                    <p>Report Approval</p>
+                                                    <p>Report Approval
+                                                        @if ($reportCounter > 0)
+                                                                <span class="badge bg-info rounded-circle px-2 py-1" title="You've {{ $reportCounter }} unapproved office">
+                                                                    {{ $reportCounter }}
+                                                                </span>
+                                                        @endif
+                                                    </p>
                                                 </a>
                                             </li>
                                         @endif
