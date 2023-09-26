@@ -23,9 +23,9 @@
     <div class="row justify-content-left mt-3">
         <div class="col-md-2">
 
-            <div class="card">
-                <div class="card-header">Goal List</div>
-                <div class="card-body">
+            <div class="card border border-secondary">
+                <div class="card-header bg-info h5">Goal List</div>
+                <div class="card-body border rounded" style="background-color: #e9ecef;">
                     <form action="{{ route('login') }}" method="post">
                         @csrf
                         <div class="mb-3 row">
@@ -35,7 +35,7 @@
                                     @forelse($kpis['goal'] as $goal)
                                         <tr>
                                             {{-- <td class="rounded "> --}}
-                                            <a style="background-color: #f5f5f5;" class="border border-secondary btn btn-light btn-block text-left {{ Request::is('smis/plan/get-objectives/' . $goal->id) ? 'bg-primary' : '' }}"
+                                            <a class="border border-secondary btn btn-light btn-block text-left {{ Request::is('smis/plan/get-objectives/' . $goal->id) ? 'bg-primary' : '' }}"
                                                 href='{{ route('get-objectives', $goal->id) }}' role="button"
                                                 aria-expanded="false" aria-controls="collapseExample">
                                                 {{ optional($goal->goalTranslations[0])->name ?? '-' }}
