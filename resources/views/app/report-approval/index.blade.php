@@ -216,6 +216,10 @@
                         @endif
 
 
+                        @php
+                            $unapprovedOfficeCount = 0;
+                            $kpiListForApproval = [];
+                        @endphp
 
                         @forelse($planAccomplishments as $planAcc)
                             @php
@@ -232,6 +236,11 @@
 
                                         @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
                                             @if (app()->getLocale() == $kpiT->locale)
+
+                                                @php
+                                                    array_push($kpiListForApproval, $kpiT->translation_id);
+                                                @endphp
+
                                                 <table class="table p-0 m-0">
                                                     <tr style="background-color: #e8f1ff;" class="border">
                                                         {{-- @if (!in_array($planAcc->Kpi->objective->id, $objective_array)) --}}
@@ -250,7 +259,9 @@
                                                     </tr>
                                                     <tr style="" class="border">
                                                         <th style="width:75%;" class="">
-                                                            <p class="m-auto py-2 px-1">KPI: {{ $kpiT->name }}</p>
+                                                            <p class="m-auto py-2 px-1">KPI: {{ $kpiT->name }}
+                                                                <span style="font-size: 16px !important;" class="badge bg-info ml-2 px-2 py-1" id="{{ $kpiT->translation_id }}-unapproved"></span>
+                                                            </p>
                                                         </th>
                                                         <th style="width: 25%;" class="bg-light border">
                                                             <p class="m-auto py-2 px-1">Total: <u>{{ $planAcc->sum }}</u>
@@ -314,6 +325,17 @@
                                                     @endphp
 
                                                     @if ($hasOfficePlan)
+
+                                                        @if(reportStatusOffice(auth()->user()->offices[0], $planAcc->kpi_id, $planning_year[0]->id) !== auth()->user()->offices[0]->level)
+                                                                @if (isset($setter))
+                                                                    @if (isset($unapprovedOfficeCount))
+                                                                        @php
+                                                                            $unapprovedOfficeCount++;
+                                                                        @endphp
+                                                                    @endif
+                                                                @endif
+                                                        @endif
+
                                                         <div class="border border-secondary my-3">
                                                             @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
                                                                 <table class="table table-bordered mb-0">
@@ -353,9 +375,13 @@
                                                         @endphp
 
                                                         {{-- if the office has children that have a plan for the current kpi and are also approved by him,
-                                                so that add their sum with their parent and display to the leader --}}
+                                                        so that add their sum with their parent and display to the leader --}}
                                                         {{-- @dd($hasChildrenOfficesPlannedAndApproved) --}}
                                                         @if (count($hasChildrenOfficesPlannedAndApproved) > 0)
+                                                            @php
+                                                                $unapprovedOfficeCount++;
+                                                            @endphp
+
                                                             @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
                                                                 <table class="table table-bordered">
                                                                     <thead>
@@ -414,6 +440,10 @@
                                                                 {{-- @dd($hasOfficePlan) --}}
 
                                                                 @if ($hasOfficePlan)
+                                                                    @php
+                                                                        $unapprovedOfficeCount++;
+                                                                    @endphp
+
                                                                     @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
                                                                         <table class="table table-bordered">
                                                                             <thead>
@@ -477,6 +507,10 @@
                                                     @endif
                                                 @endif
 
+                                                @if ($unapprovedOfficeCount > 0)
+                                                    <p class="value-for-{{ $kpiT->translation_id }}"></p>
+                                                @endif
+
                                             @empty
                                                 <h4>No offices!</h4>
                                             @endforelse
@@ -523,6 +557,12 @@
 
                                 @endphp
                             @endif
+
+
+                            @php
+                                $unapprovedOfficeCount = 0;
+                            @endphp
+
                         @empty
                             <p>No KPI!</p>
                         @endforelse
@@ -961,6 +1001,30 @@
         $(document).ready(function() {
 
             $('.select2').select2();
+
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            let unapprovedOfficeCount = {{ json_encode($unapprovedOfficeCount) }};
+            let kpiListForApproval = {{ json_encode($kpiListForApproval) }};
+
+            console.log(kpiListForApproval);
+
+            for (let i = 0; i < kpiListForApproval.length; i++) {
+
+                let selector = `.value-for-${kpiListForApproval[i]}`;
+                var pTagValue = $(selector);
+                console.log(pTagValue);
+                // console.log(pTagValue.length);
+
+                if (pTagValue.length > 0) {
+                    $(`#${kpiListForApproval[i]}-unapproved`).text(`${pTagValue.length} unapproved`);
+                }
+
+            }
+
 
         });
     </script>
