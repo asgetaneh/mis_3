@@ -72,7 +72,7 @@ class PlanApprovalController extends Controller
                 ->get();
 
             $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $all_office_list)->select('*', DB::raw('SUM(plan_value) AS sum'))
-                // ->where('reporting_periods.slug', "=", 1)
+                ->where('reporting_periods.slug', "=", 1)
                 ->groupBy('kpi_id')
                 ->get();
 
@@ -133,7 +133,7 @@ class PlanApprovalController extends Controller
                         // if he has record for the current kpi
                         if (getOfficePlanRecord($plan->kpi_id, auth()->user()->offices[0], $planning_year[0]->id)->count() > 0) {
                             $planAccomplishmentsLastOffice = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
-                                // ->where('reporting_periods.slug', "=", 1)
+                                ->where('reporting_periods.slug', "=", 1)
                                 ->where('office_id', auth()->user()->offices[0]->id)
                                 ->select('*', DB::raw('SUM(plan_value) AS sum'))
                                 ->where('kpi_id', $plan->kpi_id)
@@ -152,7 +152,7 @@ class PlanApprovalController extends Controller
         $planAccomplishmentsLastOffice = [];
         if (auth()->user()->offices[0]->level === 1) {
             $planAccomplishmentsLastOffice = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
-                // ->where('reporting_periods.slug', "=", 1)
+                ->where('reporting_periods.slug', "=", 1)
                 ->where('office_id', auth()->user()->offices[0]->id)
                 ->select('*', DB::raw('SUM(plan_value) AS sum'))
                 ->groupBy('kpi_id')
