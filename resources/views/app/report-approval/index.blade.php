@@ -440,9 +440,13 @@
                                                                 {{-- @dd($hasOfficePlan) --}}
 
                                                                 @if ($hasOfficePlan)
-                                                                    @php
-                                                                        $unapprovedOfficeCount++;
-                                                                    @endphp
+
+                                                                    @if(reportStatusOffice($office, $planAcc->kpi_id, $planning_year[0]->id) > auth()->user()->offices[0]->level)
+                                                                        @php
+                                                                            $unapprovedOfficeCount++;
+                                                                        @endphp
+
+                                                                    @endif
 
                                                                     @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
                                                                         <table class="table table-bordered">
@@ -509,6 +513,9 @@
 
                                                 @if ($unapprovedOfficeCount > 0)
                                                     <p class="value-for-{{ $kpiT->translation_id }}"></p>
+                                                    @php
+                                                        $unapprovedOfficeCount = 0;
+                                                    @endphp
                                                 @endif
 
                                             @empty

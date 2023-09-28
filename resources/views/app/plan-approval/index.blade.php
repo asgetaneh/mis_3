@@ -384,7 +384,7 @@
                                                         @endphp
 
                                                         {{-- if the office has children that have a plan for the current kpi and are also approved by him,
-                                                    so that add their sum with their parent and display to the leader --}}
+                                                        so that add their sum with their parent and display to the leader --}}
                                                         {{-- @dd($hasChildrenOfficesPlannedAndApproved) --}}
                                                         @if (count($hasChildrenOfficesPlannedAndApproved) > 0)
                                                             @php
@@ -520,6 +520,9 @@
 
                                                 @if ($unapprovedOfficeCount > 0)
                                                     <p class="value-for-{{ $kpiT->translation_id }}"></p>
+                                                    @php
+                                                        $unapprovedOfficeCount = 0;
+                                                    @endphp
                                                 @endif
 
 
