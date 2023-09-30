@@ -141,7 +141,7 @@
         </div>
 
         {{-- Only admin --}}
-        @if (auth()->user()->is_admin === true)
+        @if (auth()->user()->is_admin === true || auth()->user()->hasRole('super-admin'))
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="info-box mb-3" id="" title="click to view detail">
                     <span class="info-box-icon bg-info elevation-1">
@@ -213,7 +213,7 @@
         <!-- /.info-box -->
     </div>
 
-    @if (auth()->user()->is_admin === true)
+    @if (auth()->user()->is_admin === true || auth()->user()->hasRole('super-admin'))
         {{-- <section class="content"> --}}
         <div class="">
             <div class="row">

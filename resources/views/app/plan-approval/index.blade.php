@@ -243,8 +243,7 @@
                                                 @endphp
 
                                                 <table class="table m-0 p-0">
-                                                    <tr style="background-color: #e8f1ff;" class="border">
-                                                        {{-- @if (!in_array($planAcc->Kpi->objective->id, $objective_array)) --}}
+                                                    {{-- <tr style="background-color: #e8f1ff;" class="border">
                                                             @forelse ($planAcc->Kpi->objective->objectiveTranslations as $objective)
                                                                 @if (app()->getLocale() == $objective->locale)
                                                                     <th colspan="2" style="width:100%;"> Objective:
@@ -256,8 +255,22 @@
                                                                 <th>No objective name!</th>
                                                                 <th></th>
                                                             @endforelse
-                                                        {{-- @endif --}}
+                                                    </tr> --}}
+
+
+                                                    {{-- ------- --}}
+                                                    <tr style="background-color: #e8f1ff;" class="border">
+                                                        @if (!in_array($planAcc->Kpi->objective->id, $objective_array))
+                                                             <th colspan="2" style="width:100%;"> Objective:
+                                                                {{ $planAcc->Kpi->objective->objectiveTranslations[0]->name }}
+                                                            </th>
+                                                            <th></th>
+                                                         @endif
+                                                        @php
+                                                            $objective_array = array_merge($objective_array, [$planAcc->Kpi->objective->id]);
+                                                        @endphp
                                                     </tr>
+
                                                     <tr style="" class="border">
                                                         <th style="width:75%;" class="">
                                                             <p class="m-auto py-2 px-1">KPI: {{ $kpiT->name }}
