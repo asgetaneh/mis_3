@@ -196,4 +196,22 @@ class PlaningYearController extends Controller
             ->route('planing-years.index')
             ->withSuccess(__('crud.common.removed'));
     }
+
+    public function activation(Request $request) {
+        $id = $request->planning_year;
+        $status = $request->activation;
+
+        if($status == 'activate') {
+            $activated = PlaningYear::where('id', $id)->update([
+                'is_active' => true,
+            ]);
+        }else{
+            $deActivated = PlaningYear::where('id', $id)->update([
+                'is_active' =>false,
+            ]);
+        }
+
+        return redirect()->back()->withSuccess(__('crud.common.saved'));
+
+    }
 }
