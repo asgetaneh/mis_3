@@ -237,6 +237,60 @@
                                                                         @endforeach
                                                                     @endforeach
                                                                 </tr>
+
+
+                                                                {{-- Baseline row added --}}
+                                                                <tr>
+                                                                    <th rowspan="{{ $kpi->kpiChildTwos->count() }}">
+                                                                        Baseline
+                                                                    </th>
+                                                                    @foreach ($kpi->kpiChildTwos as $two)
+                                                                        <th>
+                                                                            {{ $two->kpiChildTwoTranslations[0]->name }}
+                                                                        </th>
+                                                                        @foreach ($kpi->kpiChildOnes as $one)
+                                                                            @foreach ($kpi->kpiChildThrees as $kpiThree)
+                                                                                @php
+                                                                                    $baseline = getBaselineIndividualOneTwoThree($planning_year[0]->id, $kpi->id, $one->id, $two->id, $kpiThree->id, auth()->user()->offices[0]->id);
+                                                                                    $off_level = auth()->user()->offices[0]->level;
+                                                                                    $disabled = '';
+                                                                                @endphp
+                                                                                @if ($baseline)
+                                                                                    @if($off_level === 1)
+                                                                                        @if ($off_level === $baseline->plan_status)
+                                                                                            @php $disabled ="disabled"; @endphp
+                                                                                        @endif
+                                                                                    @elseif ($off_level != $baseline->plan_status)
+                                                                                        @php $disabled ="disabled"; @endphp
+                                                                                    @endif
+                                                                                    <td>
+                                                                                        {{-- <input type="hidden"
+                                                                                            name="type"
+                                                                                            value="yes"> --}}
+                                                                                        <input
+                                                                                            name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
+                                                                                            value="{{ $baseline->baseline }}"
+                                                                                            class="form-control"
+                                                                                            type="number" required
+                                                                                            {{ $disabled }}>
+
+
+                                                                                    </td>
+                                                                                @else
+                                                                                    <td>
+                                                                                        <input
+                                                                                            name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
+                                                                                            class="form-control"
+                                                                                            type="number" required>
+
+                                                                                    </td>
+                                                                                @endif
+                                                                            @endforeach
+                                                                        @endforeach
+                                                                </tr>
+                                                                @endforeach
+
+
                                                                 @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
                                                                     <tr>
                                                                         <th rowspan="{{ $kpi->kpiChildTwos->count() }}">
@@ -320,6 +374,59 @@
                                                                     </th>
                                                                 @endforeach
                                                             </tr>
+
+                                                            
+                                                            {{-- Baseline row added --}}
+                                                            <tr>
+                                                                <th rowspan="{{ $kpi->kpiChildTwos->count() }}">
+                                                                    Baseline
+                                                                </th>
+                                                                @foreach ($kpi->kpiChildTwos as $two)
+                                                                        <th>
+                                                                            {{ $two->kpiChildTwoTranslations[0]->name }}
+                                                                        </th>
+                                                                        @foreach ($kpi->kpiChildOnes as $one)
+                                                                            @php
+                                                                                $baseline = getBaselineIndividualOneTwo($planning_year[0]->id, $kpi->id, $one->id, $two->id, auth()->user()->offices[0]->id);
+                                                                            @endphp
+                                                                            @if ($baseline)
+                                                                                @php
+                                                                                    $inputname = $kpi->id;
+                                                                                    $off_level = auth()->user()->offices[0]->level;
+                                                                                    $disabled = '';
+                                                                                @endphp
+
+                                                                               @if($off_level ===1)
+                                                                                    @if ($off_level === $baseline->plan_status)
+                                                                                        @php $disabled ="disabled"; @endphp
+                                                                                    @endif
+                                                                                @elseif ($off_level != $baseline->plan_status)
+                                                                                    @php $disabled ="disabled"; @endphp
+                                                                                @endif
+                                                                                <td>
+                                                                                    {{-- <input type="hidden" name="type"
+                                                                                        value="yes"> --}}
+                                                                                    <input
+                                                                                        name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}"
+                                                                                        class="form-control"
+                                                                                        value="{{ $baseline->baseline }}"
+                                                                                        type="number" required
+                                                                                        {{ $disabled }}>
+                                                                                </td>
+                                                                            @else
+                                                                                <td>
+                                                                                    <input
+                                                                                        name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}"
+                                                                                        class="form-control" type="number"
+                                                                                        required>
+                                                                                </td>
+                                                                            @endif
+                                                                        @endforeach
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tr>
+
+
                                                             @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
                                                                 <tr>
                                                                     <th rowspan="{{ $kpi->kpiChildTwos->count() }}">
@@ -411,6 +518,7 @@
                                                 @else
                                                     <tr>
                                                         <th>#</th>
+                                                        <th>Baseline</th>
                                                         @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
                                                             <th>
                                                                 {{ $period->reportingPeriodTs[0]->name }}
@@ -422,6 +530,38 @@
                                                         <th>
                                                             {{ $one->kpiChildOneTranslations[0]->name }}<br />
                                                         </th>
+
+                                                        @php
+                                                            $baseline = getBaselineIndividualOne($planning_year[0]->id, $kpi->id, $one->id, auth()->user()->offices[0]->id);
+                                                            $off_level = auth()->user()->offices[0]->level;
+                                                            $disabled = '';
+                                                        @endphp
+
+                                                        @if ($baseline)
+                                                            @if($off_level === 1)
+                                                                @if ($off_level === $baseline->plan_status)
+                                                                    @php $disabled ="disabled"; @endphp
+                                                                @endif
+                                                            @elseif ($off_level != $baseline->plan_status)
+                                                                @php $disabled ="disabled"; @endphp
+                                                            @endif
+                                                            <td>
+                                                                <input
+                                                                    name="baseline-{{ $kpi->id }}-{{ $one->id }}"
+                                                                    class="form-control"
+                                                                    value="{{ $baseline->baseline }}" type="number"
+                                                                    required {{ $disabled }}>
+                                                            </td>
+                                                        @else
+                                                            <td>
+                                                                <input
+                                                                    name="baseline-{{ $kpi->id }}-{{ $one->id }}"
+                                                                    class="form-control"
+                                                                    value="" type="number"
+                                                                    required>
+                                                            </td>
+                                                        @endif
+
                                                         @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
                                                             @php
                                                                 $inputname = '{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}';
@@ -489,6 +629,7 @@
                         @else
                             <table class="table table-bordered">
                                 <tr>
+                                    <th>Baseline</th>
                                     @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
                                         <th>
                                             {{ $period->reportingPeriodTs[0]->name }}
@@ -496,6 +637,38 @@
                                     @empty
                                     @endforelse
                                 </tr>
+
+                                @php
+                                    $baseline = getBaselineIndividual($planning_year[0]->id, $kpi->id, auth()->user()->offices[0]->id);
+                                    $off_level = auth()->user()->offices[0]->level;
+                                    $disabled = '';
+                                @endphp
+
+                                @if ($baseline)
+                                    @if($off_level === 1)
+                                        @if ($off_level === $baseline->plan_status)
+                                            @php $disabled ="disabled"; @endphp
+                                        @endif
+                                    @elseif ($off_level != $baseline->plan_status)
+                                        @php $disabled ="disabled"; @endphp
+                                    @endif
+                                    <td>
+                                        <input
+                                            name="baseline-{{ $kpi->id }}"
+                                            class="form-control"
+                                            value="{{ $baseline->baseline }}" type="number"
+                                            required {{ $disabled }}>
+                                    </td>
+                                @else
+                                    <td>
+                                        <input
+                                            name="baseline-{{ $kpi->id }}"
+                                            class="form-control"
+                                            value="" type="number"
+                                            required placeholder="Enter baseline">
+                                    </td>
+                                @endif
+
                                 @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
                                     <p class="mb-3">
                                         @php

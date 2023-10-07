@@ -242,6 +242,16 @@ class PlanApprovalController extends Controller
                             ->update([
                                 'approval_status' => $loggedInUserOfficeLevel->level
                             ]);
+
+                        $approvedBaseline = tap(
+                            DB::table('baselines')
+                                ->where('planning_year_id', $singleOfficePlan[2])
+                                ->whereIn('office_id', $mergedOffices)
+                                ->where('kpi_id', $singleOfficePlan[0])
+                        )
+                            ->update([
+                                'plan_status' => $loggedInUserOfficeLevel->level
+                            ]);
                     }
                 }
             }

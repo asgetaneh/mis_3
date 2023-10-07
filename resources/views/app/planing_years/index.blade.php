@@ -110,7 +110,8 @@
                                             <i class="icon ion-md-eye"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('delete', $planing_year_t)
+                                    @endcan
+                                    {{-- @can('delete', $planing_year_t)
                                     <form
                                         action="{{ route('planing-years.destroy', $planing_year_t->planing_year_id) }}"
                                         method="POST"
@@ -124,7 +125,7 @@
                                             <i class="icon ion-md-trash"></i>
                                         </button>
                                     </form>
-                                    @endcan
+                                    @endcan --}}
 
                                     @can('delete', $planing_year_t)
                                         <form

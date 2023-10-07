@@ -21,6 +21,7 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Andegna\DateTime as Et_date;
 use Andegna\DateTimeFactory;
+use App\Models\Baseline;
 use App\Models\PlaningYear;
 use App\Models\ReportNarration;
 use App\Models\ReportNarrationReport;
@@ -277,6 +278,8 @@ class PlanAccomplishmentController extends Controller
    }
 
    public function savePlan(Request $request){
+
+    // dd($request->all());
        $kpi = $request->input();
        $user = auth()->user()->id;
        $getuser = User::find($user);
@@ -287,6 +290,9 @@ class PlanAccomplishmentController extends Controller
         $plan_status =11;
        }
          $submit = "create";
+
+        if($request->has('type') && $request->type == "yes"){ $submit = "update";}
+
          $index = [];
         $planning = PlaningYear::where('is_active',true)->get();
          foreach ($kpi as $key => $value) {
@@ -306,32 +312,57 @@ class PlanAccomplishmentController extends Controller
                         //echo $splitvalue;
                     }
                     if($index[0] == 'files') continue;
-                     $length =  count($index);
-                     $plan_accom = new PlanAccomplishment;
-                    $plan_accom->kpi_id= $index[0];
-                    $quarter = $index[1];
-                    $plan_accom->reporting_period_id = $index[1];
 
-                    $getkpi = KeyPeformanceIndicator::find($plan_accom->kpi_id);
-                    //dump($getkpi);
-                     $report_period_type = $getkpi->reportingPeriodType->id;
-                   if($length > 2){
-                        $plan_accom->kpi_child_one_id= $index[2];
-                        if($length > 3){
-                             $plan_accom->kpi_child_two_id= $index[3];
-                             if($length > 4){
-                                $plan_accom->kpi_child_three_id= $index[4];
+                    if($index[0] == 'baseline'){
+                        $length =  count($index) - 1;
+                        $baseline = new Baseline;
+                        $baseline->kpi_id = $index[1];
+                        $baseline->baseline = $value;
+                        $baseline->plan_status = $plan_status;
+
+                        if ($length > 1) {
+                            $baseline->kpi_one_id = $index[2];
+                            if ($length > 2) {
+                                $baseline->kpi_two_id = $index[3];
+                                if ($length > 3) {
+                                    $baseline->kpi_three_id = $index[4];
+                                }
                             }
                         }
+
+                        $baseline->office_id = $user_offices;
+                        $baseline->planning_year_id = $planning[0]->id;
+                        $baseline->save();
+
+                    }else{
+                        $length =  count($index);
+                        $plan_accom = new PlanAccomplishment;
+                        $plan_accom->kpi_id = $index[0];
+                        $quarter = $index[1];
+                        $plan_accom->reporting_period_id = $index[1];
+
+                        $getkpi = KeyPeformanceIndicator::find($plan_accom->kpi_id);
+                        //dump($getkpi);
+                        $report_period_type = $getkpi->reportingPeriodType->id;
+                        if ($length > 2) {
+                            $plan_accom->kpi_child_one_id = $index[2];
+                            if ($length > 3) {
+                                $plan_accom->kpi_child_two_id = $index[3];
+                                if ($length > 4) {
+                                    $plan_accom->kpi_child_three_id = $index[4];
+                                }
+                            }
+                        }
+                        $plan_accom->office_id = $user_offices;
+                        $plan_accom->plan_value = $value;
+                        //$plan_accom->accom_value=0;
+                        $plan_accom->plan_status = $plan_status;
+                        $plan_accom->accom_status = $getoffice->level;
+                        $plan_accom->planning_year_id = $planning[0]->id;
+                        $plan_accom->save();
+                        $kpi_match_for_naration = $index[0];
                     }
-                    $plan_accom->office_id=$user_offices;
-                    $plan_accom->plan_value=$value;
-                    //$plan_accom->accom_value=0;
-                    $plan_accom->plan_status=$plan_status;
-                    $plan_accom->accom_status=$getoffice->level;
-                     $plan_accom->planning_year_id=$planning[0]->id;
-                  $plan_accom->save();
-                $kpi_match_for_naration = $index[0];
+
                 }
                 else{ //dd($index[0]);
                     $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
@@ -364,49 +395,87 @@ class PlanAccomplishmentController extends Controller
                                 //echo $splitvalue;
                             }
                             if($index[0] == 'files') continue;
-                            $length =  count($index);
-                            if($length > 2){
-                            $kpi_child_one_id= $index[2];
-                                if($length > 3){
-                                    $kpi_child_two_id= $index[3];
-                                    if($length > 4){
-                                        $kpi_child_three_id= $index[4];
+
+                            if($index[0] == 'baseline'){
+                                $length =  count($index) - 1;
+
+                                if($length > 1){
+                                    $kpi_one_id = (int)$index[2];
+                                        if($length > 2){
+                                            $kpi_two_id= (int)$index[3];
+                                            if($length > 3){
+                                                $kpi_three_id= (int)$index[4];
+                                            }
+                                            else{$kpi_three_id= NULL;  }
+                                        }
+                                         else{
+                                            $kpi_two_id= NULL;
+                                            $kpi_three_id= NULL;
+                                        }
                                     }
-                                    else{$kpi_child_three_id= NULL;  }
+                                    else{
+                                        $kpi_one_id= NULL;
+                                        $kpi_two_id= NULL;
+                                        $kpi_three_id= NULL;
                                 }
-                                 else{
+
+                                $updated = tap(DB::table('baselines')
+                                    ->where('planning_year_id' , '=', $planning[0]->id)
+                                    ->where('office_id' , '=', $user_offices)
+                                    ->where('kpi_id' , '=', (int)$index[1])
+                                    ->where('kpi_one_id' , '=', $kpi_one_id)
+                                    ->where('kpi_two_id' , '=', $kpi_two_id)
+                                    ->where('kpi_three_id' , '=',$kpi_three_id))
+                                    ->update(['baseline' => $value])
+                                    ->first();
+
+                            }else{
+                                $length =  count($index);
+                                if($length > 2){
+                                $kpi_child_one_id= $index[2];
+                                    if($length > 3){
+                                        $kpi_child_two_id= $index[3];
+                                        if($length > 4){
+                                            $kpi_child_three_id= $index[4];
+                                        }
+                                        else{$kpi_child_three_id= NULL;  }
+                                    }
+                                     else{
+                                        $kpi_child_two_id= NULL;
+                                        $kpi_child_three_id= NULL;
+                                    }
+                                }
+                                else{
+                                     $kpi_child_one_id= NULL;
                                     $kpi_child_two_id= NULL;
                                     $kpi_child_three_id= NULL;
                                 }
-                            }
-                            else{
-                                 $kpi_child_one_id= NULL;
-                                $kpi_child_two_id= NULL;
-                                $kpi_child_three_id= NULL;
+
+                            //     $check = PlanAccomplishment::
+                            //  where('planning_year_id' , '=', $planning[0]->id)
+                            // ->where('office_id' , '=', $user_offices)
+                            // ->where('kpi_id' , '=', $index[0])
+                            // ->where('reporting_period_id' , '=', $index[1])
+                            //  ->where('kpi_child_one_id' , '=', $kpi_child_one_id)
+                            //   ->where('kpi_child_two_id' , '=', $kpi_child_two_id)
+                            //    ->where('kpi_child_three_id' , '=',$kpi_child_three_id)
+                            //      ->get();
+                            //       dump( $index);
+                            //      dump( $check);
+
+                            $updated = tap(DB::table('plan_accomplishments')
+                             ->where('planning_year_id' , '=', $planning[0]->id)
+                            ->where('office_id' , '=', $user_offices)
+                            ->where('kpi_id' , '=', $index[0])
+                            ->where('reporting_period_id' , '=', $index[1])
+                             ->where('kpi_child_one_id' , '=', $kpi_child_one_id)
+                              ->where('kpi_child_two_id' , '=', $kpi_child_two_id)
+                               ->where('kpi_child_three_id' , '=',$kpi_child_three_id))
+                                ->update(['plan_value' => (string)$value])
+                                ->first();
                             }
 
-                        //     $check = PlanAccomplishment::
-                        //  where('planning_year_id' , '=', $planning[0]->id)
-                        // ->where('office_id' , '=', $user_offices)
-                        // ->where('kpi_id' , '=', $index[0])
-                        // ->where('reporting_period_id' , '=', $index[1])
-                        //  ->where('kpi_child_one_id' , '=', $kpi_child_one_id)
-                        //   ->where('kpi_child_two_id' , '=', $kpi_child_two_id)
-                        //    ->where('kpi_child_three_id' , '=',$kpi_child_three_id)
-                        //      ->get();
-                        //       dump( $index);
-                        //      dump( $check);
 
-                        $updated = tap(DB::table('plan_accomplishments')
-                         ->where('planning_year_id' , '=', $planning[0]->id)
-                        ->where('office_id' , '=', $user_offices)
-                        ->where('kpi_id' , '=', $index[0])
-                        ->where('reporting_period_id' , '=', $index[1])
-                         ->where('kpi_child_one_id' , '=', $kpi_child_one_id)
-                          ->where('kpi_child_two_id' , '=', $kpi_child_two_id)
-                           ->where('kpi_child_three_id' , '=',$kpi_child_three_id))
-                            ->update(['plan_value' => (string)$value])
-                            ->first();
                      }
                     else{
                          $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
