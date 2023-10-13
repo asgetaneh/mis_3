@@ -63,6 +63,98 @@
                                         @endcan
                                     </ul>
                                 </li>
+
+
+
+                                {{--  --}}
+
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link">
+                                        <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                        <p>
+                                            Instructions
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="#" class="nav-link">
+                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                <p>sub menu of instruction</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link">
+                                        <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                        <p>
+                                            Student
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="#" class="nav-link">
+                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                <p>Applicants</p>
+                                            </a>
+                                            <a href="#" class="nav-link">
+                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                <p>Overview</p>
+                                            </a>
+                                            <a href="#" class="nav-link">
+                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                <p>Enrollment</p>
+                                            </a>
+                                            <a href="#" class="nav-link">
+                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                <p>Results</p>
+                                            </a>
+                                            <a href="#" class="nav-link">
+                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                <p>Graduates</p>
+                                            </a>
+                                            <a href="#" class="nav-link">
+                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                <p>Attritions</p>
+                                            </a>
+                                            <a href="#" class="nav-link">
+                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                <p>Intership</p>
+                                            </a>
+                                            <a href="#" class="nav-link">
+                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                <p>Employment</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link">
+                                        <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                        <p>
+                                            Staff
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="#" class="nav-link">
+                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                <p>sub menu of staff</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                {{--  --}}
                             </ul>
                         </li>
                         <li class="nav-item {{ Request::is('smis/*') ? 'menu-open' : '' }}">
