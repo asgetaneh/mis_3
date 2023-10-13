@@ -99,35 +99,35 @@
 
                                     <ul class="nav nav-treeview">
                                         <li class="nav-item">
-                                            <a href="#" class="nav-link">
+                                            <a href="{{route('emis.student.applicant.index')}}" class="nav-link">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>Applicants</p>
                                             </a>
-                                            <a href="#" class="nav-link">
+                                            <a href="{{route('emis.student.overview.index')}}" class="nav-link">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>Overview</p>
                                             </a>
-                                            <a href="#" class="nav-link">
+                                            <a href="{{route('emis.student.enrollment.index')}}" class="nav-link">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>Enrollment</p>
                                             </a>
-                                            <a href="#" class="nav-link">
+                                            <a href="{{route('emis.student.results.index')}}" class="nav-link">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>Results</p>
                                             </a>
-                                            <a href="#" class="nav-link">
+                                            <a href="{{route('emis.student.graduates.index')}}" class="nav-link">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>Graduates</p>
                                             </a>
-                                            <a href="#" class="nav-link">
+                                            <a href="{{route('emis.student.attrition.index')}}" class="nav-link">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>Attritions</p>
                                             </a>
-                                            <a href="#" class="nav-link">
+                                            <a href="{{route('emis.student.internship.index')}}" class="nav-link">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>Intership</p>
                                             </a>
-                                            <a href="#" class="nav-link">
+                                            <a href="{{route('emis.student.employment.index')}}" class="nav-link">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>Employment</p>
                                             </a>
