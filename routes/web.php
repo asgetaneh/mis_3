@@ -225,6 +225,10 @@ Route::prefix('/')
 
                 Route::GET('/get-objectives/{goal}', [PlanAccomplishmentController::class, 'getAllObjectives'])->name('get-objectives');
                 Route::POST('/plan-save', [PlanAccomplishmentController::class, 'savePlan'])->name('plan.save');
+
+                // Exporting route for planning
+                Route::POST('/download', [PlanAccomplishmentController::class, 'downloadPlan'])->name('plan.download');
+
             });
 
             // reporting

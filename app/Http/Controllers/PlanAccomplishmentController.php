@@ -2,32 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Office;
-use App\Models\Objective;
-use App\Models\Goal;
-use Illuminate\View\View;
-use App\Models\SuitableKpi;
-use Illuminate\Http\Request;
-use App\Models\ReportingPeriod;
-use App\Models\PlanAccomplishment;
-use App\Models\KeyPeformanceIndicator;
-use Illuminate\Support\Facades\DB;
-use App\Models\ReportingPeriodType;
-use Illuminate\Http\RedirectResponse;
-use App\Http\Requests\PlanAccomplishmentStoreRequest;
-use App\Http\Requests\PlanAccomplishmentUpdateRequest;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
-use Andegna\DateTime as Et_date;
-use Andegna\DateTimeFactory;
-use App\Models\Baseline;
-use App\Models\PlaningYear;
-use App\Models\ReportNarration;
-use App\Models\ReportNarrationReport;
-
 use DateTime;
 use Redirect;
+use Carbon\Carbon;
+use App\Models\Goal;
+use App\Models\User;
+use App\Models\Office;
+use App\Models\Baseline;
+use App\Models\Objective;
+use Illuminate\View\View;
+use App\Models\PlaningYear;
+use App\Models\SuitableKpi;
+use Illuminate\Support\Str;
+use Andegna\DateTimeFactory;
+use Illuminate\Http\Request;
+use PhpOffice\PhpWord\PhpWord;
+use App\Models\ReportingPeriod;
+use App\Models\ReportNarration;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Andegna\DateTime as Et_date;
+use App\Exports\PlanExcelExport;
+use PhpOffice\PhpWord\IOFactory;
+use App\Models\PlanAccomplishment;
+use Illuminate\Support\Facades\DB;
+use App\Models\ReportingPeriodType;
+use Illuminate\Support\Facades\App;
+
+use Maatwebsite\Excel\Facades\Excel;
+use App\Models\ReportNarrationReport;
+use Illuminate\Http\RedirectResponse;
+use App\Models\KeyPeformanceIndicator;
+use App\Http\Requests\PlanAccomplishmentStoreRequest;
+use App\Http\Requests\PlanAccomplishmentUpdateRequest;
 
 
 
@@ -897,4 +903,252 @@ class PlanAccomplishmentController extends Controller
         );
 
    }
+
+
+    public function downloadPlan(Request $request)
+    {
+
+        $office_id = auth()->user()->offices[0]->id;
+        $office = Office::find($office_id);
+        $imagen_off = $office;
+        $off_level = $office->level;
+        $planning_year = PlaningYear::where('is_active', true)->get();
+        $all_office_list = $this->allChildAndChildChild($office);
+        $only_child_array = array_merge($all_office_list, array($office_id));
+
+        // handle printing excel and pdf for either filtered or all KPI Plans
+        $isFiltered = $request->has('office');
+        $officeSentToBlade = '';
+
+        $planning_year = PlaningYear::where('is_active', true)->get();
+        DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
+
+        $planAccomplishments = '';
+
+        if ($request->has('pdf') || $request->has('excel') || $request->has('word')) {
+
+            $kpi_array = [];
+            $all_kpis = getAllKpi();
+            foreach ($all_kpis as $key => $value) {
+                $kpi_array = array_merge($kpi_array, array($value->id));
+            }
+
+            // if office is filtered or selected in form
+            if ($isFiltered) {
+
+                $office_id = (int)$request->input('office');
+                $office = Office::find($office_id);
+                $all_office_list = $this->allChildAndChildChild($office);
+                $only_child_array = array_merge($all_office_list, array($office_id));
+                $off_level = $office->level;
+                $imagen_off = $office;
+
+                $officeSentToBlade = $office->officeTranslations[0]->name ? $office->officeTranslations[0]->name : '-';
+
+                $manager = DB::table('manager')->select()->where('office_id', $office_id)->first();
+                $managerName = $manager ? User::where('id', $manager->user_id)->first() : '';
+                $managerName = $managerName ? $managerName->name : '-';
+
+                $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
+                ->whereIn('office_id', $only_child_array)
+                    ->whereIn('kpi_id', $kpi_array)
+                    ->select('*', DB::raw('SUM(plan_value) AS sum'))
+                    ->where('reporting_periods.slug', "=", 1)
+                    ->where('planning_year_id', '=', $planning_year[0]->id)
+                    ->groupBy('kpi_id')
+                    ->get();
+
+                // dd($planAccomplishments);
+
+                // return view('app.plan_accomplishments.pdf-plan', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'));
+
+                // PDF
+                if ($request->has('pdf')) {
+                    view()->share([
+                        'planAccomplishments' => $planAccomplishments,
+                        'only_child_array' => $only_child_array,
+                        'off_level' => $off_level,
+                        'imagen_off' => $imagen_off,
+                        'planning_year' => $planning_year,
+                        'officeSentToBlade' => $officeSentToBlade,
+                        'managerName' => $managerName,
+                    ]);
+
+                    $pdf = App::make('dompdf.wrapper', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'))
+                        ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
+                        ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
+                    $pdf->loadView('app.plan_accomplishments.plan-export.pdf-plan');
+                    return $pdf->download($officeSentToBlade . '_Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                }
+
+                // Word
+                elseif ($request->has('word')) {
+
+                    // Create a new PhpWord instance
+                    $phpWord = new PhpWord();
+
+                    // Load the Blade template into a variable
+                    $content = view('app.plan_accomplishments.plan-export.word-plan', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'))->render();
+
+                    // Add the content to the PhpWord document
+                    $section = $phpWord->addSection();
+                    $section->addHtml($content);
+
+                    // Save the PhpWord document as a Word file
+                    $filename = 'your-file-name.docx';
+                    $phpWord->save($filename, 'Word2007');
+
+                    // Return the generated Word file as a response
+                    return response()->download($filename)->deleteFileAfterSend(true);
+                }
+
+                // Excel
+                else {
+                    return view('app.plan_accomplishments.plan-export.excel-plan', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'));
+
+                    return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.xlsx');
+                }
+            }
+
+
+            // Print all offices
+            else {
+
+                // if admin/plan office, print all offices
+                if (auth()->user()->is_admin || auth()->user()->hasRole('super-admin')) {
+
+                    $imagen_off = Office::find(1); //immaginery office of which contain all office kpi plan
+                    $off_level = 1;
+                    $all_offices = getAllOffices();
+                    $only_child_array = [];
+
+                    foreach ($all_offices as $key => $value) {
+                        $only_child_array = array_merge($only_child_array, array($value->id));
+                    }
+
+                    $planAccomplishments = PlanAccomplishment::where('planning_year_id', '=', $planning_year[0]->id)
+                        ->groupBy('kpi_id')
+                        ->orderBy('reporting_period_id')
+                        ->get();
+
+                    // dd($planAccomplishments);
+
+                    // PDF
+                    if ($request->has('pdf')) {
+                        view()->share([
+                            'planAccomplishments' => $planAccomplishments,
+                            'only_child_array' => $only_child_array,
+                            'off_level' => $off_level,
+                            'imagen_off' => $imagen_off,
+                            'planning_year' => $planning_year,
+
+                        ]);
+
+                        $pdf = App::make('dompdf.wrapper', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year'))
+                            ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
+                            ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
+                        $pdf->loadView('app.plan_accomplishments.plan-export.pdf-plan-all');
+                        return $pdf->download('All-Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                    }
+
+                    // Word
+                    elseif ($request->has('word')) {
+
+                        // Create a new PhpWord instance
+                        $phpWord = new PhpWord();
+
+                        // Load the Blade template into a variable
+                        $content = view('app.plan_accomplishments.plan-export.word-plan', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'))->render();
+
+                        // Add the content to the PhpWord document
+                        $section = $phpWord->addSection();
+                        $section->addHtml($content);
+
+                        // Save the PhpWord document as a Word file
+                        $filename = 'your-file-name.docx';
+                        $phpWord->save($filename, 'Word2007');
+
+                        // Return the generated Word file as a response
+                        return response()->download($filename)->deleteFileAfterSend(true);
+                    }
+
+                    // Excel
+                    else {
+                        return view('app.plan_accomplishments.plan-export.excel-plan-all', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year'));
+
+                        return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), 'Office-' . $officeSentToBlade . '-Plan.xlsx');
+                    }
+                }
+
+                // Only print for that current logged in user office
+                else {
+
+                    $office_id = auth()->user()->offices[0]->id;
+                    $office = Office::find($office_id);
+                    $imagen_off = $office;
+                    $off_level = $office->level;
+                    $planning_year = PlaningYear::where('is_active', true)->get();
+                    $all_office_list = $this->allChildAndChildChild($office);
+                    $only_child_array = array_merge($all_office_list, array($office_id));
+
+                    $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
+                    ->whereIn('office_id', $only_child_array)
+                        ->whereIn('kpi_id', $kpi_array)
+                        ->select('*', DB::raw('SUM(plan_value) AS sum'))
+                        ->where('reporting_periods.slug', "=", 1)
+                        ->where('planning_year_id', '=', $planning_year[0]->id)
+                        ->groupBy('kpi_id')
+                        ->get();
+
+                    // dd($planAccomplishments);
+
+                    // PDF
+                    if ($request->has('pdf')) {
+                        view()->share([
+                            'planAccomplishments' => $planAccomplishments,
+                            'only_child_array' => $only_child_array,
+                            'off_level' => $off_level,
+                            'imagen_off' => $imagen_off,
+                            'planning_year' => $planning_year,
+
+                        ]);
+
+                        $pdf = App::make('dompdf.wrapper', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year'))
+                            ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
+                            ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
+                        $pdf->loadView('app.plan_accomplishments.plan-export.pdf-plan-all');
+                        return $pdf->download('All-Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                    }
+
+                    // Word
+                    elseif ($request->has('word')) {
+
+                        // Create a new PhpWord instance
+                        $phpWord = new PhpWord();
+
+                        // Load the Blade template into a variable
+                        $content = view('app.plan_accomplishments.plan-export.word-plan', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'))->render();
+
+                        // Add the content to the PhpWord document
+                        $section = $phpWord->addSection();
+                        $section->addHtml($content);
+
+                        // Save the PhpWord document as a Word file
+                        $filename = 'your-file-name.docx';
+                        $phpWord->save($filename, 'Word2007');
+
+                        // Return the generated Word file as a response
+                        return response()->download($filename)->deleteFileAfterSend(true);
+                    }
+
+                    // Excel
+                    else {
+                        return view('app.plan_accomplishments.plan-export.excel-plan-all', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year'));
+
+                        return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.xlsx');
+                    }
+                }
+            }
+        }
+    }
 }
