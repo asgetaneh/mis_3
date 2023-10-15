@@ -49,7 +49,7 @@
 </div>
 @endsection
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
 
 <script>
     $(document).ready(function() {
