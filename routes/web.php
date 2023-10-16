@@ -33,6 +33,7 @@ use App\Http\Controllers\PlanAccomplishmentController;
 use App\Http\Controllers\ReportingPeriodTypeController;
 use App\Http\Controllers\StrategyTranslationController;
 use App\Http\Controllers\InititiveTranslationController;
+use App\Http\Controllers\InstitutionEMIS;
 use App\Http\Controllers\ObjectiveTranslationController;
 use App\Http\Controllers\ReportingPeriodTypeTController;
 use App\Http\Controllers\KeyPeformanceIndicatorController;
@@ -42,6 +43,8 @@ use App\Http\Controllers\PerspectiveTranslationController;
 use App\Http\Controllers\PlaningYearTranslationController;
 use App\Http\Controllers\KeyPeformanceIndicatorTController;
 use App\Http\Controllers\KpiChildThreeTranslationController;
+use App\Http\Controllers\StaffEMIS;
+use App\Http\Controllers\StudentEMIS;
 
 /*
 |--------------------------------------------------------------------------
@@ -270,6 +273,30 @@ Route::prefix('/')
             Route::resource('permissions', PermissionController::class);
             Route::resource('users', UserController::class);
         });
+
+Route::prefix('/emis')->group(function(){
+
+    Route::prefix('/institution')->group(function(){
+
+        Route::get('/', [InstitutionEMIS::class, 'index'])->name('emis.institution.index');
+    });
+    Route::prefix('/student')->group(function(){
+        Route::get('/applicant', [StudentEMIS::class, 'index'])->name('emis.student.applicant.index');
+        Route::get('/overview', [StudentEMIS::class, 'index'])->name('emis.student.overview.index');
+        Route::get('/enrollment', [StudentEMIS::class, 'index'])->name('emis.student.enrollment.index');
+        Route::get('/results', [StudentEMIS::class, 'index'])->name('emis.student.results.index');
+        Route::get('/graduates', [StudentEMIS::class, 'index'])->name('emis.student.graduates.index');
+        Route::get('/attrition', [StudentEMIS::class, 'index'])->name('emis.student.attrition.index');
+        Route::get('/internship', [StudentEMIS::class, 'index'])->name('emis.student.internship.index');
+        Route::get('/employment', [StudentEMIS::class, 'index'])->name('emis.student.employment.index');
+
+    });
+    Route::prefix('/staff')->group(function(){
+        Route::get('/', [StaffEMIS::class, 'index'])->name('emis.staff.index');
+
+    });
+
+});
 
     });
 
