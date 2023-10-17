@@ -252,6 +252,17 @@ class PlanApprovalController extends Controller
                             ->update([
                                 'plan_status' => $loggedInUserOfficeLevel->level
                             ]);
+
+                        $forPlanComment = array_merge($allChildrenApproved, array($office));
+
+                        // Change status of any plan comment for the office and its children approved
+                        $changePlanCommentStatus = DB::table('plan_comments')
+                            ->whereIn('office_id', $forPlanComment)
+                            ->where('kpi_id', $singleOfficePlan[0])
+                            ->where('planning_year_id', $singleOfficePlan[2])
+                            ->update([
+                                'status' => 0,
+                            ]);
                     }
                 }
             }
