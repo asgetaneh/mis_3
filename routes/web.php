@@ -273,6 +273,7 @@ Route::prefix('/emis')->group(function(){
     Route::prefix('/institution')->group(function(){
 
         Route::get('/', [InstitutionEMIS::class, 'index'])->name('emis.institution.index');
+        Route::get('/', [InstitutionEMIS::class, 'building'])->name('emis.institution.building');
     });
     Route::prefix('/student')->group(function(){
         Route::get('/applicant', [StudentEMIS::class, 'index'])->name('emis.student.applicant.index');

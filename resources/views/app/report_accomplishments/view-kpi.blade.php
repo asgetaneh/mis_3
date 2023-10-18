@@ -35,7 +35,7 @@
                 $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
             @endphp
             
-            @if($period->id!= $activeQuarter[1]->id)
+            @if($period->id!= $activeQuarter[0]->id)
             <td> 
                 {{ $planOfOfficePlan[1] }}
             </td>

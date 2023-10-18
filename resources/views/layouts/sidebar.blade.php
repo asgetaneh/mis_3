@@ -72,16 +72,16 @@
                                     <a href="#" class="nav-link">
                                         <i class="nav-icon icon fas fa fa-caret-right"></i>
                                         <p>
-                                            Instructions
+                                            Institutions
                                             <i class="right fas fa-angle-left"></i>
                                         </p>
                                     </a>
 
                                     <ul class="nav nav-treeview">
                                         <li class="nav-item">
-                                            <a href="#" class="nav-link">
+                                            <a href="{{route('emis.institution.building')}}" class="nav-link">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>sub menu of instruction</p>
+                                                <p>Buildings</p>
                                             </a>
                                         </li>
                                     </ul>

@@ -45,6 +45,11 @@ class HomeController extends Controller
         $activeUsers = '';
         $inactiveUsers = '';
 
+        $kpis = KeyPeformanceIndicator::all();
+        $Objective = Objective::all();
+        $User = User::all();
+        $Office = Office::all();
+        dd($kpis);
         // if($user_office->isEmpty()){
         //     $search = $request->get('search', '');
         //     $offices = Office::search($search)

@@ -114,11 +114,12 @@ if (! function_exists('gettrans')) {
                 $report_period = ReportingPeriod::where('id' , '=', $value->id)->where('reporting_period_type_id', '=', $type)->get();
                     if($report_period){
                         foreach ($report_period as $key2 => $period) {
-                            $acctive_period_list[$key] = $period;
+                            $acctive_period_list[$key2] = $period;
                         }
                      }
             }
         }
+        //dd($acctive_period_list);
         return $acctive_period_list;
 
      }
