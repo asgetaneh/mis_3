@@ -57,6 +57,7 @@
                             <th>
                                 Description
                             </th>
+                            <th>IsActive</th>
                             <th class="text-center">
                                 @lang('crud.common.actions')
                             </th>
@@ -75,6 +76,11 @@
                             </td>
                             <td>
                                 {{ $planing_year_t->description }}
+                            </td>
+                            <td>
+                                <p class="badge p-2 {{ $planing_year_t->planingYear->is_active && $planing_year_t->planingYear->is_active == 1 ? 'badge-success' : 'badge-danger' }}">
+                                    {{ $planing_year_t->planingYear->is_active && $planing_year_t->planingYear->is_active == 1 ? 'Active' : 'Inactive' }}
+                                </p>
                             </td>
                             <td class="text-center" style="width: 134px;">
                                 <div
@@ -104,7 +110,8 @@
                                             <i class="icon ion-md-eye"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('delete', $planing_year_t)
+                                    @endcan
+                                    {{-- @can('delete', $planing_year_t)
                                     <form
                                         action="{{ route('planing-years.destroy', $planing_year_t->planing_year_id) }}"
                                         method="POST"
@@ -118,6 +125,41 @@
                                             <i class="icon ion-md-trash"></i>
                                         </button>
                                     </form>
+                                    @endcan --}}
+
+                                    @can('delete', $planing_year_t)
+                                        <form
+                                            action="{{ route('planing-years.activation', $planing_year_t->planing_year_id) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
+                                            class="ml-2"
+                                        >
+                                            @csrf
+
+                                            <input name="planning_year" hidden type="text" value="{{ $planing_year_t->planing_year_id }}">
+
+                                            @if($planing_year_t->planingYear->is_active !== "")
+                                                @if ($planing_year_t->planingYear->is_active == 1)
+                                                <input name="activation" hidden type="text" value="deactivate">
+
+                                                    <button
+                                                        type="submit"
+                                                        class="btn btn-danger"
+                                                    >
+                                                        Deactivate
+                                                    </button>
+                                                @else
+                                                <input name="activation" hidden type="text" value="activate">
+
+                                                    <button
+                                                        type="submit"
+                                                        class="btn btn-success"
+                                                    >
+                                                        Activate
+                                                    </button>
+                                                @endif
+                                            @endif
+                                        </form>
                                     @endcan
                                 </div>
                             </td>

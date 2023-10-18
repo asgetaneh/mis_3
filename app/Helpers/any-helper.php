@@ -11,6 +11,7 @@ use App\Models\ReportNarrationReport;
 use Carbon\Carbon;
 use Andegna\DateTime as Et_date;
 use Andegna\DateTimeFactory;
+use App\Models\Baseline;
 use App\Models\PlaningYear;
 // use DateTime;
 // use Redirect;
@@ -40,24 +41,24 @@ if (! function_exists('gettrans')) {
          $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $offices)->where('kpi_id','=', $Kpi->id);
         //  $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $offices)->where('kpi_id','=', $Kpi->id);
                $total = 0;
-        // constant 
+        // constant
         if($Kpi->behavior->slug == 1){//dd($planAccomplishments);
-            $planAccomplishments=  $planAccomplishments->select('*')->get(); 
+            $planAccomplishments=  $planAccomplishments->select('*')->get();
             foreach ($planAccomplishments as $key => $planAccomplishment) {
                $total = $total+ $planAccomplishment->accom_value;
-            } 
+            }
             return $total;
         }
-        // constant 
+        // constant
         else if($Kpi->behavior->slug == 2){
             $current_report_periods = getReportingQuarter($Kpi->reportingPeriodType->id);
             foreach ($current_report_periods as $key => $current_report_period) {
                $period = $current_report_period->id;
             }
-             $planAccomplishments= $planAccomplishments->where('plan_accomplishments.reporting_period_id','=', $period)->select('*')->get(); 
-            foreach ($planAccomplishments as $key => $planAccomplishment) { 
+             $planAccomplishments= $planAccomplishments->where('plan_accomplishments.reporting_period_id','=', $period)->select('*')->get();
+            foreach ($planAccomplishments as $key => $planAccomplishment) {
                 $total = $total+ $planAccomplishment->accom_value;
-            }  
+            }
             return $total;
         }
         //incrimental
@@ -66,10 +67,10 @@ if (! function_exists('gettrans')) {
             foreach ($current_report_periods as $key => $current_report_period) {
                $period = $current_report_period->id;
             }
-             $planAccomplishments= $planAccomplishments->where('plan_accomplishments.reporting_period_id','=', $period)->select('*')->get(); 
-            foreach ($planAccomplishments as $key => $planAccomplishment) { 
+             $planAccomplishments= $planAccomplishments->where('plan_accomplishments.reporting_period_id','=', $period)->select('*')->get();
+            foreach ($planAccomplishments as $key => $planAccomplishment) {
                 $total = $total+ $planAccomplishment->accom_value;
-            }  
+            }
             return $total;
         }
          //decrimental
@@ -78,10 +79,10 @@ if (! function_exists('gettrans')) {
             foreach ($current_report_periods as $key => $current_report_period) {
                $period = $current_report_period->id;
             }
-             $planAccomplishments= $planAccomplishments->where('plan_accomplishments.reporting_period_id','=', $period)->select('*')->get(); 
-            foreach ($planAccomplishments as $key => $planAccomplishment) { 
+             $planAccomplishments= $planAccomplishments->where('plan_accomplishments.reporting_period_id','=', $period)->select('*')->get();
+            foreach ($planAccomplishments as $key => $planAccomplishment) {
                 $total = $total+ $planAccomplishment->accom_value;
-            }  
+            }
             return $total;
         }
     }
@@ -256,4 +257,40 @@ if (! function_exists('gettrans')) {
         }
         return $all_ids;
    }
+
+
+   // Baseline functions
+   function getBaselineIndividual($year,$kpi, $office){
+    $planAccomplishments = Baseline::select()->where('planning_year_id' , '=', $year)->where('office_id' , '=', $office)->where('kpi_id' , '=', $kpi)->get();
+       foreach ($planAccomplishments as $key => $planAccomplishment) {
+           return $planAccomplishment;
+       }
+   }
+
+   function getBaselineIndividualOne($year,$kpi, $one, $office){
+    $planAccomplishments = Baseline::select()->where('planning_year_id' , '=', $year)->where('office_id' , '=', $office)->where('kpi_id' , '=', $kpi)->where('kpi_one_id' , '=', $one)->get();
+       foreach ($planAccomplishments as $key => $planAccomplishment) {
+           return $planAccomplishment;
+       }
+   }
+
+   function getBaselineIndividualOneTwo($year,$kpi, $one, $two,$office){
+    $planAccomplishments = Baseline::select()->where('planning_year_id' , '=', $year)
+        ->where('office_id' , '=', $office)
+        ->where('kpi_id' , '=', $kpi)
+        ->where('kpi_one_id' , '=', $one)
+        ->where('kpi_two_id' , '=', $two)
+        ->get();
+
+       foreach ($planAccomplishments as $key => $planAccomplishment) {
+           return $planAccomplishment;
+       }
+   }
+
+   function getBaselineIndividualOneTwoThree($year,$kpi, $one, $two,$three,$office){
+    $planAccomplishments = Baseline::select()->where('planning_year_id' , '=', $year)->where('office_id' , '=', $office)->where('kpi_id' , '=', $kpi)->where('kpi_one_id' , '=', $one)->where('kpi_two_id' , '=', $two)->where('kpi_three_id' , '=', $three)->get();
+       foreach ($planAccomplishments as $key => $planAccomplishment) {
+           return $planAccomplishment;
+       }
+  }
 }

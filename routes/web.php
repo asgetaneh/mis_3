@@ -158,6 +158,8 @@ Route::prefix('/')
 
                 Route::resource('perspectives', PerspectiveController::class);
                 Route::resource('planing-years', PlaningYearController::class);
+                Route::post('/planing-years/activation', [PlaningYearController::class, 'activation'])->name('planing-years.activation');
+
                 Route::resource('reporting-periods', ReportingPeriodController::class);
                 Route::resource(
                     'reporting-period-types',
@@ -226,6 +228,10 @@ Route::prefix('/')
 
                 Route::GET('/get-objectives/{goal}', [PlanAccomplishmentController::class, 'getAllObjectives'])->name('get-objectives');
                 Route::POST('/plan-save', [PlanAccomplishmentController::class, 'savePlan'])->name('plan.save');
+
+                // Exporting route for planning
+                Route::POST('/download', [PlanAccomplishmentController::class, 'downloadPlan'])->name('plan.download');
+
             });
 
             // reporting

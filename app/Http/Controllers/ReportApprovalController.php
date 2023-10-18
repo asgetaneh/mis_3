@@ -216,6 +216,17 @@ class ReportApprovalController extends Controller
                                 'accom_status' => $loggedInUserOfficeLevel->level,
                                 'approved_by_id' => auth()->user()->id
                             ]);
+
+                        $forPlanComment = array_merge($allChildrenApproved, array($office));
+
+                        // Change status of any report comment for the office and its children approved
+                        $changePlanCommentStatus = DB::table('report_comments')
+                            ->whereIn('office_id', $forPlanComment)
+                            ->where('kpi_id', $singleOfficePlan[0])
+                            ->where('planning_year_id', $singleOfficePlan[2])
+                            ->update([
+                                'status' => 0,
+                            ]);
                     }
                 }
             }
