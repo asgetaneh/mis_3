@@ -96,7 +96,7 @@
             <h3 style="text-align: center">
                 Strategic Management Senior Directorate
             </h3>
-            <h4 style="text-align: center">Plan</h4>
+            <h4 style="text-align: center">Plan Document</h4>
         </div>
         <p style="text-indent: 0pt; text-align: left"><br /></p>
         <table style="border-collapse: collapse;" cellspacing="0">
@@ -112,7 +112,7 @@
                     <p class="s1" style="
               text-align: left;
             ">
-                        Period: <u>period from - to</u>
+                        Year: <u>{{ $planning_year[0]->planingYearTranslations[0]->name ?? '-' }}</u>
                     </p>
                 </td>
             </tr>
@@ -125,21 +125,31 @@
                     </p>
                 </td> --}}
 
-                <td style="width: 107pt">
-                    <p class="s1" style="
-              text-align: left;
-            ">
-                        Manager:
-                        <u>{{ auth()->user()->name ?? '-' }}</u>
-                    </p>
-                </td>
+                @if(auth()->user()->is_admin || auth()->user()->hasRole('super-admin'))
+                @else
+                    <td style="width: 107pt">
+                        <p class="s1" style="
+                text-align: left;
+                ">
+                            Manager:
+                            <u>{{ auth()->user()->name ?? '-' }}</u>
+                        </p>
+                    </td>
+                @endif
+
             </tr>
             <tr style="height: 15pt">
                 <td style="width: 325pt">
                     <p class="s1" style="
               text-align: left;
             ">
-                        Office: <u>{{ auth()->user()->offices[0]->officeTranslations[0]->name ?? '-'}}</u>
+                        Office: <u>
+                            @if(auth()->user()->is_admin || auth()->user()->hasRole('super-admin'))
+                                {{ $imagen_off->officeTranslations[0]->name ?? '-'}}
+                            @else
+                                {{ auth()->user()->offices[0]->officeTranslations[0]->name ?? '-'}}
+                            @endif
+                        </u>
                     </p>
                 </td>
                 <td style="width: 107pt">
@@ -172,9 +182,9 @@
             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
                 @forelse($offices  as $office)
 
-                    @if(auth()->user()->is_admin || auth()->user()->hasRole('super-admin'))
+                    {{-- @if(auth()->user()->is_admin || auth()->user()->hasRole('super-admin'))
                         <h4 style="padding: 10px; border: 1px solid #000; border-bottom: none;">Office: {{ $office->officeTranslations[0]->name }}</h4>
-                    @endif
+                    @endif --}}
                     @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
                         @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
                             @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())

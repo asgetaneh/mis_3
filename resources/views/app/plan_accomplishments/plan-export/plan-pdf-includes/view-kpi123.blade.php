@@ -44,10 +44,10 @@
                         @endforelse
                     @empty
                     @endforelse
+                </tr>
 
                 @empty
                 @endforelse
-            </tr>
 
         @empty
         @endforelse
