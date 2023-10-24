@@ -1,78 +1,108 @@
 <table class="table table-bordered" border="1" class="table table-bordered" style="border-collapse: collapse; margin-bottom: 15px; border: 1px solid #000;">
-<tr>
+{{-- <tr> --}}
 {{-- <tr>
     <th colspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 3 }} ">
         Offices: {{ $office->officeTranslations[0]->name }}
     </th>
 </tr> --}}
-<td colspan="2  ">#</td>
-@foreach ($planAcc->Kpi->kpiChildOnes as $one)
+{{-- <td colspan="2  ">#</td> --}}
+{{-- @foreach ($planAcc->Kpi->kpiChildOnes as $one)
     <td>
         {{ $one->kpiChildOneTranslations[0]->name }}
     </td>
-@endforeach
+@endforeach --}}
 {{-- <th>Sum</th> --}}
-</tr>
-    @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
-         @php
-            $childAndHimOffKpi_array = [];
-            $childAndHimOffKpi = $office->offices;
-            foreach ($childAndHimOffKpi as $key => $value) {
-                $childAndHimOffKpi_array[$key] = $value->id;
-            }
-            $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
-           // $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id, $office);
-            $narration = $planAcc->getReportNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
-        @endphp
-        <tr>
-            <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
+{{-- </tr> --}}
+
+
+
+    <tr>
+        <th colspan="2">#</th>
+
+        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+        <th>
                 {{ $period->reportingPeriodTs[0]->name }}
             </th>
+        @empty
+        @endforelse
+    </tr>
+
+
+    @forelse ($planAcc->Kpi->kpiChildOnes as $one)
+
+        <tr>
+            <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
+                {{ $one->kpiChildOneTranslations[0]->name }}
+            </th>
             @foreach ($planAcc->Kpi->kpiChildTwos as $two)
-                <td>
+                <th>
                     {{ $two->kpiChildTwoTranslations[0]->name }}
-                </td>
-                @foreach ($planAcc->Kpi->kpiChildOnes as $one)
-                    <td>
-                        @php
-                            //$planOneTwo = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id, $office, $period->id,true);
-                            $planOneTwo = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year[0]->id ,$one->id, $two->id,null);
-                            $beforePlan = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year[0]->id ,$one->id, $two->id, null);
+                </th>
 
-                        @endphp
-
-                            <div style="display: flex;">
-                                <div style="flex: 1; padding: 5px; border: 1px solid #000; background-color: rgb(255, 255, 198);">
-                                    <span style="">{{ $beforePlan[0] }}</span>
-                                </div>
-                                <div style="flex: 1; padding: 5px; text-align: center; background-color: green; border: 1px solid #000;">
-                                    <span style="color: #fff;">{{ $planOneTwo[1] }}</span>
-                                </div>
-                            </div>
-
-                        {{-- <mark>{{ $beforePlan[0] }}</mark>
-                        {{ $planOneTwo[1] }} --}}
-                    </td>
-                @endforeach
-                {{-- total ch2 --}}
-                {{-- <td>
+                @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                     @php
-                        $planSumch2_array = [];
-                        $planSumch2 = $office->offices;
-                        foreach ($planSumch2 as $key => $value) {
-                            $planSumch2_array[$key] = $value->id;
+                        $childAndHimOffKpi_array = [];
+                        $childAndHimOffKpi = $office->offices;
+                        foreach ($childAndHimOffKpi as $key => $value) {
+                            $childAndHimOffKpi_array[$key] = $value->id;
                         }
-                        $planSumch2_array = array_merge($planSumch2_array, [$office->id]);
-
-                        $planSumch2Total = $planAcc->planIndividualChTwoSum($planAcc->Kpi->id, $two->id, $planSumch2_array,$period->id);
+                        $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
+                    // $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id, $office);
+                        $narration = $planAcc->getReportNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
                     @endphp
-                    {{ $planSumch2Total }}
-                </td> --}}
-                {{-- end total ch2 --}}
+                    {{-- <tr>
+                        <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
+                            {{ $period->reportingPeriodTs[0]->name }}
+                        </th>
+                        @foreach ($planAcc->Kpi->kpiChildTwos as $two)
+                            <td>
+                                {{ $two->kpiChildTwoTranslations[0]->name }}
+                            </td>
+                            @foreach ($planAcc->Kpi->kpiChildOnes as $one) --}}
+                                <td>
+                                    @php
+                                        //$planOneTwo = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id, $office, $period->id,true);
+                                        $planOneTwo = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year[0]->id ,$one->id, $two->id,null);
+                                        $beforePlan = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year[0]->id ,$one->id, $two->id, null);
+
+                                    @endphp
+
+                                        <div style="display: flex;">
+                                            <div style="flex: 1; padding: 5px; border: 1px solid #000; background-color: rgb(255, 255, 198);">
+                                                <span style="">{{ $beforePlan[0] }}</span>
+                                            </div>
+                                            <div style="flex: 1; padding: 5px; text-align: center; background-color: green; border: 1px solid #000;">
+                                                <span style="color: #fff;">{{ $planOneTwo[1] }}</span>
+                                            </div>
+                                        </div>
+
+                                    {{-- <mark>{{ $beforePlan[0] }}</mark>
+                                    {{ $planOneTwo[1] }} --}}
+                                </td>
+                            {{-- @endforeach --}}
+                            {{-- total ch2 --}}
+                            {{-- <td>
+                                @php
+                                    $planSumch2_array = [];
+                                    $planSumch2 = $office->offices;
+                                    foreach ($planSumch2 as $key => $value) {
+                                        $planSumch2_array[$key] = $value->id;
+                                    }
+                                    $planSumch2_array = array_merge($planSumch2_array, [$office->id]);
+
+                                    $planSumch2Total = $planAcc->planIndividualChTwoSum($planAcc->Kpi->id, $two->id, $planSumch2_array,$period->id);
+                                @endphp
+                                {{ $planSumch2Total }}
+                            </td> --}}
+                            {{-- end total ch2 --}}
+                    {{-- </tr> --}}
+                {{-- @endforeach --}}
+                @empty
+                @endforelse
+        </tr>
+            @endforeach
         </tr>
     @endforeach
-@empty
-    @endforelse
     {{-- total ch1ch3 --}}
     {{-- <tr>
         <th colspan='2' style="background:#ffeecc;">

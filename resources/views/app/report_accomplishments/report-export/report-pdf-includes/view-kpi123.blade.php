@@ -12,12 +12,35 @@
             Office: {{ $office->officeTranslations[0]->name }}
         </th>
     </tr> --}}
+
     <tr>
+        <th rowspan="2" colspan="2">#</th>
+
+        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+            <th colspan="{{ $planAcc->Kpi->kpiChildThrees->count() }}">
+                {{ $period->reportingPeriodTs[0]->name }}
+            </th>
+        @empty
+        @endforelse
+    </tr>
+
+    <tr>
+
+        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+            @foreach ($planAcc->Kpi->kpiChildThrees as $kpiThree)
+                <th>{{ $kpiThree->kpiChildThreeTranslations[0]->name }}
+                </th>
+            @endforeach
+        @empty
+        @endforelse
+    </tr>
+
+    {{-- <tr>
         <td rowspan="2" colspan="2">#</td>
         @foreach ($planAcc->Kpi->kpiChildOnes as $one)
             <td colspan="{{ $planAcc->Kpi->kpiChildThrees->count() }}">{{ $one->kpiChildOneTranslations[0]->name }}
             </td>
-        @endforeach
+        @endforeach --}}
         {{-- <td rowspan ="2">
     @php
         $childAndHimOffKpi_array =[];
@@ -32,16 +55,31 @@
 
         {{"Sum"}}
     </td> --}}
-    </tr>
-    <tr>
+    {{-- </tr> --}}
+
+
+
+    {{-- <tr>
         @foreach ($planAcc->Kpi->kpiChildOnes as $one)
             @foreach ($planAcc->Kpi->kpiChildThrees as $kpiThree)
                 <td>{{ $kpiThree->kpiChildThreeTranslations[0]->name }}
             @endforeach
         @endforeach
-    </tr>
+    </tr> --}}
+
+    @forelse ($planAcc->Kpi->kpiChildOnes as $one)
+
+    <tr>
+        <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
+            {{ $one->kpiChildOneTranslations[0]->name }}
+        </th>
+    @foreach ($planAcc->Kpi->kpiChildTwos as $two)
+            <th>
+                {{ $two->kpiChildTwoTranslations[0]->name }}
+            </th>
+
     @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
-        <tr>
+        {{-- <tr>
             <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
                 {{ $period->reportingPeriodTs[0]->name }}
             </th>
@@ -49,7 +87,7 @@
                 <td>
                     {{ $two->kpiChildTwoTranslations[0]->name }}
                 </td>
-                @foreach ($planAcc->Kpi->kpiChildOnes as $one)
+                @foreach ($planAcc->Kpi->kpiChildOnes as $one) --}}
                     @php
                         $childAndHim_array = [];
                     @endphp
@@ -84,7 +122,7 @@
 
                         </td>
                     @endforeach
-                @endforeach
+                {{-- @endforeach --}}
                 {{-- total ch2 --
             <td>
         @php
@@ -101,10 +139,15 @@
             </td>
 
         {{-- end total ch2 --}}
-        </tr>
-    @endforeach
+        {{-- </tr> --}}
+    {{-- @endforeach --}}
 @empty
     @endforelse
+    </tr>
+
+    @endforeach
+
+    @endforeach
     {{-- total ch1ch3
     <tr>
         <th style ="background:#ffeecc;" colspan="2">
