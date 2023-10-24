@@ -845,7 +845,7 @@ class PlanAccomplishmentController extends Controller
 
                         ]);
 
-                        // return view('app.plan_accomplishments.plan-export.pdf-plan-all', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year'));
+                        return view('app.plan_accomplishments.plan-export.pdf-plan-all', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year'));
 
                         $pdf = App::make('dompdf.wrapper', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year'))
                             ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])

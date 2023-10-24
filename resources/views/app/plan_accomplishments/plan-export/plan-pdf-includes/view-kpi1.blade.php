@@ -8,6 +8,7 @@
     </tr> --}}
     <tr>
         <th> </th>
+        <th>Baseline</th>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             <th>
                 {{ $period->reportingPeriodTs[0]->name }}
@@ -29,6 +30,11 @@
         <td>
             {{ $one->kpiChildOneTranslations[0]->name }}
         </td>
+
+        {{-- Fetch baseline sum for this KPI, for now just a character --}}
+        <td>{{ '-' }}</td>
+
+
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             <td>
                 @php
