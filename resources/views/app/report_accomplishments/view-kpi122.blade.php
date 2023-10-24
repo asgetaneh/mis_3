@@ -1,7 +1,7 @@
-<table class="table table-bordered" > 
+<table class="table table-bordered" >
 <tr>
 <tr>
-    <th colspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 3 }} ">
+    <th colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 3 }} ">
         Offices: {{ $office->officeTranslations[0]->name }}
     </th>
     <td rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }} *{{count(getQuarter($planAcc->Kpi->reportingPeriodType->id))}}+2">
@@ -17,46 +17,76 @@
         @endif
     </td>
 </tr>
-<td colspan="2  ">#</td>
+{{-- <td colspan="2  ">#</td>
 @foreach ($planAcc->Kpi->kpiChildOnes as $one)
     <td>
         {{ $one->kpiChildOneTranslations[0]->name }}
     </td>
-@endforeach
+@endforeach --}}
 {{-- <th>Sum</th> --}}
 </tr>
-@forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
-    @php
-        $childAndHimOffKpi_array = [];
-        $childAndHimOffKpi = $office->offices;
-        foreach ($childAndHimOffKpi as $key => $value) {
-            $childAndHimOffKpi_array[$key] = $value->id;
-        }
-        $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
-       // $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id, $office);
-        $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
-    @endphp
+
+
+    <tr>
+        <th colspan="2">#</th>
+
+        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+        <th>
+                {{ $period->reportingPeriodTs[0]->name }}
+            </th>
+        @empty
+        @endforelse
+    </tr>
+
+
+    @forelse ($planAcc->Kpi->kpiChildOnes as $one)
+
     <tr>
         <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
-            {{ $period->reportingPeriodTs[0]->name }}
+            {{ $one->kpiChildOneTranslations[0]->name }}
         </th>
         @foreach ($planAcc->Kpi->kpiChildTwos as $two)
-            <td>
+            <th>
                 {{ $two->kpiChildTwoTranslations[0]->name }}
-            </td>
-            @foreach ($planAcc->Kpi->kpiChildOnes as $one)
-                <td>
-                    @php
-                        //$planOneTwo = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id, $office, $period->id,true);
-                        $planOneTwo = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year[0]->id ,$one->id, $two->id,null);
-                    @endphp
-                    {{ $planOneTwo[1] }}
-                </td>
-            @endforeach
+            </th>
+
+        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+            @php
+                $childAndHimOffKpi_array = [];
+                $childAndHimOffKpi = $office->offices;
+                foreach ($childAndHimOffKpi as $key => $value) {
+                    $childAndHimOffKpi_array[$key] = $value->id;
+                }
+                $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
+            // $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id, $office);
+                $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
+            @endphp
+            {{-- <tr>
+                <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
+                    {{ $period->reportingPeriodTs[0]->name }}
+                </th>
+                @foreach ($planAcc->Kpi->kpiChildTwos as $two)
+                    <td>
+                        {{ $two->kpiChildTwoTranslations[0]->name }}
+                    </td>
+                    @foreach ($planAcc->Kpi->kpiChildOnes as $one) --}}
+                        <td>
+                            @php
+                                //$planOneTwo = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id, $office, $period->id,true);
+                                $planOneTwo = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year[0]->id ,$one->id, $two->id,null);
+                            @endphp
+                            {{ $planOneTwo[1] }}
+                        </td>
+                    {{-- @endforeach
+            </tr>
+        @endforeach --}}
+        @empty
+        @endforelse
+
     </tr>
+    @endforeach
+</tr>
 @endforeach
-@empty
-@endforelse
 <tr>
     <td>
         Major Activities

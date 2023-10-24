@@ -1,7 +1,7 @@
-<table class="table table-bordered" > 
+<table class="table table-bordered" >
 {{-- style="background:#34214322;" --}}
     <tr>
-        <th colspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 1 }} ">
+        <th colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 1 }} ">
             Offices: {{ $office->officeTranslations[0]->name }}
         </th>
          <td rowspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 3 }}">
@@ -64,6 +64,6 @@
                     echo '<br/>';
                 @endphp
             @endforeach
-        </td> 
+        </td>
     </tr>
 </table>
