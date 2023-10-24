@@ -1,7 +1,7 @@
 {{-- level one (directores and same level) --}}
 <table class="table table-bordered" style="background:#12cd4322;">
     <tr>
-        <th colspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 1 }} ">
+        <th colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 1 }} ">
             Offices: {{ $office->officeTranslations[0]->name }}
         </td>
          <td rowspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 3 }}">
@@ -55,7 +55,7 @@
     @endforeach
     <tr>
         <td>
-            Major Activities 
+            Major Activities
         </td>
         <td colspan="{{count(getQuarter($planAcc->Kpi->reportingPeriodType->id))}}">
             @foreach ($narration as $key => $plannaration)
