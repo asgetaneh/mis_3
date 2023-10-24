@@ -1,10 +1,10 @@
 <table class="table table-bordered" border="1" class="table table-bordered" style="border-collapse: collapse; margin-bottom: 15px; border: 1px solid #000;">
 <tr>
-<tr>
+{{-- <tr>
     <th colspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 3 }} ">
         Offices: {{ $office->officeTranslations[0]->name }}
     </th>
-</tr>
+</tr> --}}
 <td colspan="2  ">#</td>
 @foreach ($planAcc->Kpi->kpiChildOnes as $one)
     <td>

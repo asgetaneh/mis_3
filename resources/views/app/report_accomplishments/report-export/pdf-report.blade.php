@@ -112,7 +112,7 @@
                     <p class="s1" style="
               text-align: left;
             ">
-                        Period: <u>period from - to</u>
+                        Year: <u>{{ $planning_year[0]->planingYearTranslations[0]->name ?? '-' }}</u>
                     </p>
                 </td>
             </tr>
@@ -149,15 +149,23 @@
                     <p style="text-indent: 0pt; text-align: left"><br /></p>
                 </td>
             </tr>
-        </table>
+            <tr>
+                <td style="border: 1px solid #000; display: inline-block; padding: 10px !important; margin-top: 10px;">
+                    <div>
+                        <p style="margin-bottom: 10px;"><u>REMARK: </u></p>
+                        <p style="margin-bottom: 5px;"><span
+                                style="background: yellow; padding: 0 15px !important; margin-right: 5px; border: 1px solid #000;"> </span>
+                            yellow labled values are plans</p>
+                        <p><span
+                                style="background: green; padding: 0 15px !important; margin-right: 5px; border: 1px solid #000;"> </span>
+                            green labled values are achievement</p>
+                    </div>
+                    <div>
 
-        <ul>
-            <span><u>REMARK: </u></span>
-            <div style="margin-left: 10px;">
-                <li><span style="background: green; padding: 5px 10px;"> </span> green labled values are achievement</li>
-                <li><span style="background: yellow; padding: 5px 10px;"> </span> yellow labled values are plans</li>
-            </div>
-        </ul>
+                    </div>
+                </td>
+            </tr>
+        </table>
 
         <p style="text-indent: 0pt; text-align: left"><br /></p>
 
@@ -176,7 +184,8 @@
             @endphp
 
             <h3 style="background-color: #e7e7ff; padding: 10px; border: 1px solid #000;">KPI:
-                {{ $planAcc->Kpi->KeyPeformanceIndicatorTs[0]->name }} - <u>Report for: {{ $activeQuarter[0]->reportingPeriodTs[0]->name }}</u></h3>
+                {{ $planAcc->Kpi->KeyPeformanceIndicatorTs[0]->name }} - <u>Report for:
+                    {{ $activeQuarter[0]->reportingPeriodTs[0]->name }}</u></h3>
 
             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
                 @forelse($offices  as $office)

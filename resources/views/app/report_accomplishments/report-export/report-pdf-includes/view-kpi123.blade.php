@@ -6,12 +6,12 @@
     @endphp
 
     <!-- <tr id="child-ones"> -->
-    <tr>
+    {{-- <tr>
 
         <th colspan="{{ $ospan }} "  style="background:#fff7e6;width:100%">
             Office: {{ $office->officeTranslations[0]->name }}
         </th>
-    </tr>
+    </tr> --}}
     <tr>
         <td rowspan="2" colspan="2">#</td>
         @foreach ($planAcc->Kpi->kpiChildOnes as $one)
