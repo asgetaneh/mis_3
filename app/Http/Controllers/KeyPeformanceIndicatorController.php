@@ -504,6 +504,96 @@ class KeyPeformanceIndicatorController extends Controller
             )
         );
     }
+    public function kpiAssignToOffices(Request $request, $id): View
+    {
+        $keyPeformanceIndicator = KeyPeformanceIndicator::find($id);
+
+        $kpiOfficelistList = [];
+        foreach ($keyPeformanceIndicator->offices as $office){
+            array_push($kpiOfficelistList, $office->id);
+        }
+        $user_office = auth()->user()->offices[0]->id;
+        $office_t = officeTranslation::join('offices', 'offices.id', '=', 'translation_id')
+        -> whereNotIn('translation_id', $kpiOfficelistList)
+         ->where('offices.parent_office_id','=', $user_office)
+         ->get();
+        $officesAdds = office::select('offices.*')
+                    ->join('kpi_office', 'offices.id', '=', 'kpi_office.office_id')
+                       ->where('parent_office_id','=', $user_office)
+                       ->where('kpi_office.kpi_id','=', $keyPeformanceIndicator->id)
+                     ->get();
+                     foreach ($officesAdds as $key => $value) {
+                       //dd($value->planacc);
+                     }
+         //$officesAdds = $keyPeformanceIndicator->offices;
+        $languages = Language::all();
+
+        return view(
+            'app.key_peformance_indicators.office-assign',
+            compact(
+                'keyPeformanceIndicator',
+                'office_t',
+                'officesAdds',
+                'languages'
+            )
+        );
+    }
+    public function kpiAssignToOfficesSave(Request $request){
+        $data = $request->input();
+        $keyPeformanceIndicator = $data['kpiId'];
+        $kpiofficesLists = $data['kpiofficeLists'];
+
+        foreach($kpiofficesLists as $kpiofficesList){
+            $kpioffice = DB::insert('insert into kpi_office (office_id, kpi_id) values (?, ?)', [$kpiofficesList, $keyPeformanceIndicator]);
+        }
+
+        $search = $request->get('search', '');
+        $keyPeformanceIndicators = KeyPeformanceIndicatorT::search($search)
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+             return redirect()->back()->with(
+            [
+                'keyPeformanceIndicator' => $keyPeformanceIndicator,
+             ]
+
+        );
+
+
+    }
+     public function kpiRemoveFromOffice($keyPeformanceIndicator_id, $office,
+        Request $request
+    ) {
+        $user_office = auth()->user()->offices[0]->id;
+        $keyPeformanceIndicator = KeyPeformanceIndicator::find($keyPeformanceIndicator_id);
+        //dd($keyPeformanceIndicator);
+        $keyPeformanceIndicator->find($keyPeformanceIndicator_id)->offices()->detach($office);
+
+        $kpiOfficesList = [];
+        //dd($keyPeformanceIndicator->offices);
+        foreach ($keyPeformanceIndicator->offices as $office){
+            array_push($kpiOfficesList, $office->id);
+        }
+
+        $KpiChildThree = KpiChildThreeTranslation::whereNotIn('kpiChildThree_id', $kpiOfficesList)->get();
+        $office_t = officeTranslation::join('offices', 'offices.id', '=', 'translation_id')
+        -> whereNotIn('translation_id', $kpiOfficesList)
+         ->where('offices.parent_office_id','=', $user_office)
+         ->get();
+
+        $childOfficesAdds = $keyPeformanceIndicator->offices;
+
+        return redirect()->back()->with(
+            [
+                'keyPeformanceIndicator' => $keyPeformanceIndicator,
+                'KpiChildThree' => $office_t,
+                'childThreeAdds' => $childOfficesAdds
+            ]
+
+        );
+
+    }
+
     public function kpiChainThreeStore(Request $request){
         // dd($request);
 

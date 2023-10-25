@@ -182,7 +182,8 @@
                                                                 <i class="icon ion-md-eye"></i>
                                                             </button>
                                                         </a>
-                                                        @endcan @can('delete',
+                                                        @endcan 
+                                                        @can('delete',
                                                         $keyPeformanceIndicator->keyPeformanceIndicatorTs[0])
                                                         <form
                                                             action="{{ route('key-peformance-indicators.destroy', $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->translation_id) }}"
@@ -192,6 +193,19 @@
                                                             <button type="submit" class="btn btn-light text-danger">
                                                                 <i class="icon ion-md-trash"></i>
                                                             </button>
+                                                           @php
+                                                            $user = auth()->user();
+                                                           @endphp 
+                                                            @if($user->hasPermission('view keypeformanceindicators'))
+
+                                                            <a
+                                                            href="{{ route('kpi-assign-tooffices', $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->keyPeformanceIndicator) }}">
+                                                            <button type="button" class="btn btn-info"
+                                                                title="Add Disaggregation Three">
+                                                                 Cascade
+                                                            </button>
+                                                            </a>
+                                                          @endif
                                                         </form>
                                                     @endcan
                                                 </div>

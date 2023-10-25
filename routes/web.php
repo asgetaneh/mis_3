@@ -65,6 +65,7 @@ Route::get('/', function () {
     return view('landing.index');
 });
 Route::get('/dashboard', [HomeController::class, 'index'])->name('home');
+Route::match(array('POST', 'GET'),'dashboard-plan-report', [HomeController::class, 'planReport'])->name('planReport');
 
 // Route::get('/dashboard', function () { return view('layouts.dashboard');});
 Route::get('lang/home', [HomeController::class, 'languageIndex']);
@@ -114,6 +115,10 @@ Route::prefix('/')
                     Route::get('kpi-chain-three/{id}', [KeyPeformanceIndicatorController::class, 'kpiChainThree'])->name('kpi-chain-three.create');
                     Route::POST('kpi-chain-three/save', [KeyPeformanceIndicatorController::class, 'kpiChainThreeStore'])->name('kpi-chain-three.store');
                     Route::DELETE('kpi-chain-three-remove/{kpiTwo}/{childthree}', [KeyPeformanceIndicatorController::class, 'kpiChainThreeRemove'])->name('kpi-chain-three.remove');
+                    Route::get('kpi-assign-tooffices/{id}', [KeyPeformanceIndicatorController::class, 'kpiAssignToOffices'])->name('kpi-assign-tooffices');
+                    Route::POST('kpi-assign-tooffices/save', [KeyPeformanceIndicatorController::class, 'kpiAssignToOfficesSave'])->name('kpi-assign-tooffices-save');
+                    Route::DELETE('kpi-remove-from-office/{kpi}/{office}', [KeyPeformanceIndicatorController::class, 'kpiRemoveFromOffice'])->name('kpi-remove-from-office');
+
 
                     Route::resource(
                         'key-peformance-indicators',

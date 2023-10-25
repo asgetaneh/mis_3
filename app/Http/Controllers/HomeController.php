@@ -13,6 +13,7 @@ use App\Models\KeyPeformanceIndicator;
 use App\Models\Perspective;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
+use App\Models\ReportingPeriod;
 
 class HomeController extends Controller
 {
@@ -43,13 +44,41 @@ class HomeController extends Controller
         $totalPerspectives = Perspective::count() ?? 'None';
         $totalOffices = Office::count() ?? 'None';
         $activeUsers = '';
-        $inactiveUsers = '';
+        $inactiveUsers = '';//dd($request->method());
 
         $kpis = KeyPeformanceIndicator::all();
-        $Objective = Objective::all();
-        $User = User::all();
-        $Office = Office::all();
-        dd($kpis);
+        $Objectives = Objective::all();
+        $Users = User::all();
+        $Offices = Office::all();
+        $all_child_and_subchildoffices = [];
+        foreach ($Offices as $key => $value) { 
+            $all_child_and_subchildoffices=array_merge($all_child_and_subchildoffices,array($value->id));
+        }
+
+        //$periods = ReportingPeriod::all();
+        $period =null;
+        //$period_or_quarter = getReportingQuarter($kpii->reportingPeriodType->id); 
+        $input = $request->all();
+        if($input){
+            if($request->has('kpi')){
+                $kpis = KeyPeformanceIndicator::where('id', $request->input('kpi'))->get();
+             }
+            if($request->has('office')){
+                 $Offices = Office::where('id',$request->input('office'))->get();
+                 foreach ($Offices as $key => $value) { 
+                    $all_child_and_subchildoffices = office_all_childs_ids($value);
+                    $all_child_and_subchildoffices = array_merge($all_child_and_subchildoffices, array($value->id));
+                }
+            }
+            if($request->has('period')){
+                 $period = ReportingPeriod::where('id',$request->input('period'))->get();
+            }
+         }
+        
+ 
+
+        
+        //dd($all_child_and_subchildoffices);
         // if($user_office->isEmpty()){
         //     $search = $request->get('search', '');
         //     $offices = Office::search($search)
@@ -69,6 +98,9 @@ class HomeController extends Controller
                 'totalObjectives' => $totalObjectives,
                 'totalPerspectives' => $totalPerspectives,
                 'totalOffices' => $totalOffices,
+                 'kpis' => $kpis,
+                'offices' => $all_child_and_subchildoffices,
+                'period' => $period,
             ]);
       //  }
 

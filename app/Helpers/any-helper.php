@@ -36,6 +36,43 @@ if (! function_exists('gettrans')) {
 
         return $kpi;
     }
+    function  getKpiPlan($kpii,$list_offices,$selected_period)
+    {
+        $planning_year = PlaningYear::where('is_active',true)->get();  
+        $active_period = getReportingQuarter($kpii->reportingPeriodType->id); 
+        if($selected_period){
+            $active_period = $selected_period;
+        }     //dd($list_offices);
+        if($active_period){
+            $planAccomplishments = PlanAccomplishment::
+            join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
+            -> where('reporting_periods.id',"=", $active_period[0]->id)
+            -> where('kpi_id' , '=', $kpii->id)
+            ->where('planning_year_id' , '=', $planning_year[0]->id)
+            ->where('plan_status' , '=', 1)
+         ->whereIn('office_id', $list_offices)
+        // -> where('reporting_periods.slug',"=", 1)
+        //->groupBy('kpi_id')
+             ->get();
+        }
+        $plan_value = 0;
+        $acc_value = 0;
+        $plan_accom_array = [];
+         foreach ($planAccomplishments as $key => $planAccomplishment) {
+            $plan_value = $plan_value+ $planAccomplishment->plan_value;
+            $acc_value = $acc_value+ $planAccomplishment->accom_value;
+        }
+        $plan_accom_array = array_merge( $plan_accom_array,array($plan_value));
+            $plan_accom_array = array_merge( $plan_accom_array,array($acc_value));
+            return $plan_accom_array;
+    }
+   
+    function getAllReportingPeriod()
+    {
+    	$ReportingPeriod = ReportingPeriod::get();
+
+        return $ReportingPeriod;
+    }
     function getKpiReport($Kpi,$office){
         $offices =  allChildAndChildChild($office);
          $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $offices)->where('kpi_id','=', $Kpi->id);

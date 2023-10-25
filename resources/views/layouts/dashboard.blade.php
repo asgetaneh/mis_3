@@ -218,11 +218,52 @@
         <div class="">
             <div class="row">
 
-                <div class="col-md-6">
+                <div class="col-md-12">
 
                     <div class="card border card-light">
-                        <div class="card-header">
-                            <h3 class="card-title">Bar Chart</h3>
+                    <form action="{{ route('home') }}" method="Get" id="comment-form">
+                         <div class="card-header">
+                            <h3 class="card-title">
+                            <div class ="row">
+                                <div class="col-md-4">
+                                    <label class="label" for="filters">Key Peformance Indicator:</label>
+                                <select class="form-control select2" name="kpi">
+                                    <option disabled selected value="">Select Key Peformance Indicator</option>
+                                    @forelse(getAllKpi() as $kpi)
+                                            <option value="{{ $kpi->id }}">{{ $kpi->keyPeformanceIndicatorTs[0]->name }}
+                                            </option>
+                                    @empty
+                                    @endforelse
+                                </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="label" for="filters">Office:</label>
+                                <select class="form-control select2" name="office">
+                                    <option disabled selected value="">Select Office</option>
+                                    @forelse(getAllOffices() as $office)
+                                            <option value="{{ $office->id }}">{{ $office->officeTranslations[0]->name }}
+                                            </option>
+                                    @empty
+                                    @endforelse
+                                </select>
+                                </div>
+                                 <div class="col-md-3">
+                                    <label class="label" for="filters">Reporting Period:</label>
+                                <select class="form-control select2" name="period">
+                                    <option disabled selected value="">Select Reporting Period</option>
+                                    @forelse(getAllReportingPeriod() as $ReportingPeriod)
+                                            <option value="{{ $ReportingPeriod->id }}">{{ $ReportingPeriod->reportingPeriodTs[0]->name }}
+                                            </option>
+                                    @empty
+                                    @endforelse
+                                </select>
+                                </div>
+                                <div class="col-md-2">
+                                <button type="submit" class="btn btn-info">Filter</button>
+                                </div>
+                            </div>                            
+                                
+                            </h3>
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                     <i class="fas fa-minus"></i>
@@ -232,6 +273,7 @@
                                 </button>
                             </div>
                         </div>
+                        </form>
                         <div class="card-body">
                             <div class="chart">
                                 <div class="chartjs-size-monitor">
@@ -313,7 +355,7 @@
 
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-12">
 
                     <div class="card border card-light">
                         <div class="card-header">
@@ -345,7 +387,7 @@
 
 
                     <div class="card border card-light">
-                        <div class="card-header">
+                        {{-- <div class="card-header">
                             <h3 class="card-title">Pie Chart</h3>
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -368,7 +410,7 @@
                             <canvas id="pieChart"
                                 style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 442px;"
                                 width="442" height="250" class="chartjs-render-monitor"></canvas>
-                        </div>
+                        </div> --}}
 
                     </div>
 
@@ -402,17 +444,17 @@
 
                     </div>
 
-                </div>
+                </div>*/
 
             </div>
 
         </div>
         {{-- </section> --}}
-    @endif
-
+    @endif     
     <script src="{{ asset('assets/plugins/chart.js/Chart.min.js') }}"></script>
     <script>
         $(function() {
+               
             /* ChartJS
              * -------
              * Here we will create a few charts using ChartJS
@@ -426,7 +468,14 @@
             var areaChartCanvas = $('#areaChart').get(0).getContext('2d')
 
             var areaChartData = {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July','s','e','r','t','y','uo'],
+                labels: [
+                    <?php 
+                    foreach($kpis as $kpii){ 
+                            $ll=substr($kpii->keyPeformanceIndicatorTs[0]->name,0,20) . '...';
+                         echo ("'".$ll."'".',');
+                     }?>
+    
+                 ],
                 datasets: [{
                         label: 'Report',
                         backgroundColor: 'rgba(60,141,188,0.9)',
@@ -436,7 +485,12 @@
                         pointStrokeColor: 'rgba(60,141,188,1)',
                         pointHighlightFill: '#fff',
                         pointHighlightStroke: 'rgba(60,141,188,1)',
-                        data: [28, 48, 40, 19, 86, 27, 90,2,3,34,5,6]
+                        data: [<?php 
+                                foreach($kpis as $kpii){ 
+                                     $k_plan_report = getKpiPlan($kpii,$offices,$period);
+                                    echo ($k_plan_report[1]);
+                                     echo(',');
+                                }?>]
                     },
                     {
                         label: 'Plan',
@@ -447,7 +501,13 @@
                         pointStrokeColor: '#c1c7d1',
                         pointHighlightFill: '#fff',
                         pointHighlightStroke: 'rgba(220,220,220,1)',
-                        data: [65, 59, 80, 81, 56, 55, 40,12,13,24,15,16]
+                        data: [
+                                <?php 
+                                foreach($kpis as $kpii){
+                                   $k_plan_report = getKpiPlan($kpii,$offices,$period);
+                                    echo($k_plan_report[0].',');
+                                 }?>
+                        ]
                     },
                 ]
             }
@@ -520,17 +580,17 @@
             }
             //Create pie or douhnut chart
             // You can switch between pie and douhnut using the method below.
-            new Chart(donutChartCanvas, {
+           /* new Chart(donutChartCanvas, {
                 type: 'doughnut',
                 data: donutData,
                 options: donutOptions
-            })
-
+            })*/
+ 
             //-------------
             //- PIE CHART -
             //-------------
             // Get context with jQuery - using jQuery's .get() method.
-            var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
+         /*   var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
             var pieData = donutData;
             var pieOptions = {
                 maintainAspectRatio: false,
@@ -542,7 +602,7 @@
                 type: 'pie',
                 data: pieData,
                 options: pieOptions
-            })
+            })*/
 
             //-------------
             //- BAR CHART -
