@@ -96,7 +96,7 @@
             <h3 style="text-align: center">
                 Strategic Management Senior Directorate
             </h3>
-            <h4 style="text-align: center">Plan</h4>
+            <h4 style="text-align: center">Plan Document</h4>
         </div>
         <p style="text-indent: 0pt; text-align: left"><br /></p>
         <table style="border-collapse: collapse;" cellspacing="0">

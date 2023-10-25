@@ -1,22 +1,10 @@
-<table class="table table-bordered" >
-{{-- style="background:#34214322;" --}}
-    <tr>
-        <th colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 1 }} ">
+{{-- level one (directores and same level) --}}
+<table class="table table-bordered" border="1" class="table table-bordered" style="border-collapse: collapse; margin-bottom: 15px; border: 1px solid #000;">
+    {{-- <tr>
+        <th colspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 1 }} ">
             Offices: {{ $office->officeTranslations[0]->name }}
         </th>
-         <td rowspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 3 }}">
-            @if (!$office->offices->isEmpty())
-                <p>
-                    <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}{{$planAcc->Kpi->id}}" role="button"
-                        aria-expanded="false" aria-controls="collapseExample0">
-                        Details
-                    </a>
-                </p>
-            @else
-                {{ 'no child ' }}
-            @endif
-        </td>
-    </tr>
+    </tr> --}}
     <tr>
         <th>#</th>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
@@ -30,7 +18,7 @@
                     $childAndHimOffKpi_array[$key] = $value->id;
                 }
                 $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
-              //  $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id, $office);
+                //$planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id, $office);
             @endphp
         @empty
         @endforelse
@@ -45,9 +33,22 @@
                 @php
                     //$planOne = $planAcc->planOne($planAcc->Kpi->id, $one->id, $office, $period->id, true);
                     $planOne = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year[0]->id ,$one->id,null,null);
+                    $beforePlan = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year[0]->id ,$one->id, null, null);
+
                     $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
                 @endphp
-                {{ $planOne[1] }}
+
+                <div style="display: flex;">
+                    <div style="flex: 1; padding: 5px; border: 1px solid #000; background-color: rgb(255, 255, 198);">
+                        <span style="">{{ $beforePlan[0] }}</span>
+                    </div>
+                    <div style="flex: 1; padding: 5px; text-align: center; background-color: green; border: 1px solid #000;">
+                        <span style="color: #fff;">{{ $planOne[1] }}</span>
+                    </div>
+                </div>
+{{--
+                <mark>{{ $beforePlan[0] }}</mark>
+                {{ $planOne[1] }} --}}
             </td>
         @empty
         @endforelse

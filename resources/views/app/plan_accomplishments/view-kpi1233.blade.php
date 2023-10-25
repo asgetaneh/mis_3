@@ -21,7 +21,32 @@
         @endif
     </td>
     </tr>
+
+
     <tr>
+        <th rowspan="2" colspan="2">#</th>
+
+        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+            <th colspan="{{ $planAcc->Kpi->kpiChildThrees->count() }}">
+                {{ $period->reportingPeriodTs[0]->name }}
+            </th>
+        @empty
+        @endforelse
+    </tr>
+
+    <tr>
+
+        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+            @foreach ($planAcc->Kpi->kpiChildThrees as $kpiThree)
+                <th>{{ $kpiThree->kpiChildThreeTranslations[0]->name }}
+                </th>
+            @endforeach
+        @empty
+        @endforelse
+    </tr>
+
+
+    {{-- <tr>
         <td rowspan="2" colspan="2">#</td>
         @foreach ($planAcc->Kpi->kpiChildOnes as $one)
             <td colspan="{{ $planAcc->Kpi->kpiChildThrees->count() }}">{{ $one->kpiChildOneTranslations[0]->name }}
@@ -34,41 +59,60 @@
                 <td>{{ $kpiThree->kpiChildThreeTranslations[0]->name }}
             @endforeach
         @endforeach
-    </tr>
-    @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
-        <tr>
-            <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
-                {{ $period->reportingPeriodTs[0]->name }}
+    </tr> --}}
+
+
+    @forelse ($planAcc->Kpi->kpiChildOnes as $one)
+
+    <tr>
+        <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
+            {{ $one->kpiChildOneTranslations[0]->name }}
+        </th>
+    @foreach ($planAcc->Kpi->kpiChildTwos as $two)
+            <th>
+                {{ $two->kpiChildTwoTranslations[0]->name }}
             </th>
-            @foreach ($planAcc->Kpi->kpiChildTwos as $two)
-                <td>
-                    {{ $two->kpiChildTwoTranslations[0]->name }}
-                </td>
-                @foreach ($planAcc->Kpi->kpiChildOnes as $one)
-                    @php
-                        $childAndHim_array = [];
-                    @endphp
-                    @foreach ($planAcc->Kpi->kpiChildThrees as $kpiThree)
+
+            @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+                {{-- <tr>
+                    <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
+                        {{ $period->reportingPeriodTs[0]->name }}
+                    </th>
+                    @foreach ($planAcc->Kpi->kpiChildTwos as $two)
                         <td>
-                            @php
-                                $childAndHim = $office->offices;
-                                foreach ($childAndHim as $key => $value) {
-                                    $childAndHim_array[$key] = $value->id;
-                                }
-                                $childAndHim_array = array_merge($childAndHim_array, [$office->id]);
-                               // $plan123 = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id, $kpiThree->id, $office, $period->id,false);
-                                  $plan123 = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year[0]->id ,$one->id, $two->id, $kpiThree->id);
-                                $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
-                                
-                            @endphp
-                            {{ $plan123[0] }}
+                            {{ $two->kpiChildTwoTranslations[0]->name }}
                         </td>
-                    @endforeach
-                @endforeach
+                        @foreach ($planAcc->Kpi->kpiChildOnes as $one) --}}
+                            @php
+                                $childAndHim_array = [];
+                            @endphp
+                            @foreach ($planAcc->Kpi->kpiChildThrees as $kpiThree)
+                                <td>
+                                    @php
+                                        $childAndHim = $office->offices;
+                                        foreach ($childAndHim as $key => $value) {
+                                            $childAndHim_array[$key] = $value->id;
+                                        }
+                                        $childAndHim_array = array_merge($childAndHim_array, [$office->id]);
+                                    // $plan123 = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id, $kpiThree->id, $office, $period->id,false);
+                                        $plan123 = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year[0]->id ,$one->id, $two->id, $kpiThree->id);
+                                        $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
+
+                                    @endphp
+                                    {{ $plan123[0] }}
+                                </td>
+                            @endforeach
+                        {{-- @endforeach
+                </tr>
+            @endforeach --}}
+            @empty
+            @endforelse
+
         </tr>
-    @endforeach
-@empty
-    @endforelse
+
+        @endforeach
+
+        @endforeach
     <tr>
         <td>
             Major Activities
@@ -80,6 +124,6 @@
                     echo '<br/>';
                 @endphp
             @endforeach
-        </td> 
+        </td>
     </tr>
 </table>

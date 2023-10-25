@@ -4,6 +4,7 @@
             {{-- <th>
                 Offices
             </th> --}}
+            <th>Baseline</th>
             @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             <th>
              {{ $period->reportingPeriodTs[0]->name }}
@@ -15,6 +16,10 @@
     @endif
     <tr>
         {{-- <td rowspan="2">{{ $office->officeTranslations[0]->name }}</td> --}}
+
+        {{-- Fetch baseline sum for this KPI, for now just a character --}}
+        <td>{{ '-' }}</td>
+
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @php
                 //$planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $office, $period->id,false,$planning_year);

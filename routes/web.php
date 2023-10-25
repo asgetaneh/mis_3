@@ -258,6 +258,9 @@ Route::prefix('/')
                 Route::match(array('GET', 'POST'),'view-report-accomplishment', [PlanAccomplishmentController::class, 'viewReportAccomplishment'])->name('view-report-accomplishment');
                  Route::GET('/get-objectives-reporting/{goal}', [PlanAccomplishmentController::class, 'getAllObjectivesReporting'])->name('get-objectives-reporting');
                  Route::POST('/report-save', [PlanAccomplishmentController::class, 'saveReport'])->name('report.save');
+
+                Route::POST('/download', [PlanAccomplishmentController::class, 'downloadReport'])->name('report.download');
+
             });
 
             Route::prefix('/report')->group(function () {

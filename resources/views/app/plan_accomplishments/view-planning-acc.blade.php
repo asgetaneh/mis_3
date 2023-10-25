@@ -17,9 +17,8 @@
 
 @section('content')
     @php     $first=1; @endphp
-    <div class="row justify-content-center">
-        <div class="col-12 row">
-            <div class="card card-primary card-outline card-outline-tabs fillable-objective col-md-7">
+    <div class="justify-content-center">
+            <div class="card card-primary card-outline card-outline-tabs fillable-objective">
                 <div class="card-body">
                     <form role="form" class="form-horizontal" method="get"
                         action="{{ route('view-plan-accomplishment') }}">
@@ -30,12 +29,13 @@
                                 @if(auth()->user()->is_admin || auth()->user()->hasRole('super-admin'))
                                     <label class="label" for="filters">Offices:</label>
                                     <select class="form-control select2" name="office">
-                                        <option disabled selected value="">Select Office</option>
+                                        <option disabled {{ old('office') == "" ? 'selected' : '' }} value="">Select Office</option>
+                                        <option value="">ALL OFFICES</option>
                                         @forelse(getAllOffices() as $office)
                                             @if ($office->id == 1)
                                                 @continue
                                             @endif
-                                            <option value="{{ $office->id }}">{{ $office->officeTranslations[0]->name }}
+                                            <option {{ old('office') == $office->id ? 'selected' : '' }} value="{{ $office->id }}">{{ $office->officeTranslations[0]->name }}
                                             </option>
                                         @empty
                                         @endforelse
@@ -44,10 +44,11 @@
                                     {{-- If normal office, check and only avail the belonged offices --}}
                                     <label class="label" for="filters">Offices:</label>
                                     <select class="form-control select2" name="office">
-                                        <option disabled selected value="">Select Office</option>
+                                        <option disabled {{ old('office') == "" ? 'selected' : '' }} value="">Select Office</option>
+                                        <option value="">ALL OFFICES</option>
                                         @forelse(getAllOffices() as $office)
                                             @if ($office->parent_office_id == auth()->user()->offices[0]->id || $office->id == auth()->user()->offices[0]->id)
-                                                <option value="{{ $office->id }}">{{ $office->officeTranslations[0]->name }}
+                                                <option {{ old('office') == $office->id ? 'selected' : '' }} value="{{ $office->id }}">{{ $office->officeTranslations[0]->name }}
                                                 </option>
                                             @endif
                                         @empty
@@ -59,9 +60,10 @@
                             <div class="col-md-4">
                                 <label class=" " for="filters">KPI:</label>
                                 <select class="form-control select2" name="kpi">
-                                    <option disabled selected value="">Select KPI</option>
+                                    <option disabled {{ old('kpi') == "" ? 'selected' : '' }} value="">Select KPI</option>
+                                    <option value="">ALL KPI</option>
                                     @forelse(getAllKpi() as $kpi)
-                                        <option value="{{ $kpi->id }}">{{ $kpi->keyPeformanceIndicatorTs[0]->name }}
+                                        <option {{ old('kpi') == $kpi->id ? 'selected' : '' }} value="{{ $kpi->id }}">{{ $kpi->keyPeformanceIndicatorTs[0]->name }}
                                         </option>
                                     @empty
                                     @endforelse
@@ -71,64 +73,17 @@
                             <div class="col-md-4">
                                 <label class="label" for="action">Action</label>
                                 <div id="action">
-                                    <button class="btn btn-primary" value="search" name="search" type="submit">Search</button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="card col-md-4 ml-2">
-                <div class="card-body">
-                    <form role="form" class="form-horizontal" method="post"
-                    action="{{ route('plan.download') }}">
-                    @csrf
-                        <div class="row">
-                            <div class="col-md-8">
-
-                                {{-- If admin put all offices --}}
-                                @if(auth()->user()->is_admin || auth()->user()->hasRole('super-admin'))
-                                    <label class="label" for="filters">Offices:</label>
-                                    <select class="form-control select2" name="office">
-                                        <option disabled selected value="">Select Office</option>
-                                        @forelse(getAllOffices() as $office)
-                                            @if ($office->id == 1)
-                                                @continue
-                                            @endif
-                                            <option value="{{ $office->id }}">{{ $office->officeTranslations[0]->name }}
-                                            </option>
-                                        @empty
-                                        @endforelse
-                                    </select>
-                                @else
-                                    {{-- If normal office, check and only avail the belonged offices --}}
-                                    <label class="label" for="filters">Office:</label>
-                                    <select class="form-control select2" name="office">
-                                        <option disabled selected value="">Select Office</option>
-                                        @forelse(getAllOffices() as $office)
-                                            @if ($office->parent_office_id == auth()->user()->offices[0]->id || $office->id == auth()->user()->offices[0]->id)
-                                                <option value="{{ $office->id }}">{{ $office->officeTranslations[0]->name }}
-                                                </option>
-                                            @endif
-                                        @empty
-                                        @endforelse
-                                    </select>
-                                @endif
-
-                            </div>
-                            <div class="col-md-4">
-                                <label class="label" for="actions">Download</label>
-                                <div id="actions">
-                                    {{-- <button class="btn btn-info" value="word" name="word" \type="submit">Word</button> --}}
-                                    <button class="btn btn-primary" value="pdf" name="pdf" type="submit">PDF</button>
+                                    <button class="btn btn-primary" value="search" name="search" type="submit">Filter</button>
+                                    <span class="border border-right mx-3"></span>
+                                    <button class="btn btn-info" value="pdf" name="pdf" type="submit">PDF</button>
                                     <button class="btn btn-success" value="excel" name="excel" type="submit">Excel</button>
+                                    {{-- <button class="btn btn-primary" value="word" name="word" type="submit">Word</button> --}}
                                 </div>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-        </div>
 
     </div>
 
