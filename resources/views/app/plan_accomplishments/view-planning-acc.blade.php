@@ -7,10 +7,13 @@
         th,
         td {
             padding: 10px;
+            border: 1px solid #289CD8;
+
         }
 
         table {
             border-collapse: collapse;
+              border: 1px solid #289CD8;
         }
     </style>
 @endsection
@@ -114,37 +117,36 @@
                                                 <table class="table">
                                                     <tr style="background:#87cdc6;">
                                                         @if (!in_array($planAcc->Kpi->objective->id, $objective_array))
-                                                             <th colspan="2" style="width:100%;"> Objective:
+                                                             <th colspan="8" style="width:100%;"> Objective:
                                                                 {{ $planAcc->Kpi->objective->objectiveTranslations[0]->name }}
                                                             </th>
-                                                           @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
-                                                                <th> {{ $period->reportingPeriodTs[0]->name }} </th>
-                                                            @empty
-                                                            @endforelse
-                                                             <th>   </th>
                                                          @endif
                                                         @php
                                                             $objective_array = array_merge($objective_array, [$planAcc->Kpi->objective->id]);
                                                         @endphp
                                                     </tr>
                                                     <tr style="background:#21212121;">
-                                                        <th></th>
-                                                         <th style="width:100%;"> KPI:
-                                                            {{ $kpiT->name }}
+                                                        <th  rowspan="2"></th>
+                                                         <th  rowspan="2" style="width:60%"> 
+                                                            KPI:   {{$kpiT->name }}
                                                         </th>
+                                                         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+                                                                <th> {{ $period->reportingPeriodTs[0]->name }} </th>
+                                                            @empty
+                                                            @endforelse
+                                                             <th> Action  </th>
+                                                        </tr>
+                                                        <tr>
                                                         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                                                             @php
-                                                                //  $planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $imagen_off, $period->id,false,$planning_year);
                                                                 $planOfOfficePlan = $planAcc->ForKpi($planAcc->Kpi->id, $imagen_off, $period->id,false,$planning_year[0]->id);
-                                                                 //dump($planOfOfficePlan);
-                                                                $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $imagen_off, $period->id);
+                                                                $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $imagen_off);
                                                             @endphp
                                                             <td>
                                                                 {{ $planOfOfficePlan[0] }}
                                                             </td>
                                                         @empty
                                                         @endforelse
-
                                                         <th>
                                                             <button type="button" class="btn btn-tool"
                                                                 data-card-widget="collapse"><i class="fas fa-plus"></i>

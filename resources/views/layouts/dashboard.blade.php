@@ -494,6 +494,7 @@
                     },
                     {
                         label: 'Plan',
+                        ttle: '7',
                         backgroundColor: 'rgba(150, 214, 222, 1)',
                         borderColor: 'rgba(210, 214, 222, 1)',
                         pointRadius: false,

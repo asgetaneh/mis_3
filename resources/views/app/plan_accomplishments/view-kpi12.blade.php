@@ -4,7 +4,7 @@
     <th colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 3 }} ">
         Offices: {{ $office->officeTranslations[0]->name }}
     </th>
-    <td rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }} *{{count(getQuarter($planAcc->Kpi->reportingPeriodType->id))}}+2">
+    <td rowspan="{{ $planAcc->Kpi->kpiChildOnes->count()  * $planAcc->Kpi->kpiChildTwos->count()}}+3">
         @if (!$office->offices->isEmpty())
             <p>
                 <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}{{$planAcc->Kpi->id}}" role="button"
@@ -141,7 +141,7 @@
         <td>
             Major Activities
         </td>
-        <td colspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 1 }}">
+        <td colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 2 }}">
             @foreach ($narration as $key => $plannaration)
                 {!! html_entity_decode($plannaration->plan_naration) !!}
                 @php

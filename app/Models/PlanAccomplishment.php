@@ -300,7 +300,7 @@ class PlanAccomplishment extends Model
     //      return $plan_accom;
     // }
    
-    public function getNarration($kkp,$year,$office,$period){
+    public function getNarration($kkp,$year,$office){
         // get all child and subchild offices for login user
         $childAndHimOffKpi_array =[];
         $childAndHimOffKpi = office_all_childs_ids($office); 
