@@ -290,14 +290,14 @@ Route::prefix('/emis')->group(function(){
         Route::get('/', [InstitutionEMIS::class, 'building'])->name('emis.institution.building');
     });
     Route::prefix('/student')->group(function(){
-        Route::get('/applicant', [StudentEMIS::class, 'index'])->name('emis.student.applicant.index');
-        Route::get('/overview', [StudentEMIS::class, 'index'])->name('emis.student.overview.index');
-        Route::get('/enrollment', [StudentEMIS::class, 'index'])->name('emis.student.enrollment.index');
-        Route::get('/results', [StudentEMIS::class, 'index'])->name('emis.student.results.index');
-        Route::get('/graduates', [StudentEMIS::class, 'index'])->name('emis.student.graduates.index');
-        Route::get('/attrition', [StudentEMIS::class, 'index'])->name('emis.student.attrition.index');
-        Route::get('/internship', [StudentEMIS::class, 'index'])->name('emis.student.internship.index');
-        Route::get('/employment', [StudentEMIS::class, 'index'])->name('emis.student.employment.index');
+        Route::get('/applicant', [StudentEMIS::class, 'applicant'])->name('emis.student.applicant.index');
+        Route::get('/overview', [StudentEMIS::class, 'overview'])->name('emis.student.overview.index');
+        Route::get('/enrollment', [StudentEMIS::class, 'enrollment'])->name('emis.student.enrollment.index');
+        Route::get('/results', [StudentEMIS::class, 'results'])->name('emis.student.results.index');
+        Route::get('/graduates', [StudentEMIS::class, 'graduates'])->name('emis.student.graduates.index');
+        Route::get('/attrition', [StudentEMIS::class, 'attrition'])->name('emis.student.attrition.index');
+        Route::get('/internship', [StudentEMIS::class, 'internship'])->name('emis.student.internship.index');
+        Route::get('/employment', [StudentEMIS::class, 'employment'])->name('emis.student.employment.index');
 
     });
     Route::prefix('/staff')->group(function(){

@@ -120,6 +120,14 @@
         <script src=" {{ asset('assets/calendar/js/jquery.calendars.ethiopian-am.js') }}"></script>
         <script src=" {{ asset('assets/calendar/js/jquery.calendars.picker-am.js') }}"></script>
 
+        <script>
+            $(document).ready(function() {
+
+                $('.select2').select2();
+
+            });
+        </script>
+
         @stack('scripts')
 
         {{-- <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script> --}}
