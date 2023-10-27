@@ -34,7 +34,7 @@
 
 
                     @if (!$user->offices->isEmpty())
-                        <li class="nav-item">
+                        <li class="nav-item {{ Request::is('emis/*') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-sitemap"></i>
                                 <p>
@@ -88,7 +88,7 @@
                                 </li>
 
 
-                                <li class="nav-item">
+                                <li class="nav-item {{ Request::is('emis/student/*') ? 'menu-open' : '' }}">
                                     <a href="#" class="nav-link">
                                         <i class="nav-icon icon fas fa fa-caret-right"></i>
                                         <p>
@@ -99,35 +99,35 @@
 
                                     <ul class="nav nav-treeview">
                                         <li class="nav-item">
-                                            <a href="{{route('emis.student.applicant.index')}}" class="nav-link">
+                                            <a href="{{route('emis.student.applicant.index')}}" class="nav-link {{ Request::is('emis/student/applicant') || Request::is('emis/student/applicant/*') ? 'active' : '' }}">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>Applicants</p>
                                             </a>
-                                            <a href="{{route('emis.student.overview.index')}}" class="nav-link">
+                                            <a href="{{route('emis.student.overview.index')}}" class="nav-link {{ Request::is('emis/student/overview') || Request::is('emis/student/overview/*') ? 'active' : '' }}">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>Overview</p>
                                             </a>
-                                            <a href="{{route('emis.student.enrollment.index')}}" class="nav-link">
+                                            <a href="{{route('emis.student.enrollment.index')}}" class="nav-link {{ Request::is('emis/student/enrollment') || Request::is('emis/student/enrollment/*') ? 'active' : '' }}">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>Enrollment</p>
                                             </a>
-                                            <a href="{{route('emis.student.results.index')}}" class="nav-link">
+                                            <a href="{{route('emis.student.results.index')}}" class="nav-link {{ Request::is('emis/student/results') || Request::is('emis/student/results/*') ? 'active' : '' }}">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>Results</p>
                                             </a>
-                                            <a href="{{route('emis.student.graduates.index')}}" class="nav-link">
+                                            <a href="{{route('emis.student.graduates.index')}}" class="nav-link {{ Request::is('emis/student/graduates') || Request::is('emis/student/graduates/*') ? 'active' : '' }}">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>Graduates</p>
                                             </a>
-                                            <a href="{{route('emis.student.attrition.index')}}" class="nav-link">
+                                            <a href="{{route('emis.student.attrition.index')}}" class="nav-link {{ Request::is('emis/student/attrition') || Request::is('emis/student/attrition/*') ? 'active' : '' }}">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>Attritions</p>
                                             </a>
-                                            <a href="{{route('emis.student.internship.index')}}" class="nav-link">
+                                            <a href="{{route('emis.student.internship.index')}}" class="nav-link {{ Request::is('emis/student/internship') || Request::is('emis/student/internship/*') ? 'active' : '' }}">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>Intership</p>
                                             </a>
-                                            <a href="{{route('emis.student.employment.index')}}" class="nav-link">
+                                            <a href="{{route('emis.student.employment.index')}}" class="nav-link {{ Request::is('emis/student/employment') || Request::is('emis/student/employment/*') ? 'active' : '' }}">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>Employment</p>
                                             </a>
