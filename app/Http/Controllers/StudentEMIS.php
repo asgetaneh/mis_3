@@ -19,7 +19,47 @@ class StudentEMIS extends Controller
     {
         $search = $request->get('search', '');
 
-        $applicants = DB::table('users')->select('*')->paginate(5);
+        $applicants = DB::connection('mysql_srs')
+        ->table('student as s')
+        ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
+        ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+        ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
+        // ->join('country as c', 'sd.country_id', '=', 'c.id')
+        ->join('state as st', 'sd.state_id', '=', 'st.id')
+        ->join('zone as z', 'sd.zone_id', '=', 'z.id')
+        ->join('woreda as w', 'sd.woreda_id', '=', 'w.id')
+        ->join('program as p', 's.program_id', '=', 'p.id')
+        ->join('program_level as pl', 'p.program_level_id', '=', 'pl.id')
+        ->join('department as d', 'd.id', '=', 'p.department_id')
+        ->select(
+            's.student_id',
+            'ifo.academic_year',
+            's.id',
+            'sf.username',
+            'ifo.program_id',
+            'sf.first_name',
+            'sf.fathers_name',
+            'sf.grand_fathers_name',
+            's.birth_date',
+            's.sex',
+            'ifo.year',
+            'sd.telephone',
+            'sd.kebele',
+            'sd.place_of_birth',
+            'sd.mother_name',
+            'sd.family_phone',
+            // 'c.code AS country_code',
+            'st.region_code AS state_code',
+            'z.zone_code AS zone_code',
+            'w.woreda_code AS woreda_code',
+            'd.code AS department_code',
+            'p.code AS program_code',
+            'pl.code AS program_level_code'
+        )
+        ->orderBy('ifo.academic_year', 'desc')
+        ->paginate(10);
+
+        // dd($applicants);
 
         return view(
             'app.emis.student.applicant.index',

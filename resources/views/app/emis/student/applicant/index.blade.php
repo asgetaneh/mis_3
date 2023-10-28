@@ -1,6 +1,15 @@
 @extends('layouts.app')
 @section('title', 'EMIS Student - Applicant')
 
+@section('style')
+    <style>
+        /* Prevent any data making a break on the td tags */
+        td {
+            white-space: nowrap !important;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="container-fluid">
         <div class="card">
@@ -66,6 +75,7 @@
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th class="text-left">
                                     applicant_id
                                 </th>
@@ -75,7 +85,7 @@
                                 <th>
                                     secondary_education_stream
                                 </th>
-                                <th>secondary_education_stream
+                                <th>qualification_level
                                 </th>
                                 <th class="text-left">
                                     hed_institution_code
@@ -134,8 +144,6 @@
                                 </th>
                                 <th>hed_acceptance_status
                                 </th>
-                                <th>hed_acceptance_status
-                                </th>
                                 <th>specially_gifted
                                 </th>
                             </tr>
@@ -143,6 +151,39 @@
                         <tbody>
                             @forelse($applicants as $key => $applicant)
                                 <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $applicant->student_id ?? '' }}</td>
+                                    <td>{{ $applicant->academic_year ?? '' }}</td>
+                                    <td>{{ $applicant->secondary_education_stream ?? '' }}</td>
+                                    <td>{{ $applicant->program_level_code ?? '' }}</td>
+                                    <td>{{ $applicant->hed_institution_code ?? '' }}</td>
+                                    <td>{{ $applicant->department_code ?? '' }}</td>
+                                    <td>{{ $applicant->program_code ?? '' }}</td>
+                                    <td>{{ $applicant->first_name ?? '' }}</td>
+                                    <td>{{ $applicant->first_name_lng ?? '' }}</td>
+                                    <td>{{ $applicant->fathers_name ?? '' }}</td>
+                                    <td>{{ $applicant->fathers_name_lng ?? '' }}</td>
+                                    <td>{{ $applicant->grand_fathers_name ?? '' }}</td>
+                                    <td>{{ $applicant->grand_fathers_name_lng ?? '' }}</td>
+                                    <td>{{ $applicant->grand_fathers_name ?? '' }}</td>
+                                    <td>{{ $applicant->last_name_lng ?? '' }}</td>
+                                    <td>{{ $applicant->birth_date ?? '' }}</td>
+                                    <td>{{ $applicant->place_of_birth ?? '' }}</td>
+                                    <td>{{ $applicant->email_address ?? '' }}</td>
+                                    <td>{{ $applicant->telephone ?? '' }}</td>
+                                    <td>{{ $applicant->sex ?? '' }}</td>
+                                    <td>{{ $applicant->country_code ?? '' }}</td>
+                                    <td>{{ $applicant->country_code ?? '' }}</td>
+                                    <td>{{ $applicant->state_code ?? '' }}</td>
+                                    <td>{{ $applicant->zone_code ?? '' }}</td>
+                                    <td>{{ $applicant->woreda_code ?? '' }}</td>
+                                    <td>{{ $applicant->kebele ?? '' }}</td>
+                                    <td>{{ $applicant->area_type ?? '' }}</td>
+                                    <td>{{ $applicant->hed_acceptance_score ?? '' }}</td>
+                                    <td>{{ $applicant->public_hed_acceptance_score ?? '' }}</td>
+                                    <td>{{ $applicant->national_exam_score ?? '' }}</td>
+                                    <td>{{ $applicant->hed_acceptance_status ?? '' }}</td>
+                                    <td>{{ $applicant->specially_gifted ?? '' }}</td>
                                 </tr>
                             @empty
                                 <tr>
