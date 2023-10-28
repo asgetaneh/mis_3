@@ -63,6 +63,16 @@ return [
             ]) : [],
         ],
 
+        'mysql_srs'=>[
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('SRS_DB_HOST', '10.140.6.103'),
+            'port' => env('SRS_DB_PORT', '3306'),
+            'database' => env('SRS_DB_DATABASE', 'forge'),
+            'username' => env('SRS_DB_USERNAME', 'forge'),
+            'password' => env('SRS_DB_PASSWORD', ''),
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
