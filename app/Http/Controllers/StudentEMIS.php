@@ -22,7 +22,7 @@ class StudentEMIS extends Controller
         $applicants = DB::connection('mysql_srs')
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
-        ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+        // ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
         ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
         // ->join('country as c', 'sd.country_id', '=', 'c.id')
         ->join('state as st', 'sd.state_id', '=', 'st.id')
@@ -33,16 +33,16 @@ class StudentEMIS extends Controller
         ->join('department as d', 'd.id', '=', 'p.department_id')
         ->select(
             's.student_id',
-            'ifo.academic_year',
+            // 'ifo.academic_year',
+            // 'ifo.year',
+            DB::raw('(SELECT MAX(academic_year) FROM student_info WHERE student_id = s.id) AS academic_year'),
             's.id',
             'sf.username',
-            'ifo.program_id',
             'sf.first_name',
             'sf.fathers_name',
             'sf.grand_fathers_name',
             's.birth_date',
             's.sex',
-            'ifo.year',
             'sd.telephone',
             'sd.kebele',
             'sd.place_of_birth',
@@ -56,7 +56,7 @@ class StudentEMIS extends Controller
             'p.code AS program_code',
             'pl.code AS program_level_code'
         )
-        ->orderBy('ifo.academic_year', 'desc')
+        ->orderBy('s.student_id', 'desc')
         ->paginate(10);
 
         // dd($applicants);
@@ -74,7 +74,6 @@ class StudentEMIS extends Controller
         $overviews = DB::connection('mysql_srs')
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
-        ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
         ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
         // ->join('country as c', 'sd.country_id', '=', 'c.id')
         ->join('state as st', 'sd.state_id', '=', 'st.id')
@@ -85,16 +84,12 @@ class StudentEMIS extends Controller
         ->join('department as d', 'd.id', '=', 'p.department_id')
         ->select(
             's.student_id',
-            'ifo.academic_year',
             's.id',
-            // 'sf.username',
-            'ifo.program_id',
             'sf.first_name',
             'sf.fathers_name',
             'sf.grand_fathers_name',
             's.birth_date',
             's.sex',
-            'ifo.year',
             'sd.telephone',
             'sd.kebele',
             'sd.place_of_birth',
@@ -109,7 +104,7 @@ class StudentEMIS extends Controller
             'p.code AS program_code',
             'pl.code AS program_level_code'
         )
-        ->orderBy('ifo.academic_year', 'desc')
+        ->orderBy('s.student_id', 'desc')
         ->paginate(10);
 
         return view(
