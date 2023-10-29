@@ -122,7 +122,42 @@ class StudentEMIS extends Controller
     {
         $search = $request->get('search', '');
 
-        $enrollments = DB::table('users')->select('*')->paginate(5);
+        $enrollments = DB::connection('mysql_srs')
+        ->table('student as s')
+        ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
+        ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+        ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
+        // ->join('country as c', 'sd.country_id', '=', 'c.id')
+        // ->join('disability as d', 'sd.disability_id', '=', 'd.id')
+        ->join('program as p', 's.program_id', '=', 'p.id')
+        ->join('program_level as pl', 'p.program_level_id', '=', 'pl.id')
+        ->join('enrollment_type as et', 'p.enrollment_type_id', '=', 'et.id')
+        ->join('department as d', 'd.id', '=', 'p.department_id')
+        // ->join('college as col', 'd.college_id', '=', 'col.id')
+        // ->join('campus as ca', 'col.campus_id', '=', 'ca.id') // if the structure is thought like this
+        ->select(
+            's.student_id',
+            'ifo.academic_year',
+
+            // Not sure which columns match the excel colummns for gpa and ECTS based data, figure out later
+            'ifo.semester_ects AS current_registered_credits',
+            'ifo.total_ects AS cumulative_registered_credits',
+            // 'round((ifo.total_grade_points / ifo.total_ects),2) AS cumulative_gpa',
+            // 'round((si.semester_grade_points / si.semester_ects) ,2) as sgpa,',
+            DB::raw('ROUND(ifo.total_grade_points / ifo.total_ects, 2) as cumulative_gpa'),
+
+            'ifo.year AS year_level',
+            // 'c.code AS country_code',
+            // 'd.code AS student_disability',
+            // 'ca.code AS campus_code',
+            // 'col.code AS college_code',
+            'd.code AS department_code',
+            'p.code AS program_code',
+            'pl.code AS target_qualification',
+            'et.enrollment_type_name AS program_modality' // later change to et.code when code column is added in the table
+        )
+        ->orderBy('s.student_id', 'desc')
+        ->paginate(10);
 
         return view(
             'app.emis.student.enrollment.index',

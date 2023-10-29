@@ -1,6 +1,15 @@
 @extends('layouts.app')
 @section('title', 'EMIS Student - Enrollment')
 
+@section('style')
+    <style>
+        /* Prevent any data making a break on the td tags */
+        td {
+            white-space: nowrap !important;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="container-fluid">
         <div class="card">
@@ -66,6 +75,7 @@
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th class="text-left">
                                     institution_code
                                 </th>
@@ -139,6 +149,42 @@
                         <tbody>
                             @forelse($enrollments as $key => $enrollment)
                                 <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $enrollment->institution_code ?? '' }}</td>
+                                    <td>{{ $enrollment->student_id ?? '' }}</td>
+                                    <td>{{ $enrollment->academic_year ?? '' }}</td>
+                                    <td>{{ $enrollment->academic_period ?? '' }}</td>
+                                    <td>{{ $enrollment->academic_term ?? '' }}</td>
+                                    <td>{{ $enrollment->campus_code ?? '' }}</td>
+                                    <td>{{ $enrollment->program_code ?? '' }}</td>
+                                    <td>{{ $enrollment->program_modality ?? '' }}</td>
+                                    <td>{{ $enrollment->target_qualification ?? '' }}</td>
+                                    <td>{{ $enrollment->year_level ?? '' }}</td>
+                                    <td>{{ $enrollment->enrollment_type ?? '' }}</td>
+                                    <td>{{ $enrollment->foreign_program ?? '' }}</td>
+                                    <td>{{ $enrollment->economically_supported ?? '' }}</td>
+                                    <td>{{ $enrollment->required_academic_periods ?? '' }}</td>
+                                    <td>{{ $enrollment->required_credits ?? '' }}</td>
+                                    <td>{{ $enrollment->current_registered_credits ?? '' }}</td>
+                                    <td>{{ $enrollment->cumulative_registered_credits ?? '' }}</td>
+                                    <td>{{ $enrollment->cumulative_completed_credits ?? '' }}</td>
+                                    <td>{{ $enrollment->cumulative_gpa ?? '' }}</td>
+                                    <td>{{ $enrollment->outgoing_exchange ?? '' }}</td>
+                                    <td>{{ $enrollment->incoming_exchange ?? '' }}</td>
+                                    <td>{{ $enrollment->exchange_country ?? '' }}</td>
+                                    <td>{{ $enrollment->exchange_institution ?? '' }}</td>
+                                    <td>{{ $enrollment->exchange_institution_lng ?? '' }}</td>
+                                    <td>{{ $enrollment->sponsorship ?? '' }}</td>
+                                    <td>{{ $enrollment->student_economical_status ?? '' }}</td>
+                                    <td>{{ $enrollment->student_disability ?? '' }}</td>
+                                    <td>{{ $enrollment->specially_gifted ?? '' }}</td>
+                                    <td>{{ $enrollment->food_service_type ?? '' }}</td>
+                                    <td>{{ $enrollment->dormitory_service_type ?? '' }}</td>
+                                    <td>{{ $enrollment->cost_sharing_loan ?? '' }}</td>
+                                    <td>{{ $enrollment->current_cost_sharing ?? '' }}</td>
+                                    <td>{{ $enrollment->accumulated_cost_sharing ?? '' }}</td>
+                                    <td>{{ $enrollment->settlement_type ?? '' }}</td>
+                                    <td>{{ $enrollment->settlment_date ?? '' }}</td>
                                 </tr>
                             @empty
                                 <tr>
