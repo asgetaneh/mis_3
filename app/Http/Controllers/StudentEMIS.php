@@ -133,6 +133,7 @@ class StudentEMIS extends Controller
         ->select(
             's.student_id',
             'ifo.academic_year',
+            'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
 
             // Not sure which columns match the excel colummns for gpa and ECTS based data, figure out later
             'ifo.semester_ects AS current_registered_credits',
@@ -164,7 +165,27 @@ class StudentEMIS extends Controller
     {
         $search = $request->get('search', '');
 
-        $results = DB::table('users')->select('*')->paginate(5);
+        $results = DB::connection('mysql_srs')
+        ->table('student as s')
+        ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
+        ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+        ->join('student_status as ss', 'ifo.status_id', '=', 'ss.id')
+        ->select(
+            's.student_id',
+            'ifo.academic_year',
+            'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
+            'ss.status_name AS result', // change later to ss.code if code column added on student_status table
+
+            // Not sure which columns match the excel columns for gpa and ECTS based data, figure out later
+            'ifo.total_ects AS total_accumulated_credits',
+            DB::raw('ROUND(ifo.semester_grade_points / ifo.semester_ects ,2) as gpa'),
+            DB::raw('ROUND(ifo.total_grade_points / ifo.total_ects, 2) as cgpa'),
+
+            // I think this is all the semester count taken in that year, not sure yet
+            // DB::raw('count(ifo.semester) as total_academic_periods'),
+        )
+        ->orderBy('s.student_id', 'desc')
+        ->paginate(10);
 
         return view(
             'app.emis.student.result.index',

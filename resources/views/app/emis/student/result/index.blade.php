@@ -66,6 +66,7 @@
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th class="text-left">
                                     institution_code
                                 </th>
@@ -104,6 +105,18 @@
                         <tbody>
                             @forelse($results as $key => $result)
                                 <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $result->institution_code ?? '' }}</td>
+                                    <td>{{ $result->student_id ?? '' }}</td>
+                                    <td>{{ $result->academic_year ?? '' }}</td>
+                                    <td>{{ $result->academic_period ?? '' }}</td>
+                                    <td>{{ $result->total_accumulated_credits ?? '' }}</td>
+                                    <td>{{ $result->cgpa ?? '' }}</td>
+                                    <td>{{ $result->total_academic_periods ?? '' }}</td>
+                                    <td>{{ $result->result ?? '' }}</td>
+                                    <td>{{ $result->transfer ?? '' }}</td>
+                                    <td>{{ $result->gpa ?? '' }}</td>
+                                    <td>{{ $result->digital_literacy_training ?? '' }}</td>
                                 </tr>
                             @empty
                                 <tr>
