@@ -1,6 +1,15 @@
 @extends('layouts.app')
 @section('title', 'EMIS Student - Result')
 
+@section('style')
+    <style>
+        /* Prevent any data making a break on the td tags */
+        td {
+            white-space: nowrap !important;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="container-fluid">
         <div class="card">
@@ -107,7 +116,7 @@
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $result->institution_code ?? '' }}</td>
-                                    <td>{{ $result->student_id ?? '' }}</td>
+                                    <td>{{ $result->national_id ?? '' }}</td>
                                     <td>{{ $result->academic_year ?? '' }}</td>
                                     <td>{{ $result->academic_period ?? '' }}</td>
                                     <td>{{ $result->total_accumulated_credits ?? '' }}</td>

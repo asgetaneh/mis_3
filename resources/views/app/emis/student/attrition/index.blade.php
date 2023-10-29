@@ -1,6 +1,15 @@
 @extends('layouts.app')
 @section('title', 'EMIS Student - Attrition')
 
+@section('style')
+    <style>
+        /* Prevent any data making a break on the td tags */
+        td {
+            white-space: nowrap !important;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="container-fluid">
         <div class="card">
@@ -66,6 +75,7 @@
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th class="text-left">
                                     institution_code
                                 </th>
@@ -85,6 +95,12 @@
                         <tbody>
                             @forelse($attritions as $key => $attrition)
                                 <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $attrition->institution_code ?? '' }}</td>
+                                    <td>{{ $attrition->national_id ?? '' }}</td>
+                                    <td>{{ $attrition->academic_year ?? '' }}</td>
+                                    <td>{{ $attrition->academic_period ?? '' }}</td>
+                                    <td>{{ $attrition->attrition_reason ?? '' }}</td>
                                 </tr>
                             @empty
                                 <tr>

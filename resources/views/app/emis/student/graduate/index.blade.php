@@ -1,6 +1,15 @@
 @extends('layouts.app')
 @section('title', 'EMIS Student - Graduate')
 
+@section('style')
+    <style>
+        /* Prevent any data making a break on the td tags */
+        td {
+            white-space: nowrap !important;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="container-fluid">
         <div class="card">
@@ -66,6 +75,7 @@
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th class="text-left">
                                     institution_code
                                 </th>
@@ -103,6 +113,18 @@
                         <tbody>
                             @forelse($graduates as $key => $graduate)
                                 <tr>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $graduate->institution_code ?? '' }}</td>
+                                    <td>{{ $graduate->national_id ?? '' }}</td>
+                                    <td>{{ $graduate->academic_year ?? '' }}</td>
+                                    <td>{{ $graduate->academic_period ?? '' }}</td>
+                                    <td>{{ $graduate->total_accumulated_credits ?? '' }}</td>
+                                    <td>{{ $graduate->cgpa ?? '' }}</td>
+                                    <td>{{ $graduate->total_academic_periods ?? '' }}</td>
+                                    <td>{{ $graduate->exit_exam_score ?? '' }}</td>
+                                    <td>{{ $graduate->employability_training ?? '' }}</td>
+                                    <td>{{ $graduate->employability_training ?? '' }}</td>
+                                    <td>{{ $graduate->employability_training ?? '' }}</td>
                                 </tr>
                             @empty
                                 <tr>
