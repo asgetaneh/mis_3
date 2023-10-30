@@ -152,9 +152,9 @@
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $enrollment->institution_code ?? '' }}</td>
                                     <td>{{ $enrollment->student_id ?? '' }}</td>
-                                    <td>{{ $enrollment->academic_year ?? '' }}</td>
-                                    <td>{{ $enrollment->academic_period ?? '' }}</td>
-                                    <td>{{ $enrollment->academic_term ?? '' }}</td>
+                                    <td>{{ $enrollment->academic_year ? str_replace('/', '', $enrollment->academic_year) : '' }}</td>
+                                    <td>{{ isset($enrollment->academic_period) ? 'S'.$enrollment->academic_period : '' }}</td>
+                                    <td>{{ isset($enrollment->academic_term) ? 'T'.$enrollment->academic_term : '' }}</td>
                                     <td>{{ $enrollment->campus_code ?? '' }}</td>
                                     <td>{{ $enrollment->program_code ?? '' }}</td>
                                     <td>{{ $enrollment->program_modality ?? '' }}</td>

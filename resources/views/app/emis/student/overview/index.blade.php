@@ -155,7 +155,7 @@
                                     <td>{{ $overview->zone_code ?? '' }}</td>
                                     <td>{{ $overview->kebele ?? '' }}</td>
                                     <td>{{ $overview->woreda_code ?? '' }}</td>
-                                    <td>{{ $overview->area_type ?? '' }}</td>
+                                    <td>{{ $overview->area_type ?? 'NPS' }}</td>
                                     <td>{{ $overview->entrance_exam_id ?? '' }}</td>
                                     <td>{{ $overview->student_tax_identification_number ?? '' }}</td>
                                     <td>{{ $overview->student_national_system_id ?? '' }}</td>

@@ -117,8 +117,8 @@
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $result->institution_code ?? '' }}</td>
                                     <td>{{ $result->national_id ?? '' }}</td>
-                                    <td>{{ $result->academic_year ?? '' }}</td>
-                                    <td>{{ $result->academic_period ?? '' }}</td>
+                                    <td>{{ $result->academic_year ? str_replace('/', '', $result->academic_year) : '' }}</td>
+                                    <td>{{ isset($result->academic_period) ? 'S'.$result->academic_period : '' }}</td>
                                     <td>{{ $result->total_accumulated_credits ?? '' }}</td>
                                     <td>{{ $result->cgpa ?? '' }}</td>
                                     <td>{{ $result->total_academic_periods ?? '' }}</td>

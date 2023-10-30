@@ -153,7 +153,7 @@
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $applicant->student_id ?? '' }}</td>
-                                    <td>{{ $applicant->academic_year ?? '' }}</td>
+                                    <td>{{ $applicant->academic_year ? str_replace('/', '', $applicant->academic_year) : '' }}</td>
                                     <td>{{ $applicant->secondary_education_stream ?? '' }}</td>
                                     <td>{{ $applicant->program_level_code ?? '' }}</td>
                                     <td>{{ $applicant->hed_institution_code ?? '' }}</td>
@@ -178,12 +178,12 @@
                                     <td>{{ $applicant->zone_code ?? '' }}</td>
                                     <td>{{ $applicant->woreda_code ?? '' }}</td>
                                     <td>{{ $applicant->kebele ?? '' }}</td>
-                                    <td>{{ $applicant->area_type ?? '' }}</td>
+                                    <td>{{ $applicant->area_type ?? 'NPS' }}</td>
                                     <td>{{ $applicant->hed_acceptance_score ?? '' }}</td>
                                     <td>{{ $applicant->public_hed_acceptance_score ?? '' }}</td>
                                     <td>{{ $applicant->national_exam_score ?? '' }}</td>
                                     <td>{{ $applicant->hed_acceptance_status ?? '' }}</td>
-                                    <td>{{ $applicant->specially_gifted ?? '' }}</td>
+                                    <td>{{ $applicant->specially_gifted ?? 'N' }}</td>
                                 </tr>
                             @empty
                                 <tr>

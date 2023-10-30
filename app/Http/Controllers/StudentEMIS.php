@@ -121,8 +121,8 @@ class StudentEMIS extends Controller
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
         ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+        ->join('check_list as cl', 'ifo.check_list_id', '=', 'cl.id')
         ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
-        // ->join('country as c', 'sd.country_id', '=', 'c.id')
         // ->join('disability as d', 'sd.disability_id', '=', 'd.id')
         ->join('program as p', 's.program_id', '=', 'p.id')
         ->join('program_level as pl', 'p.program_level_id', '=', 'pl.id')
@@ -136,14 +136,15 @@ class StudentEMIS extends Controller
             'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
 
             // Not sure which columns match the excel colummns for gpa and ECTS based data, figure out later
-            'ifo.semester_ects AS current_registered_credits',
             'ifo.total_ects AS cumulative_registered_credits',
-            // 'round((ifo.total_grade_points / ifo.total_ects),2) AS cumulative_gpa',
-            // 'round((si.semester_grade_points / si.semester_ects) ,2) as sgpa,',
+            'ifo.semester_ects AS current_registered_credits',
+            'ifo.previous_total_ects AS cumulative_completed_credits',
+            'cl.required_credit as required_credits',
+            'cl.number_of_semesters AS required_academic_periods',
+
             DB::raw('ROUND(ifo.total_grade_points / ifo.total_ects, 2) as cumulative_gpa'),
 
             'ifo.year AS year_level',
-            // 'c.code AS country_code',
             // 'd.code AS student_disability',
             // 'ca.code AS campus_code',
             // 'col.code AS college_code',

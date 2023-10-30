@@ -98,8 +98,8 @@
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $attrition->institution_code ?? '' }}</td>
                                     <td>{{ $attrition->national_id ?? '' }}</td>
-                                    <td>{{ $attrition->academic_year ?? '' }}</td>
-                                    <td>{{ $attrition->academic_period ?? '' }}</td>
+                                    <td>{{ $attrition->academic_year ? str_replace('/', '', $attrition->academic_year) : '' }}</td>
+                                    <td>{{ isset($attrition->academic_period) ? 'S'.$attrition->academic_period : '' }}</td>
                                     <td>{{ $attrition->attrition_reason ?? '' }}</td>
                                 </tr>
                             @empty
