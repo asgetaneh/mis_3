@@ -38,8 +38,8 @@ if (! function_exists('gettrans')) {
     }
     function  getKpiPlan($kpii,$list_offices,$selected_period)
     {
-        $planning_year = PlaningYear::where('is_active',true)->get();  
-        $active_period = getReportingQuarter($kpii->reportingPeriodType->id); 
+        $planning_year = PlaningYear::where('is_active',true)->get();
+        $active_period = getReportingQuarter($kpii->reportingPeriodType->id);
         if($selected_period){
             $active_period = $selected_period;
         }     //dd($list_offices);
@@ -66,7 +66,7 @@ if (! function_exists('gettrans')) {
             $plan_accom_array = array_merge( $plan_accom_array,array($acc_value));
             return $plan_accom_array;
     }
-   
+
     function getAllReportingPeriod()
     {
     	$ReportingPeriod = ReportingPeriod::get();
@@ -152,7 +152,7 @@ if (! function_exists('gettrans')) {
                 $report_period = ReportingPeriod::where('id' , '=', $value->id)->where('reporting_period_type_id', '=', $type)->get();
                     if($report_period){
                         foreach ($report_period as $key2 => $period) {
-                            dump($key2);
+                            // dump($key2);
                             $acctive_period_list[$key2] = $period;
                         }
                      }
