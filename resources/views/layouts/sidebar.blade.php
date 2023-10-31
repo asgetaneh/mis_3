@@ -135,7 +135,7 @@
                                     </ul>
                                 </li>
 
-                                <li class="nav-item">
+                                <li class="nav-item {{ Request::is('emis/staff/*') ? 'menu-open' : '' }}">
                                     <a href="#" class="nav-link">
                                         <i class="nav-icon icon fas fa fa-caret-right"></i>
                                         <p>
@@ -146,9 +146,33 @@
 
                                     <ul class="nav nav-treeview">
                                         <li class="nav-item">
-                                            <a href="#" class="nav-link">
+                                            <a href="{{ route('emis.staff.overview.index') }}" class="nav-link {{ Request::is('emis/staff/overview') || Request::is('emis/staff/overview/*') ? 'active' : '' }}">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>sub menu of staff</p>
+                                                <p>Overview</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('emis.staff.assignment.index') }}" class="nav-link {{ Request::is('emis/staff/assignment') || Request::is('emis/staff/assignment/*') ? 'active' : '' }}">
+                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                <p>Assignment</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('emis.staff.development.index') }}" class="nav-link {{ Request::is('emis/staff/development') || Request::is('emis/staff/development/*') ? 'active' : '' }}">
+                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                <p>Development</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('emis.staff.attrition.index') }}" class="nav-link {{ Request::is('emis/staff/attrition') || Request::is('emis/staff/attrition/*') ? 'active' : '' }}">
+                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                <p>Attrition</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('emis.staff.awards.index') }}" class="nav-link {{ Request::is('emis/staff/awards') || Request::is('emis/staff/awards/*') ? 'active' : '' }}">
+                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                <p>Awards</p>
                                             </a>
                                         </li>
                                     </ul>

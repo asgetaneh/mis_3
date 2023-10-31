@@ -301,7 +301,11 @@ Route::prefix('/emis')->group(function(){
 
     });
     Route::prefix('/staff')->group(function(){
-        Route::get('/', [StaffEMIS::class, 'index'])->name('emis.staff.index');
+        Route::get('/overview', [StaffEMIS::class, 'overview'])->name('emis.staff.overview.index');
+        Route::get('/assignment', [StaffEMIS::class, 'assignment'])->name('emis.staff.assignment.index');
+        Route::get('/development', [StaffEMIS::class, 'development'])->name('emis.staff.development.index');
+        Route::get('/attrition', [StaffEMIS::class, 'attrition'])->name('emis.staff.attrition.index');
+        Route::get('/awards', [StaffEMIS::class, 'awards'])->name('emis.staff.awards.index');
 
     });
 
