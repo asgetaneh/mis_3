@@ -112,7 +112,7 @@
                     <p class="s1" style="
               text-align: left;
             ">
-                        Period: <u>period from - to</u>
+                        Year: <u>{{ $planning_year[0]->planingYearTranslations[0]->name ?? '-' }}</u>
                     </p>
                 </td>
             </tr>

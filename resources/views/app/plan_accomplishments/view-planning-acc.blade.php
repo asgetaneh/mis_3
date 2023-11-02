@@ -127,7 +127,7 @@
                                                     </tr>
                                                     <tr style="background:#21212121;">
                                                         <th  rowspan="2"></th>
-                                                         <th  rowspan="2" style="width:60%"> 
+                                                         <th  rowspan="2" style="width:60%">
                                                             KPI:   {{$kpiT->name }}
                                                         </th>
                                                          @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
@@ -148,7 +148,8 @@
                                                         @empty
                                                         @endforelse
                                                         <th>
-                                                            <button type="button" class="btn btn-tool"
+                                                            <button type="button" title="Expand"
+                                                                class="btn btn-flat btn-tool bg-primary m-auto py-2 px-4"
                                                                 data-card-widget="collapse"><i class="fas fa-plus"></i>
                                                             </button>
                                                         </th>
@@ -178,26 +179,32 @@
                                         <x-form method="POST" action="{{ route('approve-plan') }}" class="mt-4">
 
                                             @forelse($offices  as $office)
-                                                @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
-                                                    {{-- <table class="table table-bordered">
-                                                        <thead> --}}
-                                                            @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
-                                                                @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
-                                                                    @include('app.plan_accomplishments.view-kpi123')
-                                                                    {{-- KPI has  child one and child two --}}
-                                                                @else
-                                                                    @include('app.plan_accomplishments.view-kpi12')
-                                                                @endif
-                                                                {{-- KPI has  child one only --}}
-                                                            @else
-                                                                @include('app.plan_accomplishments.view-kpi1')
-                                                            @endif
+                                                @php
+                                                    $isOfficeBelongToKpi = isOfficeBelongToKpi($office, $planAcc->Kpi->id);
+                                                @endphp
 
-                                                        {{-- </thead>
-                                                    </table> --}}
-                                                    {{-- KPI has no child one, which means just only plain input --}}
-                                                @else
-                                                    @include('app.plan_accomplishments.view-kpi')
+                                                @if ($isOfficeBelongToKpi->count() > 0)
+                                                    @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
+                                                        {{-- <table class="table table-bordered">
+                                                            <thead> --}}
+                                                                @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
+                                                                    @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
+                                                                        @include('app.plan_accomplishments.view-kpi123')
+                                                                        {{-- KPI has  child one and child two --}}
+                                                                    @else
+                                                                        @include('app.plan_accomplishments.view-kpi12')
+                                                                    @endif
+                                                                    {{-- KPI has  child one only --}}
+                                                                @else
+                                                                    @include('app.plan_accomplishments.view-kpi1')
+                                                                @endif
+
+                                                            {{-- </thead>
+                                                        </table> --}}
+                                                        {{-- KPI has no child one, which means just only plain input --}}
+                                                    @else
+                                                        @include('app.plan_accomplishments.view-kpi')
+                                                    @endif
                                                 @endif
                                             @empty
                                                 <h4>No offices!</h4>

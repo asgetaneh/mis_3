@@ -748,6 +748,24 @@ class PlanAccomplishmentController extends Controller
                 $off_level = $office->level;
                 $imagen_off = $office;
 
+                if(auth()->user()->is_admin || auth()->user()->hasRole('super-admin')){
+                    // $office = Office::find(1);
+                    // $imagen_off = $office;
+                    // $off_level = 1;
+                    // $all_office_list = $this->allChildAndChildChild($office);
+                    // $only_child_array = array_merge($all_office_list,array($office_id));
+
+                    $imagen_off = Office::find(1); // immaginery office of which contain all office kpi plan
+                    $off_level = 0;
+                    $all_offices = getAllOffices();
+                    $only_child_array = [];
+
+                    foreach ($all_offices as $key => $value) {
+                        $only_child_array = array_merge($only_child_array, array($value->id));
+                    }
+
+                }
+
                 $officeSentToBlade = $office->officeTranslations[0]->name ? $office->officeTranslations[0]->name : '-';
 
                 $manager = DB::table('manager')->select()->where('office_id', $office_id)->first();
@@ -763,6 +781,14 @@ class PlanAccomplishmentController extends Controller
                     ->groupBy('kpi_id')
                     ->get();
 
+                if(auth()->user()->is_admin || auth()->user()->hasRole('super-admin')){
+                    $planAccomplishments = PlanAccomplishment::where('planning_year_id', '=', $planning_year[0]->id)
+                    ->where('kpi_id', $kpiId)
+                    ->groupBy('kpi_id')
+                    ->orderBy('reporting_period_id')
+                    ->get();
+                }
+
                 // check what to export
                 if($request->has('pdf')){
                     view()->share([
@@ -774,6 +800,14 @@ class PlanAccomplishmentController extends Controller
                         'officeSentToBlade' => $officeSentToBlade,
                         'managerName' => $managerName,
                     ]);
+
+                    if(auth()->user()->is_admin || auth()->user()->hasRole('super-admin')){
+                        $pdf = App::make('dompdf.wrapper', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year'))
+                            ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
+                            ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
+                        $pdf->loadView('app.plan_accomplishments.plan-export.pdf-plan-all');
+                        return $pdf->download('All-Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                    }
 
                     $pdf = App::make('dompdf.wrapper', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'))
                         ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
@@ -1431,6 +1465,24 @@ class PlanAccomplishmentController extends Controller
                 // $off_level = $office->level;
                 $imagen_off = $office;
 
+                if(auth()->user()->is_admin || auth()->user()->hasRole('super-admin')){
+                    // $office = Office::find(1);
+                    // $imagen_off = $office;
+                    // $off_level = 1;
+                    // $all_office_list = $this->allChildAndChildChild($office);
+                    // $only_child_array = array_merge($all_office_list,array($office_id));
+
+                    $imagen_off = Office::find(1); // immaginery office of which contain all office kpi plan
+                    $off_level = 0;
+                    $all_offices = getAllOffices();
+                    $only_child_array = [];
+
+                    foreach ($all_offices as $key => $value) {
+                        $only_child_array = array_merge($only_child_array, array($value->id));
+                    }
+
+                }
+
                 $officeSentToBlade = $office->officeTranslations[0]->name ? $office->officeTranslations[0]->name : '-';
 
                 $manager = DB::table('manager')->select()->where('office_id', $office_id)->first();
@@ -1446,6 +1498,14 @@ class PlanAccomplishmentController extends Controller
                     ->groupBy('kpi_id')
                     ->get();
 
+                if(auth()->user()->is_admin || auth()->user()->hasRole('super-admin')){
+                    $planAccomplishments = PlanAccomplishment::where('planning_year_id', '=', $planning_year[0]->id)
+                    ->where('kpi_id', $kpiId)
+                    ->groupBy('kpi_id')
+                    ->orderBy('reporting_period_id')
+                    ->get();
+                }
+
                 // check what to export
                 if($request->has('pdf')){
                     view()->share([
@@ -1457,6 +1517,14 @@ class PlanAccomplishmentController extends Controller
                         'officeSentToBlade' => $officeSentToBlade,
                         'managerName' => $managerName,
                     ]);
+
+                    if(auth()->user()->is_admin || auth()->user()->hasRole('super-admin')){
+                        $pdf = App::make('dompdf.wrapper', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'))
+                        ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
+                        ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
+                        $pdf->loadView('app.report_accomplishments.report-export.pdf-report-all');
+                        return $pdf->download('All-Office-Report-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                    }
 
                     $pdf = App::make('dompdf.wrapper', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'))
                         ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
