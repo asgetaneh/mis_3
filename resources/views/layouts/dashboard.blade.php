@@ -2,78 +2,12 @@
 @section('title', 'Dashboard')
 
 @section('content')
-    <!-- Small boxes (Stat box) -->
-    {{-- <div class="row">
-                <!-- <h1>{{ __('1.welcome') }}</h1> -->
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-primary">
-            <div class="inner">
-              <h3>150</h3>
-
-              <p>KPI</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-bag"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-green">
-            <div class="inner">
-              <h3>16<sup style="font-size: 20px"></sup></h3>
-
-              <p>Objectives</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-stats-bars"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-yellow">
-            <div class="inner">
-              <h3>44</h3>
-
-              <p>User Registrations</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-person-add"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-red">
-            <div class="inner">
-              <h3>65</h3>
-
-              <p>Unique Visitors</p>
-            </div>
-            <div class="icon">
-              <i class="ion ion-pie-graph"></i>
-            </div>
-            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-      </div> --}}
-
     <div class="row">
         <div class="col-12 col-sm-6 col-md-3">
             <div class="info-box mb-3" id="" title="click to view detail">
                 <span class="info-box-icon bg-success elevation-1">
                     <i class="fas fa-link"></i>
                 </span>
-
                 <a href="{{ route('key-peformance-indicators.index') }}">
                     <div class="info-box-content">
                         <span class="info-box-text">KPI</span>
@@ -85,7 +19,6 @@
             <!-- /.info-box -->
         </div>
         <div class="col-12 col-sm-6 col-md-3">
-
             <div class="info-box " id="" title="click to view detail">
                 <span class="info-box-icon bg-secondary elevation-1">
                     <i class="fas fa-eye"></i>
@@ -103,7 +36,6 @@
             <!-- /.info-box -->
         </div>
         <div class="col-12 col-sm-6 col-md-3">
-
             <div class="info-box " id="" title="click to view detail">
                 <span class="info-box-icon bg-warning elevation-1">
                     <i class="fas fa-bullseye"></i>
@@ -140,14 +72,17 @@
             <!-- /.info-box -->
         </div>
 
+
+
+
         {{-- Only admin --}}
-        @if (auth()->user()->is_admin === true || auth()->user()->hasRole('super-admin'))
+        @if (auth()->user()->is_admin === true ||
+                auth()->user()->hasRole('super-admin'))
             <div class="col-12 col-sm-6 col-md-3">
                 <div class="info-box mb-3" id="" title="click to view detail">
                     <span class="info-box-icon bg-info elevation-1">
                         <i class="fas fa-building"></i>
                     </span>
-
                     <a href="{{ route('office-translations.index') }}">
                         <div class="info-box-content">
                             <span class="info-box-text">Offices</span>
@@ -213,444 +148,250 @@
         <!-- /.info-box -->
     </div>
 
-    @if (auth()->user()->is_admin === true || auth()->user()->hasRole('super-admin'))
-        {{-- <section class="content"> --}}
-        <div class="">
-            <div class="row">
-
-                <div class="col-md-12">
-
-                    <div class="card border card-light">
-                    <form action="{{ route('home') }}" method="Get" id="comment-form">
-                         <div class="card-header">
-                            <h3 class="card-title">
-                            <div class ="row">
-                                <div class="col-md-4">
-                                    <label class="label" for="filters">Key Peformance Indicator:</label>
-                                <select class="form-control select2" name="kpi">
-                                    <option disabled selected value="">Select Key Peformance Indicator</option>
-                                    @forelse(getAllKpi() as $kpi)
-                                            <option value="{{ $kpi->id }}">{{ $kpi->keyPeformanceIndicatorTs[0]->name }}
-                                            </option>
-                                    @empty
-                                    @endforelse
-                                </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="label" for="filters">Office:</label>
-                                <select class="form-control select2" name="office">
-                                    <option disabled selected value="">Select Office</option>
-                                    @forelse(getAllOffices() as $office)
-                                            <option value="{{ $office->id }}">{{ $office->officeTranslations[0]->name }}
-                                            </option>
-                                    @empty
-                                    @endforelse
-                                </select>
-                                </div>
-                                 <div class="col-md-3">
-                                    <label class="label" for="filters">Reporting Period:</label>
-                                <select class="form-control select2" name="period">
-                                    <option disabled selected value="">Select Reporting Period</option>
-                                    @forelse(getAllReportingPeriod() as $ReportingPeriod)
-                                            <option value="{{ $ReportingPeriod->id }}">{{ $ReportingPeriod->reportingPeriodTs[0]->name }}
-                                            </option>
-                                    @empty
-                                    @endforelse
-                                </select>
-                                </div>
-                                <div class="col-md-2">
-                                <button type="submit" class="btn btn-info">Filter</button>
-                                </div>
-                            </div>                            
-                                
-                            </h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
+    @if (auth()->user()->is_admin === true ||
+            auth()->user()->hasRole('super-admin'))
+        <form action="{{ route('home') }}" method="Get" id="comment-form">
+            <div class="card border card-light">
+                <div class="card-header">
+                    <div class ="row" style="background:#64b5f6">
+                        <div class="col-md-4">
+                            <label class="label" for="filters">
+                                Key Peformance Indicator:
+                            </label>
+                            <select class="form-control select2" name="kpi">
+                                <option disabled selected value="">
+                                    Select Key Peformance Indicator
+                                </option>
+                                @forelse(getAllKpi() as $kpi)
+                                    <option value="{{ $kpi->id }}">
+                                        {{ $kpi->keyPeformanceIndicatorTs[0]->name }}
+                                    </option>
+                                @empty
+                                @endforelse
+                            </select>
                         </div>
-                        </form>
-                        <div class="card-body">
-                            <div class="chart">
-                                <div class="chartjs-size-monitor">
-                                    <div class="chartjs-size-monitor-expand">
-                                        <div class=""></div>
-                                    </div>
-                                    <div class="chartjs-size-monitor-shrink">
-                                        <div class=""></div>
-                                    </div>
-                                </div>
-                                <canvas id="barChart"
-                                    style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 442px;"
-                                    width="442" height="250" class="chartjs-render-monitor"></canvas>
-                            </div>
+                        <div class="col-md-4">
+                            <label class="label" for="filters">Office:</label>
+                            <select class="form-control select2" name="office">
+                                <option disabled selected value="">
+                                    Select Office
+                                </option>
+                                @forelse(getAllOffices() as $office)
+                                    <option value="{{ $office->id }}">
+                                        {{ $office->officeTranslations[0]->name }}
+                                    </option>
+                                @empty
+                                @endforelse
+                            </select>
                         </div>
-
+                        <div class="col-md-3">
+                            <label class="label" for="filters">
+                                Reporting Period:
+                            </label>
+                            <select class="form-control select2" name="period">
+                                <option disabled selected value="">Select Reporting Period</option>
+                                @forelse(getAllReportingPeriod() as $ReportingPeriod)
+                                    <option value="{{ $ReportingPeriod->id }}">
+                                        {{ $ReportingPeriod->reportingPeriodTs[0]->name }}
+                                    </option>
+                                @empty
+                                @endforelse
+                            </select>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-info">Filter</button>
+                        </div>
                     </div>
-
-
-                    <div class="card border card-light">
-                        <div class="card-header">
-                            <h3 class="card-title">Stacked Bar Chart</h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart">
-                                <div class="chartjs-size-monitor">
-                                    <div class="chartjs-size-monitor-expand">
-                                        <div class=""></div>
-                                    </div>
-                                    <div class="chartjs-size-monitor-shrink">
-                                        <div class=""></div>
-                                    </div>
-                                </div>
-                                <canvas id="stackedBarChart"
-                                    style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 442px;"
-                                    width="442" height="250" class="chartjs-render-monitor"></canvas>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="card border card-light">
-                        <div class="card-header">
-                            <h3 class="card-title">Line Chart</h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart">
-                                <div class="chartjs-size-monitor">
-                                    <div class="chartjs-size-monitor-expand">
-                                        <div class=""></div>
-                                    </div>
-                                    <div class="chartjs-size-monitor-shrink">
-                                        <div class=""></div>
-                                    </div>
-                                </div>
-                                <canvas id="lineChart"
-                                    style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 442px;"
-                                    width="442" height="250" class="chartjs-render-monitor"></canvas>
-                            </div>
-                        </div>
-
-                    </div>
-
                 </div>
-
-                <div class="col-md-12">
-
-                    <div class="card border card-light">
-                        <div class="card-header">
-                            <h3 class="card-title">Donut Chart</h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="bar-chart"></div>
                         </div>
-                        <div class="card-body">
-                            <div class="chartjs-size-monitor">
-                                <div class="chartjs-size-monitor-expand">
-                                    <div class=""></div>
-                                </div>
-                                <div class="chartjs-size-monitor-shrink">
-                                    <div class=""></div>
-                                </div>
-                            </div>
-                            <canvas id="donutChart"
-                                style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 442px;"
-                                width="442" height="250" class="chartjs-render-monitor"></canvas>
-                        </div>
-
                     </div>
-
-
-                    <div class="card border card-light">
-                        {{-- <div class="card-header">
-                            <h3 class="card-title">Pie Chart</h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="chartjs-size-monitor">
-                                <div class="chartjs-size-monitor-expand">
-                                    <div class=""></div>
-                                </div>
-                                <div class="chartjs-size-monitor-shrink">
-                                    <div class=""></div>
-                                </div>
-                            </div>
-                            <canvas id="pieChart"
-                                style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 442px;"
-                                width="442" height="250" class="chartjs-render-monitor"></canvas>
-                        </div> --}}
-
-                    </div>
-
-                    <div class="card border card-light">
-                        <div class="card-header">
-                            <h3 class="card-title">Area Chart</h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart">
-                                <div class="chartjs-size-monitor">
-                                    <div class="chartjs-size-monitor-expand">
-                                        <div class=""></div>
-                                    </div>
-                                    <div class="chartjs-size-monitor-shrink">
-                                        <div class=""></div>
-                                    </div>
-                                </div>
-                                <canvas id="areaChart"
-                                    style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%; display: block; width: 442px;"
-                                    width="442" height="250" class="chartjs-render-monitor"></canvas>
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>*/
-
+                </div>
             </div>
+            <div class="card border card-light">
+                <div class="card-header">
+                    <div class ="row" style="background:#64b5f6">
+                        <div class="col-md-4">
+                            <label class="label" for="filters">
+                                Key Peformance Indicator:
+                            </label>
+                            <select class="form-control select2" name="kpi2">
+                                <option disabled selected value="">
+                                    Select Key Peformance Indicator
+                                </option>
+                                @forelse(getAllKpi() as $kpi)
+                                    <option value="{{ $kpi->id }}">
+                                        {{ $kpi->keyPeformanceIndicatorTs[0]->name }}
+                                    </option>
+                                @empty
+                                @endforelse
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="label" for="filters">
+                                Office:
+                            </label>
+                            <select class="form-control select2" name="office2">
+                                <option disabled selected value="">
+                                    Select Office
+                                </option>
+                                @forelse(getAllOffices() as $office)
+                                    <option value="{{ $office->id }}">
+                                        {{ $office->officeTranslations[0]->name }}
+                                    </option>
+                                @empty
+                                @endforelse
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="label" for="filters">
+                                Reporting Period:
+                            </label>
+                            <select class="form-control select2" name="period2">
+                                <option disabled selected value="">
+                                Select Reporting Period
+                                </option>
+                                @forelse(getAllReportingPeriod() as $ReportingPeriod)
+                                    <option value="{{ $ReportingPeriod->id }}">
+                                        {{ $ReportingPeriod->reportingPeriodTs[0]->name }}
+                                    </option>
+                                @empty
+                                @endforelse
+                            </select>
+                        </div>
+                        {{-- <div class="col-md-1">
+                            <button type="submit" class="btn btn-info">Filter</button>
+                        </div> --}}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="bar-chart2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
 
-        </div>
-        {{-- </section> --}}
-    @endif     
-    <script src="{{ asset('assets/plugins/chart.js/Chart.min.js') }}"></script>
-    <script>
-        $(function() {
-               
-            /* ChartJS
-             * -------
-             * Here we will create a few charts using ChartJS
-             */
 
-            //--------------
-            //- AREA CHART -
-            //--------------
+                <style>
+                    .morris-hover {
+                        position: absolute;
+                        z-index: 1000;
+                    }
 
-            // Get context with jQuery - using jQuery's .get() method.
-            var areaChartCanvas = $('#areaChart').get(0).getContext('2d')
+                    .morris-hover.morris-default-style {
+                        border-radius: 10px;
+                        padding: 6px;
+                        color: #666;
+                        background: rgba(255, 255, 255, 0.8);
+                        border: solid 2px rgba(230, 230, 230, 0.8);
+                        font-family: sans-serif;
+                        font-size: 12px;
+                        text-align: center;
+                    }
 
-            var areaChartData = {
-                labels: [
-                    <?php 
-                    foreach($kpis as $kpii){ 
-                            $ll=substr($kpii->keyPeformanceIndicatorTs[0]->name,0,20) . '...';
-                         echo ("'".$ll."'".',');
-                     }?>
-    
-                 ],
-                datasets: [{
-                        label: 'Report',
-                        backgroundColor: 'rgba(60,141,188,0.9)',
-                        borderColor: 'rgba(60,141,188,0.8)',
-                        pointRadius: false,
-                        pointColor: '#3b8bba',
-                        pointStrokeColor: 'rgba(60,141,188,1)',
-                        pointHighlightFill: '#fff',
-                        pointHighlightStroke: 'rgba(60,141,188,1)',
-                        data: [<?php 
-                                foreach($kpis as $kpii){ 
-                                     $k_plan_report = getKpiPlan($kpii,$offices,$period);
-                                    echo ($k_plan_report[1]);
-                                     echo(',');
-                                }?>]
-                    },
-                    {
-                        label: 'Plan',
-                        ttle: '7',
-                        backgroundColor: 'rgba(150, 214, 222, 1)',
-                        borderColor: 'rgba(210, 214, 222, 1)',
-                        pointRadius: false,
-                        pointColor: 'rgba(210, 214, 222, 1)',
-                        pointStrokeColor: '#c1c7d1',
-                        pointHighlightFill: '#fff',
-                        pointHighlightStroke: 'rgba(220,220,220,1)',
-                        data: [
-                                <?php 
-                                foreach($kpis as $kpii){
-                                   $k_plan_report = getKpiPlan($kpii,$offices,$period);
-                                    echo($k_plan_report[0].',');
-                                 }?>
-                        ]
-                    },
-                ]
-            }
+                    .morris-hover.morris-default-style .morris-hover-row-label {
+                        font-weight: bold;
+                        margin: 0.25em 0;
+                    }
 
-            var areaChartOptions = {
-                maintainAspectRatio: false,
-                responsive: true,
-                legend: {
-                    display: false
-                },
-                scales: {
-                    xAxes: [{
-                        gridLines: {
-                            display: false,
-                        }
-                    }],
-                    yAxes: [{
-                        gridLines: {
-                            display: false,
-                        }
-                    }]
-                }
-            }
+                    .morris-hover.morris-default-style .morris-hover-point {
+                        white-space: nowrap;
+                        margin: 0.1em 0;
+                    }
 
-            // This will get the first returned node in the jQuery collection.
-            new Chart(areaChartCanvas, {
-                type: 'line',
-                data: areaChartData,
-                options: areaChartOptions
-            })
+                    svg {
+                        width: 100%;
+                    }
+                </style>
 
-            //-------------
-            //- LINE CHART -
-            //--------------
-            var lineChartCanvas = $('#lineChart').get(0).getContext('2d')
-            var lineChartOptions = $.extend(true, {}, areaChartOptions)
-            var lineChartData = $.extend(true, {}, areaChartData)
-            lineChartData.datasets[0].fill = false;
-            lineChartData.datasets[1].fill = false;
-            lineChartOptions.datasetFill = false
 
-            var lineChart = new Chart(lineChartCanvas, {
-                type: 'line',
-                data: lineChartData,
-                options: lineChartOptions
-            })
+                <link rel="stylesheet" href="https://www.cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css" />
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+                <script src="https://code.jquery.com/jquery-1.8.2.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+                <meta charset=utf-8 />
+                <script>
+                    $(document).ready(function() {
+                        barChart();
+                        barChart2();
+                        lineChart();
+                        areaChart();
+                        donutChart();
 
-            //-------------
-            //- DONUT CHART -
-            //-------------
-            // Get context with jQuery - using jQuery's .get() method.
-            var donutChartCanvas = $('#donutChart').get(0).getContext('2d')
-            var donutData = {
-                labels: [
-                    'Chrome',
-                    'IE',
-                    'FireFox',
-                    'Safari',
-                    'Opera',
-                    'Navigator',
-                ],
-                datasets: [{
-                    data: [700, 500, 400, 600, 300, 100],
-                    backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
-                }]
-            }
-            var donutOptions = {
-                maintainAspectRatio: false,
-                responsive: true,
-            }
-            //Create pie or douhnut chart
-            // You can switch between pie and douhnut using the method below.
-           /* new Chart(donutChartCanvas, {
-                type: 'doughnut',
-                data: donutData,
-                options: donutOptions
-            })*/
- 
-            //-------------
-            //- PIE CHART -
-            //-------------
-            // Get context with jQuery - using jQuery's .get() method.
-         /*   var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
-            var pieData = donutData;
-            var pieOptions = {
-                maintainAspectRatio: false,
-                responsive: true,
-            }
-            //Create pie or douhnut chart
-            // You can switch between pie and douhnut using the method below.
-            new Chart(pieChartCanvas, {
-                type: 'pie',
-                data: pieData,
-                options: pieOptions
-            })*/
+                        $(window).resize(function() {
+                            window.barChart.redraw();
+                            window.barChart2.redraw();
+                            window.lineChart.redraw();
+                            window.areaChart.redraw();
+                            window.donutChart.redraw();
+                        });
+                    });
 
-            //-------------
-            //- BAR CHART -
-            //-------------
-            var barChartCanvas = $('#barChart').get(0).getContext('2d')
-            var barChartData = $.extend(true, {}, areaChartData)
-            var temp0 = areaChartData.datasets[0]
-            var temp1 = areaChartData.datasets[1]
-            barChartData.datasets[0] = temp1
-            barChartData.datasets[1] = temp0
+                    function barChart() {
+                        window.barChart = Morris.Bar({
+                            element: 'bar-chart',
+                            data: [
+                                <?php
+                                
+                                foreach ($kpis as $kpii) {
+                                    echo '{';
+                                    $ll = substr($kpii->keyPeformanceIndicatorTs[0]->name, 0, 20) . '...';
+                                    echo 'KPI:';
+                                    echo "'" . $ll . "',";
+                                    $k_plan_report = getKpiPlan($kpii, $offices, $period);
+                                    echo 'Plan:' . $k_plan_report[0] . ',';
+                                    $k_plan_report = getKpiPlan($kpii, $offices, $period);
+                                    echo 'Report:' . $k_plan_report[1];
+                                    echo '},';
+                                }
+                                ?>
+                                /* { y: '2006', a: 100, b: 90 },*/
+                            ],
+                            xkey: 'KPI',
+                            ykeys: ['Plan', 'Report'],
+                            labels: ['Plan ', 'Report'],
+                            lineColors: ['#188e5', '#ff3321'],
+                            lineWidth: '1px',
+                            resize: true,
+                            redraw: true
+                        });
+                    }
 
-            var barChartOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                datasetFill: false
-            }
-
-            new Chart(barChartCanvas, {
-                type: 'bar',
-                data: barChartData,
-                options: barChartOptions
-            })
-
-            //---------------------
-            //- STACKED BAR CHART -
-            //---------------------
-            var stackedBarChartCanvas = $('#stackedBarChart').get(0).getContext('2d')
-            var stackedBarChartData = $.extend(true, {}, barChartData)
-
-            var stackedBarChartOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    xAxes: [{
-                        stacked: true,
-                    }],
-                    yAxes: [{
-                        stacked: true
-                    }]
-                }
-            }
-
-            new Chart(stackedBarChartCanvas, {
-                type: 'bar',
-                data: stackedBarChartData,
-                options: stackedBarChartOptions
-            })
-        })
-    </script>
+                    function barChart2() {
+                        window.barChart2 = Morris.Bar({
+                            element: 'bar-chart2',
+                            data: [
+                                <?php
+                                
+                                foreach ($kpis2 as $kpii) {
+                                    echo '{';
+                                    $ll = substr($kpii->keyPeformanceIndicatorTs[0]->name, 0, 20) . '...';
+                                    echo 'KPI:';
+                                    echo "'" . $ll . "',";
+                                    $k_plan_report = getKpiPlan($kpii, $offices2, $period2);
+                                    echo 'Plan:' . $k_plan_report[0] . ',';
+                                    $k_plan_report = getKpiPlan($kpii, $offices2, $period2);
+                                    echo 'Report:' . $k_plan_report[1];
+                                    echo '},';
+                                }
+                                ?>
+                                /* { y: '2006', a: 100, b: 90 },*/
+                            ],
+                            xkey: 'KPI',
+                            ykeys: ['Plan', 'Report'],
+                            labels: ['Plan ', 'Report'],
+                            lineColors: ['#1e88e5', '#ff3321'],
+                            lineWidth: '1px',
+                            resize: true,
+                            redraw: true
+                        });
+                    }
+                </script>
+    @endif
 @endsection

@@ -46,22 +46,33 @@ class HomeController extends Controller
         $activeUsers = '';
         $inactiveUsers = '';//dd($request->method());
 
-        $kpis = KeyPeformanceIndicator::all();
         $Objectives = Objective::all();
         $Users = User::all();
         $Offices = Office::all();
+        $Offices2 = Office::all();
+        $kpis = KeyPeformanceIndicator::all();
+        $kpis2 = KeyPeformanceIndicator::all();
         $all_child_and_subchildoffices = [];
+        $all_child_and_subchildoffices2 = [];
+
         foreach ($Offices as $key => $value) { 
             $all_child_and_subchildoffices=array_merge($all_child_and_subchildoffices,array($value->id));
+        }
+        foreach ($Offices2 as $key => $value) { 
+            $all_child_and_subchildoffices2=array_merge($all_child_and_subchildoffices2,array($value->id));
         }
 
         //$periods = ReportingPeriod::all();
         $period =null;
+        $period2 =null;
         //$period_or_quarter = getReportingQuarter($kpii->reportingPeriodType->id); 
-        $input = $request->all();
+        $input = $request->all();//dd($input);
         if($input){
             if($request->has('kpi')){
                 $kpis = KeyPeformanceIndicator::where('id', $request->input('kpi'))->get();
+             }
+             if($request->has('kpi2')){
+                $kpis2 = KeyPeformanceIndicator::where('id', $request->input('kpi2'))->get();
              }
             if($request->has('office')){
                  $Offices = Office::where('id',$request->input('office'))->get();
@@ -70,8 +81,18 @@ class HomeController extends Controller
                     $all_child_and_subchildoffices = array_merge($all_child_and_subchildoffices, array($value->id));
                 }
             }
+            if($request->has('office2')){
+                 $Offices2 = Office::where('id',$request->input('office2'))->get();
+                 foreach ($Offices2 as $key => $value) { 
+                    $all_child_and_subchildoffices2 = office_all_childs_ids($value);
+                    $all_child_and_subchildoffices2 = array_merge($all_child_and_subchildoffices2, array($value->id));
+                }
+            }
             if($request->has('period')){
                  $period = ReportingPeriod::where('id',$request->input('period'))->get();
+            }
+            if($request->has('period2')){
+                 $period = ReportingPeriod::where('id',$request->input('period2'))->get();
             }
          }
         
@@ -101,6 +122,9 @@ class HomeController extends Controller
                  'kpis' => $kpis,
                 'offices' => $all_child_and_subchildoffices,
                 'period' => $period,
+                 'kpis2' => $kpis2,
+                'offices2' => $all_child_and_subchildoffices2,
+                'period2' => $period2,
             ]);
       //  }
 
