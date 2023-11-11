@@ -299,6 +299,11 @@ Route::prefix('/emis')->group(function(){
         Route::get('/internship', [StudentEMIS::class, 'internship'])->name('emis.student.internship.index');
         Route::get('/employment', [StudentEMIS::class, 'employment'])->name('emis.student.employment.index');
 
+        Route::prefix('/others')->group(function(){
+            Route::get('/', [StudentEMIS::class, 'others'])->name('emis.student.others.index');
+            Route::get('/filter', [StudentEMIS::class, 'othersFilter'])->name('emis.student.others.filter');
+        });
+
     });
     Route::prefix('/staff')->group(function(){
         Route::get('/overview', [StaffEMIS::class, 'overview'])->name('emis.staff.overview.index');
