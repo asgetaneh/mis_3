@@ -73,6 +73,16 @@ return [
             'password' => env('SRS_DB_PASSWORD', ''),
         ],
 
+        'mysql_hrm'=>[
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('HRM_DB_HOST', '10.140.6.113'),
+            'port' => env('HRM_DB_PORT', '3306'),
+            'database' => env('HRM_DB_DATABASE', 'forge'),
+            'username' => env('HRM_DB_USERNAME', 'forge'),
+            'password' => env('HRM_DB_PASSWORD', ''),
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
