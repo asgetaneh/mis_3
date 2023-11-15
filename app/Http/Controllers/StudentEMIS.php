@@ -265,24 +265,161 @@ class StudentEMIS extends Controller
         );
     }
 
+    public function others(Request $request): View
+    {
+        $search = $request->get('search', '');
 
-    /**
-     * Display a listing of the resource.
-     */
-    // public function index(Request $request): View
-    // {
-    //     $this->authorize('view-any', GenderTranslation::class);
+        return view(
+            'app.emis.student.others.index'
+        );
+    }
 
-    //     $search = $request->get('search', '');
+    public function othersFilter(Request $request)
+    {
 
-    //     $genderTranslations = GenderTranslation::search($search)
-    //         ->latest()
-    //         ->paginate(5)
-    //         ->withQueryString();
+        $academicYear = request('academic-year');
+        $semester = request('semester');
+        $year = request('year');
 
-    //     return view(
-    //         'app.gender_translations.index',
-    //         compact('genderTranslations', 'search')
-    //     );
-    // }
+        $reportType = $request->input('report-type');
+
+        $query = DB::connection('mysql_srs')
+            ->table('student AS s')
+            ->join('student_info AS sfo', 's.id', '=', 'sfo.student_id');
+
+        if (!empty($academicYear)) {
+            $query->where('sfo.academic_year', $academicYear);
+        }
+
+        if (!empty($semester)) {
+            $query->where('sfo.semester', $semester);
+        }
+
+        if (!empty($year)) {
+            $query->where('sfo.year', $year);
+        }
+
+        $query->select(
+            's.birth_date',
+            's.sex',
+            'sfo.academic_year',
+            DB::raw('YEAR(CURDATE()) - YEAR(s.birth_date) - (DATE_FORMAT(CURDATE(), "%m%d") < DATE_FORMAT(s.birth_date, "%m%d")) AS age')
+        );
+
+        // prevent logically impossible birth_date value from fetching
+        $twoYearsAgo = now()->subYears(2);
+
+        $query->whereNotNull('s.birth_date')
+            ->where('s.birth_date', '<=', $twoYearsAgo);
+
+        $query = $query->paginate(10);
+
+        // student age by sex report type
+        if($request->input('report-type') == 1){
+            $output = '
+                <tr>
+                    <th rowspan="2">Age</th>
+                    <th colspan="2">Sex</th>
+                    <th rowspan="2">Male to Female Ration</th>
+                </tr>
+                <tr>
+                    <th>M</th>
+                    <th>F</th>
+                </tr>
+                ';
+
+            $loop = 1;
+            if($query->count() > 0){
+                foreach ($query as $row) {
+                    $output .= '
+                        <tr>
+                            <td>' . $row->age . '</td>
+                            <td>' . $row->sex . '</td>
+                            <td>' . $row->sex . '</td>
+                            <td>' . $row->sex . '</td>
+                        </tr>
+                ';
+                    $loop++;
+                }
+            }else{
+                $output .= '<tr><th>No items found!</th></tr>';
+            }
+
+            // $data = [
+            //     'data' => $output,
+            //     'links' => $query->links(),
+            // ];
+
+            // return response()->json($data);
+        }
+
+        // completion rate of UG students in percent report type
+        else{
+            $output = '
+                <tr>
+                    <th rowspan="2">Program</th>
+                    <th colspan="2">1st to 2nd Year</th>
+                    <th colspan="2">2nd to 3rd Year</th>
+                    <th colspan="2">3rd to 4th Year</th>
+                    <th colspan="2">4th to 5th Year</th>
+                    <th colspan="2">5th to 6th Year</th>
+                    <th colspan="2">6th to 7th Year</th>
+                </tr>
+                <tr>
+                    <th>M</th>
+                    <th>F</th>
+                    <th>M</th>
+                    <th>F</th>
+                    <th>M</th>
+                    <th>F</th>
+                    <th>M</th>
+                    <th>F</th>
+                    <th>M</th>
+                    <th>F</th>
+                    <th>M</th>
+                    <th>F</th>
+                </tr>
+                ';
+
+            $loop = 1;
+            if($query->count() > 0){
+                foreach ($query as $row) {
+                    $output .= '
+                        <tr>
+                            <td>program name</td>
+                            <td>' . $row->age . '</td>
+                            <td>' . $row->sex . '</td>
+                            <td>' . $row->sex . '</td>
+                            <td>' . $row->sex . '</td>
+                            <td>' . $row->sex . '</td>
+                            <td>' . $row->sex . '</td>
+                            <td>' . $row->sex . '</td>
+                            <td>' . $row->sex . '</td>
+                            <td>' . $row->sex . '</td>
+                            <td>' . $row->sex . '</td>
+                            <td>' . $row->sex . '</td>
+                            <td>' . $row->sex . '</td>
+                        </tr>
+                ';
+                    $loop++;
+                }
+            }else{
+                $output .= '<tr><th>No items found!</th></tr>';
+            }
+
+            // $data = [
+            //     'data' => $output,
+            //     'links' => $query->links(),
+            // ];
+
+            // return response()->json($data);
+        }
+
+        $request->flash();
+
+        return view(
+            'app.emis.student.others.index', compact('output','query' , 'reportType')
+        );
+    }
+
 }

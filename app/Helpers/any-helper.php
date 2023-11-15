@@ -43,6 +43,8 @@ if (! function_exists('gettrans')) {
         if($selected_period){
             $active_period = $selected_period;
         }     //dd($list_offices);
+
+        $planAccomplishments = '';
         if($active_period){
             $planAccomplishments = PlanAccomplishment::
             join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
@@ -69,10 +71,13 @@ if (! function_exists('gettrans')) {
         $plan_value = 0;
         $acc_value = 0;
         $plan_accom_array = [];
-         foreach ($planAccomplishments as $key => $planAccomplishment) {
-            $plan_value = $plan_value+ $planAccomplishment->plan_value;
-            $acc_value = $acc_value+ $planAccomplishment->accom_value;
+        if(!empty($planAccomplishments)) {
+            foreach ($planAccomplishments as $key => $planAccomplishment) {
+                $plan_value = $plan_value+ $planAccomplishment->plan_value;
+                $acc_value = $acc_value+ $planAccomplishment->accom_value;
+            }
         }
+
         $plan_accom_array = array_merge( $plan_accom_array,array($plan_value));
             $plan_accom_array = array_merge( $plan_accom_array,array($acc_value));
             return $plan_accom_array;

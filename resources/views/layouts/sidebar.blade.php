@@ -131,6 +131,10 @@
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>Employment</p>
                                             </a>
+                                            <a href="{{route('emis.student.others.index')}}" class="nav-link {{ Request::is('emis/student/others') || Request::is('emis/student/others/*') ? 'active' : '' }}">
+                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                <p>Other Reports</p>
+                                            </a>
                                         </li>
                                     </ul>
                                 </li>
