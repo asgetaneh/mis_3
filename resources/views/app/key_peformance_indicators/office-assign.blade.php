@@ -12,18 +12,17 @@
                 </h4>
                 <br>
                 <x-form method="POST" action="{{ route('kpi-assign-tooffices-save') }}" class="mt-4">
+                        <button type="submit" class="btn btn-primary float-right">
+                            <i class="icon ion-md-save"></i>
+                            Add
+                        </button>
                     @include('app.key_peformance_indicators.office-assign-form-input')
 
                     <div class="mt-4">
                         <a href="{{ route('key-peformance-indicators.index') }}" class="btn btn-light">
                             <i class="icon ion-md-return-left text-primary"></i>
                             @lang('crud.common.back')
-                        </a>
-
-                        <button type="submit" class="btn btn-primary float-right">
-                            <i class="icon ion-md-save"></i>
-                            Add
-                        </button>
+                        </a>                       
                     </div>
                 </x-form>
                 <br>
@@ -61,8 +60,11 @@
                                         {{ $officesAdd->office->officeTranslations[0]->name ?? '-' }}
                                     </td>
                                     <td>
-                                        @can('delete', $officesAdd)
-                                            <form
+                                        @php
+                                        $user = auth()->user();
+                                        @endphp 
+                                        @if($user->hasPermission('view keypeformanceindicators'))
+                                             <form
                                                 action="{{ route('kpi-remove-from-office', [$keyPeformanceIndicator, $officesAdd]) }}"
                                                 method="POST"
                                                 onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')">
@@ -71,7 +73,7 @@
                                                     <i class="icon ion-md-trash"></i>
                                                 </button>
                                             </form>
-                                        @endcan
+                                         @endif
                                     </td>
                                 </tr>
                             @empty

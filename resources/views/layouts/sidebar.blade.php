@@ -740,6 +740,15 @@
                                         </a>
                                     </li>
                                 @endcan
+                                 @can('view-any', App\Models\User::class)
+                                    <li class="nav-item">
+                                        <a href="{{ route('feedback-view') }}"
+                                            class="nav-link {{ Request::is('access/management/comments') || Request::is('access/management/comments/*') ? 'active' : '' }}">
+                                            <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                            <p>View Comments</p>
+                                        </a>
+                                    </li>
+                                @endcan
                             </ul>
                         </li>
                     @endif

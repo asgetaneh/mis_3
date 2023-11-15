@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -92,10 +92,24 @@
                         <a href="#about" class="btn-get-started scrollto">Read more</a>
                     </div>
                 </div>
+
                 <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="zoom-in" data-aos-delay="200">
-                    <img src="{{ asset('assets/landing-page/assets/img/smis.png') }}" class="img-fluid animated"
-                        alt="" />
+                    <form action="{{ route('feedback-save') }}" method="Get" id="comment-form">
+                    <div class="card card-primary card-outline card-outline-tabs fillable-objective">
+                        {{-- @dd($objectives) --}}
+                        <div class="card-header p-0 border-bottom-0 objectives-list-tab">
+
+                        </div>
+
+                        <label for="summernote">Feedback</label>
+                        {{-- <input type="hidden" name="type" value="yes"> --}}
+                        <textarea name="fback" style="height: 250px;" class="form-control summernote"
+                            placeholder="Type any feedback (comments,difficulties and ...) here" id="narration-field"></textarea>
+                    </div>
+                        <button type="submit" class="btn btn-info pull-right">Send</button>
+                    </form>
                 </div>
+                
             </div>
         </div>
     </section>
@@ -278,3 +292,28 @@
 </body>
 
 </html>
+
+
+    <div class="row justify-content-left mt-3">
+
+        <div class="col-md-12">
+            <div class="col-12">
+                <div class="card card-primary card-outline card-outline-tabs fillable-objective">
+                    {{-- @dd($objectives) --}}
+                    <div class="card-header p-0 border-bottom-0 objectives-list-tab">
+
+                    </div>
+
+                    <label for="summernote">Major Activities</label>
+                    <input type="hidden" name="type" value="yes">
+                    <textarea name="fback" style="height: 100px;" class="form-control summernote"
+                        placeholder="Narration here" id="narration-field"></textarea>
+                    <p class="narration-field text-danger" style="display: none;">Please fill Major
+                        Activities field!</p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+ 

@@ -45,6 +45,7 @@ use App\Http\Controllers\KeyPeformanceIndicatorTController;
 use App\Http\Controllers\KpiChildThreeTranslationController;
 use App\Http\Controllers\StaffEMIS;
 use App\Http\Controllers\StudentEMIS;
+use App\Http\Controllers\FeedbackController;
 
 /*
 |--------------------------------------------------------------------------
@@ -71,6 +72,10 @@ Route::match(array('POST', 'GET'),'dashboard-plan-report', [HomeController::clas
 Route::get('lang/home', [HomeController::class, 'languageIndex']);
 Route::get('lang/change', [HomeController::class, 'change'])->name('changeLang');
 Route::get('languages', [LanguageController::class, 'index']);
+Route::get('feedback', [FeedbackController::class, 'index'])->name('feedback-view');
+Route::get('feedback/new', [FeedbackController::class, 'create'])->name('feedback');
+Route::get('feedback/save', [FeedbackController::class, 'store'])->name('feedback-save');
+
     // institution ownerships
 
 // Route::get('home', [HomeController::class, 'home'])->name('home');

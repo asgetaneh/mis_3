@@ -55,6 +55,17 @@ if (! function_exists('gettrans')) {
         //->groupBy('kpi_id')
              ->get();
         }
+        else{
+            $planAccomplishments = PlanAccomplishment::
+            join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
+             -> where('kpi_id' , '=', $kpii->id)
+            ->where('planning_year_id' , '=', $planning_year[0]->id)
+            ->where('plan_status' , '=', 1)
+            ->whereIn('office_id', $list_offices)
+            -> where('reporting_periods.slug',"=", 1)
+        //->groupBy('kpi_id')
+             ->get();
+        }
         $plan_value = 0;
         $acc_value = 0;
         $plan_accom_array = [];
@@ -157,7 +168,7 @@ if (! function_exists('gettrans')) {
                      }
             }
         }
-        //dd($acctive_period_list);
+        // dd($acctive_period_list);
         return $acctive_period_list;
 
      }
