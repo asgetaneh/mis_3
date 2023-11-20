@@ -28,7 +28,8 @@ class StrategyController extends Controller
         $search = $request->get('search', '');
 
         $strategy_ts = StrategyTranslation::search($search)
-            ->latest()
+            // ->latest()
+             ->oldest()
             ->paginate(35)
             ->withQueryString();
 

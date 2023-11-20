@@ -79,13 +79,13 @@
 
                                         </td>
                                         <td>
-                                            {{ $objective->objectiveTranslations[0]->description ?? '-' }}
+                                            {!! html_entity_decode($objective->objectiveTranslations[0]->description ?? '-'  ) !!}
                                         </td>
                                         <td>
-                                            {{ $objective->objectiveTranslations[0]->out_put ?? '-' }}
+                                            {!! html_entity_decode($objective->objectiveTranslations[0]->out_put ?? '-'  ) !!}
                                         </td>
                                         <td>
-                                            {{ $objective->objectiveTranslations[0]->out_come ?? '-' }}
+                                            {!! html_entity_decode($objective->objectiveTranslations[0]->out_come ?? '-') !!}
                                         </td>
                                         <td>{{ $objective->objectiveTranslations[0]->objective->weight ?? '-' }}</td>
                                         <td class="text-center" style="width: 134px;">

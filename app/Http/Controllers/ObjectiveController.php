@@ -33,7 +33,8 @@ class ObjectiveController extends Controller
             ->withQueryString();
 
         $objective_ts = ObjectiveTranslation::search($search)
-            ->latest()
+            // ->latest()
+             ->oldest()
             ->paginate(15)
             ->withQueryString();
 
@@ -177,7 +178,7 @@ class ObjectiveController extends Controller
         $isNewLangAdded = false;
         $localeArray = [];
 
-        foreach ($request->except('_token', '_method', 'goal_id', 'perspective_id', 'weight') as $key => $value) {
+        foreach ($request->except('files','_token', '_method', 'goal_id', 'perspective_id', 'weight') as $key => $value) {
 
             $locale = str_replace(['name_', 'description_', 'out_put_', 'out_come_'], '', $key);
 

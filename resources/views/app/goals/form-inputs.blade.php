@@ -55,7 +55,7 @@
             ></x-inputs.text>
         </x-inputs.group>
 
-        <x-inputs.group class="col-sm-12">
+        {{-- <x-inputs.group class="col-sm-12">
             <x-inputs.text
                 name="{{'out_put_'.$lang->locale}}"
                 label="{{'Output in '.$lang->name}}"
@@ -64,9 +64,21 @@
                 value="{{ $goalTranslations[$lang->locale][0]->out_put ?? '' }}"
                 required
             ></x-inputs.text>
+        </x-inputs.group> --}}
+
+        <x-inputs.group class="col-sm-12">
+            <x-inputs.textarea
+                name="{{'out_put_'.$lang->locale}}"
+                label="{{'Output in '.$lang->name}}"
+                class="form-control summernote" 
+                maxlength=""
+                placeholder="{{'output in '.$lang->name}}"
+                required>
+                {{ $goalTranslations[$lang->locale][0]->out_put ?? '' }}
+            </x-inputs.textarea>
         </x-inputs.group>
 
-         <x-inputs.group class="col-sm-12">
+         {{-- <x-inputs.group class="col-sm-12">
             <x-inputs.text
                 name="{{'out_come_'.$lang->locale}}"
                 label="{{'Outcome in '.$lang->name}}"
@@ -75,19 +87,41 @@
                 value="{{ $goalTranslations[$lang->locale][0]->out_come ?? '' }}"
                 required
             ></x-inputs.text>
+        </x-inputs.group> --}}
+
+        <x-inputs.group class="col-sm-12">
+            <x-inputs.textarea
+                name="{{'out_come_'.$lang->locale}}"
+                label="{{'Outcome in '.$lang->name}}"
+                class="form-control summernote" 
+                maxlength=""
+                placeholder="{{'outcome in '.$lang->name}}"
+                required>
+                {{ $goalTranslations[$lang->locale][0]->out_come ?? '' }}
+            </x-inputs.textarea>
         </x-inputs.group>
 
         <x-inputs.group class="col-sm-12">
             <x-inputs.textarea
                 name="{{'description_'.$lang->locale}}"
                 label="{{'Description in '.$lang->name}}"
+                class="form-control summernote" 
                 maxlength=""
                 placeholder="Description"
-                required>{{ $goalTranslations[$lang->locale][0]->description ?? '' }}
-                  </x-inputs.textarea
-            >
+                required>
+                {{ $goalTranslations[$lang->locale][0]->description ?? '' }}
+            </x-inputs.textarea>
         </x-inputs.group>
 
     @endforeach
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.summernote').summernote({
+                height: 150
+            });
+            $('.dropdown-toggle').dropdown()
+        });
+    </script>
 
 </div>

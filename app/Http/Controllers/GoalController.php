@@ -26,8 +26,9 @@ class GoalController extends Controller
         $search = $request->get('search', '');
         $goal_ts = GoalTranslation::search($search)
 
-             ->latest()
-            ->paginate(15)
+             ->oldest()
+            //   ->latest()
+            ->paginate(10)
             ->withQueryString();
 
         return view('app.goals.index', compact('goal_ts', 'search'));
@@ -133,11 +134,11 @@ class GoalController extends Controller
             'updated_by' => auth()->user()->id,
             // 'created_by_id' => $goal->created_by_id || '',
         ]);
-
+     
         $isNewLangAdded = false;
         $localeArray = [];
-
-        foreach ($request->except('_token', '_method') as $key => $value) {
+//dd($request->all());
+        foreach ($request->except('_token', '_method','files') as $key => $value) {
 
             $locale = str_replace(['name_', 'description_', 'out_put_', 'out_come_'], '', $key);
 

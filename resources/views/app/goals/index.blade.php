@@ -49,14 +49,15 @@
                             <th class="text-left">
                                 Name
                             </th>
-                            <th class="text-left">
-                                Description
-                            </th>
+                           
                             <th class="text-center">
                                 Output
                             </th>
                             <th class="text-center">
                                 Outcome
+                            </th>
+                             <th class="text-left">
+                                Description
                             </th>
                             <th class="text-center">
                                 @lang('crud.common.actions')
@@ -72,9 +73,10 @@
                         <tr>
                             <td>{{ $count++ }}</td>
                             <td>{{ $goal_t->name ?? '-' }}</td>
-                            <td>{{ $goal_t->description ?? '-' }}</td>
-                            <td>{{ strip_tags($goal_t->out_put ?? '-' )}}</td>
-                            <td>{{ strip_tags($goal_t->out_come ?? '-') }}</td>
+                            <td>{!! html_entity_decode($goal_t->out_put ) !!} </td>
+                            <td>{!! html_entity_decode($goal_t->out_come ) !!} </td>
+                            <td>{!! html_entity_decode($goal_t->description ) !!} </td>
+                            {{-- <td>{!! html_entity_decode($goal_t->out_put ) !!} </td> --}}
                             <td class="text-center" style="width: 134px;">
                                 <div
                                     role="group"
