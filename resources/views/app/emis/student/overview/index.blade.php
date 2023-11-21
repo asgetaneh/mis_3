@@ -16,7 +16,9 @@
             <div class="card-header">
                 <div style="">
                     <h3 class="card-title">Overview List</h3>
-                </div>
+                    <button class="btn btn-success pull-right" style="float:50%"> Download Excel</button>
+                 </div>
+                   
             </div>
             <div class="card-body">
 
@@ -69,7 +71,6 @@
                 <!-- /.card-body -->
             </div> --}}
 
-                <button class="btn btn-success">Download Excel</button>
 
                 <div class="table-responsive mt-3">
                     <table class="table table-bordered table-hover">
@@ -132,9 +133,13 @@
                         </thead>
                         <tbody>
                             @forelse($overviews as $key => $overview)
+                                @php
+                                  $nation_id = $nation_institute_id-> getNationalId($overview->student_id); 
+                                 @endphp
+                                
                                 <tr>
                                     <td>{{ $key+1 }}</td>
-                                    <td>{{ $overview->national_id ?? '' }}</td>
+                                    <td>{{ $nation_id[0]['nation_id'] ?? '' }}</td>
                                     <td>{{ $overview->student_id ?? '' }}</td>
                                     <td>{{ $overview->first_name ?? '' }}</td>
                                     <td>{{ $overview->first_name_lng ?? '' }}</td>
