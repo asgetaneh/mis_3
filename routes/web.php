@@ -46,6 +46,7 @@ use App\Http\Controllers\KpiChildThreeTranslationController;
 use App\Http\Controllers\StaffEMIS;
 use App\Http\Controllers\StudentEMIS;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\NationInstitutionIdController;
 
 /*
 |--------------------------------------------------------------------------
@@ -291,6 +292,8 @@ Route::prefix('/emis')->group(function(){
 
     Route::prefix('/institution')->group(function(){
 
+        Route::get('/student-id', [NationInstitutionIdController::class, 'index'])->name('emis.setting.student-id');
+        Route::post('/student-id/import', [NationInstitutionIdController::class, 'import'])->name('emis.setting.student-id-import');
         Route::get('/', [InstitutionEMIS::class, 'index'])->name('emis.institution.index');
         Route::get('/', [InstitutionEMIS::class, 'building'])->name('emis.institution.building');
     });

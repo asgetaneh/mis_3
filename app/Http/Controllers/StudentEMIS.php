@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\GenderTranslationStoreRequest;
 use App\Http\Requests\GenderTranslationUpdateRequest;
+use App\Models\NationInstitutionId;
 
 class StudentEMIS extends Controller
 {
@@ -18,7 +19,6 @@ class StudentEMIS extends Controller
     public function applicant(Request $request): View
     {
         $search = $request->get('search', '');
-
         $applicants = DB::connection('mysql_srs')
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
@@ -70,7 +70,7 @@ class StudentEMIS extends Controller
     public function overview(Request $request): View
     {
         $search = $request->get('search', '');
-
+        $nation_institute_id = new NationInstitutionId; 
         $overviews = DB::connection('mysql_srs')
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
@@ -105,11 +105,12 @@ class StudentEMIS extends Controller
             'pl.code AS program_level_code'
         )
         ->orderBy('s.student_id', 'desc')
-        ->paginate(10);
+        ->paginate(50);
+        //dd($overviews);
 
         return view(
             'app.emis.student.overview.index',
-            compact('overviews', 'search')
+            compact('overviews', 'nation_institute_id','search')
         );
     }
 
@@ -154,7 +155,7 @@ class StudentEMIS extends Controller
             'et.enrollment_type_name AS program_modality' // later change to et.code when code column is added in the table
         )
         ->orderBy('s.student_id', 'desc')
-        ->paginate(10);
+        ->paginate(50);
 
         return view(
             'app.emis.student.enrollment.index',

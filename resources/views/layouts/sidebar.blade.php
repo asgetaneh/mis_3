@@ -53,14 +53,24 @@
                                     </a>
 
                                     <ul class="nav nav-treeview">
-                                        @can('view-any', App\Models\User::class)
+                                        {{-- @can('view-any', App\Models\User::class) --}}
+                                            <li class="nav-item">
+                                                <a href="{{ route('emis.setting.student-id') }}" class="nav-link">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Student Id</p>
+                                                </a>
+                                            </li>
+                                        {{-- @endcan --}}
+                                    </ul>
+                                    <ul class="nav nav-treeview">
+                                        {{-- @can('view-any', App\Models\User::class) --}}
                                             <li class="nav-item">
                                                 <a href="{{ route('users.index') }}" class="nav-link">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                    <p>Users</p>
+                                                    <p>Staff Id</p>
                                                 </a>
                                             </li>
-                                        @endcan
+                                        {{-- @endcan --}}
                                     </ul>
                                 </li>
 
