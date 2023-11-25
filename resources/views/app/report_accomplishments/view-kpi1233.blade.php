@@ -1,6 +1,6 @@
 <table class="table table-bordered">
     @php
-        $ospan = $planAcc->Kpi->kpiChildThrees->count() * $planAcc->Kpi->kpiChildOnes->count() + 2;
+        $ospan = $planAcc->Kpi->kpiChildThrees->count() * getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 2;
     @endphp
     <!-- <tr id="child-ones"> -->
     <tr >

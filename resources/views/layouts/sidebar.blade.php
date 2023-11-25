@@ -62,6 +62,7 @@
                                             </li>
                                         {{-- @endcan --}}
                                     </ul>
+                                   
                                     <ul class="nav nav-treeview">
                                         {{-- @can('view-any', App\Models\User::class) --}}
                                             <li class="nav-item">
@@ -72,6 +73,27 @@
                                             </li>
                                         {{-- @endcan --}}
                                     </ul>
+                                     <ul class="nav nav-treeview">
+                                        {{-- @can('view-any', App\Models\User::class) --}}
+                                            <li class="nav-item">
+                                                <a href="{{ route('emis.setting.campus') }}" class="nav-link">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Campus</p>
+                                                </a>
+                                            </li>
+                                        {{-- @endcan --}}
+                                    </ul>
+                                     <ul class="nav nav-treeview">
+                                        {{-- @can('view-any', App\Models\User::class) --}}
+                                            <li class="nav-item">
+                                                <a href="{{ route('emis.setting.building.purpose') }}" class="nav-link">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Buiding purpose</p>
+                                                </a>
+                                            </li>
+                                        {{-- @endcan --}}
+                                    </ul>
+                                    
                                 </li>
 
 
@@ -709,6 +731,58 @@
                                     @endif
                                 </ul>
                             </li>
+                              <li class="nav-item">
+                                    <a href="#" class="nav-link">
+                                        <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                        <p>
+                                            Performer
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+
+                                    <ul class="nav nav-treeview">
+                                        {{-- @can('view-any', App\Models\User::class) --}}
+                                            <li class="nav-item">
+                                                <a href="{{ route('tasks.index') }}" class="nav-link">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Task</p>
+                                                </a>
+                                            </li>
+                                        {{-- @endcan --}}
+                                    </ul>
+                                   
+                                    <ul class="nav nav-treeview">
+                                        {{-- @can('view-any', App\Models\User::class) --}}
+                                            <li class="nav-item">
+                                                <a href="{{ route('users.index') }}" class="nav-link">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Task</p>
+                                                </a>
+                                            </li>
+                                        {{-- @endcan --}}
+                                    </ul>
+                                     <ul class="nav nav-treeview">
+                                        {{-- @can('view-any', App\Models\User::class) --}}
+                                            <li class="nav-item">
+                                                <a href="{{ route('emis.setting.campus') }}" class="nav-link">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Task</p>
+                                                </a>
+                                            </li>
+                                        {{-- @endcan --}}
+                                    </ul>
+                                     <ul class="nav nav-treeview">
+                                        {{-- @can('view-any', App\Models\User::class) --}}
+                                            <li class="nav-item">
+                                                <a href="{{ route('emis.setting.building.purpose') }}" class="nav-link">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Task</p>
+                                                </a>
+                                            </li>
+                                        {{-- @endcan --}}
+                                    </ul>
+                                    
+                                </li>
 
 
 

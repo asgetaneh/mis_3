@@ -47,7 +47,10 @@ use App\Http\Controllers\StaffEMIS;
 use App\Http\Controllers\StudentEMIS;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\NationInstitutionIdController;
-
+use App\Http\Controllers\CampusController;
+use App\Http\Controllers\BuildingPurposeController;
+use App\Http\Controllers\BuildingController;
+use App\Http\Controllers\TaskController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -86,7 +89,9 @@ Route::prefix('/')
     ->group(function () {
 
         Route::prefix('/smis')->group(function () {
-
+            Route::prefix('/performer')->group(function () {
+              Route::resource('tasks', TaskController::class);
+            });
             Route::prefix('/setting')->group(function () {
                 Route::resource(
                     'planing-year-translations',
@@ -291,12 +296,19 @@ Route::prefix('/')
 Route::prefix('/emis')->group(function(){
 
     Route::prefix('/institution')->group(function(){
-
         Route::get('/student-id', [NationInstitutionIdController::class, 'index'])->name('emis.setting.student-id');
         Route::post('/student-id/import', [NationInstitutionIdController::class, 'import'])->name('emis.setting.student-id-import');
+       
+        Route::get('/campus', [CampusController::class, 'index'])->name('emis.setting.campus');
+        Route::get('/building/purpose', [BuildingPurposeController::class, 'index'])->name('emis.setting.building.purpose');
+        Route::get('/building/purpose/new', [BuildingPurposeController::class, 'create'])->name('emis.setting.building.purpose.new');
+        Route::post('/building/purpose/save', [BuildingPurposeController::class, 'store'])->name('emis.setting.building.purpose.store');
+        Route::get('/building/purpose/edit', [BuildingPurposeController::class, 'create'])->name('emis.setting.building.purpose.edit');
+        Route::get('/building', [BuildingController::class, 'index'])->name('emis.institution.building');
+        
+
         Route::get('/', [InstitutionEMIS::class, 'index'])->name('emis.institution.index');
-        Route::get('/', [InstitutionEMIS::class, 'building'])->name('emis.institution.building');
-    });
+     });
     Route::prefix('/student')->group(function(){
         Route::get('/applicant', [StudentEMIS::class, 'applicant'])->name('emis.student.applicant.index');
         Route::get('/overview', [StudentEMIS::class, 'overview'])->name('emis.student.overview.index');

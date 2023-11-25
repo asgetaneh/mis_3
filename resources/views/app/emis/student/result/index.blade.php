@@ -16,7 +16,8 @@
             <div class="card-header">
                 <div style="">
                     <h3 class="card-title">Results List</h3>
-                </div>
+                </div> &nbsp;&nbsp;
+                <button class="btn btn-success">Download Excel</button>
             </div>
             <div class="card-body">
 
@@ -69,7 +70,6 @@
                 <!-- /.card-body -->
             </div> --}}
 
-                <button class="btn btn-success">Download Excel</button>
 
                 <div class="table-responsive mt-3">
                     <table class="table table-bordered table-hover">
@@ -113,10 +113,13 @@
                         </thead>
                         <tbody>
                             @forelse($results as $key => $result)
+                             @php
+                                  $nation_id = $nation_institute_id-> getNationalId($result->student_id); 
+                                 @endphp
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $result->institution_code ?? '' }}</td>
-                                    <td>{{ $result->national_id ?? '' }}</td>
+                                     <td>{{ "dept_code" }}</td>
+                                    <td>{{ $nation_id[0]['nation_id'] ?? '' }}</td>
                                     <td>{{ $result->academic_year ? str_replace('/', '', $result->academic_year) : '' }}</td>
                                     <td>{{ isset($result->academic_period) ? 'S'.$result->academic_period : '' }}</td>
                                     <td>{{ $result->total_accumulated_credits ?? '' }}</td>
