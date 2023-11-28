@@ -90,7 +90,10 @@ Route::prefix('/')
 
         Route::prefix('/smis')->group(function () {
             Route::prefix('/performer')->group(function () {
-              Route::resource('tasks', TaskController::class);
+                Route::resource('tasks', TaskController::class);
+                Route::get('task-assign/{id}', [TaskController::class, 'taskAssignIndex'])->name('task-assign.index');
+                Route::POST('task-assign/store', [TaskController::class, 'taskAssignStore'])->name('task-assign.store');
+                Route::DELETE('task-remove/{kpi}/{office}', [TaskController::class, 'taskRemove'])->name('task-remove.destroy');
             });
             Route::prefix('/setting')->group(function () {
                 Route::resource(
@@ -298,14 +301,14 @@ Route::prefix('/emis')->group(function(){
     Route::prefix('/institution')->group(function(){
         Route::get('/student-id', [NationInstitutionIdController::class, 'index'])->name('emis.setting.student-id');
         Route::post('/student-id/import', [NationInstitutionIdController::class, 'import'])->name('emis.setting.student-id-import');
-       
+
         Route::get('/campus', [CampusController::class, 'index'])->name('emis.setting.campus');
         Route::get('/building/purpose', [BuildingPurposeController::class, 'index'])->name('emis.setting.building.purpose');
         Route::get('/building/purpose/new', [BuildingPurposeController::class, 'create'])->name('emis.setting.building.purpose.new');
         Route::post('/building/purpose/save', [BuildingPurposeController::class, 'store'])->name('emis.setting.building.purpose.store');
         Route::get('/building/purpose/edit', [BuildingPurposeController::class, 'create'])->name('emis.setting.building.purpose.edit');
         Route::get('/building', [BuildingController::class, 'index'])->name('emis.institution.building');
-        
+
 
         Route::get('/', [InstitutionEMIS::class, 'index'])->name('emis.institution.index');
      });

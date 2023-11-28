@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Objective Index')
+@section('title', 'Task Index')
 
 @section('content')
     <div class="container-fluid">
@@ -48,9 +48,9 @@
                                         <th class="text-left">
                                             Description
                                         </th>
-                                         
-                                        <th class="text-right">
-                                            @lang('crud.objectives.inputs.weight')
+
+                                        <th class="text-left">
+                                            Weight
                                         </th>
                                         <th class="text-center">
                                             @lang('crud.common.actions')
@@ -71,25 +71,30 @@
                                         <td>
                                             {!! html_entity_decode($task->description ?? '-'  ) !!}
                                         </td>
+                                        <td>
+                                            {{ $task->weight }}
+                                        </td>
                                         <td class="text-center" style="width: 134px;">
                                             <div role="group" aria-label="Row Actions" class="btn-group">
-                                                @can('update', $objective->objectiveTranslations[0])
+                                                {{-- @can('update', $task) --}}
                                                     <a
-                                                        href="{{ route('objectives.edit', $objective->objectiveTranslations[0]->translation_id) }}">
+                                                        href="{{ route('tasks.edit', $task) }}">
                                                         <button type="button" class="btn btn-light">
                                                             <i class="icon ion-md-create"></i>
                                                         </button>
                                                     </a>
-                                                    @endcan @can('view', $objective->objectiveTranslations[0])
+                                                {{-- @endcan
+                                                @can('view', $task) --}}
                                                     <a
-                                                        href="{{ route('objectives.show', $objective->objectiveTranslations[0]->translation_id) }}">
+                                                        href="{{ route('tasks.show', $task) }}">
                                                         <button type="button" class="btn btn-light">
                                                             <i class="icon ion-md-eye"></i>
                                                         </button>
                                                     </a>
-                                                    @endcan @can('delete', $objective->objectiveTranslations[0])
+                                                {{-- @endcan
+                                                @can('delete', $task) --}}
                                                     <form
-                                                        action="{{ route('objectives.destroy', $objective->objectiveTranslations[0]->translation_id) }}"
+                                                        action="{{ route('tasks.destroy', $task) }}"
                                                         method="POST"
                                                         onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')">
                                                         @csrf @method('DELETE')
@@ -97,7 +102,9 @@
                                                             <i class="icon ion-md-trash"></i>
                                                         </button>
                                                     </form>
-                                                @endcan
+                                                {{-- @endcan --}}
+
+                                                <a href="{{ route('task-assign.index', $task->id) }}" class="btn btn-info">Task Assign</a>
                                             </div>
                                         </td>
                                     </tr>

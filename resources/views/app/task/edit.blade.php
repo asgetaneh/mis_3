@@ -1,27 +1,27 @@
 @extends('layouts.app')
-@section('title', 'Edit Objective')
+@section('title', 'Edit Task')
 
 @section('content')
 <div class="container">
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">
-                <a href="{{ route('objectives.index') }}" class="mr-4"
+                <a href="{{ route('tasks.index') }}" class="mr-4"
                     ><i class="icon ion-md-arrow-back"></i
                 ></a>
-                @lang('crud.objectives.edit_title')
+                Edit Task
             </h4>
 
             <x-form
                 method="PUT"
-                action="{{ route('objectives.update', $objective) }}"
+                action="{{ route('tasks.update', $task) }}"
                 class="mt-4"
             >
-                @include('app.objectives.form-inputs')
+                @include('app.task.form-inputs')
 
                 <div class="mt-4">
                     <a
-                        href="{{ route('objectives.index') }}"
+                        href="{{ route('tasks.index') }}"
                         class="btn btn-light"
                     >
                         <i class="icon ion-md-return-left text-primary"></i>
@@ -29,7 +29,7 @@
                     </a>
 
                     <a
-                        href="{{ route('objectives.create') }}"
+                        href="{{ route('tasks.create') }}"
                         class="btn btn-light"
                     >
                         <i class="icon ion-md-add text-primary"></i>

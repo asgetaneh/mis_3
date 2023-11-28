@@ -90,13 +90,19 @@ class KeyPeformanceIndicator extends Model
     {
         return $this->belongsToMany(KpiChildThree::class); // changed from hasMany to belongsToMany
     }
-    public function byOfficeAndKpi($kpi,$office) { 
+    public function byOfficeAndKpi($kpi,$office) {
         $tasks = Task::select('tasks.*')
-                ->where('kpi_id','=', $kpi) ->where('office_id','=', $office)->get(); 
+                ->where('kpi_id','=', $kpi) ->where('office_id','=', $office)->get();
              return $tasks;
 
-        
+
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
 
 
 

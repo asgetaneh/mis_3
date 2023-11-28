@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
-use App\Models\KeyPeformanceIndicator;
-use Illuminate\Http\Request;
+use App\Models\Office;
 use App\Models\Language;
+use Illuminate\Http\Request;
 use App\Models\ReportingPeriod;
+use App\Models\OfficeTranslation;
+use App\Models\KeyPeformanceIndicator;
 
 
 class TaskController extends Controller
@@ -77,20 +79,18 @@ class TaskController extends Controller
         //
         $data = $request->input();//dd($data);
         $office = auth()->user()->offices[0]->id;
-        $offices = $request->input('offices');
         $language = Language::all();
          //$lastGoal = Goal::select('id')->orderBy('id','desc')->first();
         try {
             $task = new Task;
+            $task->weight= $data['weight'] ?? null;
+            $task->period_id= $data['reporting_period'];
+            $task->office_id = $office;
+            $task->kpi_id = $data['kpi'];
+            $task->created_by_id= auth()->user()->id;
              foreach ($language as $key => $value) {
-                // code...
-                $task->weight= $data['weight'] ?? null;
-                $task->period_id= $data['reporting_period'];
-                $task->kpi_id = $office;
-                $task->office_id = $data['kpi'];
-                $task->created_by_id= auth()->user()->id;
                 $task ->name = $data['name_'.$value->locale];
-                 $task ->description = $data['description_'.$value->locale];
+                $task ->description = $data['description_'.$value->locale];
                 $task->save();
          }
 
@@ -107,15 +107,44 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        //
+        // $this->authorize('view', $task);
+
+        return view('app.task.show', compact('task'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Task $task)
+    public function edit(Request $request, Task $task)
     {
-        //
+        // $this->authorize('update', $task);
+
+        $search = $request->get('search', '');
+        // dd($task);
+
+        $office = auth()->user()->offices[0]->id;
+        $kpis = KeyPeformanceIndicator::select('key_peformance_indicators.*')
+                ->join('kpi_office', 'key_peformance_indicators.id', '=', 'kpi_office.kpi_id')
+                ->join('offices', 'offices.id', '=', 'kpi_office.office_id')
+                ->where('office_id',"=", $office)
+                ->get();
+        $tasks = Task::search($search)
+             ->oldest()
+            ->paginate(10)
+            ->withQueryString();
+        $reporting_periods = ReportingPeriod::search($search)
+             ->oldest()
+            ->paginate(10)
+            ->withQueryString();
+        $languages = Language::search($search)
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
+
+        return view(
+            'app.task.edit',
+            compact('tasks','task', 'kpis','reporting_periods', 'search', 'languages')
+        );
     }
 
     /**
@@ -123,7 +152,32 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        //
+        // $this->authorize('update', $task);
+
+        // dd($request->all());
+
+        $data = $request->input();
+        $office = auth()->user()->offices[0]->id;
+        $language = Language::all();
+
+        $task->update([
+            'created_by_id' => auth()->user()->id,
+            'period_id' => $data['reporting_period'],
+            'kpi_id' => $data['kpi'],
+            'office_id' => $office,
+            'weight' => $data['weight'] ?? null
+        ]);
+
+        foreach ($language as $key => $value) {
+            $task->update([
+                'name' => $data['name_'.$value->locale],
+                'description' => $data['description_'.$value->locale],
+            ]);
+        }
+
+        return redirect()
+            ->route('tasks.index', $task)
+            ->withSuccess(__('crud.common.updated'));
     }
 
     /**
@@ -131,6 +185,12 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+        // $this->authorize('delete', $task);
+
+        $task->delete();
+
+        return redirect()
+            ->route('tasks.index')
+            ->withSuccess(__('crud.common.removed'));
     }
 }
