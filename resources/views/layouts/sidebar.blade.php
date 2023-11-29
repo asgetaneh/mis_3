@@ -735,7 +735,7 @@
                                     <a href="#" class="nav-link">
                                         <i class="nav-icon icon fas fa fa-caret-right"></i>
                                         <p>
-                                            Performer
+                                            Performer task
                                             <i class="right fas fa-angle-left"></i>
                                         </p>
                                     </a>
@@ -754,9 +754,9 @@
                                     <ul class="nav nav-treeview">
                                         {{-- @can('view-any', App\Models\User::class) --}}
                                             <li class="nav-item">
-                                                <a href="{{ route('users.index') }}" class="nav-link">
+                                                <a href="{{ route('performer.index') }}" class="nav-link">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                    <p>Task</p>
+                                                    <p>Performer</p>
                                                 </a>
                                             </li>
                                         {{-- @endcan --}}

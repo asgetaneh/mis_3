@@ -90,6 +90,9 @@ Route::prefix('/')
 
         Route::prefix('/smis')->group(function () {
             Route::prefix('/performer')->group(function () {
+                Route::get('performer-list', [TaskController::class, 'performer'])->name('performer.index');
+                Route::post('performer-add', [TaskController::class, 'addPerformer'])->name('performer-add-tooffices-save');
+                Route::DELETE('performer-remove-from-office/{performer}', [TaskController::class, 'performerRemoveFromOffice'])->name('performer-remove-from-office');
                 Route::resource('tasks', TaskController::class);
                 Route::get('task-assign/{id}', [TaskController::class, 'taskAssignIndex'])->name('task-assign.index');
                 Route::POST('task-assign/store', [TaskController::class, 'taskAssignStore'])->name('task-assign.store');
