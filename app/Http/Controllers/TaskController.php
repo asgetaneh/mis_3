@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Models\User;
+use App\Models\Performer;
 use App\Models\Office;
 use App\Models\Language;
 use Illuminate\Http\Request;
 use App\Models\ReportingPeriod;
 use App\Models\OfficeTranslation;
 use App\Models\KeyPeformanceIndicator;
+use Illuminate\Support\Facades\DB;
 
 
 class TaskController extends Controller
@@ -193,4 +196,87 @@ class TaskController extends Controller
             ->route('tasks.index')
             ->withSuccess(__('crud.common.removed'));
     }
+    public function performer(Request $request)
+    {
+        //
+        $search = $request->get('search', '');
+        $offices = auth()->user()->offices;
+        $operformerAdds = Performer::select('performers.*')
+                ->join('users', 'users.id', '=', 'performers.user_id')
+                 ->where('performers.office_id',"=", $offices[0]->id)
+                ->get();//dd($operformerAdds);
+
+        $addedUserList = [];
+        foreach ($operformerAdds as $operformerAdd){ 
+            array_push($addedUserList, $operformerAdd->user_id);
+        }
+        $users = User::select('users.*')
+                -> whereNotIn('id', $addedUserList)
+                ->get();
+
+        return view(
+            'app.performer.index',
+            compact('users', 'offices', 'operformerAdds', 'search')
+        );
+    }
+     public function addPerformer(Request $request)
+    {
+        //
+         $data = $request->input();
+        $office = $data['office'];
+        $users = $data['users'];
+
+        foreach($users as $user){
+            $performer = DB::insert('insert into performers (user_id, office_id) values (?, ?)', [$user, $office]);
+        }
+
+        $search = $request->get('search', '');
+        $offices = auth()->user()->offices;
+         $operformerAdds = Performer::select('performers.*')
+                ->join('users', 'users.id', '=', 'performers.user_id')
+                 ->where('performers.office_id',"=", $offices[0]->id)
+                ->get();
+        $addedUserList = [];
+        foreach ($operformerAdds as $operformerAdd){ 
+            array_push($addedUserList, $operformerAdd->user_id);
+        }
+        $users = User::select('users.*')
+                -> whereNotIn('id', $addedUserList)
+                ->get();
+
+        return redirect()->back()->with(
+            [
+                'users'=> $users,
+                'offices'=> $offices,
+                'operformerAdds'=> $operformerAdds,
+             ]
+
+        );
+    }
+    public function performerRemoveFromOffice($performer, Request $request) {
+        $performer_ob = Performer::find($performer);//dd($performer_ob);
+        $performer_ob->delete();
+        $offices = auth()->user()->offices;
+        $operformerAdds = Performer::select('performers.*')
+                ->join('users', 'users.id', '=', 'performers.user_id')
+                 ->where('performers.office_id',"=", $offices[0]->id)
+                ->get();
+        $addedUserList = [];
+        foreach ($operformerAdds as $operformerAdd){ 
+            array_push($addedUserList, $operformerAdd->user_id);
+        }
+        $users = User::select('users.*')
+                -> whereNotIn('id', $addedUserList)
+                ->get();
+
+        return redirect()->back()->with(
+            [
+                'users'=> $users,
+                'offices'=> $offices,
+                'operformerAdds'=> $operformerAdds,
+             ]
+
+        ); 
+    }
+    
 }
