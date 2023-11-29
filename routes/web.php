@@ -93,7 +93,7 @@ Route::prefix('/')
                 Route::resource('tasks', TaskController::class);
                 Route::get('task-assign/{id}', [TaskController::class, 'taskAssignIndex'])->name('task-assign.index');
                 Route::POST('task-assign/store', [TaskController::class, 'taskAssignStore'])->name('task-assign.store');
-                Route::DELETE('task-remove/{kpi}/{office}', [TaskController::class, 'taskRemove'])->name('task-remove.destroy');
+                Route::DELETE('task-remove/{performer}/{task}', [TaskController::class, 'taskAssignRemove'])->name('task-remove.destroy');
             });
             Route::prefix('/setting')->group(function () {
                 Route::resource(

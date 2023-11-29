@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use App\Models\Office;
 use App\Models\Language;
+use App\Models\Performer;
+use App\Models\TaskAssign;
 use Illuminate\Http\Request;
 use App\Models\ReportingPeriod;
 use App\Models\OfficeTranslation;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use App\Models\KeyPeformanceIndicator;
-
+use Andegna\DateTimeFactory;
 
 class TaskController extends Controller
 {
@@ -192,5 +196,88 @@ class TaskController extends Controller
         return redirect()
             ->route('tasks.index')
             ->withSuccess(__('crud.common.removed'));
+    }
+
+    public function taskAssignIndex(Request $request, $id){
+
+        // $this->authorize('task-assign-index', $task);
+
+        $task = Task::find($id);
+        // dd($task);
+
+        $user_office = auth()->user()->offices[0]->id;
+
+        $assignedPerformers = TaskAssign::where('task_id', $task->id);
+        // dd($assignedPerformers->pluck('assigned_to_id'));
+
+        $performersNotAssigned = Performer::whereNotIn('user_id', $assignedPerformers->pluck('assigned_to_id'))->get();
+        // dd($performersNotAssigned);
+
+        $languages = Language::all();
+        $assignedPerformers = TaskAssign::where('task_id', $task->id)->get();
+
+        return view(
+            'app.task.task-assign',
+            compact(
+                'task',
+                'performersNotAssigned',
+                'assignedPerformers',
+                'languages'
+            )
+        );
+    }
+
+    public function taskAssignStore(Request $request)
+    {
+
+        // $this->authorize('task-assign-store', $task);
+
+        // dd($request->all());
+        $data = $request->input();
+
+        $taskId = $data['taskId'];
+        $expectedValue = $data['expectedValue'];
+        $timeGap = $data['timeGap'];
+        $performers = $data['performers'];
+
+        $startDate = $data['start_date'];
+        $endDate = $data['end_date'];
+
+        $startDate = explode('/', $data['start_date']);
+        $endDate = explode('/', $data['end_date']);
+
+        $startDate = DateTimeFactory::of($startDate[2], $startDate[1], $startDate[0]);
+        $startDate = $startDate->format('Y-m-d');
+
+        $endDate = DateTimeFactory::of($endDate[2], $endDate[1], $endDate[0]);
+        $endDate = $endDate->format('Y-m-d');
+
+        foreach ($performers as $performerId) {
+            TaskAssign::create([
+                'task_id' => (int)$taskId,
+                'assigned_by_id' => auth()->user()->id,
+                'assigned_to_id' => $performerId,
+                'assigned_at' => now(),
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'expected_value' => (int)$expectedValue,
+                'time_gap' => (int)$timeGap,
+            ]);
+        }
+
+        return redirect()->back()->withSuccess(__('crud.common.assigned'));
+    }
+
+    public function taskAssignRemove($performer, $task, Request $request){
+
+        // $this->authorize('task-assign-delete', $task);
+
+        $user_office = auth()->user()->offices[0]->id;
+        $task = Task::find($task);
+
+        $deletePerformerTask = TaskAssign::where('assigned_to_id', $performer)->where('task_id', $task->id)->delete();
+
+        return redirect()->back()->withSuccess(__('crud.common.removed'));
+
     }
 }
