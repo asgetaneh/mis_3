@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('task_id')->constrained();
             $table->foreignId('assigned_by_id')->constrained('users');
             $table->foreignId('assigned_to_id')->constrained('users');
-            $table->integer('status');
+            $table->integer('status')->default(0);
             $table->date('assigned_at');
             $table->date('start_date');
             $table->date('end_date');
