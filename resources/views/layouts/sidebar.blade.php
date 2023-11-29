@@ -62,7 +62,7 @@
                                             </li>
                                         {{-- @endcan --}}
                                     </ul>
-                                   
+
                                     <ul class="nav nav-treeview">
                                         {{-- @can('view-any', App\Models\User::class) --}}
                                             <li class="nav-item">
@@ -93,7 +93,7 @@
                                             </li>
                                         {{-- @endcan --}}
                                     </ul>
-                                    
+
                                 </li>
 
 
@@ -731,9 +731,9 @@
                                     @endif
                                 </ul>
                             </li>
-                              <li class="nav-item">
+                              <li class="nav-item {{ Request::is('smis/performer/*') ? 'menu-open' : '' }}">
                                     <a href="#" class="nav-link">
-                                        <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                        <i class="nav-icon icon fas fa fa-users"></i>
                                         <p>
                                             Performer task
                                             <i class="right fas fa-angle-left"></i>
@@ -743,22 +743,28 @@
                                     <ul class="nav nav-treeview">
                                         {{-- @can('view-any', App\Models\User::class) --}}
                                             <li class="nav-item">
-                                                <a href="{{ route('tasks.index') }}" class="nav-link">
+                                                <a href="{{ route('tasks.index') }}" class="nav-link {{ Request::is('smis/performer/tasks') || Request::is('smis/performer/tasks/*') ? 'active' : '' }}">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Task</p>
                                                 </a>
                                             </li>
-                                        {{-- @endcan --}}
-                                    </ul>
-                                   
-                                    <ul class="nav nav-treeview">
-                                        {{-- @can('view-any', App\Models\User::class) --}}
                                             <li class="nav-item">
-                                                <a href="{{ route('performer.index') }}" class="nav-link">
+                                                <a href="{{ route('performer.index') }}" class="nav-link {{ Request::is('smis/performer/performer-list') ? 'active' : '' }}">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Performer</p>
                                                 </a>
                                             </li>
+                                        {{-- @endcan --}}
+                                    </ul>
+
+                                    <ul class="nav nav-treeview">
+                                        {{-- @can('view-any', App\Models\User::class) --}}
+                                            {{-- <li class="nav-item">
+                                                <a href="{{ route('performer.index') }}" class="nav-link">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Performer</p>
+                                                </a>
+                                            </li> --}}
                                         {{-- @endcan --}}
                                     </ul>
                                      <ul class="nav nav-treeview">
@@ -781,7 +787,7 @@
                                             </li>
                                         {{-- @endcan --}}
                                     </ul>
-                                    
+
                                 </li>
 
 
