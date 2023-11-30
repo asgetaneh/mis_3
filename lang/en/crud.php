@@ -27,6 +27,8 @@ return [
         'commented' => 'Successfully commented',
         'disapproved' => 'Successfully disapproved',
         'replied' => 'Successfully replied',
+        'accepted' => 'Successfully accepted',
+        'rejected' => 'Successfully rejected',
     ],
 
     'users' => [

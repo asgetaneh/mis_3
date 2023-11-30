@@ -22,4 +22,9 @@ class TaskAssign extends Model
         'reject_reason',
         'challenge',
     ];
+
+    public function task()
+    {
+        return $this->belongsTo(Task::class, 'task_id');
+    }
 }

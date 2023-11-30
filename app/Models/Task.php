@@ -36,4 +36,9 @@ class Task extends Model
     {
         return $this->belongsTo(ReportingPeriod::class, 'period_id');
     }
+
+    public function assignedTasks()
+    {
+        return $this->hasMany(TaskAssign::class, 'task_id');
+    }
 }

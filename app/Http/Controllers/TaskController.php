@@ -14,6 +14,7 @@ use App\Models\OfficeTranslation;
 use Illuminate\Support\Carbon;
 use App\Models\KeyPeformanceIndicator;
 use Andegna\DateTimeFactory;
+use App\Models\TaskAccomplishment;
 use Illuminate\Support\Facades\DB;
 
 
@@ -364,5 +365,43 @@ class TaskController extends Controller
 
         return redirect()->back()->withSuccess(__('crud.common.removed'));
 
+    }
+
+    public function assignedTasksIndex(Request $request){
+
+        $search = $request->get('search', '');
+
+        $assignedTasks = TaskAssign::where('assigned_to_id', auth()->user()->id)->paginate(10);
+        return view('app.performer-task.index', compact('assignedTasks'));
+    }
+
+    public function assignedTaskStatus(Request $request){
+
+        $taskAssignId = $request->input('taskAssignId');
+        $taskAssign = TaskAssign::where('id', (int)$taskAssignId)->where('assigned_to_id', auth()->user()->id)->update([
+            'status' => $request->type === 'accept' ? 1 : 2,
+            'reject_reason' => $request->type === 'reject' ? $request->input('reject_text')  : NULL
+        ]);
+
+        return redirect()->back()->withSuccess(__($request->type === 'accept' ? 'crud.common.accepted' : 'crud.common.rejected'));
+    }
+
+    public function assignedTaskReport(Request $request){
+
+        $data = $request->input();
+
+        $taskReported = TaskAccomplishment::create([
+            'task_assign_id' => (int)$data['taskAssignId'],
+            'reported_value' => $data['reported-value'],
+            'reported_at' => now(),
+            'task_done_description' => $data['report_text'],
+        ]);
+
+        $taskStatusChanged = TaskAssign::where('id', (int)$data['taskAssignId'])->where('assigned_to_id', auth()->user()->id)->update([
+            'status' => 2,
+        ]);
+
+
+        return redirect()->back()->withSuccess(__('crud.common.saved'));
     }
 }
