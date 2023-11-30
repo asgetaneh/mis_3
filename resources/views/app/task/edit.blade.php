@@ -17,7 +17,7 @@
                 action="{{ route('tasks.update', $task) }}"
                 class="mt-4"
             >
-                @include('app.task.form-inputs')
+                @include('app.task.edit-form-inputs')
 
                 <div class="mt-4">
                     <a

@@ -53,7 +53,8 @@
             {{-- <option disabled {{ empty($selected) ? 'selected' : '' }}>Please select the Office</option> --}}
            
             @foreach($task_measurements as $value => $label) 
-                <option value="{{ $label->id }}" @if(in_array($label->id, $label->pluck('id')->toArray()))  @endif>
+                <option value="{{ $label->id }}" 
+                @if(in_array($label->id, $selected_measure->pluck('id')->toArray())) selected @endif>
                 {{ $label->name }}
                 </option>
              @endforeach

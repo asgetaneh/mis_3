@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class TaskMeasurement extends Model
 {
     use HasFactory;
+     public function task()
+    {
+        return $this->belongsToMany(Task::class, 'task_task_measures');
+    }
 }
