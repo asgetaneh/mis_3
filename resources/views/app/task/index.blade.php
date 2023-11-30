@@ -113,7 +113,7 @@
                                                     </form>
                                                 {{-- @endcan --}}
 
-                                                <a href="{{ route('task-assign.index', $task->id) }}" class="btn btn-info">Task Assign</a>
+                                                <a href="{{ route('task-assign.index', $task->id) }}" class="btn btn-info">Assign Performer</a>
                                             </div>
                                         </td>
                                     </tr>
