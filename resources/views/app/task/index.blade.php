@@ -48,8 +48,9 @@
                                         <th class="text-left">
                                             Description
                                         </th>
-
                                         <th class="text-left">
+                                            Task measurements
+                                        </th>                                        <th class="text-left">
                                             Weight
                                         </th>
                                         <th class="text-center">
@@ -71,6 +72,14 @@
                                         <td>
                                             {!! html_entity_decode($task->description ?? '-'  ) !!}
                                         </td>
+                                        <td> 
+                                        @forelse($task->taskMeasurement  as $task_measure)
+                                            {{ $task_measure->name ?? '-' }}<br/>
+                                        @empty
+                                              @lang('crud.common.no_items_found')
+                                               
+                                        @endforelse
+                                         </td>
                                         <td>
                                             {{ $task->weight }}
                                         </td>

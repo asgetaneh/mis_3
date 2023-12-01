@@ -741,7 +741,12 @@
                                     </a>
 
                                     <ul class="nav nav-treeview">
-                                        {{-- @can('view-any', App\Models\User::class) --}}
+                                         <li class="nav-item">
+                                                <a href="{{ route('TaskMeasurements.index') }}" class="nav-link {{ Request::is('smis/performer/TaskMeasurement') || Request::is('smis/performer/TaskMeasurement/*') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Task Measurement</p>
+                                                </a>
+                                            </li>
                                             <li class="nav-item">
                                                 <a href="{{ route('tasks.index') }}" class="nav-link {{ Request::is('smis/performer/tasks') || Request::is('smis/performer/tasks/*') ? 'active' : '' }}">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>

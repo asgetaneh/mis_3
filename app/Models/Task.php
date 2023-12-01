@@ -36,7 +36,10 @@ class Task extends Model
     {
         return $this->belongsTo(ReportingPeriod::class, 'period_id');
     }
-
+    public function taskMeasurement()
+    {
+        return $this->belongsToMany(TaskMeasurement::class, 'task_task_measures');
+    }
     public function assignedTasks()
     {
         return $this->hasMany(TaskAssign::class, 'task_id');

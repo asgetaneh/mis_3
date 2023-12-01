@@ -51,6 +51,7 @@ use App\Http\Controllers\CampusController;
 use App\Http\Controllers\BuildingPurposeController;
 use App\Http\Controllers\BuildingController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TaskMeasurementController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -102,6 +103,7 @@ Route::prefix('/')
                 Route::post('performer-add', [TaskController::class, 'addPerformer'])->name('performer-add-tooffices-save');
                 Route::DELETE('performer-remove-from-office/{performer}', [TaskController::class, 'performerRemoveFromOffice'])->name('performer-remove-from-office');
                 Route::resource('tasks', TaskController::class);
+                Route::resource('TaskMeasurements', TaskMeasurementController::class);
                 Route::get('tasks/task-assign/{id}', [TaskController::class, 'taskAssignIndex'])->name('task-assign.index');
                 Route::POST('tasks/task-assign/store', [TaskController::class, 'taskAssignStore'])->name('task-assign.store');
                 Route::DELETE('tasks/task-remove/{performer}/{task}', [TaskController::class, 'taskAssignRemove'])->name('task-remove.destroy');

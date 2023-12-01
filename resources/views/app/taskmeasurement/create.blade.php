@@ -1,44 +1,36 @@
 @extends('layouts.app')
-@section('title', 'Edit Task')
+@section('title', 'Create Task Measurements')
 
 @section('content')
 <div class="container">
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">
-                <a href="{{ route('tasks.index') }}" class="mr-4"
+                <a href="{{ route('TaskMeasurements.index') }}" class="mr-4"
                     ><i class="icon ion-md-arrow-back"></i
                 ></a>
-                Edit Task
+               {{"Create Task"}}
             </h4>
 
             <x-form
-                method="PUT"
-                action="{{ route('tasks.update', $task) }}"
+                method="POST"
+                action="{{ route('TaskMeasurements.store') }}"
                 class="mt-4"
             >
-                @include('app.task.edit-form-inputs')
+                @include('app.taskmeasurement.form-inputs')
 
                 <div class="mt-4">
                     <a
-                        href="{{ route('tasks.index') }}"
+                        href="{{ route('TaskMeasurements.index') }}"
                         class="btn btn-light"
                     >
                         <i class="icon ion-md-return-left text-primary"></i>
                         @lang('crud.common.back')
                     </a>
 
-                    <a
-                        href="{{ route('tasks.create') }}"
-                        class="btn btn-light"
-                    >
-                        <i class="icon ion-md-add text-primary"></i>
-                        @lang('crud.common.create')
-                    </a>
-
                     <button type="submit" class="btn btn-primary float-right">
                         <i class="icon ion-md-save"></i>
-                        @lang('crud.common.update')
+                        @lang('crud.common.create')
                     </button>
                 </div>
             </x-form>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Models\TaskMeasurement;
 use App\Models\User;
 use App\Models\Office;
 use App\Models\Language;
@@ -29,21 +30,22 @@ class TaskController extends Controller
         $search = $request->get('search', '');
         $office = auth()->user()->offices[0]->id;
         $kpis = KeyPeformanceIndicator::select('key_peformance_indicators.*')
-                      ->join('kpi_office', 'key_peformance_indicators.id', '=', 'kpi_office.kpi_id')
-                     ->join('offices', 'offices.id', '=', 'kpi_office.office_id')
-                      ->where('office_id',"=", $office)
-                     ->get();
+                ->join('kpi_office', 'key_peformance_indicators.id', '=', 'kpi_office.kpi_id')
+                ->join('offices', 'offices.id', '=', 'kpi_office.office_id')
+                ->where('office_id',"=", $office)
+                ->get();
         $tasks = Task::search($search)
              ->oldest()
             ->paginate(10)
             ->withQueryString();
+        $task_measurements = TaskMeasurement::all();
         $reporting_periods = ReportingPeriod::search($search)
              ->oldest()
             ->paginate(10)
             ->withQueryString();
          return view(
             'app.task.index',
-            compact('tasks','kpis','reporting_periods', 'search')
+            compact('tasks','kpis','reporting_periods', 'task_measurements', 'search')
         );
     }
 
@@ -68,13 +70,14 @@ class TaskController extends Controller
              ->oldest()
             ->paginate(10)
             ->withQueryString();
+        $task_measurements = TaskMeasurement::all();
         $languages = Language::search($search)
             ->latest()
             ->paginate(5)
             ->withQueryString();
-         return view(
+          return view(
             'app.task.create',
-            compact('tasks','kpis','reporting_periods', 'languages', 'search')
+            compact('tasks','kpis','reporting_periods', 'languages', 'task_measurements',  'search')
         );
     }
 
@@ -98,8 +101,12 @@ class TaskController extends Controller
              foreach ($language as $key => $value) {
                 $task ->name = $data['name_'.$value->locale];
                 $task ->description = $data['description_'.$value->locale];
-                $task->save();
+               $task->save(); 
+             foreach ($data['measurements'] as $key => $value) { 
+               $task_measurement = DB::insert('insert into task_task_measures (task_id, task_measurement_id) values (?, ?)', [$task->id, $value]);
+            }
          }
+         
 
          return redirect()
             ->route('tasks.index', $task)
@@ -147,10 +154,11 @@ class TaskController extends Controller
             ->latest()
             ->paginate(5)
             ->withQueryString();
-
-        return view(
+        $task_measurements = TaskMeasurement::all();
+        $selected_measure = $task->taskMeasurement;
+         return view(
             'app.task.edit',
-            compact('tasks','task', 'kpis','reporting_periods', 'search', 'languages')
+            compact('tasks','task', 'kpis','reporting_periods', 'search', 'languages','task_measurements', 'selected_measure')
         );
     }
 
@@ -163,7 +171,7 @@ class TaskController extends Controller
 
         // dd($request->all());
 
-        $data = $request->input();
+        $data = $request->input();//dd($data);
         $office = auth()->user()->offices[0]->id;
         $language = Language::all();
 
@@ -180,7 +188,20 @@ class TaskController extends Controller
                 'name' => $data['name_'.$value->locale],
                 'description' => $data['description_'.$value->locale],
             ]);
-        }
+        }//dd($data);
+        // get task_mesurement form task
+        $task_measurements = $task->taskMeasurement;
+        $task->taskMeasurement()->detach($task_measurements);
+        $task->taskMeasurement()->attach($data['measurements']);
+
+        // foreach ($task_measurements as $key => $obj) { 
+        //     DB::table('task_task_measures')->where('task_measurement_id', $obj->id)->delete();
+        //  }
+       
+       
+        //  foreach ($data['measurements'] as $key => $value) {  
+        //        $task_measurement = DB::insert('insert into task_task_measures (task_id, task_measurement_id) values (?, ?)', [$task->id, $value]);
+        //     }
 
         return redirect()
             ->route('tasks.index', $task)
