@@ -19,7 +19,30 @@ class StaffEMIS extends Controller
         $search = $request->get('search', '');
 
         $overviews = DB::table('users')->paginate(10);
-
+        
+        $employees=DB::connection('mysql_hrm')->table('employees as emp')
+        
+        ->join('field_of_studies as fs','fs.id','=','emp.field_of_study_id')
+        ->join('nationalities as nation','nation.id','=','emp.nationality_id')
+        ->join('regions as r', 'emp.region_id', '=', 'r.id')
+        ->join('zones as z', 'emp.zone_id', '=', 'z.id')
+        ->join('woredas as w', 'emp.woreda_id', '=', 'w.id')
+        ->select(
+            'emp.first_name',
+        'emp.father_name',
+        'emp.grand_father_name',
+        'emp.gender',
+        'emp.date_of_birth',
+        'emp.birth_city',
+        'emp.email',
+        'emp.phone_number',
+        'nation.nation',
+        'r.name',
+        'w.name',
+        'z.name',
+        'fs.name'
+    ) ->get();
+    // dd($employees);
         return view(
             'app.emis.staff.overview.index',
             compact('overviews', 'search')
