@@ -16,4 +16,9 @@ class TaskAccomplishment extends Model
         'reported_at',
         'task_done_description',
     ];
+
+    public function taskAssign()
+    {
+        return $this->belongsTo(TaskAssign::class);
+    }
 }

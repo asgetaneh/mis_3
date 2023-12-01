@@ -27,4 +27,15 @@ class TaskAssign extends Model
     {
         return $this->belongsTo(Task::class, 'task_id');
     }
+
+    public function taskAccomplishments()
+    {
+        // return $this->hasMany(TaskAccomplishment::class);
+        return $this->hasOne(TaskAccomplishment::class, 'task_assign_id');
+    }
+
+    public function assignedTo()
+    {
+        return $this->belongsTo(User::class, 'assigned_to_id');
+    }
 }

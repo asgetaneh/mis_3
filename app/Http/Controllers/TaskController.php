@@ -371,7 +371,8 @@ class TaskController extends Controller
 
         $search = $request->get('search', '');
 
-        $assignedTasks = TaskAssign::where('assigned_to_id', auth()->user()->id)->paginate(10);
+        // get only assigned and accepted tasks using their status
+        $assignedTasks = TaskAssign::whereIn('status', [0, 1])->where('assigned_to_id', auth()->user()->id)->paginate(10);
         return view('app.performer-task.index', compact('assignedTasks'));
     }
 
@@ -398,10 +399,35 @@ class TaskController extends Controller
         ]);
 
         $taskStatusChanged = TaskAssign::where('id', (int)$data['taskAssignId'])->where('assigned_to_id', auth()->user()->id)->update([
-            'status' => 2,
+            'status' => 3,
         ]);
 
 
         return redirect()->back()->withSuccess(__('crud.common.saved'));
+    }
+
+    public function assignedTaskHistory(Request $request){
+
+        $perfomer = auth()->user()->id;
+
+        $taskHistory = TaskAssign::where('assigned_to_id', $perfomer)
+            ->whereIn('status', [2,3,4])
+            ->paginate(10);
+
+        return view('app.performer-task.view-tasks', compact('taskHistory'));
+
+    }
+
+    public function getPerformerReportInfo($data)
+    {
+
+        $returnValue = TaskAccomplishment::where('task_assign_id', $data)->first();
+        error_log($returnValue->reported_value);
+
+        $responseData = [];
+        $responseData['reported_value'] = $returnValue->reported_value;
+        $responseData['reported_description'] = $returnValue->task_done_description;
+
+        return response()->json($responseData);
     }
 }

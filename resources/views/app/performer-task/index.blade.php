@@ -76,8 +76,8 @@
                                     <td>{!! html_entity_decode($task->task->description) ?? '-' !!} </td>
                                     <td class="td-wrap">{{ $task->start_date ?? '-' }} </td>
                                     <td class="td-wrap">{{ $task->end_date ?? '-' }} </td>
-                                    {{-- <td class="td-wrap">{{ $task->expected_value }} </td> --}}
-                                    <td>{{ $task->time_gap ?? '-' }}</td>
+                                    <td class="td-wrap">{{ $task->expected_value }} </td>
+                                    {{-- <td>{{ $task->time_gap ?? '-' }}</td> --}}
                                     <td class="text-center" style="width: 134px;">
                                         <div role="group" aria-label="Row Actions" class="btn-group">
                                             {{-- @can('update', $task) --}}

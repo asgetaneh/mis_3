@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('task_accomplishments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('task_assign_id')->constrained('task_assigns');
-            $table->double('accomplishment_value');
+            $table->double('accomplishment_value')->nullable();
             $table->double('reported_value');
             $table->date('reported_at');
             $table->text('task_done_description')->nullable();

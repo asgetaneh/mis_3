@@ -41,4 +41,9 @@ class Task extends Model
     {
         return $this->hasMany(TaskAssign::class, 'task_id');
     }
+
+    public function taskAccomplishments()
+    {
+        return $this->hasManyThrough(TaskAccomplishment::class, TaskAssign::class);
+    }
 }
