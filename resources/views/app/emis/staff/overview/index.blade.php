@@ -167,7 +167,7 @@
                     </table>
                 </div>
                 <div class="float-right mt-3">
-                    {!! $overviews->render() !!}
+                    {!! $employees->render() !!}
                 </div>
             </div>
         </div>
