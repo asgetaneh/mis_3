@@ -742,7 +742,7 @@
 
                                     <ul class="nav nav-treeview">
                                          <li class="nav-item">
-                                                <a href="{{ route('TaskMeasurements.index') }}" class="nav-link {{ Request::is('smis/performer/TaskMeasurement') || Request::is('smis/performer/TaskMeasurement/*') ? 'active' : '' }}">
+                                                <a href="{{ route('TaskMeasurements.index') }}" class="nav-link {{ Request::is('smis/performer/TaskMeasurements') || Request::is('smis/performer/TaskMeasurements/*') ? 'active' : '' }}">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Task Measurement</p>
                                                 </a>
@@ -852,7 +852,7 @@
                         </li>
                     @endif
                 @endif
-                <li class="nav-item {{ Request::is('smis/performer/tasks/assigned-tasks') || Request::is('smis/performer/tasks/assigned/history') ? 'menu-open' : '' }}">
+                <li class="nav-item {{ Request::is('performer/tasks/assigned') || Request::is('performer/tasks/assigned/history') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link">
                         <i class="nav-icon icon fas fa fa-list"></i>
                         <p>
@@ -864,13 +864,13 @@
                     <ul class="nav nav-treeview">
                         {{-- @can('view-any', App\Models\User::class) --}}
                             <li class="nav-item">
-                                <a href="{{ route('assigned-tasks.index') }}" class="nav-link {{ Request::is('smis/performer/tasks/assigned-tasks') ? 'active' : '' }}">
+                                <a href="{{ route('assigned-tasks.index') }}" class="nav-link {{ Request::is('performer/tasks/assigned') ? 'active' : '' }}">
                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
                                     <p>Assigned Tasks</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('assigned-task.history') }}" class="nav-link {{ Request::is('smis/performer/tasks/assigned/history') ? 'active' : '' }}">
+                                <a href="{{ route('assigned-task.history') }}" class="nav-link {{ Request::is('performer/tasks/assigned/history') ? 'active' : '' }}">
                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
                                     <p>View Tasks</p>
                                 </a>

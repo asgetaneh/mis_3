@@ -89,14 +89,24 @@ Route::prefix('/')
     ->middleware('auth')
     ->group(function () {
 
+        Route::prefix('/performer')->group(function () {
+
+            Route::get('tasks/assigned', [TaskController::class, 'assignedTasksIndex'])->name('assigned-tasks.index');
+            Route::POST('tasks/assigned/status', [TaskController::class, 'assignedTaskStatus'])->name('assigned-task.status');
+            Route::POST('tasks/assigned/report', [TaskController::class, 'assignedTaskReport'])->name('assigned-task.report');
+            Route::get('tasks/assigned/history', [TaskController::class, 'assignedTaskHistory'])->name('assigned-task.history');
+            Route::get('tasks/view/report/{data}', [TaskController::class, 'getPerformerReportInfo'])->name('performer-report.view-report')->where('data', '.*');
+
+        });
+
         Route::prefix('/smis')->group(function () {
             Route::prefix('/performer')->group(function () {
 
-                Route::get('tasks/assigned-tasks', [TaskController::class, 'assignedTasksIndex'])->name('assigned-tasks.index');
-                Route::POST('tasks/assigned-task-status', [TaskController::class, 'assignedTaskStatus'])->name('assigned-task.status');
-                Route::POST('tasks/assigned/report', [TaskController::class, 'assignedTaskReport'])->name('assigned-task.report');
-                Route::get('tasks/assigned/history', [TaskController::class, 'assignedTaskHistory'])->name('assigned-task.history');
-                Route::get('tasks/view/report/{data}', [TaskController::class, 'getPerformerReportInfo'])->name('performer-report.view-report')->where('data', '.*');
+                // Route::get('tasks/assigned-tasks', [TaskController::class, 'assignedTasksIndex'])->name('assigned-tasks.index');
+                // Route::POST('tasks/assigned-task-status', [TaskController::class, 'assignedTaskStatus'])->name('assigned-task.status');
+                // Route::POST('tasks/assigned/report', [TaskController::class, 'assignedTaskReport'])->name('assigned-task.report');
+                // Route::get('tasks/assigned/history', [TaskController::class, 'assignedTaskHistory'])->name('assigned-task.history');
+                // Route::get('tasks/view/report/{data}', [TaskController::class, 'getPerformerReportInfo'])->name('performer-report.view-report')->where('data', '.*');
 
 
                 Route::get('performer-list', [TaskController::class, 'performer'])->name('performer.index');
