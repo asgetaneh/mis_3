@@ -26,7 +26,7 @@ class StaffEMIS extends Controller
         ->join('nationalities as nation','nation.id','=','emp.nationality_id')
         ->join('regions as r', 'emp.region_id', '=', 'r.id')
         ->join('zones as z', 'emp.zone_id', '=', 'z.id')
-        ->join('woredas as w', 'emp.woreda_id', '=', 'w.id')
+    //     ->join('woredas as w', 'emp.woreda_id', '=', 'w.id')
         ->select(
             'emp.first_name',
         'emp.father_name',
@@ -38,10 +38,11 @@ class StaffEMIS extends Controller
         'emp.phone_number',
         'nation.nation',
         'r.name',
-        'w.name',
+        // 'w.name',
         'z.name',
         'fs.name'
-    ) ->get();
+    ) 
+    ->paginate(10);
     // dd($employees);
         return view(
             'app.emis.staff.overview.index',
