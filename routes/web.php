@@ -96,6 +96,7 @@ Route::prefix('/')
             Route::POST('tasks/assigned/report', [TaskController::class, 'assignedTaskReport'])->name('assigned-task.report');
             Route::get('tasks/assigned/history', [TaskController::class, 'assignedTaskHistory'])->name('assigned-task.history');
             Route::get('tasks/view/report/{data}', [TaskController::class, 'getPerformerReportInfo'])->name('performer-report.view-report')->where('data', '.*');
+            Route::get('tasks/view/evaluation/{data}', [TaskController::class, 'getPerformerEvaluationInfo'])->name('performer-report.view-evaluation')->where('data', '.*');
 
         });
 

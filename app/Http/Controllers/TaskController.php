@@ -101,12 +101,12 @@ class TaskController extends Controller
              foreach ($language as $key => $value) {
                 $task ->name = $data['name_'.$value->locale];
                 $task ->description = $data['description_'.$value->locale];
-               $task->save(); 
-             foreach ($data['measurements'] as $key => $value) { 
+               $task->save();
+             foreach ($data['measurements'] as $key => $value) {
                $task_measurement = DB::insert('insert into task_task_measures (task_id, task_measurement_id) values (?, ?)', [$task->id, $value]);
             }
          }
-         
+
 
          return redirect()
             ->route('tasks.index', $task)
@@ -194,12 +194,12 @@ class TaskController extends Controller
         $task->taskMeasurement()->detach($task_measurements);
         $task->taskMeasurement()->attach($data['measurements']);
 
-        // foreach ($task_measurements as $key => $obj) { 
+        // foreach ($task_measurements as $key => $obj) {
         //     DB::table('task_task_measures')->where('task_measurement_id', $obj->id)->delete();
         //  }
-       
-       
-        //  foreach ($data['measurements'] as $key => $value) {  
+
+
+        //  foreach ($data['measurements'] as $key => $value) {
         //        $task_measurement = DB::insert('insert into task_task_measures (task_id, task_measurement_id) values (?, ?)', [$task->id, $value]);
         //     }
 
@@ -443,11 +443,24 @@ class TaskController extends Controller
     {
 
         $returnValue = TaskAccomplishment::where('task_assign_id', $data)->first();
-        error_log($returnValue->reported_value);
+        // error_log($returnValue->reported_value);
 
         $responseData = [];
         $responseData['reported_value'] = $returnValue->reported_value;
         $responseData['reported_description'] = $returnValue->task_done_description;
+
+        return response()->json($responseData);
+    }
+
+    public function getPerformerEvaluationInfo($data)
+    {
+
+        $returnValue = TaskAccomplishment::where('task_assign_id', $data)->first();
+        // error_log($returnValue->reported_value);
+
+        $responseData = [];
+        $responseData['evaluated_value'] = $returnValue->reported_value;
+        $responseData['evaluated_description'] = $returnValue->task_done_description;
 
         return response()->json($responseData);
     }

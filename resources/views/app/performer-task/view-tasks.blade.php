@@ -131,7 +131,7 @@
     </div>
 
     {{-- View Evaluation modal --}}
-    <div class="modal fade view-evaluation" id="view-evaluation" style="display: none;" aria-hidden="true">
+    <div class="modal fade view-evaluation-modal" id="view-evaluation" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header bg-light">
@@ -140,8 +140,12 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body evaluation-modal-body">
                     <h5>Evaluation content here</h5>
+                    {{-- <h5>Evaluated Value:</h5>
+                    <p><strong id="evaluated-value" class=""></strong></p>
+                    <h5>Evaluated Description: </h5>
+                    <p><strong id="evaluated-description"></strong></p> --}}
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -205,6 +209,32 @@
     {{-- View Evaluation --}}
     <script>
         // Listen for the view evaluation click event
+        $('#view-evaluation-btn').on('click', function() {
+
+            var id = $(this).attr('data-id');
+            console.log(id);
+
+            // AJAX request with the information attached
+            var url = "{{ route('performer-report.view-evaluation', [':id']) }}";
+            url = url.replace(':id', id);
+
+            // Empty modal data
+            $('.evaluation-modal-body #evaluated-value').empty();
+            $('.evaluation-modal-body #evaluated-description').empty();
+
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                success: function(response) {
+                    console.log(response);
+                    $('.evaluation-modal-body #evaluated-value').html(response.evaluated_value);
+                    $('.evaluation-modal-body #evaluated-description').html(response.evaluated_description);
+
+                    $('.view-evaluation-modal').modal('show');
+                }
+            });
+
+        });
     </script>
 
 @endsection
