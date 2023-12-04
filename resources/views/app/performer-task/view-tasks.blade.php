@@ -12,7 +12,7 @@
 
 @section('content')
     <div class="container-fluid">
-        <div class="searchbar mt-0 mb-4">
+        {{-- <div class="searchbar mt-0 mb-4">
             <div class="row">
                 <div class="col-md-6">
                     <form>
@@ -27,6 +27,23 @@
                         </div>
                     </form>
                 </div>
+            </div>
+        </div> --}}
+
+        <div class="w-25 mb-3">
+            <div>
+                <form action="{{ route('assigned-task.history') }}" method="get">
+                    <label for="filter-status">Status</label>
+                    <div class="d-flex">
+                        <select name="status-filter" id="filter-status" class="form-control select2">
+                            <option disabled selected value="iuy">Filter By Status</option>
+                            <option {{ old('status-filter') == 2 ? 'selected' : '' }} value="2">REJECTED</option>
+                            <option {{ old('status-filter') == 3 ? 'selected' : '' }} value="3">REPORTED</option>
+                            <option {{ old('status-filter') == 4 ? 'selected' : '' }} value="4">EVALUATED</option>
+                        </select>
+                        <button id="btn-filter" type="submit" class="btn btn-primary ml-2">Filter</button>
+                    </div>
+                </form>
             </div>
         </div>
 

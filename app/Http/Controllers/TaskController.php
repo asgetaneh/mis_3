@@ -431,9 +431,20 @@ class TaskController extends Controller
 
         $perfomer = auth()->user()->id;
 
-        $taskHistory = TaskAssign::where('assigned_to_id', $perfomer)
+        if (!empty($request->input('status-filter')))
+        {
+            $taskHistory = TaskAssign::where('assigned_to_id', $perfomer)
+            ->where('status', $request->input('status-filter'))
             ->whereIn('status', [2,3,4])
             ->paginate(10);
+
+            $request->flash();
+
+        }else{
+            $taskHistory = TaskAssign::where('assigned_to_id', $perfomer)
+            ->whereIn('status', [2,3,4])
+            ->paginate(10);
+        }
 
         return view('app.performer-task.view-tasks', compact('taskHistory'));
 
