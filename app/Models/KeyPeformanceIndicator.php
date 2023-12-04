@@ -94,8 +94,6 @@ class KeyPeformanceIndicator extends Model
         $tasks = Task::select('tasks.*')
                 ->where('kpi_id','=', $kpi) ->where('office_id','=', $office)->get();
              return $tasks;
-
-
     }
 
     public function tasks()

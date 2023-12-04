@@ -425,4 +425,35 @@ class TaskController extends Controller
 
         return redirect()->back()->withSuccess(__('crud.common.saved'));
     }
+    public function performersTaskList(Request $request)
+    {
+        // $this->authorize('update', $task);
+
+        $search = $request->get('search', '');
+        $office = auth()->user()->offices[0]->id;
+        $performers = Performer::select('performers.*')
+                // ->join('kpi_office', 'key_peformance_indicators.id', '=', 'kpi_office.kpi_id')
+                // ->join('offices', 'offices.id', '=', 'kpi_office.office_id')
+                ->where('office_id',"=", $office)
+                ->get();
+        // $tasks = Task::search($search)
+        //      ->oldest()
+        //     ->paginate(10)
+        //     ->withQueryString();
+        // $reporting_periods = ReportingPeriod::search($search)
+        //      ->oldest()
+        //     ->paginate(10)
+        //     ->withQueryString();
+        // $languages = Language::search($search)
+        //     ->latest()
+        //     ->paginate(5)
+        //     ->withQueryString();
+        // $task_measurements = TaskMeasurement::all();
+        // $selected_measure = $task->taskMeasurement;
+         return view(
+            'app.task.performer-task-list',
+            compact('performers', 'search')
+        );
+    }
+
 }

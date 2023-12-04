@@ -10,9 +10,21 @@ class TaskAssignController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         //
+        $search = $request->get('search', '');
+        $user_id = auth()->user()->id;
+        $TaskAssigns = TaskAssign::select('task_assigns.*')
+                // ->join('kpi_office', 'key_peformance_indicators.id', '=', 'kpi_office.kpi_id')
+                // ->join('offices', 'offices.id', '=', 'kpi_office.office_id')
+                ->where('assigned_by_id',"=", $user_id)
+                ->where('status',"=", 3)
+                ->get();
+         return view(
+            'app.taskassign.index',
+            compact('TaskAssigns', 'search')
+        );
     }
 
     /**

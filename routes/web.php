@@ -51,6 +51,7 @@ use App\Http\Controllers\CampusController;
 use App\Http\Controllers\BuildingPurposeController;
 use App\Http\Controllers\BuildingController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TaskAssignController;
 use App\Http\Controllers\TaskMeasurementController;
 /*
 |--------------------------------------------------------------------------
@@ -99,6 +100,8 @@ Route::prefix('/')
                 Route::get('performer-list', [TaskController::class, 'performer'])->name('performer.index');
                 Route::post('performer-add', [TaskController::class, 'addPerformer'])->name('performer-add-tooffices-save');
                 Route::DELETE('performer-remove-from-office/{performer}', [TaskController::class, 'performerRemoveFromOffice'])->name('performer-remove-from-office');
+                Route::get('performer-task-list', [TaskController::class, 'performersTaskList'])->name('performer.create');
+                Route::get('performer-report', [TaskAssignController::class, 'index'])->name('taskassign.index');
                 Route::resource('tasks', TaskController::class);
                 Route::resource('TaskMeasurements', TaskMeasurementController::class);
                 Route::get('tasks/task-assign/{id}', [TaskController::class, 'taskAssignIndex'])->name('task-assign.index');
