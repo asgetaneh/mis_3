@@ -82,36 +82,53 @@
                                         <div role="group" aria-label="Row Actions" class="btn-group">
                                             {{-- @can('update', $task) --}}
 
-                                            @if ($task->status === 1)
-                                                <a class="btn btn-sm btn-flat btn-info text-white report-task"
-                                                    id="report-task" data-toggle="modal" data-target="#report-modal"
-                                                    data-task-id="{{ $task->id }}">
-                                                    <i class="fas fa fa-list mr-1"></i>Report
-                                                </a>
-                                            @elseif($task->status === 0)
-                                                <form action="{{ route('assigned-task.status') }}" method="POST"
-                                                    onsubmit="return confirm('Are you sure you want to accept this Task?')"
-                                                    class="mr-2">
-                                                    @csrf
-                                                    <input type="hidden" value="{{ $task->id }}" name="taskAssignId">
-                                                    <input type="hidden" value="accept" name="type">
+                                            @php
+                                                $activePeriodList = getReportingQuarter($task->task->period->reportingPeriodType->id);
+                                                $activePeriodArray = [];
+                                            @endphp
 
-                                                    <button type="submit" class="btn btn-sm btn-flat btn-success"
-                                                        value="accept">
-                                                        <i class="fas fa fa-check"></i>
-                                                        Accept
-                                                    </button>
-                                                </form>
+                                            @forelse ($activePeriodList as $period)
+                                                @php
+                                                    array_push($activePeriodArray, $period->id);
+                                                @endphp
+                                            @empty
+                                            @endforelse
 
-                                                <a class="btn btn-sm btn-flat btn-danger reject-task" id="reject-task"
-                                                    data-toggle="modal" data-target="#reject-modal"
-                                                    data-task-id="{{ $task->id }}">
-                                                    <i class="fas fa fa-ban mr-1"></i>Reject
-                                                </a>
-                                            @elseif($task->status === 2)
-                                                <span class="badge bg-info p-1">TASK REPORTED</span>
-                                            @elseif($task->status === 3)
-                                                <span class="badge bg-success p-1">TASK ACCEPTED</span>
+                                            @if (!in_array($task->task->period->id, $activePeriodArray))
+                                                <p class="text-danger">Reporting time expired!</p>
+                                            @else
+                                                @if ($task->status === 1)
+                                                    <a class="btn btn-sm btn-flat btn-info text-white report-task"
+                                                        id="report-task" data-toggle="modal" data-target="#report-modal"
+                                                        data-task-id="{{ $task->id }}">
+                                                        <i class="fas fa fa-list mr-1"></i>Report
+                                                    </a>
+                                                @elseif($task->status === 0)
+                                                    <form action="{{ route('assigned-task.status') }}" method="POST"
+                                                        onsubmit="return confirm('Are you sure you want to accept this Task?')"
+                                                        class="mr-2">
+                                                        @csrf
+                                                        <input type="hidden" value="{{ $task->id }}"
+                                                            name="taskAssignId">
+                                                        <input type="hidden" value="accept" name="type">
+
+                                                        <button type="submit" class="btn btn-sm btn-flat btn-success"
+                                                            value="accept">
+                                                            <i class="fas fa fa-check"></i>
+                                                            Accept
+                                                        </button>
+                                                    </form>
+
+                                                    <a class="btn btn-sm btn-flat btn-danger reject-task" id="reject-task"
+                                                        data-toggle="modal" data-target="#reject-modal"
+                                                        data-task-id="{{ $task->id }}">
+                                                        <i class="fas fa fa-ban mr-1"></i>Reject
+                                                    </a>
+                                                @elseif($task->status === 2)
+                                                    <span class="badge bg-info p-1">TASK REPORTED</span>
+                                                @elseif($task->status === 3)
+                                                    <span class="badge bg-success p-1">TASK ACCEPTED</span>
+                                                @endif
                                             @endif
                                             {{-- @endcan --}}
                                         </div>
@@ -127,8 +144,8 @@
                         </tbody>
                     </table>
                     <div class="float-right">
-                    {!! $assignedTasks->render() !!}
-                </div>
+                        {!! $assignedTasks->render() !!}
+                    </div>
                 </div>
             </div>
         </div>
