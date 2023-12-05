@@ -10,6 +10,12 @@ class TaskMeasurement extends Model
 {
     use HasFactory;
     use Searchable;
+     protected $fillable = [
+        
+        'name',
+        'description',
+        'expected_value',
+    ];
     protected $searchableFields = ['*'];
      public function task()
     {

@@ -281,27 +281,9 @@ class TaskController extends Controller
     public function performerRemoveFromOffice($performer, Request $request) {
         $performer_ob = Performer::find($performer);//dd($performer_ob);
         $performer_ob->delete();
-        $offices = auth()->user()->offices;
-        $operformerAdds = Performer::select('performers.*')
-                ->join('users', 'users.id', '=', 'performers.user_id')
-                 ->where('performers.office_id',"=", $offices[0]->id)
-                ->get();
-        $addedUserList = [];
-        foreach ($operformerAdds as $operformerAdd){
-            array_push($addedUserList, $operformerAdd->user_id);
-        }
-        $users = User::select('users.*')
-                -> whereNotIn('id', $addedUserList)
-                ->get();
-
-        return redirect()->back()->with(
-            [
-                'users'=> $users,
-                'offices'=> $offices,
-                'operformerAdds'=> $operformerAdds,
-             ]
-
-        );
+        return redirect()
+            ->route('performer.index')
+            ->withSuccess(__('crud.common.removed'));
     }
 
 

@@ -43,9 +43,9 @@
                                         <th class="text-left">
                                             Description
                                         </th>
-                                        <th class="text-left">
+                                        {{-- <th class="text-left">
                                             expected value
-                                        </th>   
+                                        </th>    --}}
                                         <th class="text-center">
                                             @lang('crud.common.actions')
                                         </th>
@@ -56,7 +56,7 @@
                                 $count = 1;
                             @endphp
 
-                            @forelse($task_measurements as $task_measurement)
+                            @forelse($task_measurements as $task_measurement) 
                                     <tr>
                                         <td>{{ $count++ }}</td>
                                         <td>
@@ -66,9 +66,9 @@
                                             {!! html_entity_decode($task_measurement->description ?? '-'  ) !!}
                                         </td>
                                          
-                                        <td>
+                                        {{-- <td>
                                             {{ $task_measurement->expected_value }}
-                                        </td>
+                                        </td> --}}
                                         <td class="text-center" style="width: 134px;">
                                             <div role="group" aria-label="Row Actions" class="btn-group">
                                                 {{-- @can('update', $task) --}}
