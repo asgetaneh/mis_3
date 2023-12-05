@@ -852,7 +852,7 @@
                         </li>
                     @endif
                 @endif
-                <li class="nav-item {{ Request::is('smis/performer/tasks/assigned-tasks') || Request::is('smis/performer/task/view-tasks') ? 'menu-open' : '' }}">
+                <li class="nav-item {{ Request::is('smis/performer/tasks/assigned-tasks') || Request::is('smis/performer/tasks/assigned/history') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link">
                         <i class="nav-icon icon fas fa fa-list"></i>
                         <p>
@@ -870,7 +870,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('performer.index') }}" class="nav-link {{ Request::is('smis/performer/performer-list') ? 'active' : '' }}">
+                                <a href="{{ route('assigned-task.history') }}" class="nav-link {{ Request::is('smis/performer/tasks/assigned/history') ? 'active' : '' }}">
                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
                                     <p>View Tasks</p>
                                 </a>

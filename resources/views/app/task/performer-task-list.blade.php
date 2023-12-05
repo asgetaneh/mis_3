@@ -34,7 +34,7 @@
                             {{-- @if (!$kpis->empty()) --}}
                                 @forelse($performers as $performer)
                                     <tr style="background:#96fffd45;">
-                                        <th colspan="5">{{"Performer: "}}{{ $performer->user->name }} </th>
+                                        <th colspan="8">{{"Performer: "}}{{ $performer->user->name }} </th>
                                     </tr>
                                     <tr>
                                         <th>#</th>
@@ -45,10 +45,17 @@
                                             Description
                                         </th>
                                         <th class="text-left">
-                                            Task measurements
-                                        </th>                                        <th class="text-left">
                                             Expected value
                                         </th>
+                                        <th class="text-left">
+                                            Reported value
+                                        </th>
+                                        <th class="text-left">
+                                            Task measurements
+                                        </th>     
+                                         <th class="text-left">
+                                            Accomplishments Value
+                                        </th>                                     
                                     </tr>
                         </thead>
                         <tbody>
@@ -65,17 +72,45 @@
                                         <td>
                                             {!! html_entity_decode($task->description ?? '-'  ) !!}
                                         </td>
-                                        <td> 
-                                        @forelse($task->taskMeasurement  as $task_measure)
-                                            {{ $task_measure->name ?? '-' }}<br/>
-                                        @empty
-                                              @lang('crud.common.no_items_found')
-                                               
-                                        @endforelse
-                                         </td>
-                                        <td>
-                                            {{ $task->assignedTasks[0]->expected_value }}
+                                         <td>
+                                            @php
+                                             $assignment =   $task->getTaskAssignment($task->id,$performer->id);
+                                            @endphp
+                                            {{ $assignment[0]->expected_value }}
                                         </td>
+                                        <td>
+                                            @if($assignment[0]->taskAccomplishments)
+                                            {{ $assignment[0]->taskAccomplishments->reported_value }}
+                                            @else
+                                            {{"--"}}
+                                            @endif
+                                        </td>
+                                        <td> 
+                                            @forelse($task->taskMeasurement  as $task_measure)
+                                                {{ $task_measure->name ?? '-' }}<br/>
+                                            @empty
+                                                {{"--"}}
+                                            @endforelse
+                                         </td>
+                                         <td>
+                                            @forelse($task->taskMeasurement  as $task_measure)
+                                                @php $acomm_id = 0; @endphp
+                                                @if($assignment[0]->taskAccomplishments)
+                                                    @php
+                                                     $acomm_id = $assignment[0]->taskAccomplishments->id;
+                                                    @endphp
+                                                @endif
+                                                @php
+                                                $accomplish_value =   $task->getTaskAccomplishmentValue($task_measure->id, $acomm_id);
+                                                 @endphp 
+                                                {{ $accomplish_value }}<br/>
+                                            @empty
+                                                 {{"--"}}
+                                            @endforelse
+                                            
+                                             
+                                         </td>
+                                       
                                         
                                     </tr>
                              @empty

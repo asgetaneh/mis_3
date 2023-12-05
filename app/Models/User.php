@@ -98,4 +98,9 @@ class User extends Authenticatable
         }
          return false;
     }
+
+    public function assignedTasks()
+    {
+        return $this->hasMany(TaskAssign::class, 'assigned_to_id');
+    }
 }

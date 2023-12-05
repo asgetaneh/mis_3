@@ -96,12 +96,16 @@ Route::prefix('/')
                 Route::get('tasks/assigned-tasks', [TaskController::class, 'assignedTasksIndex'])->name('assigned-tasks.index');
                 Route::POST('tasks/assigned-task-status', [TaskController::class, 'assignedTaskStatus'])->name('assigned-task.status');
                 Route::POST('tasks/assigned/report', [TaskController::class, 'assignedTaskReport'])->name('assigned-task.report');
+                Route::get('tasks/assigned/history', [TaskController::class, 'assignedTaskHistory'])->name('assigned-task.history');
+                Route::get('tasks/view/report/{data}', [TaskController::class, 'getPerformerReportInfo'])->name('performer-report.view-report')->where('data', '.*');
+
 
                 Route::get('performer-list', [TaskController::class, 'performer'])->name('performer.index');
                 Route::post('performer-add', [TaskController::class, 'addPerformer'])->name('performer-add-tooffices-save');
                 Route::DELETE('performer-remove-from-office/{performer}', [TaskController::class, 'performerRemoveFromOffice'])->name('performer-remove-from-office');
                 Route::get('performer-task-list', [TaskController::class, 'performersTaskList'])->name('performer.create');
                 Route::get('performer-report', [TaskAssignController::class, 'index'])->name('taskassign.index');
+                Route::post('performer-report-accept', [TaskAssignController::class, 'store'])->name('taskassign.store');
                 Route::resource('tasks', TaskController::class);
                 Route::resource('TaskMeasurements', TaskMeasurementController::class);
                 Route::get('tasks/task-assign/{id}', [TaskController::class, 'taskAssignIndex'])->name('task-assign.index');

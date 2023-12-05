@@ -56,31 +56,36 @@
                                 method="POST"
                                 action="{{ route('taskassign.store') }}"
                                 class="mt-4">
-                            @forelse($TaskAssigns as $TaskAssign)
+                            @forelse($TaskAccomplishments as $TaskAccomplishment)
                                 <tr>
                                     <td>{{ $count++ }}</td>
                                     <td>
-                                        {{ $TaskAssign->task->name ?? '-' }}
+                                        {{ $TaskAccomplishment->taskAssign->task->name ?? '-' }}
                                     </td>
                                     <td>
-                                        {!! html_entity_decode($TaskAssign->task->description ?? '-'  ) !!}
+                                        {!! html_entity_decode($TaskAccomplishment->taskAssign->task->description ?? '-'  ) !!}
                                     </td>
                                     <td>
-                                        {{ $TaskAssign->expected_value }}
+                                        {{ $TaskAccomplishment->taskAssign->expected_value }}
                                     </td>
                                     <td>
-                                        {{ $TaskAssign->expected_value }}
+                                        {{ $TaskAccomplishment->reported_value }}
                                     </td>
-                                    <td>
-                                        <x-inputs.group class="col-sm-12">
-                                            <x-inputs.number
-                                                name="Expected_value"  :value="old('Expected_value', ($TaskAssign ? $TaskAssign->Expected_value : ''))"
-                                                max="255"
-                                                step="0.01"
-                                                placeholder="Expected value"
-                                                required
-                                            ></x-inputs.number>
-                                        </x-inputs.group>
+                                    <td> 
+                                     @forelse($TaskAccomplishment->taskAssign->task->taskMeasurement as $taskMeasurement)
+                                        @php
+                                            $accoum_value =  $TaskAccomplishment->getAccomplishemtValueUalue($TaskAccomplishment->id,  $taskMeasurement->id); 
+                                        @endphp
+                                        {{$taskMeasurement->name}}
+                                        <input
+                                            name="{{ $TaskAccomplishment->id}}
+                                                                                                                        - {{$taskMeasurement->id}}" 
+                                        class="form-control"
+                                        value="{{ $accoum_value }}"
+                                            placeholder="Expected value"    type="number" required>
+                                        @empty 
+                                                @lang('crud.common.no_items_found') 
+                                        @endforelse
                                     </td>
                                 </tr>
                              @empty
@@ -94,7 +99,7 @@
                                 <td colspan="6">
                                     <button type="submit" class="btn btn-primary float-right">
                                         <i class="icon ion-md-save"></i>
-                                        @lang('crud.common.create')
+                                        @lang('crud.common.save')
                                     </button>
                                 </td>
                             </tr>
