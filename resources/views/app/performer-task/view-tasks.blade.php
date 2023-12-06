@@ -159,10 +159,15 @@
                 </div>
                 <div class="modal-body evaluation-modal-body">
                     <table class="table table-bordered">
-                        <tr>
-                            <th>Measurement Type</th>
-                            <th>Accomplishment Value</th>
-                        </tr>
+                        <thead>
+                            <tr>
+                                <th>Measurement Type</th>
+                                <th>Accomplishment Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -247,9 +252,9 @@
                     // console.log(response.looper);
 
                     if(response.looper.length > 0){
-                        $('.evaluation-modal-body table').html('');
+                        $('.evaluation-modal-body table tbody').html('');
                         $.each(response.looper, function(key, value) {
-                            $('.evaluation-modal-body table').append(`
+                            $('.evaluation-modal-body table tbody').append(`
                                 <tr>
                                     <td>${value[0]}</td>
                                     <td>${value[1]}</td>
@@ -257,7 +262,7 @@
                             `);
                         });
                     }else{
-                        $('.evaluation-modal-body table').html('');
+                        $('.evaluation-modal-body table tbody').html('');
                         $('.evaluation-modal-body table').html('No Evaluation Made!');
                     }
 
