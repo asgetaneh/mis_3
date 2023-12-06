@@ -281,27 +281,9 @@ class TaskController extends Controller
     public function performerRemoveFromOffice($performer, Request $request) {
         $performer_ob = Performer::find($performer);//dd($performer_ob);
         $performer_ob->delete();
-        $offices = auth()->user()->offices;
-        $operformerAdds = Performer::select('performers.*')
-                ->join('users', 'users.id', '=', 'performers.user_id')
-                 ->where('performers.office_id',"=", $offices[0]->id)
-                ->get();
-        $addedUserList = [];
-        foreach ($operformerAdds as $operformerAdd){
-            array_push($addedUserList, $operformerAdd->user_id);
-        }
-        $users = User::select('users.*')
-                -> whereNotIn('id', $addedUserList)
-                ->get();
-
-        return redirect()->back()->with(
-            [
-                'users'=> $users,
-                'offices'=> $offices,
-                'operformerAdds'=> $operformerAdds,
-             ]
-
-        );
+        return redirect()
+            ->route('performer.index')
+            ->withSuccess(__('crud.common.removed'));
     }
 
 
@@ -426,6 +408,39 @@ class TaskController extends Controller
 
         return redirect()->back()->withSuccess(__('crud.common.saved'));
     }
+    public function performersTaskList(Request $request)
+    {
+        // $this->authorize('update', $task);
+
+        $search = $request->get('search', '');
+        $office = auth()->user()->offices[0]->id;
+        $performers = Performer::select('performers.*')
+                //   ->join('users', 'users.id', '=', 'performers.user_id')
+                //   ->join('task_assigns', 'task_assigns.assigned_by_id', '=','users.id')
+                ->where('office_id',"=", $office)
+                // ->where('task_assigns.status',"!=", 2)
+                // ->groupBY('performers.id')
+                ->get();
+        // $tasks = Task::search($search)
+        //      ->oldest()
+        //     ->paginate(10)
+        //     ->withQueryString();
+        // $reporting_periods = ReportingPeriod::search($search)
+        //      ->oldest()
+        //     ->paginate(10)
+        //     ->withQueryString();
+        // $languages = Language::search($search)
+        //     ->latest()
+        //     ->paginate(5)
+        //     ->withQueryString();
+        // $task_measurements = TaskMeasurement::all();
+        // $selected_measure = $task->taskMeasurement;
+         return view(
+            'app.task.performer-task-list',
+            compact('performers', 'search')
+        );
+    }
+
 
     public function assignedTaskHistory(Request $request){
 

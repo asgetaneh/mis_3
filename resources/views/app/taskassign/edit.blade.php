@@ -6,22 +6,22 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">
-                <a href="{{ route('TaskMeasurements.index') }}" class="mr-4"
+                <a href="{{ route('tasks.index') }}" class="mr-4"
                     ><i class="icon ion-md-arrow-back"></i
                 ></a>
-                Edit Task Measurement 
+                Edit Task
             </h4>
 
             <x-form
                 method="PUT"
-                action="{{ route('TaskMeasurements.update', $task_measurement) }}"
+                action="{{ route('tasks.update', $task) }}"
                 class="mt-4"
             >
-                @include('app.taskmeasurement.edit-form-inputs')
+                @include('app.task.edit-form-inputs')
 
                 <div class="mt-4">
                     <a
-                        href="{{ route('TaskMeasurements.index') }}"
+                        href="{{ route('tasks.index') }}"
                         class="btn btn-light"
                     >
                         <i class="icon ion-md-return-left text-primary"></i>
@@ -29,7 +29,7 @@
                     </a>
 
                     <a
-                        href="{{ route('TaskMeasurements.create') }}"
+                        href="{{ route('tasks.create') }}"
                         class="btn btn-light"
                     >
                         <i class="icon ion-md-add text-primary"></i>

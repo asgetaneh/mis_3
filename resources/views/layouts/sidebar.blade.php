@@ -756,7 +756,7 @@
                                             <li class="nav-item">
                                                 <a href="{{ route('performer.index') }}" class="nav-link {{ Request::is('smis/performer/performer-list') ? 'active' : '' }}">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                    <p>Performer</p>
+                                                    <p>Performer list</p>
                                                 </a>
                                             </li>
                                         {{-- @endcan --}}
@@ -775,9 +775,9 @@
                                      <ul class="nav nav-treeview">
                                         {{-- @can('view-any', App\Models\User::class) --}}
                                             <li class="nav-item">
-                                                <a href="{{ route('emis.setting.campus') }}" class="nav-link">
+                                                <a href="{{ route('performer.create') }}" class="nav-link">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                    <p>Task</p>
+                                                    <p>Performer task list</p>
                                                 </a>
                                             </li>
                                         {{-- @endcan --}}
@@ -785,9 +785,9 @@
                                      <ul class="nav nav-treeview">
                                         {{-- @can('view-any', App\Models\User::class) --}}
                                             <li class="nav-item">
-                                                <a href="{{ route('emis.setting.building.purpose') }}" class="nav-link">
+                                                <a href="{{ route('taskassign.index') }}" class="nav-link">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                    <p>Task</p>
+                                                    <p>Performer report</p>
                                                 </a>
                                             </li>
                                         {{-- @endcan --}}

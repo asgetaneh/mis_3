@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Edit Task')
+@section('title', 'Create Task Measurements')
 
 @section('content')
 <div class="container">
@@ -9,15 +9,15 @@
                 <a href="{{ route('TaskMeasurements.index') }}" class="mr-4"
                     ><i class="icon ion-md-arrow-back"></i
                 ></a>
-                Edit Task Measurement 
+               {{"Create Task"}}
             </h4>
 
             <x-form
-                method="PUT"
-                action="{{ route('TaskMeasurements.update', $task_measurement) }}"
+                method="POST"
+                action="{{ route('TaskMeasurements.store') }}"
                 class="mt-4"
             >
-                @include('app.taskmeasurement.edit-form-inputs')
+                @include('app.taskmeasurement.form-inputs')
 
                 <div class="mt-4">
                     <a
@@ -28,17 +28,9 @@
                         @lang('crud.common.back')
                     </a>
 
-                    <a
-                        href="{{ route('TaskMeasurements.create') }}"
-                        class="btn btn-light"
-                    >
-                        <i class="icon ion-md-add text-primary"></i>
-                        @lang('crud.common.create')
-                    </a>
-
                     <button type="submit" class="btn btn-primary float-right">
                         <i class="icon ion-md-save"></i>
-                        @lang('crud.common.update')
+                        @lang('crud.common.create')
                     </button>
                 </div>
             </x-form>

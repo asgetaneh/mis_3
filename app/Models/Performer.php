@@ -27,4 +27,13 @@ class Performer extends Model
     {
         return $this->belongsTo(Office::class, 'office_id');
     }
+    public function getTaskByperformer($performer) {
+        $tasks = Task::select('tasks.*')
+             ->join('task_assigns', 'tasks.id', '=', 'task_assigns.task_id')
+              ->join('users', 'users.id', '=', 'task_assigns.assigned_to_id')
+              ->join('performers', 'performers.user_id', '=', 'users.id')
+            ->where('performers.id','=', $performer) 
+            ->get();
+             return $tasks;
+    }
 }

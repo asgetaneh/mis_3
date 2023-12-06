@@ -1,7 +1,6 @@
 @php $editing = isset($task) @endphp
 
 <div class="row">
-
      @foreach($languages as $key => $lang)
      <x-inputs.group class="col-sm-12">
         <x-inputs.text
@@ -9,7 +8,7 @@
             label="{{'Name in '.$lang->name}}"
              maxlength="255"
             placeholder="{{'name in '.$lang->name}}"
-            value="{{ $task_measurement->name ?? '' }}"
+            value="{{ $task->name ?? '' }}"
             required
         ></x-inputs.text>
     </x-inputs.group>
@@ -21,11 +20,21 @@
             maxlength=""
             placeholder="Description"
             >
-            {{ $task_measurement->description ?? '' }}
+            {{ $task->description ?? '' }}
         </x-inputs.textarea>
     </x-inputs.group>
- @endforeach
- 
+ @endforeach 
+    <x-inputs.group class="col-sm-12">
+        <x-inputs.number
+            name="Expected_value"
+            label="Expected value"
+            :value="old('Expected_value', ($editing ? $task->Expected_value : ''))"
+            max="255"
+            step="0.01"
+            placeholder="Expected value"
+            required
+        ></x-inputs.number>
+    </x-inputs.group>
 
      <script type="text/javascript">
         $(document).ready(function() {
