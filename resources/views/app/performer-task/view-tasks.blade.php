@@ -246,7 +246,7 @@
                 success: function(response) {
                     // console.log(response.looper);
 
-                    if(response.looper.length < 0){
+                    if(response.looper.length > 0){
                         $('.evaluation-modal-body table').html('');
                         $.each(response.looper, function(key, value) {
                             $('.evaluation-modal-body table').append(`
