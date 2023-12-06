@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
 use App\Models\KeyPeformanceIndicator;
 use Andegna\DateTimeFactory;
 use App\Models\TaskAccomplishment;
+use App\Models\TaskMeasurementAcomplishment;
 use Illuminate\Support\Facades\DB;
 
 
@@ -481,12 +482,19 @@ class TaskController extends Controller
     public function getPerformerEvaluationInfo($data)
     {
 
-        $returnValue = TaskAccomplishment::where('task_assign_id', $data)->first();
-        // error_log($returnValue->reported_value);
+        $taskAccompId = TaskAccomplishment::where('task_assign_id', $data)->first();
+        // error_log($taskAccompId->id);
+
+        $taskMeasurementAccomp = TaskMeasurementAcomplishment::where('task_accomplishment_id', $taskAccompId->id)->get();
 
         $responseData = [];
-        $responseData['evaluated_value'] = $returnValue->reported_value;
-        $responseData['evaluated_description'] = $returnValue->task_done_description;
+        $loopedArray = [];
+
+        foreach ($taskMeasurementAccomp as $taskMeasurement){
+            array_push($loopedArray, [TaskMeasurement::findOrFail($taskMeasurement->task_measurement_id)->name, $taskMeasurement->accomplishment_value]);
+        }
+
+        $responseData['looper'] = $loopedArray;
 
         return response()->json($responseData);
     }

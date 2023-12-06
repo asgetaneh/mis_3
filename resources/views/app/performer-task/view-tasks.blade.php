@@ -158,11 +158,12 @@
                     </button>
                 </div>
                 <div class="modal-body evaluation-modal-body">
-                    <h5>Evaluation content here</h5>
-                    {{-- <h5>Evaluated Value:</h5>
-                    <p><strong id="evaluated-value" class=""></strong></p>
-                    <h5>Evaluated Description: </h5>
-                    <p><strong id="evaluated-description"></strong></p> --}}
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Measurement Type</th>
+                            <th>Accomplishment Value</th>
+                        </tr>
+                    </table>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -243,9 +244,21 @@
                 url: url,
                 dataType: 'json',
                 success: function(response) {
-                    console.log(response);
-                    $('.evaluation-modal-body #evaluated-value').html(response.evaluated_value);
-                    $('.evaluation-modal-body #evaluated-description').html(response.evaluated_description);
+                    // console.log(response.looper);
+
+                    if(response.looper.length > 0){
+                        $.each(response.looper, function(key, value) {
+                            $('.evaluation-modal-body table').append(`
+                                <tr>
+                                    <td>${value[0]}</td>
+                                    <td>${value[1]}</td>
+                                </tr>
+                            `);
+                        });
+                    }else{
+                        $('.evaluation-modal-body table').html('No Evaluation Made!');
+                    }
+
 
                     $('.view-evaluation-modal').modal('show');
                 }
