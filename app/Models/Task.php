@@ -2,9 +2,12 @@
 
 namespace App\Models;
 use App\Models\Scopes\Searchable;
-
+use Carbon\Carbon;
+use Andegna\DateTime as Et_date;
+use Andegna\DateTimeFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use DateTime;
 
 class Task extends Model
 {
@@ -75,4 +78,15 @@ class Task extends Model
                 return "--";
                 
     }
+     public function getEtTodayDate(){
+        $date = new \DateTime() ;
+        $ethiopic_today = DateTimeFactory::fromDateTime($date);
+        $ethiopic_today_tostring = $ethiopic_today->getYear().'-'.$ethiopic_today->getMonth().'-'.$ethiopic_today->getDay();
+        $now_et_date = DateTime::createFromFormat('Y-m-d',  $ethiopic_today_tostring);
+        return $now_et_date;
+     }
+      public function dateFormat($string_date){
+        $to_date = DateTime::createFromFormat('Y-m-d',  $string_date);
+        return $to_date;
+      }
  }

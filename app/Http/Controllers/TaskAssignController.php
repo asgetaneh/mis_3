@@ -17,10 +17,12 @@ class TaskAssignController extends Controller
         //
         $search = $request->get('search', '');
         $user_id = auth()->user()->id;
+        $current_period = 
         $TaskAccomplishments = TaskAccomplishment::select('task_accomplishments.*')
                  ->join('task_assigns', 'task_assigns.id', '=', 'task_accomplishments.task_assign_id')
-                // ->join('offices', 'offices.id', '=', 'kpi_office.office_id')
-                ->where('task_assigns.assigned_by_id',"=", $user_id)
+                 ->join('tasks', 'tasks.id', '=', 'task_assigns.task_id')
+                 ->join('planing_years', 'planing_years.id', '=', 'tasks.plan_year_id')
+                 ->where('task_assigns.assigned_by_id',"=", $user_id) 
                 ->where('task_assigns.status',"=", 3)
                 ->get();
          return view(

@@ -21,6 +21,8 @@ return new class extends Migration
             $table->foreign('kpi_id')->references('id')->on('key_peformance_indicators'); 
              $table->unsignedBigInteger('office_id'); 
             $table->foreign('office_id')->references('id')->on('offices'); 
+            $table->unsignedBigInteger('plan_year_id'); 
+            $table->foreign('plan_year_id')->references('id')->on('planing_years');
             $table->string('name');
             $table->text('description');
             $table->text('weight')->nullable();

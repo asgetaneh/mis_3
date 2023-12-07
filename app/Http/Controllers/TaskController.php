@@ -12,6 +12,7 @@ use App\Models\TaskAssign;
 use Illuminate\Http\Request;
 use App\Models\ReportingPeriod;
 use App\Models\OfficeTranslation;
+use App\Models\PlaningYear;
 use Illuminate\Support\Carbon;
 use App\Models\KeyPeformanceIndicator;
 use Andegna\DateTimeFactory;
@@ -90,6 +91,7 @@ class TaskController extends Controller
         $data = $request->input();//dd($data);
         $office = auth()->user()->offices[0]->id;
         $language = Language::all();
+        $planning_year = PlaningYear::where('is_active',true)->get();
          //$lastGoal = Goal::select('id')->orderBy('id','desc')->first();
         try {
             $task = new Task;
@@ -97,6 +99,7 @@ class TaskController extends Controller
             $task->period_id= $data['reporting_period'];
             $task->office_id = $office;
             $task->kpi_id = $data['kpi'];
+            $task->plan_year_id = $planning_year[0]->id;
             $task->created_by_id= auth()->user()->id;
              foreach ($language as $key => $value) {
                 $task ->name = $data['name_'.$value->locale];

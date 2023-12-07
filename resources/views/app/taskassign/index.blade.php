@@ -75,16 +75,22 @@
                                      @forelse($TaskAccomplishment->taskAssign->task->taskMeasurement as $taskMeasurement)
                                         @php
                                             $accoum_value =  $TaskAccomplishment->getAccomplishemtValueUalue($TaskAccomplishment->id,  $taskMeasurement->id); 
+                                            $start_date = $TaskAccomplishment->taskAssign->task->dateFormat($TaskAccomplishment->taskAssign->task->period->start_date);
+                                            $end_date = $TaskAccomplishment->taskAssign->task->dateFormat($TaskAccomplishment->taskAssign->task->period->end_date);
+                                            $now_et_date = $TaskAccomplishment->taskAssign->task->getEtTodayDate();
+                                            $disabled = "disabled";
+                                           if($start_date < $now_et_date && $end_date > $now_et_date){
+                                                $disabled = "";
+                                            }
                                         @endphp
                                         {{$taskMeasurement->name}}
-                                        <input
-                                            name="{{ $TaskAccomplishment->id}}
-                                                                                                                        - {{$taskMeasurement->id}}" 
+                                       <br/> 
+                                         <input name="{{ $TaskAccomplishment->id}}- {{$taskMeasurement->id}}" 
                                         class="form-control"
                                         value="{{ $accoum_value }}"
-                                            placeholder="Expected value"    type="number" required>
+                                        placeholder="Expected value" type="number"   {{ $disabled }} required>
                                         @empty 
-                                                @lang('crud.common.no_items_found') 
+                                            @lang('crud.common.no_items_found') 
                                         @endforelse
                                     </td>
                                 </tr>
