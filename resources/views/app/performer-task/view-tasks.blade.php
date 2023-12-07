@@ -12,7 +12,7 @@
 
 @section('content')
     <div class="container-fluid">
-        <div class="searchbar mt-0 mb-4">
+        {{-- <div class="searchbar mt-0 mb-4">
             <div class="row">
                 <div class="col-md-6">
                     <form>
@@ -27,6 +27,23 @@
                         </div>
                     </form>
                 </div>
+            </div>
+        </div> --}}
+
+        <div class="w-25 mb-3">
+            <div>
+                <form action="{{ route('assigned-task.history') }}" method="get">
+                    <label for="filter-status">Status</label>
+                    <div class="d-flex">
+                        <select name="status-filter" id="filter-status" class="form-control select2">
+                            <option disabled selected value="iuy">Filter By Status</option>
+                            <option {{ old('status-filter') == 2 ? 'selected' : '' }} value="2">REJECTED</option>
+                            <option {{ old('status-filter') == 3 ? 'selected' : '' }} value="3">REPORTED</option>
+                            <option {{ old('status-filter') == 4 ? 'selected' : '' }} value="4">EVALUATED</option>
+                        </select>
+                        <button id="btn-filter" type="submit" class="btn btn-primary ml-2">Filter</button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -131,7 +148,7 @@
     </div>
 
     {{-- View Evaluation modal --}}
-    <div class="modal fade view-evaluation" id="view-evaluation" style="display: none;" aria-hidden="true">
+    <div class="modal fade view-evaluation-modal" id="view-evaluation" style="display: none;" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header bg-light">
@@ -140,8 +157,18 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <h5>Evaluation content here</h5>
+                <div class="modal-body evaluation-modal-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Measurement Type</th>
+                                <th>Accomplishment Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -205,6 +232,46 @@
     {{-- View Evaluation --}}
     <script>
         // Listen for the view evaluation click event
+        $('#view-evaluation-btn').on('click', function() {
+
+            var id = $(this).attr('data-id');
+            console.log(id);
+
+            // AJAX request with the information attached
+            var url = "{{ route('performer-report.view-evaluation', [':id']) }}";
+            url = url.replace(':id', id);
+
+            // Empty modal data
+            $('.evaluation-modal-body #evaluated-value').empty();
+            $('.evaluation-modal-body #evaluated-description').empty();
+
+            $.ajax({
+                url: url,
+                dataType: 'json',
+                success: function(response) {
+                    // console.log(response.looper);
+
+                    if(response.looper.length > 0){
+                        $('.evaluation-modal-body table tbody').html('');
+                        $.each(response.looper, function(key, value) {
+                            $('.evaluation-modal-body table tbody').append(`
+                                <tr>
+                                    <td>${value[0]}</td>
+                                    <td>${value[1]}</td>
+                                </tr>
+                            `);
+                        });
+                    }else{
+                        $('.evaluation-modal-body table tbody').html('');
+                        $('.evaluation-modal-body table').html('No Evaluation Made!');
+                    }
+
+
+                    $('.view-evaluation-modal').modal('show');
+                }
+            });
+
+        });
     </script>
 
 @endsection

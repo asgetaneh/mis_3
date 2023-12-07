@@ -17,6 +17,7 @@ use Illuminate\Support\Carbon;
 use App\Models\KeyPeformanceIndicator;
 use Andegna\DateTimeFactory;
 use App\Models\TaskAccomplishment;
+use App\Models\TaskMeasurementAcomplishment;
 use Illuminate\Support\Facades\DB;
 
 
@@ -104,12 +105,12 @@ class TaskController extends Controller
              foreach ($language as $key => $value) {
                 $task ->name = $data['name_'.$value->locale];
                 $task ->description = $data['description_'.$value->locale];
-               $task->save(); 
-             foreach ($data['measurements'] as $key => $value) { 
+               $task->save();
+             foreach ($data['measurements'] as $key => $value) {
                $task_measurement = DB::insert('insert into task_task_measures (task_id, task_measurement_id) values (?, ?)', [$task->id, $value]);
             }
          }
-         
+
 
          return redirect()
             ->route('tasks.index', $task)
@@ -197,12 +198,12 @@ class TaskController extends Controller
         $task->taskMeasurement()->detach($task_measurements);
         $task->taskMeasurement()->attach($data['measurements']);
 
-        // foreach ($task_measurements as $key => $obj) { 
+        // foreach ($task_measurements as $key => $obj) {
         //     DB::table('task_task_measures')->where('task_measurement_id', $obj->id)->delete();
         //  }
-       
-       
-        //  foreach ($data['measurements'] as $key => $value) {  
+
+
+        //  foreach ($data['measurements'] as $key => $value) {
         //        $task_measurement = DB::insert('insert into task_task_measures (task_id, task_measurement_id) values (?, ?)', [$task->id, $value]);
         //     }
 
@@ -449,9 +450,20 @@ class TaskController extends Controller
 
         $perfomer = auth()->user()->id;
 
-        $taskHistory = TaskAssign::where('assigned_to_id', $perfomer)
+        if (!empty($request->input('status-filter')))
+        {
+            $taskHistory = TaskAssign::where('assigned_to_id', $perfomer)
+            ->where('status', $request->input('status-filter'))
             ->whereIn('status', [2,3,4])
             ->paginate(10);
+
+            $request->flash();
+
+        }else{
+            $taskHistory = TaskAssign::where('assigned_to_id', $perfomer)
+            ->whereIn('status', [2,3,4])
+            ->paginate(10);
+        }
 
         return view('app.performer-task.view-tasks', compact('taskHistory'));
 
@@ -461,11 +473,31 @@ class TaskController extends Controller
     {
 
         $returnValue = TaskAccomplishment::where('task_assign_id', $data)->first();
-        error_log($returnValue->reported_value);
+        // error_log($returnValue->reported_value);
 
         $responseData = [];
         $responseData['reported_value'] = $returnValue->reported_value;
         $responseData['reported_description'] = $returnValue->task_done_description;
+
+        return response()->json($responseData);
+    }
+
+    public function getPerformerEvaluationInfo($data)
+    {
+
+        $taskAccompId = TaskAccomplishment::where('task_assign_id', $data)->first();
+        // error_log($taskAccompId->id);
+
+        $taskMeasurementAccomp = TaskMeasurementAcomplishment::where('task_accomplishment_id', $taskAccompId->id)->get();
+
+        $responseData = [];
+        $loopedArray = [];
+
+        foreach ($taskMeasurementAccomp as $taskMeasurement){
+            array_push($loopedArray, [TaskMeasurement::findOrFail($taskMeasurement->task_measurement_id)->name, $taskMeasurement->accomplishment_value]);
+        }
+
+        $responseData['looper'] = $loopedArray;
 
         return response()->json($responseData);
     }
