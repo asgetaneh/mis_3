@@ -30,16 +30,30 @@
             </div>
         </div> --}}
 
-        <div class="w-25 mb-3">
+        <div class="w-50 mb-3">
             <div>
                 <form action="{{ route('assigned-task.history') }}" method="get">
                     <label for="filter-status">Status</label>
                     <div class="d-flex">
                         <select name="status-filter" id="filter-status" class="form-control select2">
-                            <option disabled selected value="iuy">Filter By Status</option>
+                            <option disabled {{ old('status-filter') == "" ? 'selected' : '' }} value="">Filter By Status</option>
+                            <option value="">ALL</option>
                             <option {{ old('status-filter') == 2 ? 'selected' : '' }} value="2">REJECTED</option>
                             <option {{ old('status-filter') == 3 ? 'selected' : '' }} value="3">REPORTED</option>
                             <option {{ old('status-filter') == 4 ? 'selected' : '' }} value="4">EVALUATED</option>
+                        </select>
+
+                        <p class="mx-1"></p>
+
+                        <select name="year-filter" id="filter-year" class="form-control select2">
+                            <option disabled {{ old('year-filter') == "" ? 'selected' : '' }} value="">Filter By year</option>
+                            <option value="">ALL</option>
+
+                            @forelse (App\Models\PlaningYear::all() as $year)
+                                <option {{ old('year-filter') == $year->id ? 'selected' : '' }} value="{{ $year->id }}">{{ $year->planingYearTranslations[0]->name ?? '-' }}</option>
+                            @empty
+
+                            @endforelse
                         </select>
                         <button id="btn-filter" type="submit" class="btn btn-primary ml-2">Filter</button>
                     </div>
