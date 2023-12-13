@@ -65,14 +65,25 @@
                     {{-- Fetch baseline sum for this KPI, for now just a character --}}
                     @php
                         $baseline = getBaselineIndividualOneTwoThree($planning_year[0]->id, $planAcc->Kpi->id, $one->id, $two->id, $kpiThree->id, auth()->user()->offices[0]->id);
+                        $baselineLastYear = getBaselineLastYear($planAcc->Kpi->id, $planning_year[0]->id, 1, auth()->user()->offices[0]->id, $one->id, $two->id, $kpiThree->id);
+
                     @endphp
-                    @if ($baseline)
+                    {{-- @if ($baseline)
                         <td>
                             {{ $baseline->baseline ?? '-' }}
                         </td>
                     @else
                         <td>
                             {{ $baseline->baseline ?? '-' }}
+                        </td>
+                    @endif --}}
+                    @if (!empty($baselineLastYear))
+                        <td>
+                            {{ $baselineLastYear }}
+                        </td>
+                    @else
+                        <td>
+                            -
                         </td>
                     @endif
                 @endforeach

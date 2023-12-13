@@ -35,14 +35,25 @@
 
                     @php
                         $baseline = getBaselineIndividualOneTwo($planning_year[0]->id, $planAcc->Kpi->id, $one->id, $two->id, auth()->user()->offices[0]->id);
+                        $baselineLastYear = getBaselineLastYear($planAcc->Kpi->id, $planning_year[0]->id, 1, auth()->user()->offices[0]->id, $one->id, $two->id);
+
                     @endphp
-                    @if ($baseline)
+                    {{-- @if ($baseline)
                         <td>
                             {{ $baseline->baseline ?? '-' }}
                         </td>
                     @else
                         <td>
                             {{ $baseline->baseline ?? '-' }}
+                        </td>
+                    @endif --}}
+                    @if (!empty($baselineLastYear))
+                        <td>
+                            {{ $baselineLastYear }}
+                        </td>
+                    @else
+                        <td>
+                            -
                         </td>
                     @endif
 
