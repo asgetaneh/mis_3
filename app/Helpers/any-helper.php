@@ -346,4 +346,28 @@ if (! function_exists('gettrans')) {
            return $planAccomplishment;
        }
   }
+
+  function getBaselineLastYear($kpi, $planningYear, $period, $office, $one = null, $two = null, $three = null){
+
+    $previousYear = '';
+
+    $lessYear = Carbon::now();
+    $lessYear->year = $lessYear->year - 1;
+
+    $previousYear = PlaningYear::where('is_active', 0)
+        ->where('created_at', '<', $lessYear)
+        ->first();
+
+    $baseline = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
+        ->where('kpi_id', $kpi)
+        ->where('office_id', $office)
+        ->where('planning_year_id', $previousYear->id ?? null)
+        ->where('kpi_child_one_id', $one)
+        ->where('kpi_child_two_id', $two)
+        ->where('kpi_child_three_id', $three)
+        ->where('reporting_periods.slug',"=", 1)
+        ->first();
+
+    return $baseline->plan_value ?? '';
+}
 }
