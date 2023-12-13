@@ -79,7 +79,7 @@
                                     <button class="btn btn-primary" value="search" name="search" type="submit">Filter</button>
                                     <span class="border border-right mx-3"></span>
                                     <button class="btn btn-info" value="pdf" name="pdf" type="submit">PDF</button>
-                                    <button class="btn btn-success" value="excel" name="excel" type="submit">Excel</button>
+                                    {{-- <button class="btn btn-success" value="excel" name="excel" type="submit">Excel</button> --}}
                                     {{-- <button class="btn btn-primary" value="word" name="word" type="submit">Word</button> --}}
                                 </div>
                             </div>
