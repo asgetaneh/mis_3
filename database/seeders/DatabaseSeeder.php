@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\User;
 use App\Models\Office;
+use App\Models\Language;
 use Illuminate\Database\Seeder;
 use App\Models\OfficeTranslation;
 use Illuminate\Support\Facades\DB;
@@ -30,183 +31,183 @@ class DatabaseSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Create default permissions
-        Permission::create(['name' => 'list genders']);
-        Permission::create(['name' => 'view genders']);
-        Permission::create(['name' => 'create genders']);
-        Permission::create(['name' => 'update genders']);
-        Permission::create(['name' => 'delete genders']);
+        Permission::updateOrCreate(['name' => 'list genders']);
+        Permission::updateOrCreate(['name' => 'view genders']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate genders']);
+        Permission::updateOrCreate(['name' => 'update genders']);
+        Permission::updateOrCreate(['name' => 'delete genders']);
 
-        Permission::create(['name' => 'list gendertranslations']);
-        Permission::create(['name' => 'view gendertranslations']);
-        Permission::create(['name' => 'create gendertranslations']);
-        Permission::create(['name' => 'update gendertranslations']);
-        Permission::create(['name' => 'delete gendertranslations']);
+        Permission::updateOrCreate(['name' => 'list gendertranslations']);
+        Permission::updateOrCreate(['name' => 'view gendertranslations']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate gendertranslations']);
+        Permission::updateOrCreate(['name' => 'update gendertranslations']);
+        Permission::updateOrCreate(['name' => 'delete gendertranslations']);
 
-        Permission::create(['name' => 'list goals']);
-        Permission::create(['name' => 'view goals']);
-        Permission::create(['name' => 'create goals']);
-        Permission::create(['name' => 'update goals']);
-        Permission::create(['name' => 'delete goals']);
+        Permission::updateOrCreate(['name' => 'list goals']);
+        Permission::updateOrCreate(['name' => 'view goals']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate goals']);
+        Permission::updateOrCreate(['name' => 'update goals']);
+        Permission::updateOrCreate(['name' => 'delete goals']);
 
-        Permission::create(['name' => 'list goaltranslations']);
-        Permission::create(['name' => 'view goaltranslations']);
-        Permission::create(['name' => 'create goaltranslations']);
-        Permission::create(['name' => 'update goaltranslations']);
-        Permission::create(['name' => 'delete goaltranslations']);
+        Permission::updateOrCreate(['name' => 'list goaltranslations']);
+        Permission::updateOrCreate(['name' => 'view goaltranslations']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate goaltranslations']);
+        Permission::updateOrCreate(['name' => 'update goaltranslations']);
+        Permission::updateOrCreate(['name' => 'delete goaltranslations']);
 
-        Permission::create(['name' => 'list inititives']);
-        Permission::create(['name' => 'view inititives']);
-        Permission::create(['name' => 'create inititives']);
-        Permission::create(['name' => 'update inititives']);
-        Permission::create(['name' => 'delete inititives']);
+        Permission::updateOrCreate(['name' => 'list inititives']);
+        Permission::updateOrCreate(['name' => 'view inititives']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate inititives']);
+        Permission::updateOrCreate(['name' => 'update inititives']);
+        Permission::updateOrCreate(['name' => 'delete inititives']);
 
-        Permission::create(['name' => 'list inititivetranslations']);
-        Permission::create(['name' => 'view inititivetranslations']);
-        Permission::create(['name' => 'create inititivetranslations']);
-        Permission::create(['name' => 'update inititivetranslations']);
-        Permission::create(['name' => 'delete inititivetranslations']);
+        Permission::updateOrCreate(['name' => 'list inititivetranslations']);
+        Permission::updateOrCreate(['name' => 'view inititivetranslations']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate inititivetranslations']);
+        Permission::updateOrCreate(['name' => 'update inititivetranslations']);
+        Permission::updateOrCreate(['name' => 'delete inititivetranslations']);
 
-        Permission::create(['name' => 'list keypeformanceindicators']);
-        Permission::create(['name' => 'view keypeformanceindicators']);
-        Permission::create(['name' => 'create keypeformanceindicators']);
-        Permission::create(['name' => 'update keypeformanceindicators']);
-        Permission::create(['name' => 'delete keypeformanceindicators']);
+        Permission::updateOrCreate(['name' => 'list keypeformanceindicators']);
+        Permission::updateOrCreate(['name' => 'view keypeformanceindicators']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate keypeformanceindicators']);
+        Permission::updateOrCreate(['name' => 'update keypeformanceindicators']);
+        Permission::updateOrCreate(['name' => 'delete keypeformanceindicators']);
 
-        Permission::create(['name' => 'list keypeformanceindicatorts']);
-        Permission::create(['name' => 'view keypeformanceindicatorts']);
-        Permission::create(['name' => 'create keypeformanceindicatorts']);
-        Permission::create(['name' => 'update keypeformanceindicatorts']);
-        Permission::create(['name' => 'delete keypeformanceindicatorts']);
+        Permission::updateOrCreate(['name' => 'list keypeformanceindicatorts']);
+        Permission::updateOrCreate(['name' => 'view keypeformanceindicatorts']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate keypeformanceindicatorts']);
+        Permission::updateOrCreate(['name' => 'update keypeformanceindicatorts']);
+        Permission::updateOrCreate(['name' => 'delete keypeformanceindicatorts']);
 
-        Permission::create(['name' => 'list languages']);
-        Permission::create(['name' => 'view languages']);
-        Permission::create(['name' => 'create languages']);
-        Permission::create(['name' => 'update languages']);
-        Permission::create(['name' => 'delete languages']);
+        Permission::updateOrCreate(['name' => 'list languages']);
+        Permission::updateOrCreate(['name' => 'view languages']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate languages']);
+        Permission::updateOrCreate(['name' => 'update languages']);
+        Permission::updateOrCreate(['name' => 'delete languages']);
 
-        Permission::create(['name' => 'list objectives']);
-        Permission::create(['name' => 'view objectives']);
-        Permission::create(['name' => 'create objectives']);
-        Permission::create(['name' => 'update objectives']);
-        Permission::create(['name' => 'delete objectives']);
+        Permission::updateOrCreate(['name' => 'list objectives']);
+        Permission::updateOrCreate(['name' => 'view objectives']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate objectives']);
+        Permission::updateOrCreate(['name' => 'update objectives']);
+        Permission::updateOrCreate(['name' => 'delete objectives']);
 
-        Permission::create(['name' => 'list objectivetranslations']);
-        Permission::create(['name' => 'view objectivetranslations']);
-        Permission::create(['name' => 'create objectivetranslations']);
-        Permission::create(['name' => 'update objectivetranslations']);
-        Permission::create(['name' => 'delete objectivetranslations']);
+        Permission::updateOrCreate(['name' => 'list objectivetranslations']);
+        Permission::updateOrCreate(['name' => 'view objectivetranslations']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate objectivetranslations']);
+        Permission::updateOrCreate(['name' => 'update objectivetranslations']);
+        Permission::updateOrCreate(['name' => 'delete objectivetranslations']);
 
-        Permission::create(['name' => 'list offices']);
-        Permission::create(['name' => 'view offices']);
-        Permission::create(['name' => 'create offices']);
-        Permission::create(['name' => 'update offices']);
-        Permission::create(['name' => 'delete offices']);
+        Permission::updateOrCreate(['name' => 'list offices']);
+        Permission::updateOrCreate(['name' => 'view offices']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate offices']);
+        Permission::updateOrCreate(['name' => 'update offices']);
+        Permission::updateOrCreate(['name' => 'delete offices']);
 
-        Permission::create(['name' => 'list officetranslations']);
-        Permission::create(['name' => 'view officetranslations']);
-        Permission::create(['name' => 'create officetranslations']);
-        Permission::create(['name' => 'update officetranslations']);
-        Permission::create(['name' => 'delete officetranslations']);
+        Permission::updateOrCreate(['name' => 'list officetranslations']);
+        Permission::updateOrCreate(['name' => 'view officetranslations']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate officetranslations']);
+        Permission::updateOrCreate(['name' => 'update officetranslations']);
+        Permission::updateOrCreate(['name' => 'delete officetranslations']);
 
-        Permission::create(['name' => 'list perspectives']);
-        Permission::create(['name' => 'view perspectives']);
-        Permission::create(['name' => 'create perspectives']);
-        Permission::create(['name' => 'update perspectives']);
-        Permission::create(['name' => 'delete perspectives']);
+        Permission::updateOrCreate(['name' => 'list perspectives']);
+        Permission::updateOrCreate(['name' => 'view perspectives']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate perspectives']);
+        Permission::updateOrCreate(['name' => 'update perspectives']);
+        Permission::updateOrCreate(['name' => 'delete perspectives']);
 
-        Permission::create(['name' => 'list perspectivetranslations']);
-        Permission::create(['name' => 'view perspectivetranslations']);
-        Permission::create(['name' => 'create perspectivetranslations']);
-        Permission::create(['name' => 'update perspectivetranslations']);
-        Permission::create(['name' => 'delete perspectivetranslations']);
+        Permission::updateOrCreate(['name' => 'list perspectivetranslations']);
+        Permission::updateOrCreate(['name' => 'view perspectivetranslations']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate perspectivetranslations']);
+        Permission::updateOrCreate(['name' => 'update perspectivetranslations']);
+        Permission::updateOrCreate(['name' => 'delete perspectivetranslations']);
 
-        Permission::create(['name' => 'list planaccomplishments']);
-        Permission::create(['name' => 'view planaccomplishments']);
-        Permission::create(['name' => 'create planaccomplishments']);
-        Permission::create(['name' => 'update planaccomplishments']);
-        Permission::create(['name' => 'delete planaccomplishments']);
+        Permission::updateOrCreate(['name' => 'list planaccomplishments']);
+        Permission::updateOrCreate(['name' => 'view planaccomplishments']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate planaccomplishments']);
+        Permission::updateOrCreate(['name' => 'update planaccomplishments']);
+        Permission::updateOrCreate(['name' => 'delete planaccomplishments']);
 
-        Permission::create(['name' => 'list planingyears']);
-        Permission::create(['name' => 'view planingyears']);
-        Permission::create(['name' => 'create planingyears']);
-        Permission::create(['name' => 'update planingyears']);
-        Permission::create(['name' => 'delete planingyears']);
+        Permission::updateOrCreate(['name' => 'list planingyears']);
+        Permission::updateOrCreate(['name' => 'view planingyears']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate planingyears']);
+        Permission::updateOrCreate(['name' => 'update planingyears']);
+        Permission::updateOrCreate(['name' => 'delete planingyears']);
 
-        Permission::create(['name' => 'list planingyeartranslations']);
-        Permission::create(['name' => 'view planingyeartranslations']);
-        Permission::create(['name' => 'create planingyeartranslations']);
-        Permission::create(['name' => 'update planingyeartranslations']);
-        Permission::create(['name' => 'delete planingyeartranslations']);
+        Permission::updateOrCreate(['name' => 'list planingyeartranslations']);
+        Permission::updateOrCreate(['name' => 'view planingyeartranslations']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate planingyeartranslations']);
+        Permission::updateOrCreate(['name' => 'update planingyeartranslations']);
+        Permission::updateOrCreate(['name' => 'delete planingyeartranslations']);
 
-        Permission::create(['name' => 'list reportingperiods']);
-        Permission::create(['name' => 'view reportingperiods']);
-        Permission::create(['name' => 'create reportingperiods']);
-        Permission::create(['name' => 'update reportingperiods']);
-        Permission::create(['name' => 'delete reportingperiods']);
+        Permission::updateOrCreate(['name' => 'list reportingperiods']);
+        Permission::updateOrCreate(['name' => 'view reportingperiods']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate reportingperiods']);
+        Permission::updateOrCreate(['name' => 'update reportingperiods']);
+        Permission::updateOrCreate(['name' => 'delete reportingperiods']);
 
-        Permission::create(['name' => 'list reportingperiodts']);
-        Permission::create(['name' => 'view reportingperiodts']);
-        Permission::create(['name' => 'create reportingperiodts']);
-        Permission::create(['name' => 'update reportingperiodts']);
-        Permission::create(['name' => 'delete reportingperiodts']);
+        Permission::updateOrCreate(['name' => 'list reportingperiodts']);
+        Permission::updateOrCreate(['name' => 'view reportingperiodts']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate reportingperiodts']);
+        Permission::updateOrCreate(['name' => 'update reportingperiodts']);
+        Permission::updateOrCreate(['name' => 'delete reportingperiodts']);
 
-        Permission::create(['name' => 'list reportingperiodtypes']);
-        Permission::create(['name' => 'view reportingperiodtypes']);
-        Permission::create(['name' => 'create reportingperiodtypes']);
-        Permission::create(['name' => 'update reportingperiodtypes']);
-        Permission::create(['name' => 'delete reportingperiodtypes']);
+        Permission::updateOrCreate(['name' => 'list reportingperiodtypes']);
+        Permission::updateOrCreate(['name' => 'view reportingperiodtypes']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate reportingperiodtypes']);
+        Permission::updateOrCreate(['name' => 'update reportingperiodtypes']);
+        Permission::updateOrCreate(['name' => 'delete reportingperiodtypes']);
 
-        Permission::create(['name' => 'list reportingperiodtypets']);
-        Permission::create(['name' => 'view reportingperiodtypets']);
-        Permission::create(['name' => 'create reportingperiodtypets']);
-        Permission::create(['name' => 'update reportingperiodtypets']);
-        Permission::create(['name' => 'delete reportingperiodtypets']);
+        Permission::updateOrCreate(['name' => 'list reportingperiodtypets']);
+        Permission::updateOrCreate(['name' => 'view reportingperiodtypets']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate reportingperiodtypets']);
+        Permission::updateOrCreate(['name' => 'update reportingperiodtypets']);
+        Permission::updateOrCreate(['name' => 'delete reportingperiodtypets']);
 
-        Permission::create(['name' => 'list strategies']);
-        Permission::create(['name' => 'view strategies']);
-        Permission::create(['name' => 'create strategies']);
-        Permission::create(['name' => 'update strategies']);
-        Permission::create(['name' => 'delete strategies']);
+        Permission::updateOrCreate(['name' => 'list strategies']);
+        Permission::updateOrCreate(['name' => 'view strategies']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate strategies']);
+        Permission::updateOrCreate(['name' => 'update strategies']);
+        Permission::updateOrCreate(['name' => 'delete strategies']);
 
-        Permission::create(['name' => 'list strategytranslations']);
-        Permission::create(['name' => 'view strategytranslations']);
-        Permission::create(['name' => 'create strategytranslations']);
-        Permission::create(['name' => 'update strategytranslations']);
-        Permission::create(['name' => 'delete strategytranslations']);
+        Permission::updateOrCreate(['name' => 'list strategytranslations']);
+        Permission::updateOrCreate(['name' => 'view strategytranslations']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate strategytranslations']);
+        Permission::updateOrCreate(['name' => 'update strategytranslations']);
+        Permission::updateOrCreate(['name' => 'delete strategytranslations']);
 
-        Permission::create(['name' => 'list suitablekpis']);
-        Permission::create(['name' => 'view suitablekpis']);
-        Permission::create(['name' => 'create suitablekpis']);
-        Permission::create(['name' => 'update suitablekpis']);
-        Permission::create(['name' => 'delete suitablekpis']);
+        Permission::updateOrCreate(['name' => 'list suitablekpis']);
+        Permission::updateOrCreate(['name' => 'view suitablekpis']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate suitablekpis']);
+        Permission::updateOrCreate(['name' => 'update suitablekpis']);
+        Permission::updateOrCreate(['name' => 'delete suitablekpis']);
 
         // Create user role and assign existing permissions
         $currentPermissions = Permission::all();
-        $userRole = Role::create(['name' => 'staff']);
+        $userRole = Role::updateOrCreate(['name' => 'staff']);
         $userRole->givePermissionTo($currentPermissions);
 
         // Create admin exclusive permissions
-        Permission::create(['name' => 'list roles']);
-        Permission::create(['name' => 'view roles']);
-        Permission::create(['name' => 'create roles']);
-        Permission::create(['name' => 'update roles']);
-        Permission::create(['name' => 'delete roles']);
+        Permission::updateOrCreate(['name' => 'list roles']);
+        Permission::updateOrCreate(['name' => 'view roles']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate roles']);
+        Permission::updateOrCreate(['name' => 'update roles']);
+        Permission::updateOrCreate(['name' => 'delete roles']);
 
-        Permission::create(['name' => 'list permissions']);
-        Permission::create(['name' => 'view permissions']);
-        Permission::create(['name' => 'create permissions']);
-        Permission::create(['name' => 'update permissions']);
-        Permission::create(['name' => 'delete permissions']);
+        Permission::updateOrCreate(['name' => 'list permissions']);
+        Permission::updateOrCreate(['name' => 'view permissions']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate permissions']);
+        Permission::updateOrCreate(['name' => 'update permissions']);
+        Permission::updateOrCreate(['name' => 'delete permissions']);
 
-        Permission::create(['name' => 'list users']);
-        Permission::create(['name' => 'view users']);
-        Permission::create(['name' => 'create users']);
-        Permission::create(['name' => 'update users']);
-        Permission::create(['name' => 'delete users']);
+        Permission::updateOrCreate(['name' => 'list users']);
+        Permission::updateOrCreate(['name' => 'view users']);
+        Permission::updateOrCreate(['name' => 'updateOrCreate users']);
+        Permission::updateOrCreate(['name' => 'update users']);
+        Permission::updateOrCreate(['name' => 'delete users']);
 
         // Create admin role and assign all permissions
         $allPermissions = Permission::all();
-        $adminRole = Role::create(['name' => 'super-admin']);
+        $adminRole = Role::updateOrCreate(['name' => 'super-admin']);
         $adminRole->givePermissionTo($allPermissions);
 
         $user = \App\Models\User::whereEmail('admin@admin')->first();
@@ -227,6 +228,13 @@ class DatabaseSeeder extends Seeder
             $adminUser->assignRole($adminRole);
 
         }
+
+        // Default System Language
+        $englishLanguage = Language::updateOrCreate([
+            'name' => 'English',
+            'description' => 'English Language',
+            'locale' => 'en',
+        ]);
 
         // create imaginary office and assign admin
         $officeExists = Office::find(1);
