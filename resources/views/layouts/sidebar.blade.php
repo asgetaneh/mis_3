@@ -462,7 +462,7 @@
                                         ->distinct('kpi_id')
                                         ->get();
 
-                                    $planning_year = App\Models\PlaningYear::where('is_active', true)->get();
+                                    $planning_year = App\Models\PlaningYear::where('is_active', true)->first();
 
                                 @endphp
 
@@ -471,7 +471,7 @@
                                 {{-- If comment exist for current office --}}
                                 @forelse ($planAccomplishments as $planAcc)
                                     @php
-                                        $hasOfficeComment = hasOfficeActiveComment($currentLoggedInOffice, $planAcc->kpi_id, $planning_year[0]->id);
+                                        $hasOfficeComment = hasOfficeActiveComment($currentLoggedInOffice, $planAcc->kpi_id, $planning_year->id ?? NULL);
                                     @endphp
 
                                     @if ($hasOfficeComment->count() > 0)
@@ -487,7 +487,7 @@
                                     @forelse ($planAccomplishments as $planAcc)
 
                                         @php
-                                            $hasOfficeComment = hasOfficeActiveComment($currentLoggedInOffice, $planAcc->kpi_id, $planning_year[0]->id);
+                                            $hasOfficeComment = hasOfficeActiveComment($currentLoggedInOffice, $planAcc->kpi_id, $planning_year->id ?? NULL);
                                         @endphp
 
                                         @if ($hasOfficeComment->count() > 0)
@@ -620,7 +620,7 @@
                                         ->distinct('office_id')
                                         ->get();
 
-                                    $planning_year = App\Models\PlaningYear::where('is_active', true)->get();
+                                    $planning_year = App\Models\PlaningYear::where('is_active', true)->first();
 
                                 @endphp
 
@@ -629,7 +629,7 @@
                                 {{-- If comment exist for current office --}}
                                 @forelse ($reportAccomplishments as $reportAcc)
                                     @php
-                                        $hasOfficeComment = hasOfficeActiveReportComment($currentLoggedInOffice, $reportAcc->kpi_id, $planning_year[0]->id);
+                                        $hasOfficeComment = hasOfficeActiveReportComment($currentLoggedInOffice, $reportAcc->kpi_id, $planning_year->id ?? NULL);
                                     @endphp
 
                                     @if ($hasOfficeComment->count() > 0)
@@ -645,7 +645,7 @@
                                     @forelse ($reportAccomplishments as $reportAcc)
 
                                         @php
-                                            $hasOfficeComment = hasOfficeActiveReportComment($currentLoggedInOffice, $reportAcc->kpi_id, $planning_year[0]->id);
+                                            $hasOfficeComment = hasOfficeActiveReportComment($currentLoggedInOffice, $reportAcc->kpi_id, $planning_year->id ?? NULL);
                                         @endphp
 
                                         @if ($hasOfficeComment->count() > 0)

@@ -34,8 +34,8 @@
                     </th>
 
                     @php
-                        $baseline = getBaselineIndividualOneTwo($planning_year[0]->id, $planAcc->Kpi->id, $one->id, $two->id, auth()->user()->offices[0]->id);
-                        $baselineLastYear = getBaselineLastYear($planAcc->Kpi->id, $planning_year[0]->id, 1, auth()->user()->offices[0]->id, $one->id, $two->id);
+                        $baseline = getBaselineIndividualOneTwo($planning_year->id ?? NULL, $planAcc->Kpi->id, $one->id, $two->id, auth()->user()->offices[0]->id);
+                        $baselineLastYear = getBaselineLastYear($planAcc->Kpi->id, $planning_year->id ?? NULL, 1, auth()->user()->offices[0]->id, $one->id, $two->id);
 
                     @endphp
                     {{-- @if ($baseline)
@@ -65,7 +65,7 @@
                                 $childAndHimOffKpi_array[$key] = $value->id;
                             }
                             $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
-                            $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
+                            $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
                         @endphp
 
                         {{-- <tr> --}}
@@ -75,7 +75,7 @@
                                 @foreach ($planAcc->Kpi->kpiChildOnes as $one) --}}
                                     <td>
                                         @php
-                                            $planOneTwo = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id, false, $planning_year[0]->id, $one->id, $two->id, null);
+                                            $planOneTwo = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id, false, $planning_year->id ?? NULL, $one->id, $two->id, null);
                                         @endphp
                                         {{ $planOneTwo[0] }}
                                     </td>

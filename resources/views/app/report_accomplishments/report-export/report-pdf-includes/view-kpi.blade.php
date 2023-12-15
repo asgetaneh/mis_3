@@ -23,15 +23,15 @@
             @php
                 //$planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $office, $period->id,true,$planning_year);
                 $activeQuarter = getReportingQuarter($planAcc->Kpi->reportingPeriodType->id);
-                 $planOfOfficePlan =$planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year[0]->id ,null,null,null);
-                 $beforePlan = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year[0]->id ,null,null,null);
+                 $planOfOfficePlan =$planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year->id ?? NULL ,null,null,null);
+                 $beforePlan = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year->id ?? NULL ,null,null,null);
 
-                $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
+                $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
             @endphp
             <td>
 
                 <div style="display: flex;">
-                    <div style="flex: 1; padding: 5px; border: 1px solid #000; background-color: rgb(255, 255, 198);">
+                    <div style="flex: 1; padding: 5px; text-align: center; border: 1px solid #000; background-color: rgb(255, 255, 198);">
                         <span style="">{{ $beforePlan[0] }}</span>
                     </div>
                     <div style="flex: 1; padding: 5px; text-align: center; background-color: green; border: 1px solid #000;">

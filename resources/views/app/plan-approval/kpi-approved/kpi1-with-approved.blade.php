@@ -1,9 +1,9 @@
 <tr>
     {{-- check if current office is approved or not so that show the select or an APPROVED badge --}}
-    {{-- @if(planStatusOffice($office, $planAcc->kpi_id, $planning_year[0]->id) == 0)
+    {{-- @if(planStatusOffice($office, $planAcc->kpi_id, $planning_year->id ?? NULL) == 0)
         <th class="bg-light">
             <div class="icheck-success d-inline">
-                <input class="office-checkbox-kpi-{{ $planAcc->kpi_id }}" name="approve[]" type="checkbox" id="{{$office->id}}" value="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}">
+                <input class="office-checkbox-kpi-{{ $planAcc->kpi_id }}" name="approve[]" type="checkbox" id="{{$office->id}}" value="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year->id ?? NULL}}">
                 <label for="{{$office->id}}">
                     Select Office
                 </label>
@@ -32,7 +32,7 @@
             $childAndHimOffKpi_array[$key] = $value->id;
         }
         $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
-        $planKpiOfficeYear = planSumOfKpi($planAcc->Kpi->id, $office, $planning_year[0]->id, 3);
+        $planKpiOfficeYear = planSumOfKpi($planAcc->Kpi->id, $office, $planning_year->id ?? NULL, 3);
     @endphp
 @empty
 @endforelse
@@ -47,7 +47,7 @@
     <td>
         @php
             $planOne = planOne($planAcc->Kpi->id, $one->id, $office, $period->id, 3);
-            $narration = getNarrationApproved($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
+            $narration = getNarrationApproved($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
         @endphp
         {{ $planOne }}
     </td>

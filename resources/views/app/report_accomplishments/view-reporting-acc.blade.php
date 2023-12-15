@@ -147,8 +147,8 @@
                                                                 $one =null;
                                                                 $three =null;
                                                                 $two =null;
-                                                                $planOfOfficePlan = $planAcc->ForKpi($planAcc->Kpi->id, $imagen_off, $period->id,true,$planning_year[0]->id);//dump($planOfOfficePlan);
-                                                                $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year[0]->id, $imagen_off, $period->id);
+                                                                $planOfOfficePlan = $planAcc->ForKpi($planAcc->Kpi->id, $imagen_off, $period->id,true,$planning_year->id ?? NULL);//dump($planOfOfficePlan);
+                                                                $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $imagen_off, $period->id);
                                                                  $activeQuarter = getReportingQuarter($planAcc->Kpi->reportingPeriodType->id);
 
                                                             @endphp

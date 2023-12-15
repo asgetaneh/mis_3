@@ -149,7 +149,7 @@
                                     @endphp
                                     @forelse($KeyPeformanceIndicators as $kpi)
                                     @php
-                                    $checkPlanedForKpi = checkPlanedForKpi($planning_year[0]->id, $kpi->id, auth()->user()->offices[0]->id); //dd($checkPlanedForKpi->plan_status);
+                                    $checkPlanedForKpi = checkPlanedForKpi($planning_year->id ?? NULL, $kpi->id, auth()->user()->offices[0]->id); //dd($checkPlanedForKpi->plan_status);
                                     @endphp
                                     @if($checkPlanedForKpi)
                                     @if($checkPlanedForKpi->plan_status==1)
@@ -164,7 +164,7 @@
                                                 {{ $kpi->KeyPeformanceIndicatorTs[0]->name }}
                                                 @php
                                                 $kpi_id = $kpi->id;
-                                                $checkPlanedForKpi = checkPlanedForKpi($planning_year[0]->id, $kpi->id, auth()->user()->offices[0]->id);
+                                                $checkPlanedForKpi = checkPlanedForKpi($planning_year->id ?? NULL, $kpi->id, auth()->user()->offices[0]->id);
                                                 @endphp
                                                 (Reporting:{{ $kpi->reportingPeriodType->reportingPeriodTypeTs[0]->name }})
 
@@ -176,10 +176,10 @@
                                         </div>
                                         <div class="card-body reporting-container">
 
-                                            @if (hasOfficeActiveReportComment(auth()->user()->offices[0]->id, $kpi_id, $planning_year[0]->id)->count() > 0)
+                                            @if (hasOfficeActiveReportComment(auth()->user()->offices[0]->id, $kpi_id, $planning_year->id ?? NULL)->count() > 0)
                                             <div class="bg-light w-5 float-right p-3">
-                                                <p class="m-auto">You have comment from <u>{{ getReportCommentorInfo(auth()->user()->offices[0]->id, $kpi->id, $planning_year[0]->id)->name ?? '-' }}</u>
-                                                    <a class="btn btn-sm btn-flat btn-info text-white view-comment" data-toggle="modal" data-target="#view-comment-modal" data-id="{{ getReportCommentorInfo(auth()->user()->offices[0]->id, $kpi->id, $planning_year[0]->id)->translation_id ?? '-' }}-{{$kpi_id}}-{{$planning_year[0]->id}}">
+                                                <p class="m-auto">You have comment from <u>{{ getReportCommentorInfo(auth()->user()->offices[0]->id, $kpi->id, $planning_year->id ?? NULL)->name ?? '-' }}</u>
+                                                    <a class="btn btn-sm btn-flat btn-info text-white view-comment" data-toggle="modal" data-target="#view-comment-modal" data-id="{{ getReportCommentorInfo(auth()->user()->offices[0]->id, $kpi->id, $planning_year->id ?? NULL)->translation_id ?? '-' }}-{{$kpi_id}}-{{$planning_year->id ?? NULL}}">
                                                         <i class="fas fa fa-eye mr-1"></i>View Comment
                                                     </a>
                                                 </p>
@@ -240,7 +240,7 @@
                                                         @php
                                                         $inputname = $kpi->id . $period->id;
                                                         //echo ($inputname)."<br />";
-                                                        $plan = getSavedPlanIndividualOneTwoThree($planning_year[0]->id, $kpi->id, $period->id, $one->id, $two->id, $kpiThree->id, auth()->user()->offices[0]->id);
+                                                        $plan = getSavedPlanIndividualOneTwoThree($planning_year->id ?? NULL, $kpi->id, $period->id, $one->id, $two->id, $kpiThree->id, auth()->user()->offices[0]->id);
                                                         $off_level = auth()->user()->offices[0]->level;
                                                         $disabled ="";
                                                         @endphp
@@ -305,7 +305,7 @@
                                                         </th>
                                                         @foreach ($kpi->kpiChildOnes as $one)
                                                         @php
-                                                        $plan12 = getSavedPlanIndividualOneTwo($planning_year[0]->id, $kpi->id, $period->id, $one->id, $two->id, auth()->user()->offices[0]->id);
+                                                        $plan12 = getSavedPlanIndividualOneTwo($planning_year->id ?? NULL, $kpi->id, $period->id, $one->id, $two->id, auth()->user()->offices[0]->id);
                                                         @endphp
                                                         @if ($plan12)
                                                         @php
@@ -378,7 +378,7 @@
                                                         @forelse(getReportingQuarter($kpi->reportingPeriodType->id) as $period)
                                                         @php
                                                         $inputname = '{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}';
-                                                        $plan1 = getSavedPlanIndividualOne($planning_year[0]->id, $kpi->id, $period->id, $one->id, auth()->user()->offices[0]->id);
+                                                        $plan1 = getSavedPlanIndividualOne($planning_year->id ?? NULL, $kpi->id, $period->id, $one->id, auth()->user()->offices[0]->id);
                                                         $off_level = auth()->user()->offices[0]->level;
                                                         $disabled ="";
 
@@ -442,7 +442,7 @@
                                                 <p class="mb-3">
                                                     @php
                                                     $inputname = '{{ $kpi->id }}-{{ $period->id }}';
-                                                    $planP = getSavedPlanIndividual($planning_year[0]->id, $kpi->id,
+                                                    $planP = getSavedPlanIndividual($planning_year->id ?? NULL, $kpi->id,
                                                     $period->id, auth()->user()->offices[0]->id,true);
                                                     $off_level = auth()->user()->offices[0]->level;
                                                     $disabled ="";
@@ -505,7 +505,7 @@
                                             </p>
                                             @endif
                                             @php
-                                            $report_naration = getSavedReportNaration($planning_year[0]->id, $period->id, $kpi->id, auth()->user()->offices[0]->id);
+                                            $report_naration = getSavedReportNaration($planning_year->id ?? NULL, $period->id, $kpi->id, auth()->user()->offices[0]->id);
                                             @endphp
                                             @if ($report_naration)
                                             <label for="summernote">Major Activities</label>

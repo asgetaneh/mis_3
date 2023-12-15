@@ -259,7 +259,7 @@ class PlanAccomplishmentController extends Controller
                     ->get();
                     $objectives = $objectives->unique();
        $reportingTypes = ReportingPeriodType::all();
-       $planning_year = PlaningYear::where('is_active',true)->get();
+       $planning_year = PlaningYear::where('is_active',true)->first();
 
        $getoffice = Office::find($user_offices);
         $kpis = ['kpi' => [],'goal' => $goal, 'offwithkpi' => $getoffice];
@@ -300,7 +300,7 @@ class PlanAccomplishmentController extends Controller
         if($request->has('type') && $request->type == "yes"){ $submit = "update";}
 
          $index = [];
-        $planning = PlaningYear::where('is_active',true)->get();
+        $planning = PlaningYear::where('is_active',true)->first();
          foreach ($kpi as $key => $value) {
             $str_key= (string)$key ;
             // dd($kpi);
@@ -337,7 +337,7 @@ class PlanAccomplishmentController extends Controller
                         }
 
                         $baseline->office_id = $user_offices;
-                        $baseline->planning_year_id = $planning[0]->id;
+                        $baseline->planning_year_id = $planning->id;
                         $baseline->save();
 
                     }else{
@@ -364,7 +364,7 @@ class PlanAccomplishmentController extends Controller
                         //$plan_accom->accom_value=0;
                         $plan_accom->plan_status = $plan_status;
                         $plan_accom->accom_status = $getoffice->level;
-                        $plan_accom->planning_year_id = $planning[0]->id;
+                        $plan_accom->planning_year_id = $planning->id;
                         $plan_accom->save();
                         $kpi_match_for_naration = $index[0];
                     }
@@ -384,7 +384,7 @@ class PlanAccomplishmentController extends Controller
                     $naration->office_id=$user_offices;
                     $naration->approval_status=$getoffice->level;
                    // $naration->reporting_period_id=$index[2];
-                    $naration->planing_year_id=$planning[0]->id;
+                    $naration->planing_year_id=$planning->id;
                     $naration->save();
                  }
                 }
@@ -426,7 +426,7 @@ class PlanAccomplishmentController extends Controller
                                 }
 
                                 $updated = tap(DB::table('baselines')
-                                    ->where('planning_year_id' , '=', $planning[0]->id)
+                                    ->where('planning_year_id' , '=', $planning->id ?? NULL)
                                     ->where('office_id' , '=', $user_offices)
                                     ->where('kpi_id' , '=', (int)$index[1])
                                     ->where('kpi_one_id' , '=', $kpi_one_id)
@@ -458,7 +458,7 @@ class PlanAccomplishmentController extends Controller
                                 }
 
                             //     $check = PlanAccomplishment::
-                            //  where('planning_year_id' , '=', $planning[0]->id)
+                            //  where('planning_year_id' , '=', $planning->id ?? NULL)
                             // ->where('office_id' , '=', $user_offices)
                             // ->where('kpi_id' , '=', $index[0])
                             // ->where('reporting_period_id' , '=', $index[1])
@@ -470,7 +470,7 @@ class PlanAccomplishmentController extends Controller
                             //      dump( $check);
 
                             $updated = tap(DB::table('plan_accomplishments')
-                             ->where('planning_year_id' , '=', $planning[0]->id)
+                             ->where('planning_year_id' , '=', $planning->id ?? NULL)
                             ->where('office_id' , '=', $user_offices)
                             ->where('kpi_id' , '=', $index[0])
                             ->where('reporting_period_id' , '=', $index[1])
@@ -490,7 +490,7 @@ class PlanAccomplishmentController extends Controller
                                 $index[$splitkey] =$splitvalue;
                               }
                          $updated2 = tap(DB::table('report_narrations')
-                         ->where('planing_year_id' , '=', $planning[0]->id)->where('office_id' , '=', $user_offices)->where('key_peformance_indicator_id' , '=', $index[1]))
+                         ->where('planing_year_id' , '=', $planning->id ?? NULL)->where('office_id' , '=', $user_offices)->where('key_peformance_indicator_id' , '=', $index[1]))
                             ->update(['plan_naration' => $value])
                             ->first();
                     }
@@ -499,7 +499,7 @@ class PlanAccomplishmentController extends Controller
           }
          } //dd("end");
         $search = $request->get('search', '');
-          $planAccomplishments = PlanAccomplishment::where('office_id' , '=', $user_offices)->where('planning_year_id' , '=', $planning[0]->id)
+          $planAccomplishments = PlanAccomplishment::where('office_id' , '=', $user_offices)->where('planning_year_id' , '=', $planning->id ?? NULL)
 
             ->latest()
             ->paginate(15)
@@ -554,7 +554,7 @@ class PlanAccomplishmentController extends Controller
               return redirect()
             ->route('plan-accomplishment',$obj_office);
                          }
-        $planning_year = PlaningYear::where('is_active',true)->get();
+        $planning_year = PlaningYear::where('is_active',true)->first();
         return view(
             'app.plan_accomplishments.coview-planning',
             compact('planAccomplishments', 'planAccomplishment_all','all_office_list','only_child_array','planning_year','obj_office','search')
@@ -568,7 +568,7 @@ class PlanAccomplishmentController extends Controller
         $office =Office::find($office_id);
         $imagen_off = $office;
         $off_level = $office->level;
-        $planning_year = PlaningYear::where('is_active',true)->get();
+        $planning_year = PlaningYear::where('is_active',true)->first();
         $all_office_list = $this->allChildAndChildChild($office);
         $only_child_array = array_merge($all_office_list,array($office_id));
 
@@ -614,7 +614,7 @@ class PlanAccomplishmentController extends Controller
                     ->where('kpi_id', $kpiId)
                     ->select('*', DB::raw('SUM(plan_value) AS sum'))
                     ->where('reporting_periods.slug', "=", 1)
-                    ->where('planning_year_id', '=', $planning_year[0]->id)
+                    ->where('planning_year_id', '=', $planning_year->id ?? NULL)
                     ->groupBy('kpi_id')
                     ->get();
 
@@ -634,7 +634,8 @@ class PlanAccomplishmentController extends Controller
                         ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
                         ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
                     $pdf->loadView('app.plan_accomplishments.plan-export.pdf-plan');
-                    return $pdf->download($officeSentToBlade . '_Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                    $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                    return $pdf->download($officeSentToBlade . '_Office-Plan-For-' . $planYear . '.pdf');
                 }
 
                 // Word
@@ -662,7 +663,8 @@ class PlanAccomplishmentController extends Controller
                 else {
                     return view('app.plan_accomplishments.plan-export.excel-plan', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'));
 
-                    return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.xlsx');
+                    $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                    return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Plan-For-' . $planYear . '.xlsx');
                 }
 
 
@@ -687,7 +689,7 @@ class PlanAccomplishmentController extends Controller
                     ->whereIn('kpi_id', $kpi_array)
                     ->select('*', DB::raw('SUM(plan_value) AS sum'))
                     ->where('reporting_periods.slug', "=", 1)
-                    ->where('planning_year_id', '=', $planning_year[0]->id)
+                    ->where('planning_year_id', '=', $planning_year->id ?? NULL)
                     ->groupBy('kpi_id')
                     ->get();
 
@@ -707,7 +709,8 @@ class PlanAccomplishmentController extends Controller
                         ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
                         ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
                     $pdf->loadView('app.plan_accomplishments.plan-export.pdf-plan');
-                    return $pdf->download($officeSentToBlade . '_Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                    $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                    return $pdf->download($officeSentToBlade . '_Office-Plan-For-' . $planYear . '.pdf');
                 }
 
                 // Word
@@ -735,7 +738,8 @@ class PlanAccomplishmentController extends Controller
                 else {
                     return view('app.plan_accomplishments.plan-export.excel-plan', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'));
 
-                    return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.xlsx');
+                    $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                    return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Plan-For-' . $planYear . '.xlsx');
                 }
 
             } else if ($request->has('kpi') && $request->filled('kpi')) {
@@ -777,12 +781,12 @@ class PlanAccomplishmentController extends Controller
                     ->where('kpi_id', $kpiId)
                     ->select('*', DB::raw('SUM(plan_value) AS sum'))
                     ->where('reporting_periods.slug', "=", 1)
-                    ->where('planning_year_id', '=', $planning_year[0]->id)
+                    ->where('planning_year_id', '=', $planning_year->id ?? NULL)
                     ->groupBy('kpi_id')
                     ->get();
 
                 if(auth()->user()->is_admin || auth()->user()->hasRole('super-admin')){
-                    $planAccomplishments = PlanAccomplishment::where('planning_year_id', '=', $planning_year[0]->id)
+                    $planAccomplishments = PlanAccomplishment::where('planning_year_id', '=', $planning_year->id ?? NULL)
                     ->where('kpi_id', $kpiId)
                     ->groupBy('kpi_id')
                     ->orderBy('reporting_period_id')
@@ -806,14 +810,16 @@ class PlanAccomplishmentController extends Controller
                             ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
                             ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
                         $pdf->loadView('app.plan_accomplishments.plan-export.pdf-plan-all');
-                        return $pdf->download('All-Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                        $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                        return $pdf->download('All-Office-Plan-For-' . $planYear . '.pdf');
                     }
 
                     $pdf = App::make('dompdf.wrapper', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'))
                         ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
                         ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
                     $pdf->loadView('app.plan_accomplishments.plan-export.pdf-plan');
-                    return $pdf->download($officeSentToBlade . '_Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                    $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                    return $pdf->download($officeSentToBlade . '_Office-Plan-For-' . $planYear . '.pdf');
                 }
 
                 // Word
@@ -841,7 +847,8 @@ class PlanAccomplishmentController extends Controller
                 else {
                     return view('app.plan_accomplishments.plan-export.excel-plan', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'));
 
-                    return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.xlsx');
+                    $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                    return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Plan-For-' . $planYear . '.xlsx');
                 }
 
             }
@@ -861,7 +868,7 @@ class PlanAccomplishmentController extends Controller
                         $only_child_array = array_merge($only_child_array, array($value->id));
                     }
 
-                    $planAccomplishments = PlanAccomplishment::where('planning_year_id', '=', $planning_year[0]->id)
+                    $planAccomplishments = PlanAccomplishment::where('planning_year_id', '=', $planning_year->id ?? NULL)
                         ->groupBy('kpi_id')
                         ->orderBy('reporting_period_id')
                         ->get();
@@ -885,7 +892,10 @@ class PlanAccomplishmentController extends Controller
                             ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
                             ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
                         $pdf->loadView('app.plan_accomplishments.plan-export.pdf-plan-all');
-                        return $pdf->download('All-Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+
+                        $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+
+                        return $pdf->download('All-Office-Plan-For-' . $planYear . '.pdf');
                     }
 
                     // Word
@@ -924,7 +934,7 @@ class PlanAccomplishmentController extends Controller
                     $office = Office::find($office_id);
                     $imagen_off = $office;
                     $off_level = $office->level;
-                    $planning_year = PlaningYear::where('is_active', true)->get();
+                    $planning_year = PlaningYear::where('is_active', true)->first();
                     $all_office_list = $this->allChildAndChildChild($office);
                     $only_child_array = array_merge($all_office_list, array($office_id));
 
@@ -933,7 +943,7 @@ class PlanAccomplishmentController extends Controller
                         ->whereIn('kpi_id', $kpi_array)
                         ->select('*', DB::raw('SUM(plan_value) AS sum'))
                         ->where('reporting_periods.slug', "=", 1)
-                        ->where('planning_year_id', '=', $planning_year[0]->id)
+                        ->where('planning_year_id', '=', $planning_year->id ?? NULL)
                         ->groupBy('kpi_id')
                         ->get();
 
@@ -954,7 +964,8 @@ class PlanAccomplishmentController extends Controller
                             ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
                             ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
                         $pdf->loadView('app.plan_accomplishments.plan-export.pdf-plan-all');
-                        return $pdf->download('All-Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                        $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                        return $pdf->download('All-Office-Plan-For-' . $planYear . '.pdf');
                     }
 
                     // Word
@@ -982,7 +993,8 @@ class PlanAccomplishmentController extends Controller
                     else {
                         return view('app.plan_accomplishments.plan-export.excel-plan-all', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year'));
 
-                        return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.xlsx');
+                        $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                        return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Plan-For-' . $planYear . '.xlsx');
                     }
                 }
             }
@@ -997,7 +1009,7 @@ class PlanAccomplishmentController extends Controller
                 $office = Office::find(1);
                 $imagen_off = $office;
                 $off_level = 1;
-                $planning_year = PlaningYear::where('is_active',true)->get();
+                $planning_year = PlaningYear::where('is_active',true)->first();
                 $all_office_list = $this->allChildAndChildChild($office);
                 $only_child_array = array_merge($all_office_list,array($office_id));
             }
@@ -1023,7 +1035,7 @@ class PlanAccomplishmentController extends Controller
 
             $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $only_child_array)->whereIn('kpi_id', $kpi_array)->select('*', DB::raw('SUM(plan_value) AS sum'))
             -> where('reporting_periods.slug',"=", 1)
-            -> where('planning_year_id','=', $planning_year[0]->id)
+            -> where('planning_year_id','=', $planning_year->id ?? NULL)
             ->groupBy('kpi_id')  ->get();
 
             // to persist the select input values
@@ -1033,7 +1045,7 @@ class PlanAccomplishmentController extends Controller
         else{
         $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $only_child_array)->select('*', DB::raw('SUM(plan_value) AS sum'))
         -> where('reporting_periods.slug',"=", 1)
-        -> where('planning_year_id','=', $planning_year[0]->id)
+        -> where('planning_year_id','=', $planning_year->id ?? NULL)
        ->groupBy('kpi_id')  ->get();
          if( $is_admin){
             $imagen_off = Office::find(1); //immaginery office of which contain all office kpi plan
@@ -1051,7 +1063,7 @@ class PlanAccomplishmentController extends Controller
                // select('*', DB::raw('SUM(plan_value) AS sum'))
                 // -> where('reporting_periods.slug',"=", 1)
                 // -> where('plan_status',"=", 2)
-                  where('planning_year_id','=', $planning_year[0]->id)
+                  where('planning_year_id','=', $planning_year->id ?? NULL)
                 //->groupBy('reporting_period_id')
                 //->groupBy('objective_id')
                 ->groupBy('kpi_id')
@@ -1095,7 +1107,7 @@ class PlanAccomplishmentController extends Controller
               }
         dd("c");
         $updated = tap(DB::table('plan_accomplishments')
-            ->where('planning_year_id' , '=', $planning[0]->id)
+            ->where('planning_year_id' , '=', $planning->id ?? NULL)
         ->where('office_id' , '=', $user_offices)
         ->where('kpi_id' , '=', $index[0])
         ->where('reporting_period_id' , '=', $index[1])
@@ -1137,7 +1149,7 @@ class PlanAccomplishmentController extends Controller
                     ->get();
                     $objectives = $objectives->unique();
        $reportingTypes = ReportingPeriodType::all();
-       $planning_year = PlaningYear::where('is_active',true)->get();
+       $planning_year = PlaningYear::where('is_active',true)->first();
 
        $getoffice = Office::find($user_offices);
         $kpis = ['kpi' => [],'goal' => $goal, 'offwithkpi' => $getoffice];
@@ -1172,7 +1184,7 @@ class PlanAccomplishmentController extends Controller
        }
         $submit = "create";
          $index = [];
-        $planning = PlaningYear::where('is_active',true)->get();
+        $planning = PlaningYear::where('is_active',true)->first();
          foreach ($kpi as $key => $value) {
             $str_key= (string)$key ;
               //dd($kpi);
@@ -1209,7 +1221,7 @@ class PlanAccomplishmentController extends Controller
                     }
                     $off_level = auth()->user()->offices[0]->level;
                     $updated = tap(DB::table('plan_accomplishments')
-                        ->where('planning_year_id' , '=', $planning[0]->id)
+                        ->where('planning_year_id' , '=', $planning->id ?? NULL)
                         ->where('office_id' , '=', $user_offices)
                         ->where('kpi_id' , '=', $index[0])
                         ->where('reporting_period_id' , '=', $index[1])
@@ -1232,13 +1244,13 @@ class PlanAccomplishmentController extends Controller
                                 $naration->key_peformance_indicator_id=$index[1];
                                 $naration->office_id=$user_offices;
                                 $naration->reporting_period_id=$index[2];
-                                $naration->planing_year_id=$planning[0]->id;
+                                $naration->planing_year_id=$planning->id;
                                 $naration->save();
                             }
                             else{
                                 $updated2 = tap(DB::table('report_narration_reports')
-                                ->where('planing_year_id' , '=', $planning[0]
-                                ->id)->where('office_id' , '=', $user_offices)
+                                ->where('planing_year_id' , '=', $planning
+                                ->id ?? NULL)->where('office_id' , '=', $user_offices)
                                 ->where('key_peformance_indicator_id' , '=', $index[1])
                                 ->where('reporting_period_id' , '=', $index[2]))
                                 ->update(['report_naration' => $value])
@@ -1248,7 +1260,7 @@ class PlanAccomplishmentController extends Controller
               }
           } //dd("end");
         $search = $request->get('search', '');
-          $planAccomplishments = PlanAccomplishment::where('office_id' , '=', $user_offices)->where('planning_year_id' , '=', $planning[0]->id)
+          $planAccomplishments = PlanAccomplishment::where('office_id' , '=', $user_offices)->where('planning_year_id' , '=', $planning->id ?? NULL)
 
             ->latest()
             ->paginate(15)
@@ -1265,7 +1277,7 @@ class PlanAccomplishmentController extends Controller
         $imagen_off = $office;
         $off_level = $office->level;
        $all_office_list = $this->allChildAndChildChild($office);
-       $planning_year = PlaningYear::where('is_active',true)->get();
+       $planning_year = PlaningYear::where('is_active',true)->first();
        $only_child_array = array_merge($all_office_list,array($office_id));
 
       DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
@@ -1311,7 +1323,7 @@ class PlanAccomplishmentController extends Controller
                     ->where('kpi_id', $kpiId)
                     ->select('*', DB::raw('SUM(accom_value) AS sum'))
                     ->where('reporting_periods.slug', "=", 1)
-                    ->where('planning_year_id', '=', $planning_year[0]->id)
+                    ->where('planning_year_id', '=', $planning_year->id ?? NULL)
                     ->groupBy('kpi_id')
                     ->get();
 
@@ -1334,7 +1346,8 @@ class PlanAccomplishmentController extends Controller
                     ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
                     ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
                 $pdf->loadView('app.report_accomplishments.report-export.pdf-report');
-                return $pdf->download($officeSentToBlade . '_Office-Report-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                return $pdf->download($officeSentToBlade . '_Office-Report-For-' . $planYear . '.pdf');
                 }
 
                 // Word
@@ -1362,7 +1375,8 @@ class PlanAccomplishmentController extends Controller
                 else {
                     return view('app.report_accomplishments.report-export.excel-report', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'));
 
-                    return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Report-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.xlsx');
+                    $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                    return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Report-For-' . $planYear . '.xlsx');
                 }
 
 
@@ -1387,7 +1401,7 @@ class PlanAccomplishmentController extends Controller
                     ->whereIn('kpi_id', $kpi_array)
                     ->select('*', DB::raw('SUM(accom_value) AS sum'))
                     ->where('reporting_periods.slug', "=", 1)
-                    ->where('planning_year_id', '=', $planning_year[0]->id)
+                    ->where('planning_year_id', '=', $planning_year->id ?? NULL)
                     ->groupBy('kpi_id')
                     ->get();
 
@@ -1407,7 +1421,8 @@ class PlanAccomplishmentController extends Controller
                         ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
                         ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
                         $pdf->loadView('app.report_accomplishments.report-export.pdf-report');
-                        return $pdf->download($officeSentToBlade . '_Office-Report-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                        $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                        return $pdf->download($officeSentToBlade . '_Office-Report-For-' . $planYear . '.pdf');
                 }
 
                 // Word
@@ -1435,7 +1450,8 @@ class PlanAccomplishmentController extends Controller
                 else {
                     return view('app.report_accomplishments.report-export.excel-report', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'));
 
-                    return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Report-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.xlsx');
+                    $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                    return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Report-For-' . $planYear . '.xlsx');
                 }
 
             } else if ($request->has('kpi') && $request->filled('kpi')) {
@@ -1494,12 +1510,12 @@ class PlanAccomplishmentController extends Controller
                     ->where('kpi_id', $kpiId)
                     ->select('*', DB::raw('SUM(accom_value) AS sum'))
                     ->where('reporting_periods.slug', "=", 1)
-                    ->where('planning_year_id', '=', $planning_year[0]->id)
+                    ->where('planning_year_id', '=', $planning_year->id ?? NULL)
                     ->groupBy('kpi_id')
                     ->get();
 
                 if(auth()->user()->is_admin || auth()->user()->hasRole('super-admin')){
-                    $planAccomplishments = PlanAccomplishment::where('planning_year_id', '=', $planning_year[0]->id)
+                    $planAccomplishments = PlanAccomplishment::where('planning_year_id', '=', $planning_year->id ?? NULL)
                     ->where('kpi_id', $kpiId)
                     ->groupBy('kpi_id')
                     ->orderBy('reporting_period_id')
@@ -1523,14 +1539,16 @@ class PlanAccomplishmentController extends Controller
                         ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
                         ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
                         $pdf->loadView('app.report_accomplishments.report-export.pdf-report-all');
-                        return $pdf->download('All-Office-Report-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                        $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                        return $pdf->download('All-Office-Report-For-' . $planYear . '.pdf');
                     }
 
                     $pdf = App::make('dompdf.wrapper', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'))
                         ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
                         ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
                         $pdf->loadView('app.report_accomplishments.report-export.pdf-report');
-                        return $pdf->download($officeSentToBlade . '_Office-Report-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                        $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                        return $pdf->download($officeSentToBlade . '_Office-Report-For-' . $planYear . '.pdf');
                 }
 
                 // Word
@@ -1558,7 +1576,8 @@ class PlanAccomplishmentController extends Controller
                 else {
                     return view('app.report_accomplishments.report-export.excel-report', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'));
 
-                    return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Report-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.xlsx');
+                    $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                    return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Report-For-' . $planYear . '.xlsx');
                 }
             }
 
@@ -1577,7 +1596,7 @@ class PlanAccomplishmentController extends Controller
                         $only_child_array = array_merge($only_child_array, array($value->id));
                     }
 
-                    $planAccomplishments = PlanAccomplishment::where('planning_year_id', '=', $planning_year[0]->id)
+                    $planAccomplishments = PlanAccomplishment::where('planning_year_id', '=', $planning_year->id ?? NULL)
                         ->groupBy('kpi_id')
                         ->orderBy('reporting_period_id')
                         ->get();
@@ -1601,7 +1620,8 @@ class PlanAccomplishmentController extends Controller
                             ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
                             ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
                             $pdf->loadView('app.report_accomplishments.report-export.pdf-report-all');
-                            return $pdf->download('All-Office-Report-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                            $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                            return $pdf->download('All-Office-Report-For-' . $planYear . '.pdf');
                     }
 
                     // Word
@@ -1640,7 +1660,7 @@ class PlanAccomplishmentController extends Controller
                     $office = Office::find($office_id);
                     $imagen_off = $office;
                     $off_level = $office->level;
-                    $planning_year = PlaningYear::where('is_active', true)->get();
+                    $planning_year = PlaningYear::where('is_active', true)->first();
                     $all_office_list = $this->allChildAndChildChild($office);
                     $only_child_array = array_merge($all_office_list, array($office_id));
 
@@ -1649,7 +1669,7 @@ class PlanAccomplishmentController extends Controller
                         ->whereIn('kpi_id', $kpi_array)
                         ->select('*', DB::raw('SUM(accom_value) AS sum'))
                         ->where('reporting_periods.slug', "=", 1)
-                        ->where('planning_year_id', '=', $planning_year[0]->id)
+                        ->where('planning_year_id', '=', $planning_year->id ?? NULL)
                         ->groupBy('kpi_id')
                         ->get();
 
@@ -1670,7 +1690,8 @@ class PlanAccomplishmentController extends Controller
                             ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
                             ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
                             $pdf->loadView('app.report_accomplishments.report-export.pdf-report-all');
-                            return $pdf->download('All-Office-Report-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                            $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                            return $pdf->download('All-Office-Report-For-' . $planYear . '.pdf');
                     }
 
                     // Word
@@ -1698,7 +1719,8 @@ class PlanAccomplishmentController extends Controller
                     else {
                         return view('app.plan_accomplishments.plan-export.excel-plan-all', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year'));
 
-                        return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Report-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.xlsx');
+                        $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                        return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Report-For-' . $planYear . '.xlsx');
                     }
                 }
             }
@@ -1714,7 +1736,7 @@ class PlanAccomplishmentController extends Controller
                 $office = Office::find(1);
                 $imagen_off = $office;
                 $off_level = 1;
-                $planning_year = PlaningYear::where('is_active',true)->get();
+                $planning_year = PlaningYear::where('is_active',true)->first();
                 $all_office_list = $this->allChildAndChildChild($office);
                 $only_child_array = $all_office_list;
             }
@@ -1742,7 +1764,7 @@ class PlanAccomplishmentController extends Controller
             ->whereIn('office_id', $only_child_array)
             ->whereIn('kpi_id', $kpi_array)
             ->select('*', DB::raw('SUM(accom_value) AS sum'))
-            -> where('planning_year_id','=', $planning_year[0]->id)
+            -> where('planning_year_id','=', $planning_year->id ?? NULL)
                 //-> where('reporting_periods.slug',"=", 1)
             ->groupBy('kpi_id')
             ->get();
@@ -1754,7 +1776,7 @@ class PlanAccomplishmentController extends Controller
         $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
         ->whereIn('office_id', $only_child_array)
         ->select('*', DB::raw('SUM(accom_value) AS sum'))
-        -> where('planning_year_id','=', $planning_year[0]->id)
+        -> where('planning_year_id','=', $planning_year->id ?? NULL)
         //-> where('reporting_periods.slug',"=", 1)
        ->groupBy('kpi_id')
        ->get();
@@ -1772,12 +1794,12 @@ class PlanAccomplishmentController extends Controller
                     ->join('objectives', 'key_peformance_indicators.objective_id', '=', 'objectives.id')
                 ->select('*', DB::raw('SUM(accom_value) AS sum'))
                 //-> where('reporting_periods.slug',"=", 2)
-                -> where('planning_year_id','=', $planning_year[0]->id)
+                -> where('planning_year_id','=', $planning_year->id ?? NULL)
                 ->groupBy('objective_id')->groupBy('kpi_id') ->get();
         }
         }
        //dd($planAccomplishments);
-         $planning_year = PlaningYear::where('is_active',true)->get();
+         $planning_year = PlaningYear::where('is_active',true)->first();
         return view(
             'app.report_accomplishments.view-reporting-acc',
             compact('planAccomplishments','all_office_list','only_child_array','planning_year','office','off_level','imagen_off','search')
@@ -1793,7 +1815,7 @@ class PlanAccomplishmentController extends Controller
         $office = Office::find($office_id);
         $imagen_off = $office;
         $off_level = $office->level;
-        $planning_year = PlaningYear::where('is_active', true)->get();
+        $planning_year = PlaningYear::where('is_active', true)->first();
         $all_office_list = $this->allChildAndChildChild($office);
         $only_child_array = array_merge($all_office_list, array($office_id));
 
@@ -1801,7 +1823,7 @@ class PlanAccomplishmentController extends Controller
         $isFiltered = $request->has('office');
         $officeSentToBlade = '';
 
-        $planning_year = PlaningYear::where('is_active', true)->get();
+        $planning_year = PlaningYear::where('is_active', true)->first();
         DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
 
         $planAccomplishments = '';
@@ -1835,7 +1857,7 @@ class PlanAccomplishmentController extends Controller
                     ->whereIn('kpi_id', $kpi_array)
                     ->select('*', DB::raw('SUM(plan_value) AS sum'))
                     ->where('reporting_periods.slug', "=", 1)
-                    ->where('planning_year_id', '=', $planning_year[0]->id)
+                    ->where('planning_year_id', '=', $planning_year->id ?? NULL)
                     ->groupBy('kpi_id')
                     ->get();
 
@@ -1859,7 +1881,8 @@ class PlanAccomplishmentController extends Controller
                         ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
                         ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
                     $pdf->loadView('app.plan_accomplishments.plan-export.pdf-plan');
-                    return $pdf->download($officeSentToBlade . '_Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                    $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                    return $pdf->download($officeSentToBlade . '_Office-Plan-For-' . $planYear . '.pdf');
                 }
 
                 // Word
@@ -1887,7 +1910,8 @@ class PlanAccomplishmentController extends Controller
                 else {
                     return view('app.plan_accomplishments.plan-export.excel-plan', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'));
 
-                    return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.xlsx');
+                    $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                    return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Plan-For-' . $planYear . '.xlsx');
                 }
             }
 
@@ -1907,7 +1931,7 @@ class PlanAccomplishmentController extends Controller
                         $only_child_array = array_merge($only_child_array, array($value->id));
                     }
 
-                    $planAccomplishments = PlanAccomplishment::where('planning_year_id', '=', $planning_year[0]->id)
+                    $planAccomplishments = PlanAccomplishment::where('planning_year_id', '=', $planning_year->id ?? NULL)
                         ->groupBy('kpi_id')
                         ->orderBy('reporting_period_id')
                         ->get();
@@ -1929,7 +1953,8 @@ class PlanAccomplishmentController extends Controller
                             ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
                             ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
                         $pdf->loadView('app.plan_accomplishments.plan-export.pdf-plan-all');
-                        return $pdf->download('All-Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                        $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                        return $pdf->download('All-Office-Plan-For-' . $planYear . '.pdf');
                     }
 
                     // Word
@@ -1968,7 +1993,7 @@ class PlanAccomplishmentController extends Controller
                     $office = Office::find($office_id);
                     $imagen_off = $office;
                     $off_level = $office->level;
-                    $planning_year = PlaningYear::where('is_active', true)->get();
+                    $planning_year = PlaningYear::where('is_active', true)->first();
                     $all_office_list = $this->allChildAndChildChild($office);
                     $only_child_array = array_merge($all_office_list, array($office_id));
 
@@ -1977,7 +2002,7 @@ class PlanAccomplishmentController extends Controller
                         ->whereIn('kpi_id', $kpi_array)
                         ->select('*', DB::raw('SUM(plan_value) AS sum'))
                         ->where('reporting_periods.slug', "=", 1)
-                        ->where('planning_year_id', '=', $planning_year[0]->id)
+                        ->where('planning_year_id', '=', $planning_year->id ?? NULL)
                         ->groupBy('kpi_id')
                         ->get();
 
@@ -1998,7 +2023,8 @@ class PlanAccomplishmentController extends Controller
                             ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
                             ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
                         $pdf->loadView('app.plan_accomplishments.plan-export.pdf-plan-all');
-                        return $pdf->download('All-Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                        $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                        return $pdf->download('All-Office-Plan-For-' . $planYear . '.pdf');
                     }
 
                     // Word
@@ -2026,7 +2052,8 @@ class PlanAccomplishmentController extends Controller
                     else {
                         return view('app.plan_accomplishments.plan-export.excel-plan-all', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year'));
 
-                        return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Plan-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.xlsx');
+                        $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                        return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Plan-For-' . $planYear . '.xlsx');
                     }
                 }
             }
@@ -2040,7 +2067,7 @@ class PlanAccomplishmentController extends Controller
         $office = Office::find($office_id);
         $imagen_off = $office;
         $off_level = $office->level;
-        $planning_year = PlaningYear::where('is_active', true)->get();
+        $planning_year = PlaningYear::where('is_active', true)->first();
         $all_office_list = $this->allChildAndChildChild($office);
         $only_child_array = array_merge($all_office_list, array($office_id));
 
@@ -2048,7 +2075,7 @@ class PlanAccomplishmentController extends Controller
         $isFiltered = $request->has('office');
         $officeSentToBlade = '';
 
-        $planning_year = PlaningYear::where('is_active', true)->get();
+        $planning_year = PlaningYear::where('is_active', true)->first();
         DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
 
         $planAccomplishments = '';
@@ -2082,7 +2109,7 @@ class PlanAccomplishmentController extends Controller
                     ->whereIn('kpi_id', $kpi_array)
                     ->select('*', DB::raw('SUM(plan_value) AS sum'))
                     ->where('reporting_periods.slug', "=", 1)
-                    ->where('planning_year_id', '=', $planning_year[0]->id)
+                    ->where('planning_year_id', '=', $planning_year->id ?? NULL)
                     ->groupBy('kpi_id')
                     ->get();
 
@@ -2106,7 +2133,8 @@ class PlanAccomplishmentController extends Controller
                         ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
                         ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
                     $pdf->loadView('app.report_accomplishments.report-export.pdf-report');
-                    return $pdf->download($officeSentToBlade . '_Office-Report-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                    $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                    return $pdf->download($officeSentToBlade . '_Office-Report-For-' . $planYear . '.pdf');
                 }
 
                 // Word
@@ -2134,7 +2162,8 @@ class PlanAccomplishmentController extends Controller
                 else {
                     return view('app.report_accomplishments.report-export.excel-report', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year', 'officeSentToBlade', 'managerName'));
 
-                    return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Report-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.xlsx');
+                    $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                    return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Report-For-' . $planYear . '.xlsx');
                 }
             }
 
@@ -2154,7 +2183,7 @@ class PlanAccomplishmentController extends Controller
                         $only_child_array = array_merge($only_child_array, array($value->id));
                     }
 
-                    $planAccomplishments = PlanAccomplishment::where('planning_year_id', '=', $planning_year[0]->id)
+                    $planAccomplishments = PlanAccomplishment::where('planning_year_id', '=', $planning_year->id ?? NULL)
                         ->groupBy('kpi_id')
                         ->orderBy('reporting_period_id')
                         ->get();
@@ -2176,7 +2205,8 @@ class PlanAccomplishmentController extends Controller
                             ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
                             ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
                         $pdf->loadView('app.report_accomplishments.report-export.pdf-report-all');
-                        return $pdf->download('All-Office-Report-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                        $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                        return $pdf->download('All-Office-Report-For-' . $planYear . '.pdf');
                     }
 
                     // Word
@@ -2215,7 +2245,7 @@ class PlanAccomplishmentController extends Controller
                     $office = Office::find($office_id);
                     $imagen_off = $office;
                     $off_level = $office->level;
-                    $planning_year = PlaningYear::where('is_active', true)->get();
+                    $planning_year = PlaningYear::where('is_active', true)->first();
                     $all_office_list = $this->allChildAndChildChild($office);
                     $only_child_array = array_merge($all_office_list, array($office_id));
 
@@ -2224,7 +2254,7 @@ class PlanAccomplishmentController extends Controller
                         ->whereIn('kpi_id', $kpi_array)
                         ->select('*', DB::raw('SUM(plan_value) AS sum'))
                         ->where('reporting_periods.slug', "=", 1)
-                        ->where('planning_year_id', '=', $planning_year[0]->id)
+                        ->where('planning_year_id', '=', $planning_year->id ?? NULL)
                         ->groupBy('kpi_id')
                         ->get();
 
@@ -2247,7 +2277,8 @@ class PlanAccomplishmentController extends Controller
                             ->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
                             ->setPaper([0, 0, 419.53 + 350, 595.28], 'portrait');
                         $pdf->loadView('app.report_accomplishments.report-export.pdf-report-all');
-                        return $pdf->download('All-Office-Report-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.pdf');
+                        $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                        return $pdf->download('All-Office-Report-For-' . $planYear . '.pdf');
                     }
 
                     // Word
@@ -2275,7 +2306,8 @@ class PlanAccomplishmentController extends Controller
                     else {
                         return view('app.report_accomplishments.report-export.excel-report-all', compact('planAccomplishments', 'only_child_array', 'off_level', 'imagen_off', 'planning_year'));
 
-                        return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Report-For-' . $planning_year[0]->planingYearTranslations[0]->name . '.xlsx');
+                        $planYear = !empty($planning_year) ? $planning_year->planingYearTranslations[0]->name : '';
+                        return Excel::download(new PlanExcelExport($planAccomplishments, $only_child_array, $off_level, $imagen_off, $planning_year, $officeSentToBlade, $managerName), $officeSentToBlade . '_Office-Report-For-' . $planYear . '.xlsx');
                     }
                 }
             }

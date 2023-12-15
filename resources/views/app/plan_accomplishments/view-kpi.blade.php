@@ -5,8 +5,8 @@
                 Offices
             </th>
             @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
-            <th> 
-             {{ $period->reportingPeriodTs[0]->name }} 
+            <th>
+             {{ $period->reportingPeriodTs[0]->name }}
             </th>
             @empty
             @endforelse
@@ -30,9 +30,9 @@
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @php
                 //$planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $office, $period->id,false,$planning_year);
-                $planOfOfficePlan =$planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year[0]->id ,null,null,null);
+                $planOfOfficePlan =$planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year->id ?? NULL ,null,null,null);
                 //dump($planOfOfficePlan[0]);
-                $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
+                $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
             @endphp
             <td>
                 {{ $planOfOfficePlan[0] }}
@@ -42,7 +42,7 @@
     </tr>
     <tr>
         <td>
-            Major Activities  
+            Major Activities
         </td>
         <td colspan="4">
              @foreach ($narration as $key => $plannaration)

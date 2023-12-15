@@ -38,7 +38,7 @@ if (! function_exists('gettrans')) {
     }
     function  getKpiPlan($kpii,$list_offices,$selected_period)
     {
-        $planning_year = PlaningYear::where('is_active',true)->get();
+        $planning_year = PlaningYear::where('is_active',true)->first();
         $active_period = getReportingQuarter($kpii->reportingPeriodType->id);
         if($selected_period){
             $active_period = $selected_period;
@@ -50,7 +50,7 @@ if (! function_exists('gettrans')) {
             join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
             -> where('reporting_periods.id',"=", $active_period[0]->id)
             -> where('kpi_id' , '=', $kpii->id)
-            ->where('planning_year_id' , '=', $planning_year[0]->id)
+            ->where('planning_year_id' , '=', $planning_year->id ?? NULL)
             ->where('plan_status' , '=', 1)
          ->whereIn('office_id', $list_offices)
         // -> where('reporting_periods.slug',"=", 1)
@@ -61,7 +61,7 @@ if (! function_exists('gettrans')) {
             $planAccomplishments = PlanAccomplishment::
             join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
              -> where('kpi_id' , '=', $kpii->id)
-            ->where('planning_year_id' , '=', $planning_year[0]->id)
+            ->where('planning_year_id' , '=', $planning_year->id ?? NULL)
             ->where('plan_status' , '=', 1)
             ->whereIn('office_id', $list_offices)
             -> where('reporting_periods.slug',"=", 1)

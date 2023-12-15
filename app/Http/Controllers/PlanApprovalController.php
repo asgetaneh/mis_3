@@ -122,7 +122,7 @@ class PlanApprovalController extends Controller
             return redirect()
                 ->route('plan-accomplishment', $obj_office);
         }
-        $planning_year = PlaningYear::where('is_active', true)->get();
+        $planning_year = PlaningYear::where('is_active', true)->first();
 
         // if last office worked on the kpi, add its sum to show total
         if ($planAccomplishments->count() > 0) {
@@ -131,7 +131,7 @@ class PlanApprovalController extends Controller
                     // if he belongs to the kpi
                     if (isLastOfficeBelongToKpi(auth()->user()->offices[0], $plan->kpi_id)->count() > 0) {
                         // if he has record for the current kpi
-                        if (getOfficePlanRecord($plan->kpi_id, auth()->user()->offices[0], $planning_year[0]->id)->count() > 0) {
+                        if (getOfficePlanRecord($plan->kpi_id, auth()->user()->offices[0], $planning_year->id ?? NULL)->count() > 0) {
                             $planAccomplishmentsLastOffice = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
                                 ->where('reporting_periods.slug', "=", 1)
                                 ->where('office_id', auth()->user()->offices[0]->id)

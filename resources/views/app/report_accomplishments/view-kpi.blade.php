@@ -5,8 +5,8 @@
                 Offices
             </th>
             @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
-            <th> 
-             {{ $period->reportingPeriodTs[0]->name }} 
+            <th>
+             {{ $period->reportingPeriodTs[0]->name }}
             </th>
             @empty
             @endforelse
@@ -31,16 +31,16 @@
             @php
                 //$planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $office, $period->id,true,$planning_year);
                 $activeQuarter = getReportingQuarter($planAcc->Kpi->reportingPeriodType->id);
-                 $planOfOfficePlan =$planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year[0]->id ,null,null,null);
-                $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
+                 $planOfOfficePlan =$planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year->id ?? NULL ,null,null,null);
+                $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
             @endphp
-            
+
             @if($period->id!= $activeQuarter[0]->id)
-            <td> 
+            <td>
                 {{ $planOfOfficePlan[1] }}
             </td>
             @else
-            <td style="background-color:#99cd99;"> 
+            <td style="background-color:#99cd99;">
               <span >  {{ $planOfOfficePlan[1] }}</span>
             </td>
             @endif
@@ -49,7 +49,7 @@
     </tr>
     <tr>
         <td>
-            Major Activities  
+            Major Activities
         </td>
         <td colspan="4">
              @foreach ($narration as $key => $plannaration)
