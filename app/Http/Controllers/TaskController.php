@@ -92,7 +92,7 @@ class TaskController extends Controller
         $data = $request->input();//dd($data);
         $office = auth()->user()->offices[0]->id;
         $language = Language::all();
-        $planning_year = PlaningYear::where('is_active',true)->get();
+        $planning_year = PlaningYear::where('is_active',true)->first();
          //$lastGoal = Goal::select('id')->orderBy('id','desc')->first();
         try {
             $task = new Task;
@@ -100,7 +100,7 @@ class TaskController extends Controller
             $task->period_id= $data['reporting_period'];
             $task->office_id = $office;
             $task->kpi_id = $data['kpi'];
-            $task->plan_year_id = $planning_year[0]->id;
+            $task->plan_year_id = $planning_year->id ?? NULL;
             $task->created_by_id= auth()->user()->id;
              foreach ($language as $key => $value) {
                 $task ->name = $data['name_'.$value->locale];
@@ -378,8 +378,16 @@ class TaskController extends Controller
 
         $search = $request->get('search', '');
 
+        $planning_year = PlaningYear::where('is_active',true)->first();
+
         // get only assigned and accepted tasks using their status
-        $assignedTasks = TaskAssign::whereIn('status', [0, 1])->where('assigned_to_id', auth()->user()->id)->paginate(10);
+        $assignedTasks = TaskAssign::
+            join('tasks', 'task_assigns.task_id', 'tasks.id')
+            ->join('planing_years', 'tasks.plan_year_id', 'planing_years.id')
+            ->where('tasks.plan_year_id', $planning_year->id ?? NULL)
+            ->whereIn('status', [0, 1])
+            ->where('assigned_to_id', auth()->user()->id)->paginate(10);
+
         return view('app.performer-task.index', compact('assignedTasks'));
     }
 
@@ -450,15 +458,34 @@ class TaskController extends Controller
 
         $perfomer = auth()->user()->id;
 
-        if (!empty($request->input('status-filter')))
+        if (!empty($request->input('status-filter')) && !empty($request->input('year-filter')))
         {
-            $taskHistory = TaskAssign::where('assigned_to_id', $perfomer)
-            ->where('status', $request->input('status-filter'))
-            ->whereIn('status', [2,3,4])
+            $taskHistory = TaskAssign::
+            join('tasks', 'task_assigns.task_id', 'tasks.id')
+            ->join('planing_years', 'tasks.plan_year_id', 'planing_years.id')
+            ->where('tasks.plan_year_id', $request->input('year-filter'))
+            ->where('task_assigns.assigned_to_id', $perfomer)
+            ->where('task_assigns.status', $request->input('status-filter'))
             ->paginate(10);
 
             $request->flash();
 
+        }elseif(!empty($request->input('status-filter'))){
+            $taskHistory = TaskAssign::where('assigned_to_id', $perfomer)
+            ->where('status', $request->input('status-filter'))
+            ->paginate(10);
+
+            $request->flash();
+        }elseif(!empty($request->input('year-filter'))){
+            $taskHistory = TaskAssign::
+            join('tasks', 'task_assigns.task_id', 'tasks.id')
+            ->join('planing_years', 'tasks.plan_year_id', 'planing_years.id')
+            ->where('tasks.plan_year_id', $request->input('year-filter'))
+            ->where('task_assigns.assigned_to_id', $perfomer)
+            ->whereIn('task_assigns.status', [2,3,4])
+            ->paginate(10);
+
+            $request->flash();
         }else{
             $taskHistory = TaskAssign::where('assigned_to_id', $perfomer)
             ->whereIn('status', [2,3,4])

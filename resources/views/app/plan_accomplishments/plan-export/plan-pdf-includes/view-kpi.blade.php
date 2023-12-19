@@ -14,18 +14,28 @@
 
         </tr>
     @endif
+        @php
+            $baselineLastYear = getBaselineLastYear($planAcc->Kpi->id, $planning_year->id ?? NULL, 1, auth()->user()->offices[0]->id);
+        @endphp
     <tr>
         {{-- <td rowspan="2">{{ $office->officeTranslations[0]->name }}</td> --}}
 
-        {{-- Fetch baseline sum for this KPI, for now just a character --}}
-        <td>{{ '-' }}</td>
-
+        {{-- baseline --}}
+        @if (!empty($baselineLastYear))
+            <td>
+                {{ $baselineLastYear }}
+            </td>
+        @else
+            <td>
+                -
+            </td>
+        @endif
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @php
                 //$planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $office, $period->id,false,$planning_year);
-                $planOfOfficePlan =$planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year[0]->id ,null,null,null);
+                $planOfOfficePlan =$planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year->id ?? NULL ,null,null,null);
                 //dump($planOfOfficePlan[0]);
-                $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
+                $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
             @endphp
             <td>
                 {{ $planOfOfficePlan[0] }}

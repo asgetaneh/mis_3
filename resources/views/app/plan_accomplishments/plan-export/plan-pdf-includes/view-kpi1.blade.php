@@ -26,27 +26,37 @@
         @endforelse
 
         @foreach ($planAcc->Kpi->kpiChildOnes as $one)
-    <tr>
-        <td>
-            {{ $one->kpiChildOneTranslations[0]->name }}
-        </td>
+            @php
+                $baselineLastYear = getBaselineLastYear($planAcc->Kpi->id, $planning_year->id ?? NULL, 1, auth()->user()->offices[0]->id, $one->id);
+            @endphp
+            <tr>
+                <td>
+                    {{ $one->kpiChildOneTranslations[0]->name }}
+                </td>
 
-        {{-- Fetch baseline sum for this KPI, for now just a character --}}
-        <td>{{ '-' }}</td>
+                {{-- baseline --}}
+                @if (!empty($baselineLastYear))
+                    <td>
+                        {{ $baselineLastYear }}
+                    </td>
+                @else
+                    <td>
+                        -
+                    </td>
+                @endif
 
-
-        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
-            <td>
-                @php
-                   // $planOne = $planAcc->planOne($planAcc->Kpi->id, $one->id, $office, $period->id,false);
-                    $planOne = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year[0]->id ,$one->id,null,null);
-                    $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
-                @endphp
-                {{ $planOne[0] }}
-            </td>
-        @empty
-        @endforelse
-    </tr>
+                @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+                    <td>
+                        @php
+                        // $planOne = $planAcc->planOne($planAcc->Kpi->id, $one->id, $office, $period->id,false);
+                            $planOne = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year->id ?? NULL ,$one->id,null,null);
+                            $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
+                        @endphp
+                        {{ $planOne[0] }}
+                    </td>
+                @empty
+                @endforelse
+            </tr>
     @endforeach
     <tr>
         <td>

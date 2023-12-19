@@ -48,7 +48,7 @@
                         }
                         $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
                     // $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id, $office);
-                        $narration = $planAcc->getReportNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
+                        $narration = $planAcc->getReportNarration($planAcc->Kpi->id,$planning_year->id ?? NULL, $office, $period->id);
                     @endphp
                     {{-- <tr>
                         <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
@@ -62,13 +62,13 @@
                                 <td>
                                     @php
                                         //$planOneTwo = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id, $office, $period->id,true);
-                                        $planOneTwo = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year[0]->id ,$one->id, $two->id,null);
-                                        $beforePlan = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year[0]->id ,$one->id, $two->id, null);
+                                        $planOneTwo = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year->id ?? NULL ,$one->id, $two->id,null);
+                                        $beforePlan = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year->id ?? NULL ,$one->id, $two->id, null);
 
                                     @endphp
 
                                         <div style="display: flex;">
-                                            <div style="flex: 1; padding: 5px; border: 1px solid #000; background-color: rgb(255, 255, 198);">
+                                            <div style="flex: 1; padding: 5px; text-align: center; border: 1px solid #000; background-color: rgb(255, 255, 198);">
                                                 <span style="">{{ $beforePlan[0] }}</span>
                                             </div>
                                             <div style="flex: 1; padding: 5px; text-align: center; background-color: green; border: 1px solid #000;">

@@ -296,17 +296,17 @@
 
                                     </div>
                                     <div class="card-body approval-container" style="display: none;">
-                                        @if (hasOfficeActiveComment(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)->count() > 0)
+                                        @if (hasOfficeActiveComment(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year->id ?? NULL)->count() > 0)
                                             <div class="bg-light w-5 float-right p-3">
                                                 <p class="m-auto">You have comment from
-                                                    <u>{{ getPlanCommentorInfo(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)->name ?? '-' }}</u>
+                                                    <u>{{ getPlanCommentorInfo(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year->id ?? NULL)->name ?? '-' }}</u>
                                                     <a class="btn btn-sm btn-flat btn-info text-white view-comment"
                                                         data-toggle="modal" data-target="#view-comment-modal"
-                                                        data-id="{{ getPlanCommentorInfo(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)->translation_id ?? '-' }}-{{ $planAcc->Kpi->id }}-{{ $planning_year[0]->id }}">
+                                                        data-id="{{ getPlanCommentorInfo(auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year->id ?? NULL)->translation_id ?? '-' }}-{{ $planAcc->Kpi->id }}-{{ $planning_year->id ?? NULL }}">
                                                         <i class="fas fa fa-eye mr-1"></i>View/Reply
                                                     </a>
                                                     <a data-toggle="modal" data-target="#disapprove-modal"
-                                                        data-id="{{ auth()->user()->offices[0]->id }}-{{ $planAcc->Kpi->id }}-{{ $planning_year[0]->id }}"
+                                                        data-id="{{ auth()->user()->offices[0]->id }}-{{ $planAcc->Kpi->id }}-{{ $planning_year->id ?? NULL }}"
                                                         class="btn btn-danger btn-sm btn-flat disapprove-plan"
                                                         id="disapprove-for-{{ $planAcc->Kpi->id }}">
                                                         Disapprove
@@ -343,7 +343,7 @@
 
                                                     @if ($hasOfficePlan->count() > 0)
 
-                                                        @if(planStatusOffice(auth()->user()->offices[0], $planAcc->kpi_id, $planning_year[0]->id) !== auth()->user()->offices[0]->level)
+                                                        @if(planStatusOffice(auth()->user()->offices[0], $planAcc->kpi_id, $planning_year->id ?? NULL) !== auth()->user()->offices[0]->level)
 
                                                                 @if (isset($setter))
                                                                     @if (isset($unapprovedOfficeCount))

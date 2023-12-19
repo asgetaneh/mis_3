@@ -182,17 +182,17 @@
                                                 </div>
                                             </div>
                                             <div class="card-body planning-container">
-                                                @if (hasOfficeActiveComment(auth()->user()->offices[0]->id, $kpi_id, $planning_year[0]->id)->count() > 0)
+                                                @if (hasOfficeActiveComment(auth()->user()->offices[0]->id, $kpi_id, $planning_year->id ?? NULL)->count() > 0)
                                                     <div class="bg-light w-5 float-right p-3">
-                                                        <p class="m-auto">You have comment from <u>{{ getPlanCommentorInfo(auth()->user()->offices[0]->id, $kpi_id, $planning_year[0]->id)->name ?? '-' }}</u>
+                                                        <p class="m-auto">You have comment from <u>{{ getPlanCommentorInfo(auth()->user()->offices[0]->id, $kpi_id, $planning_year->id ?? NULL)->name ?? '-' }}</u>
                                                             <a  class="btn btn-sm btn-flat btn-info text-white view-comment"
                                                                 data-toggle="modal" data-target="#view-comment-modal"
-                                                                data-id="{{ getPlanCommentorInfo(auth()->user()->offices[0]->id, $kpi_id, $planning_year[0]->id)->translation_id ?? 0 }}-{{$kpi_id}}-{{$planning_year[0]->id}}">
+                                                                data-id="{{ getPlanCommentorInfo(auth()->user()->offices[0]->id, $kpi_id, $planning_year->id ?? NULL)->translation_id ?? 0 }}-{{$kpi_id}}-{{$planning_year->id ?? NULL}}">
                                                                 <i class="fas fa fa-eye mr-1"></i>View Comment
                                                             </a>
                                                             {{-- <a
                                                                 data-toggle="modal" data-target="#disapprove-modal"
-                                                                data-id="{{auth()->user()->offices[0]->id}}-{{$planAcc->Kpi->id}}-{{$planning_year[0]->id}}"
+                                                                data-id="{{auth()->user()->offices[0]->id}}-{{$planAcc->Kpi->id}}-{{$planning_year->id ?? NULL}}"
                                                                 class="btn btn-danger btn-sm btn-flat disapprove-plan" id="disapprove-for-{{ $planAcc->Kpi->id }}">
                                                                 Disapprove
                                                             </a> --}}
@@ -274,7 +274,7 @@
                                                                         @foreach ($kpi->kpiChildOnes as $one)
                                                                             @foreach ($kpi->kpiChildThrees as $kpiThree)
                                                                                 @php
-                                                                                    $baseline = getBaselineIndividualOneTwoThree($planning_year[0]->id, $kpi->id, $one->id, $two->id, $kpiThree->id, auth()->user()->offices[0]->id);
+                                                                                    $baseline = getBaselineIndividualOneTwoThree($planning_year->id ?? NULL, $kpi->id, $one->id, $two->id, $kpiThree->id, auth()->user()->offices[0]->id);
                                                                                     $off_level = auth()->user()->offices[0]->level;
                                                                                     $disabled = '';
                                                                                 @endphp
@@ -326,11 +326,13 @@
 
                                                                             @foreach ($kpi->kpiChildThrees as $kpiThree)
                                                                             @php
-                                                                            $baseline = getBaselineIndividualOneTwoThree($planning_year[0]->id, $kpi->id, $one->id, $two->id, $kpiThree->id, auth()->user()->offices[0]->id);
+                                                                            $baseline = getBaselineIndividualOneTwoThree($planning_year->id ?? NULL, $kpi->id, $one->id, $two->id, $kpiThree->id, auth()->user()->offices[0]->id);
                                                                             $off_level = auth()->user()->offices[0]->level;
                                                                             $disabled = '';
+
+                                                                            $baselineLastYear = getBaselineLastYear($kpi->id, $planning_year->id ?? NULL, 1, auth()->user()->offices[0]->id, $one->id, $two->id, $kpiThree->id);
                                                                         @endphp
-                                                                        @if ($baseline)
+                                                                        {{-- @if ($baseline)
                                                                             @if($off_level === 1)
                                                                                 @if ($off_level === $baseline->plan_status)
                                                                                     @php $disabled ="disabled"; @endphp
@@ -359,6 +361,15 @@
                                                                                     type="number" required>
 
                                                                             </td>
+                                                                        @endif --}}
+                                                                        @if (!empty($baselineLastYear))
+                                                                            <td>
+                                                                                {{ $baselineLastYear }}
+                                                                            </td>
+                                                                        @else
+                                                                            <td>
+                                                                                -
+                                                                            </td>
                                                                         @endif
                                                                             @endforeach
 
@@ -368,7 +379,7 @@
                                                                                     @php
                                                                                         $inputname = $kpi->id . $period->id;
                                                                                         //echo ($inputname)."<br/>";
-                                                                                        $plan = getSavedPlanIndividualOneTwoThree($planning_year[0]->id, $kpi->id, $period->id, $one->id, $two->id, $kpiThree->id, auth()->user()->offices[0]->id);
+                                                                                        $plan = getSavedPlanIndividualOneTwoThree($planning_year->id ?? NULL, $kpi->id, $period->id, $one->id, $two->id, $kpiThree->id, auth()->user()->offices[0]->id);
                                                                                         $off_level = auth()->user()->offices[0]->level;
                                                                                         $disabled = '';
                                                                                     @endphp
@@ -444,7 +455,7 @@
                                                                                     @php
                                                                                         $inputname = $kpi->id . $period->id;
                                                                                         //echo ($inputname)."<br/>";
-                                                                                        $plan = getSavedPlanIndividualOneTwoThree($planning_year[0]->id, $kpi->id, $period->id, $one->id, $two->id, $kpiThree->id, auth()->user()->offices[0]->id);
+                                                                                        $plan = getSavedPlanIndividualOneTwoThree($planning_year->id ?? NULL, $kpi->id, $period->id, $one->id, $two->id, $kpiThree->id, auth()->user()->offices[0]->id);
                                                                                         $off_level = auth()->user()->offices[0]->level;
                                                                                         $disabled = '';
                                                                                     @endphp
@@ -530,9 +541,10 @@
                                                                             </th>
 
                                                                             @php
-                                                                                $baseline = getBaselineIndividualOneTwo($planning_year[0]->id, $kpi->id, $one->id, $two->id, auth()->user()->offices[0]->id);
+                                                                                $baseline = getBaselineIndividualOneTwo($planning_year->id ?? NULL, $kpi->id, $one->id, $two->id, auth()->user()->offices[0]->id);
+                                                                                $baselineLastYear = getBaselineLastYear($kpi->id, $planning_year->id ?? NULL, 1, auth()->user()->offices[0]->id, $one->id, $two->id);
                                                                             @endphp
-                                                                            @if ($baseline)
+                                                                            {{-- @if ($baseline)
                                                                                 @php
                                                                                     $inputname = $kpi->id;
                                                                                     $off_level = auth()->user()->offices[0]->level;
@@ -547,8 +559,8 @@
                                                                                     @php $disabled ="disabled"; @endphp
                                                                                 @endif
                                                                                 <td>
-                                                                                    {{-- <input type="hidden" name="type"
-                                                                                        value="yes"> --}}
+                                                                                    <!-- <input type="hidden" name="type"
+                                                                                        value="yes"> -->
                                                                                     <input
                                                                                         name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}"
                                                                                         class="form-control"
@@ -563,11 +575,21 @@
                                                                                         class="form-control" type="number"
                                                                                         required>
                                                                                 </td>
+                                                                            @endif --}}
+
+                                                                            @if (!empty($baselineLastYear))
+                                                                                <td>
+                                                                                    {{ $baselineLastYear }}
+                                                                                </td>
+                                                                            @else
+                                                                                <td>
+                                                                                    -
+                                                                                </td>
                                                                             @endif
 
                                                                             @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
                                                                                 @php
-                                                                                    $plan12 = getSavedPlanIndividualOneTwo($planning_year[0]->id, $kpi->id, $period->id, $one->id, $two->id, auth()->user()->offices[0]->id);
+                                                                                    $plan12 = getSavedPlanIndividualOneTwo($planning_year->id ?? NULL, $kpi->id, $period->id, $one->id, $two->id, auth()->user()->offices[0]->id);
                                                                                 @endphp
                                                                                 @if ($plan12)
                                                                                     @php
@@ -626,7 +648,7 @@
                                                                         </th>
                                                                         @foreach ($kpi->kpiChildOnes as $one)
                                                                             @php
-                                                                                $baseline = getBaselineIndividualOneTwo($planning_year[0]->id, $kpi->id, $one->id, $two->id, auth()->user()->offices[0]->id);
+                                                                                $baseline = getBaselineIndividualOneTwo($planning_year->id ?? NULL, $kpi->id, $one->id, $two->id, auth()->user()->offices[0]->id);
                                                                             @endphp
                                                                             @if ($baseline)
                                                                                 @php
@@ -677,7 +699,7 @@
                                                                         </th>
                                                                         @foreach ($kpi->kpiChildOnes as $one)
                                                                             @php
-                                                                                $plan12 = getSavedPlanIndividualOneTwo($planning_year[0]->id, $kpi->id, $period->id, $one->id, $two->id, auth()->user()->offices[0]->id);
+                                                                                $plan12 = getSavedPlanIndividualOneTwo($planning_year->id ?? NULL, $kpi->id, $period->id, $one->id, $two->id, auth()->user()->offices[0]->id);
                                                                             @endphp
                                                                             @if ($plan12)
                                                                                 @php
@@ -769,12 +791,13 @@
                                                         </th>
 
                                                         @php
-                                                            $baseline = getBaselineIndividualOne($planning_year[0]->id, $kpi->id, $one->id, auth()->user()->offices[0]->id);
+                                                            $baseline = getBaselineIndividualOne($planning_year->id ?? NULL, $kpi->id, $one->id, auth()->user()->offices[0]->id);
                                                             $off_level = auth()->user()->offices[0]->level;
                                                             $disabled = '';
+                                                            $baselineLastYear = getBaselineLastYear($kpi->id, $planning_year->id ?? NULL, 1, auth()->user()->offices[0]->id, $one->id);
                                                         @endphp
 
-                                                        @if ($baseline)
+                                                        {{-- @if ($baseline)
                                                             @if($off_level === 1)
                                                                 @if ($off_level === $baseline->plan_status)
                                                                     @php $disabled ="disabled"; @endphp
@@ -797,12 +820,22 @@
                                                                     value="" type="number"
                                                                     required>
                                                             </td>
+                                                        @endif --}}
+
+                                                        @if (!empty($baselineLastYear))
+                                                            <td>
+                                                                {{ $baselineLastYear }}
+                                                            </td>
+                                                        @else
+                                                            <td>
+                                                                -
+                                                            </td>
                                                         @endif
 
                                                         @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
                                                             @php
                                                                 $inputname = '{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}';
-                                                                $plan1 = getSavedPlanIndividualOne($planning_year[0]->id, $kpi->id, $period->id, $one->id, auth()->user()->offices[0]->id);
+                                                                $plan1 = getSavedPlanIndividualOne($planning_year->id ?? NULL, $kpi->id, $period->id, $one->id, auth()->user()->offices[0]->id);
                                                                 $off_level = auth()->user()->offices[0]->level;
                                                                 $disabled = '';
                                                             @endphp
@@ -876,12 +909,13 @@
                                 </tr>
 
                                 @php
-                                    $baseline = getBaselineIndividual($planning_year[0]->id, $kpi->id, auth()->user()->offices[0]->id);
+                                    $baseline = getBaselineIndividual($planning_year->id ?? NULL, $kpi->id, auth()->user()->offices[0]->id);
                                     $off_level = auth()->user()->offices[0]->level;
                                     $disabled = '';
+                                    $baselineLastYear = getBaselineLastYear($kpi->id, $planning_year->id ?? NULL, 1, auth()->user()->offices[0]->id);
                                 @endphp
 
-                                @if ($baseline)
+                                {{-- @if ($baseline)
                                     @if($off_level === 1)
                                         @if ($off_level === $baseline->plan_status)
                                             @php $disabled ="disabled"; @endphp
@@ -904,6 +938,16 @@
                                             value="" type="number"
                                             required placeholder="Enter baseline">
                                     </td>
+                                @endif --}}
+
+                                @if (!empty($baselineLastYear))
+                                    <td>
+                                        {{ $baselineLastYear }}
+                                    </td>
+                                @else
+                                    <td>
+                                        -
+                                    </td>
                                 @endif
 
                                 @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
@@ -912,7 +956,7 @@
                                             $last_period = count(getQuarter($kpi->reportingPeriodType->id));
 
                                             $inputid = $kpi->id . $last_period;
-                                            $plan = getSavedPlanIndividual($planning_year[0]->id, $kpi->id, $period->id, auth()->user()->offices[0]->id);
+                                            $plan = getSavedPlanIndividual($planning_year->id ?? NULL, $kpi->id, $period->id, auth()->user()->offices[0]->id);
                                             $off_level = auth()->user()->offices[0]->level;
                                             $disabled = '';
                                         @endphp
@@ -1065,7 +1109,7 @@
                             </p>
                             @endif
                             @php
-                                $plan_naration = getSavedPlanNaration($planning_year[0]->id, $kpi->id, auth()->user()->offices[0]->id);
+                                $plan_naration = getSavedPlanNaration($planning_year->id ?? NULL, $kpi->id, auth()->user()->offices[0]->id);
                             @endphp
                             @if ($plan_naration)
                                 <label for="summernote">Major Activities</label>
