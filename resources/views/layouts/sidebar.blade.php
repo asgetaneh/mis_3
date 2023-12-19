@@ -731,6 +731,7 @@
                                     @endif
                                 </ul>
                             </li>
+                            @if($user->hasPermission('create task'))
                               <li class="nav-item {{ Request::is('smis/performer/*') ? 'menu-open' : '' }}">
                                     <a href="#" class="nav-link">
                                         <i class="nav-icon icon fas fa fa-users"></i>
@@ -794,7 +795,7 @@
                                     </ul>
 
                                 </li>
-
+                                @endif
 
 
                         </ul>
@@ -852,6 +853,7 @@
                         </li>
                     @endif
                 @endif
+                @if($user->hasPermission('view task'))
                 <li class="nav-item {{ Request::is('performer/tasks/assigned') || Request::is('performer/tasks/assigned/history') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link">
                         <i class="nav-icon icon fas fa fa-list"></i>
@@ -879,6 +881,7 @@
                     </ul>
 
                 </li>
+                @endif
             @endauth
 
             @auth

@@ -85,6 +85,7 @@ class AuthenticatedSessionController extends Controller
                 //     return new UnauthorizedException(403);
 
                 $first_name = $info[0]['givenname'][0];
+                $full_name = $info[0]['cn'][0];//dd($full_name);
                 $middle_name = 'Unknown';
                 $last_name = 'Unknown';
                 if (isset($info[0]['sn'])) {
@@ -120,7 +121,8 @@ class AuthenticatedSessionController extends Controller
                         $user = User::create([
                             'username' => $uid,
                             'password' => Hash::make($password),
-                            'name' => $first_name." ".$middle_name." ".$last_name,
+                            'name' =>  $full_name,
+                            //'name' => $first_name." ".$middle_name." ".$last_name,
                             'email' => $email,
                             // 'gender' => 'Unknown',
                             // 'phone' => $phone,
@@ -140,7 +142,8 @@ class AuthenticatedSessionController extends Controller
                     $user->update([
                         'username' => $uid,
                         'password' => Hash::make($password),
-                        'name' => $first_name." ".$middle_name." ".$last_name,
+                        //'name' => $first_name." ".$middle_name." ".$last_name,
+                         'name' =>  $full_name,
                         'email' => $email,
                         // 'gender' => 'Unknown',
                         // 'phone' => $phone,

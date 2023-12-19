@@ -78,7 +78,7 @@
                                         </button>
                                     </a>
                                     @endcan
-                                    {{-- @can('delete', $officeTranslation)
+                                    @can('delete', $officeTranslation)
                                         <form action="{{ route('office-translations.destroy', $officeTranslation) }}"
                                             method="POST" onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')">
                                             @csrf @method('DELETE')
@@ -86,7 +86,7 @@
                                                 <i class="icon ion-md-trash"></i>
                                             </button>
                                         </form>
-                                    @endcan --}}
+                                    @endcan
                             </div>
                         </td>
                     </tr>

@@ -79,7 +79,7 @@
             <div class="col-12">
                 <div class="card card-primary card-outline card-outline-tabs fillable-objective">
                     {{-- @dd($objectives) --}}
-                    <div class="card-header p-0 border-bottom-0 objectives-list-tab">
+                    <div class="card-header p-0 border-bottom-0 objectives-list-tab" color:white;">
                         <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
                             @forelse ($objectives as $objective)
                                 @php
@@ -95,18 +95,18 @@
                                     @if (app()->getLocale() == $obj_ts->locale)
                                         @if ($isIterated)
                                             <li class="nav-item">
-                                                <a class="nav-link" id="{{ $obj_ts->translation_id . '-tab' }}"
+                                                <a class="nav-link   btn-info btn-rounded"   id="{{ $obj_ts->translation_id . '-tab' }}"
                                                     data-toggle="pill" href="{{ '#objective-' . $obj_ts->translation_id }}"
                                                     role="tab" aria-controls="{{ $obj_ts->translation_id }}"
-                                                    aria-selected="false" title="{{ $obj_ts->name }}">{{ Str::of($obj_ts->name)->limit(10) }}
+                                                    aria-selected="false" title="{{ $obj_ts->name }}"> {{ Str::of($obj_ts->name)->limit(20) }}
                                                 </a>
                                             </li>
                                         @else
                                             <li class="nav-item">
-                                                <a class="nav-link active" id="{{ $obj_ts->translation_id . '-tab' }}"
+                                                <a class="nav-link active btn-rounded  btn-info"   id="{{ $obj_ts->translation_id . '-tab' }}"
                                                     data-toggle="pill" href="{{ '#objective-' . $obj_ts->translation_id }}"
                                                     role="tab" aria-controls="{{ $obj_ts->translation_id }}"
-                                                    aria-selected="true" title="{{ $obj_ts->name }}">{{ Str::of($obj_ts->name)->limit(10) }}
+                                                    aria-selected="true" title="{{ $obj_ts->name }}">{{ Str::of($obj_ts->name)->limit(20) }}
                                                 </a>
                                             </li>
 
@@ -729,8 +729,6 @@
                                                                         .value;
                                                                     var KOTvalues2 = document.getElementById('koneT{{ $one->id }}{{ $two->id }}2')
                                                                         .value;
-                                                                    var KOTvalues2 = document.getElementById('koneT{{ $one->id }}{{ $two->id }}2')
-                                                                        .value;
                                                                     var KOTvalues3 = document.getElementById('koneT{{ $one->id }}{{ $two->id }}3')
                                                                         .value;
                                                                     var KOTvalues4 = document.getElementById('koneT{{ $one->id }}{{ $two->id }}4')
@@ -987,19 +985,25 @@
                                         }
                                         // constant
                                         else if (behavior == 2) {
-                                            for (var i = loop; i > 2; i--) {
+                                            for (var i = 1; i < loop; i++) {
                                                 var idd = String({{ $kpi->id }}) + String(i);
-                                                var iddd = String({{ $kpi->id }}) + String(i - 1);
+                                                var iddd = String({{ $kpi->id }}) + String(i + 1);
                                                 var values = document.getElementById(idd).value;
                                                 var values2 = document.getElementById(iddd).value;
-                                            }
-                                            if (values != values2) {
-                                                document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
-                                                    "Plan should be constant";
-                                                $('#' + idd_y).val("");
-                                            }else{
-                                                document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
-                                                    "";
+                                                if (values != values2) {
+                                                    document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
+                                                        "Plan should be constant";
+                                                    for (var i = loop; i > 1; i--) {
+                                                        var idd = String({{ $kpi->id }}) + String(i);
+                                                        $('#' + idd).val("");
+                                                    }
+                                                    $('#' + idd_y).val("");
+                                                     document.getElementById("idd_y").innerHTML =
+                                                        "Plan should be constant";
+                                                }else{
+                                                    document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
+                                                        "";
+                                                }
                                             }
                                         }
                                         // incremental
@@ -1010,9 +1014,12 @@
                                                 var values = document.getElementById(idd).value;
                                                 var values2 = document.getElementById(iddd).value;
                                                 if (values < values2) {
-
                                                     document.getElementById("s{{ $kpi->id }}{{ 1 }}")
                                                         .innerHTML = "Plan should be incremental";
+                                                    for (var i = loop; i > 1; i--) {
+                                                        var idd = String({{ $kpi->id }}) + String(i);
+                                                        $('#' + idd).val("");
+                                                    }
                                                     $('#' + idd_y).val("");
                                                 }else{
                                                 document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
@@ -1027,12 +1034,16 @@
                                                 var iddd = String({{ $kpi->id }}) + String(i - 1);
                                                 var values = document.getElementById(idd).value;
                                                 var values2 = document.getElementById(iddd).value;
-                                            }
-                                            if (values > values2) {
+                                             if (values > values2) {
                                                 document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
                                                     "Plan should be incremental";
+                                                for (var i = loop; i > 1; i--) {
+                                                    var idd = String({{ $kpi->id }}) + String(i);
+                                                    $('#' + idd).val("");
+                                                }
                                                 $('#' + idd_y).val("");
                                             }
+                                        }
                                         } else {
                                             document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
                                                 "problem";
@@ -1068,9 +1079,14 @@
                                     class="form-control summernote" placeholder="Narration here" id="narration-field-{{ $kpi->id }}"></textarea>
                                     <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>
                             @endif
+                             {{-- <label class="form-label" for="inputImage">Image:</label>
+                                <input  type="file"  name="image"   id="inputImage" class="form-control @error('image') is-invalid @enderror">
+                                @error('image')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror --}}
 
                         </div>
-                                            </div>
+                         </div>
 
                     @empty
                         <h4>No KPI registered for this Goal and Objective!</h4>
@@ -1107,7 +1123,7 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <form action="{{ route('reply-comment.store') }}" method="POST" id="comment-form">
+                <form action="{{ route('reply-comment.store') }}" method="POST" id="comment-form" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" id="hidden-input-view-comment" class="hidden-input-view-comment" value=""
                         name="view-commented-office-info">

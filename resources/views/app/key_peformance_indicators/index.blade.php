@@ -194,22 +194,21 @@
                                                             <button type="submit" class="btn btn-light text-danger">
                                                                 <i class="icon ion-md-trash"></i>
                                                             </button>
-                                                           
                                                         </form>
                                                     @endcan
                                                     @php
                                                     $user = auth()->user();
                                                     @endphp 
-                                                    @if($user->hasPermission('view keypeformanceindicators'))
-
-                                                        <a
-                                                            href="{{ route('kpi-assign-tooffices', $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->keyPeformanceIndicator) }}">
-                                                        <button type="button" class="btn btn-info"
-                                                                title="Add Disaggregation Three">
+                                                    @forelse(auth()->user()->offices[0]-> keyPeformanceIndicators as $key => $offkpi)
+                                                    @if($user->hasPermission('view keypeformanceindicators') && $offkpi->id ==$keyPeformanceIndicator->id)
+                                                        <a href="{{ route('kpi-assign-tooffices', $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->keyPeformanceIndicator) }}">
+                                                        <button type="button" class="btn btn-info" title="Cascade key performance indicator for sub offices">
                                                                  Cascade
                                                         </button>
                                                         </a>
                                                     @endif
+                                                    @empty
+                                                    @endforelse
                                                 </div>
                                             </div>
                                         </td>
