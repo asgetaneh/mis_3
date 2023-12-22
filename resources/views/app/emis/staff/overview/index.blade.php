@@ -126,8 +126,35 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($overviews as $key => $overview)
+                            @forelse($employees as $key => $employee)
                                 <tr>
+                                    <td>{{$key+1}}</td>
+                                    <td> --</td>
+                                    <td> {{ $employee->first_name }} </td>
+                                    <td> {{ $employee->first_name_am }} </td>
+                                    <td> {{ $employee->father_name }} </td>
+                                    <td> {{ $employee->father_name_am }} </td>
+                                    <td> {{ $employee->father_name }} </td>
+                                    <td> {{ $employee->father_name_am }} </td>
+                                    <td> {{ $employee->grand_father_name }} </td>
+                                    <td> {{ $employee->grand_father_name_am }} </td>
+                                    <td> {{ $employee->date_of_birth }} </td>
+                                    <td> {{ $employee->birth_city }} </td>
+                                    <td> {{ $employee->email }} </td>
+                                    <td> {{ $employee->phone_number }} </td>
+                                    <td> {{ $employee->gender }} </td>
+                                    <td>ET</td>
+                                   
+                                    <td> {{ $employee->nation }} </td>
+                                    <td> {{ $employee->region }} </td>
+                                    <td> {{ $employee->zone }} </td>
+                                    <td> {{ $employee->woreda }} </td>
+                                    <td> {{ $employee->kebele }} </td>
+                                    <td> ?</td>
+                                    <td> {{ $employee->field_of_study }} </td>
+                                    <td> ? </td>
+                                   
+                                  
                                 </tr>
                             @empty
                                 <tr>
@@ -140,7 +167,7 @@
                     </table>
                 </div>
                 <div class="float-right mt-3">
-                    {!! $overviews->render() !!}
+                    {!! $employees->render() !!}
                 </div>
             </div>
         </div>

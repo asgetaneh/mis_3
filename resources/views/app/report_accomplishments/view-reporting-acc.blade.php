@@ -78,7 +78,7 @@
                                     <button class="btn btn-primary" value="search" name="search" type="submit">Filter</button>
                                     <span class="border border-right mx-3"></span>
                                     <button class="btn btn-info" value="pdf" name="pdf" type="submit">PDF</button>
-                                    <button class="btn btn-success" value="excel" name="excel" type="submit">Excel</button>
+                                    {{-- <button class="btn btn-success" value="excel" name="excel" type="submit">Excel</button> --}}
                                     {{-- <button class="btn btn-primary" value="word" name="word" type="submit">Word</button> --}}
 
                                 </div>
@@ -147,8 +147,8 @@
                                                                 $one =null;
                                                                 $three =null;
                                                                 $two =null;
-                                                                $planOfOfficePlan = $planAcc->ForKpi($planAcc->Kpi->id, $imagen_off, $period->id,true,$planning_year[0]->id);//dump($planOfOfficePlan);
-                                                                $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year[0]->id, $imagen_off, $period->id);
+                                                                $planOfOfficePlan = $planAcc->ForKpi($planAcc->Kpi->id, $imagen_off, $period->id,true,$planning_year->id ?? NULL);//dump($planOfOfficePlan);
+                                                                $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $imagen_off, $period->id);
                                                                  $activeQuarter = getReportingQuarter($planAcc->Kpi->reportingPeriodType->id);
 
                                                             @endphp

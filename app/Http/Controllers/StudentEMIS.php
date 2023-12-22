@@ -117,7 +117,7 @@ class StudentEMIS extends Controller
     public function enrollment(Request $request): View
     {
         $search = $request->get('search', '');
-
+        $nation_institute_id = new NationInstitutionId; 
         $enrollments = DB::connection('mysql_srs')
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
@@ -159,14 +159,14 @@ class StudentEMIS extends Controller
 
         return view(
             'app.emis.student.enrollment.index',
-            compact('enrollments', 'search')
+            compact('enrollments', 'nation_institute_id', 'search')
         );
     }
 
     public function results(Request $request): View
     {
         $search = $request->get('search', '');
-
+        $nation_institute_id = new NationInstitutionId; 
         $results = DB::connection('mysql_srs')
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
@@ -187,11 +187,11 @@ class StudentEMIS extends Controller
             // DB::raw('count(ifo.semester) as total_academic_periods'),
         )
         ->orderBy('s.student_id', 'desc')
-        ->paginate(10);
+        ->paginate(50);
 
         return view(
             'app.emis.student.result.index',
-            compact('results', 'search')
+            compact('results', 'nation_institute_id', 'search')
         );
     }
 

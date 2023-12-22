@@ -41,4 +41,9 @@ class ReportingPeriod extends Model
     {
         return $this->hasMany(ReportingPeriodT::class);
     }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
 }

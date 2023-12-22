@@ -1,6 +1,6 @@
 <table class="table table-bordered">
     @php
-        $ospan = $planAcc->Kpi->kpiChildThrees->count() * $planAcc->Kpi->kpiChildOnes->count() + 2;
+        $ospan = $planAcc->Kpi->kpiChildThrees->count() * getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 2;
     @endphp
     <!-- <tr id="child-ones"> -->
     <tr >
@@ -93,8 +93,8 @@
                                 }
                                 $childAndHim_array = array_merge($childAndHim_array, [$office->id]);
                                 //$plan123 = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id, $kpiThree->id, $office, $period->id,true);
-                                $plan123 = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year[0]->id ,$one->id, $two->id, $kpiThree->id);
-                                $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
+                                $plan123 = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year->id ?? NULL ,$one->id, $two->id, $kpiThree->id);
+                                $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
 
                             @endphp
                             {{ $plan123[1] }}

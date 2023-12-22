@@ -112,7 +112,7 @@
                     <p class="s1" style="
               text-align: left;
             ">
-                        Year: <u>{{ $planning_year[0]->planingYearTranslations[0]->name ?? '-' }}</u>
+                        Year: <u>{{ $planning_year ? $planning_year->planingYearTranslations[0]->name :  '-' }}</u>
                     </p>
                 </td>
             </tr>

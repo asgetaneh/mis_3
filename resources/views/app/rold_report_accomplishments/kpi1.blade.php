@@ -30,7 +30,7 @@
         <td>
             @php
                 $planOne = $planAcc->planOne($planAcc->Kpi->id, $one->id, $office, $period->id);
-                $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
+                $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
             @endphp
             {{ $planOne }}
         </td>
@@ -51,10 +51,10 @@
         Major Activities
     </td>
     <td colspan="5">
-        @foreach ($narration as $key => $plannaration) 
+        @foreach ($narration as $key => $plannaration)
               {!! html_entity_decode($plannaration->plan_naration) !!}
               @php
-              echo "<br/>"  
+              echo "<br/>"
               @endphp
         @endforeach
     </td>
@@ -64,12 +64,12 @@
 
 {{-- total ch2
             <td>
-            @php 
+            @php
                 $planSumch2_array= [];
-                $planSumch2 = $office->offices; 
+                $planSumch2 = $office->offices;
                 foreach ($planSumch2 as $key => $value) {
                     $planSumch2_array[$key] = $value->id;
-                } 
+                }
                 $planSumch2_array = array_merge($planSumch2_array, array($office->id));
 
                 $planSumch1Total = $planAcc->planIndividualChOneSum($planAcc->Kpi->id,  $planSumch2_array);

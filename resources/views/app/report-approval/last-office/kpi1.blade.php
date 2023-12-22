@@ -1,15 +1,15 @@
 <tr>
         {{-- check if current office is approved or not so that show the select or an APPROVED badge --}}
-        @if(reportStatusOffice(auth()->user()->offices[0], $planAcc->kpi_id, $planning_year[0]->id) !== auth()->user()->offices[0]->level)
+        @if(reportStatusOffice(auth()->user()->offices[0], $planAcc->kpi_id, $planning_year->id ?? NULL) !== auth()->user()->offices[0]->level)
             @if (isset($setter))
                 <th class="bg-light">
-                    {{-- <input class="form-check" type ="checkbox" name="approve[]" value="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}"
+                    {{-- <input class="form-check" type ="checkbox" name="approve[]" value="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year->id ?? NULL}}"
                 title="Appove for {{$office->officeTranslations[0]->name}}"/> --}}
 
                     <div class="icheck-success d-inline">
                         <input class="office-checkbox-kpi-{{ $planAcc->kpi_id }}" name="approve[]" type="checkbox"
                             id="{{ $planAcc->kpi_id }}-{{ auth()->user()->offices[0]->id }}"
-                            value="{{ $planAcc->Kpi->id }}-{{ auth()->user()->offices[0]->id }}-{{ $planning_year[0]->id }}">
+                            value="{{ $planAcc->Kpi->id }}-{{ auth()->user()->offices[0]->id }}-{{ $planning_year->id ?? NULL }}">
                         <label for="{{ $planAcc->kpi_id }}-{{ auth()->user()->offices[0]->id }}">
                             Select Office
                         </label>
@@ -17,7 +17,7 @@
                 </th>
             @else
                 <th class="bg-light">
-                    <input class="hidden-self-input-{{ $planAcc->Kpi->id }}" type ="hidden" name="approve[]" value="{{$planAcc->Kpi->id}}-{{auth()->user()->offices[0]->id}}-{{$planning_year[0]->id}}"
+                    <input class="hidden-self-input-{{ $planAcc->Kpi->id }}" type ="hidden" name="approve[]" value="{{$planAcc->Kpi->id}}-{{auth()->user()->offices[0]->id}}-{{$planning_year->id ?? NULL}}"
                     title="Appove for {{auth()->user()->offices[0]->officeTranslations[0]->name}}"/>
 
                     <p class="badge badge-warning d-inline">NOT APPROVED</p>
@@ -61,7 +61,7 @@
         <td>
             @php
                 $planOne = reportOne($planAcc->Kpi->id, $one->id, auth()->user()->offices[0], $period->id, 7);
-                $narration = getReportNarrationSelfOffice($planAcc->Kpi->id, $planning_year[0]->id, auth()->user()->offices[0], $period->id);
+                $narration = getReportNarrationSelfOffice($planAcc->Kpi->id, $planning_year->id ?? NULL, auth()->user()->offices[0], $period->id);
             @endphp
             {{ $planOne }}
         </td>

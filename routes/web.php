@@ -47,7 +47,12 @@ use App\Http\Controllers\StaffEMIS;
 use App\Http\Controllers\StudentEMIS;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\NationInstitutionIdController;
-
+use App\Http\Controllers\CampusController;
+use App\Http\Controllers\BuildingPurposeController;
+use App\Http\Controllers\BuildingController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TaskAssignController;
+use App\Http\Controllers\TaskMeasurementController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -85,8 +90,39 @@ Route::prefix('/')
     ->middleware('auth')
     ->group(function () {
 
-        Route::prefix('/smis')->group(function () {
+        Route::prefix('/performer')->group(function () {
 
+            Route::get('tasks/assigned', [TaskController::class, 'assignedTasksIndex'])->name('assigned-tasks.index');
+            Route::POST('tasks/assigned/status', [TaskController::class, 'assignedTaskStatus'])->name('assigned-task.status');
+            Route::POST('tasks/assigned/report', [TaskController::class, 'assignedTaskReport'])->name('assigned-task.report');
+            Route::get('tasks/assigned/history', [TaskController::class, 'assignedTaskHistory'])->name('assigned-task.history');
+            Route::get('tasks/view/report/{data}', [TaskController::class, 'getPerformerReportInfo'])->name('performer-report.view-report')->where('data', '.*');
+            Route::get('tasks/view/evaluation/{data}', [TaskController::class, 'getPerformerEvaluationInfo'])->name('performer-report.view-evaluation')->where('data', '.*');
+
+        });
+
+        Route::prefix('/smis')->group(function () {
+            Route::prefix('/performer')->group(function () {
+
+                // Route::get('tasks/assigned-tasks', [TaskController::class, 'assignedTasksIndex'])->name('assigned-tasks.index');
+                // Route::POST('tasks/assigned-task-status', [TaskController::class, 'assignedTaskStatus'])->name('assigned-task.status');
+                // Route::POST('tasks/assigned/report', [TaskController::class, 'assignedTaskReport'])->name('assigned-task.report');
+                // Route::get('tasks/assigned/history', [TaskController::class, 'assignedTaskHistory'])->name('assigned-task.history');
+                // Route::get('tasks/view/report/{data}', [TaskController::class, 'getPerformerReportInfo'])->name('performer-report.view-report')->where('data', '.*');
+
+
+                Route::get('performer-list', [TaskController::class, 'performer'])->name('performer.index');
+                Route::post('performer-add', [TaskController::class, 'addPerformer'])->name('performer-add-tooffices-save');
+                Route::DELETE('performer-remove-from-office/{performer}', [TaskController::class, 'performerRemoveFromOffice'])->name('performer-remove-from-office');
+                Route::get('performer-task-list', [TaskController::class, 'performersTaskList'])->name('performer.create');
+                Route::get('performer-report', [TaskAssignController::class, 'index'])->name('taskassign.index');
+                Route::post('performer-report-accept', [TaskAssignController::class, 'store'])->name('taskassign.store');
+                Route::resource('tasks', TaskController::class);
+                Route::resource('TaskMeasurements', TaskMeasurementController::class);
+                Route::get('tasks/task-assign/{id}', [TaskController::class, 'taskAssignIndex'])->name('task-assign.index');
+                Route::POST('tasks/task-assign/store', [TaskController::class, 'taskAssignStore'])->name('task-assign.store');
+                Route::DELETE('tasks/task-remove/{performer}/{task}', [TaskController::class, 'taskAssignRemove'])->name('task-remove.destroy');
+            });
             Route::prefix('/setting')->group(function () {
                 Route::resource(
                     'planing-year-translations',
@@ -291,12 +327,19 @@ Route::prefix('/')
 Route::prefix('/emis')->group(function(){
 
     Route::prefix('/institution')->group(function(){
-
         Route::get('/student-id', [NationInstitutionIdController::class, 'index'])->name('emis.setting.student-id');
         Route::post('/student-id/import', [NationInstitutionIdController::class, 'import'])->name('emis.setting.student-id-import');
+
+        Route::get('/campus', [CampusController::class, 'index'])->name('emis.setting.campus');
+        Route::get('/building/purpose', [BuildingPurposeController::class, 'index'])->name('emis.setting.building.purpose');
+        Route::get('/building/purpose/new', [BuildingPurposeController::class, 'create'])->name('emis.setting.building.purpose.new');
+        Route::post('/building/purpose/save', [BuildingPurposeController::class, 'store'])->name('emis.setting.building.purpose.store');
+        Route::get('/building/purpose/edit', [BuildingPurposeController::class, 'create'])->name('emis.setting.building.purpose.edit');
+        Route::get('/building', [BuildingController::class, 'index'])->name('emis.institution.building');
+
+
         Route::get('/', [InstitutionEMIS::class, 'index'])->name('emis.institution.index');
-        Route::get('/', [InstitutionEMIS::class, 'building'])->name('emis.institution.building');
-    });
+     });
     Route::prefix('/student')->group(function(){
         Route::get('/applicant', [StudentEMIS::class, 'applicant'])->name('emis.student.applicant.index');
         Route::get('/overview', [StudentEMIS::class, 'overview'])->name('emis.student.overview.index');

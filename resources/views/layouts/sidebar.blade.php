@@ -62,6 +62,7 @@
                                             </li>
                                         {{-- @endcan --}}
                                     </ul>
+
                                     <ul class="nav nav-treeview">
                                         {{-- @can('view-any', App\Models\User::class) --}}
                                             <li class="nav-item">
@@ -72,6 +73,27 @@
                                             </li>
                                         {{-- @endcan --}}
                                     </ul>
+                                     <ul class="nav nav-treeview">
+                                        {{-- @can('view-any', App\Models\User::class) --}}
+                                            <li class="nav-item">
+                                                <a href="{{ route('emis.setting.campus') }}" class="nav-link">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Campus</p>
+                                                </a>
+                                            </li>
+                                        {{-- @endcan --}}
+                                    </ul>
+                                     <ul class="nav nav-treeview">
+                                        {{-- @can('view-any', App\Models\User::class) --}}
+                                            <li class="nav-item">
+                                                <a href="{{ route('emis.setting.building.purpose') }}" class="nav-link">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Buiding purpose</p>
+                                                </a>
+                                            </li>
+                                        {{-- @endcan --}}
+                                    </ul>
+
                                 </li>
 
 
@@ -440,7 +462,7 @@
                                         ->distinct('kpi_id')
                                         ->get();
 
-                                    $planning_year = App\Models\PlaningYear::where('is_active', true)->get();
+                                    $planning_year = App\Models\PlaningYear::where('is_active', true)->first();
 
                                 @endphp
 
@@ -449,7 +471,7 @@
                                 {{-- If comment exist for current office --}}
                                 @forelse ($planAccomplishments as $planAcc)
                                     @php
-                                        $hasOfficeComment = hasOfficeActiveComment($currentLoggedInOffice, $planAcc->kpi_id, $planning_year[0]->id);
+                                        $hasOfficeComment = hasOfficeActiveComment($currentLoggedInOffice, $planAcc->kpi_id, $planning_year->id ?? NULL);
                                     @endphp
 
                                     @if ($hasOfficeComment->count() > 0)
@@ -465,7 +487,7 @@
                                     @forelse ($planAccomplishments as $planAcc)
 
                                         @php
-                                            $hasOfficeComment = hasOfficeActiveComment($currentLoggedInOffice, $planAcc->kpi_id, $planning_year[0]->id);
+                                            $hasOfficeComment = hasOfficeActiveComment($currentLoggedInOffice, $planAcc->kpi_id, $planning_year->id ?? NULL);
                                         @endphp
 
                                         @if ($hasOfficeComment->count() > 0)
@@ -598,7 +620,7 @@
                                         ->distinct('office_id')
                                         ->get();
 
-                                    $planning_year = App\Models\PlaningYear::where('is_active', true)->get();
+                                    $planning_year = App\Models\PlaningYear::where('is_active', true)->first();
 
                                 @endphp
 
@@ -607,7 +629,7 @@
                                 {{-- If comment exist for current office --}}
                                 @forelse ($reportAccomplishments as $reportAcc)
                                     @php
-                                        $hasOfficeComment = hasOfficeActiveReportComment($currentLoggedInOffice, $reportAcc->kpi_id, $planning_year[0]->id);
+                                        $hasOfficeComment = hasOfficeActiveReportComment($currentLoggedInOffice, $reportAcc->kpi_id, $planning_year->id ?? NULL);
                                     @endphp
 
                                     @if ($hasOfficeComment->count() > 0)
@@ -623,7 +645,7 @@
                                     @forelse ($reportAccomplishments as $reportAcc)
 
                                         @php
-                                            $hasOfficeComment = hasOfficeActiveReportComment($currentLoggedInOffice, $reportAcc->kpi_id, $planning_year[0]->id);
+                                            $hasOfficeComment = hasOfficeActiveReportComment($currentLoggedInOffice, $reportAcc->kpi_id, $planning_year->id ?? NULL);
                                         @endphp
 
                                         @if ($hasOfficeComment->count() > 0)
@@ -709,7 +731,71 @@
                                     @endif
                                 </ul>
                             </li>
+                            @if($user->hasPermission('create task'))
+                              <li class="nav-item {{ Request::is('smis/performer/*') ? 'menu-open' : '' }}">
+                                    <a href="#" class="nav-link">
+                                        <i class="nav-icon icon fas fa fa-users"></i>
+                                        <p>
+                                            Performer task
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
 
+                                    <ul class="nav nav-treeview">
+                                         <li class="nav-item">
+                                                <a href="{{ route('TaskMeasurements.index') }}" class="nav-link {{ Request::is('smis/performer/TaskMeasurements') || Request::is('smis/performer/TaskMeasurements/*') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Task Measurement</p>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="{{ route('tasks.index') }}" class="nav-link {{ Request::is('smis/performer/tasks') || Request::is('smis/performer/tasks/*') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Task</p>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="{{ route('performer.index') }}" class="nav-link {{ Request::is('smis/performer/performer-list') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Performer list</p>
+                                                </a>
+                                            </li>
+                                        {{-- @endcan --}}
+                                    </ul>
+
+                                    <ul class="nav nav-treeview">
+                                        {{-- @can('view-any', App\Models\User::class) --}}
+                                            {{-- <li class="nav-item">
+                                                <a href="{{ route('performer.index') }}" class="nav-link">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Performer</p>
+                                                </a>
+                                            </li> --}}
+                                        {{-- @endcan --}}
+                                    </ul>
+                                     <ul class="nav nav-treeview">
+                                        {{-- @can('view-any', App\Models\User::class) --}}
+                                            <li class="nav-item">
+                                                <a href="{{ route('performer.create') }}" class="nav-link">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Performer task list</p>
+                                                </a>
+                                            </li>
+                                        {{-- @endcan --}}
+                                    </ul>
+                                     <ul class="nav nav-treeview">
+                                        {{-- @can('view-any', App\Models\User::class) --}}
+                                            <li class="nav-item">
+                                                <a href="{{ route('taskassign.index') }}" class="nav-link">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Performer report</p>
+                                                </a>
+                                            </li>
+                                        {{-- @endcan --}}
+                                    </ul>
+
+                                </li>
+                                @endif
 
 
                         </ul>
@@ -766,6 +852,35 @@
                             </ul>
                         </li>
                     @endif
+                @endif
+                @if($user->hasPermission('view task'))
+                <li class="nav-item {{ Request::is('performer/tasks/assigned') || Request::is('performer/tasks/assigned/history') ? 'menu-open' : '' }}">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon icon fas fa fa-list"></i>
+                        <p>
+                            Task
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+
+                    <ul class="nav nav-treeview">
+                        {{-- @can('view-any', App\Models\User::class) --}}
+                            <li class="nav-item">
+                                <a href="{{ route('assigned-tasks.index') }}" class="nav-link {{ Request::is('performer/tasks/assigned') ? 'active' : '' }}">
+                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                    <p>Assigned Tasks</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('assigned-task.history') }}" class="nav-link {{ Request::is('performer/tasks/assigned/history') ? 'active' : '' }}">
+                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                    <p>View Tasks</p>
+                                </a>
+                            </li>
+                        {{-- @endcan --}}
+                    </ul>
+
+                </li>
                 @endif
             @endauth
 

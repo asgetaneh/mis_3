@@ -21,8 +21,8 @@
             }
             $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
             $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id, $office);
-            $narration = $planAcc->getNarration($planAcc->Kpi->id,$planning_year[0]->id, $office, $period->id);
-        @endphp 
+            $narration = $planAcc->getNarration($planAcc->Kpi->id,$planning_year->id ?? NULL, $office, $period->id);
+        @endphp
         <tr>
             <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
                 {{ $period->reportingPeriodTs[0]->name }}
@@ -48,7 +48,7 @@
                             $planSumch2_array[$key] = $value->id;
                         }
                         $planSumch2_array = array_merge($planSumch2_array, [$office->id]);
-                        
+
                         $planSumch2Total = $planAcc->planIndividualChTwoSum($planAcc->Kpi->id, $two->id, $planSumch2_array,$period->id);
                     @endphp
                     {{ $planSumch2Total }}
@@ -72,7 +72,7 @@
                     $offices_array[$key] = $value->id;
                 }
                 $offices_array = array_merge($offices_array, [$office->id]);
-                
+
                 $planSumch1ch3 = $planAcc->planIndividualChOnech($planAcc->Kpi->id, $one->id, $two->id, $offices_array);
             @endphp
             {{ $planSumch1ch3 }}
@@ -85,10 +85,10 @@
         Major Activities
     </td>
     <td colspan="5">
-        @foreach ($narration as $key => $plannaration) 
+        @foreach ($narration as $key => $plannaration)
               {!! html_entity_decode($plannaration->plan_naration) !!}
               @php
-              echo "<br/>"  
+              echo "<br/>"
               @endphp
         @endforeach
     </td>

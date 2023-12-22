@@ -112,7 +112,7 @@
                     <p class="s1" style="
               text-align: left;
             ">
-                        Year: <u>{{ $planning_year[0]->planingYearTranslations[0]->name ?? '-' }}</u>
+                        Year: <u>{{ $planning_year ? $planning_year->planingYearTranslations[0]->name :  '-' }}</u>
                     </p>
                 </td>
             </tr>
@@ -193,7 +193,7 @@
             @endphp
 
             <h3 style="background-color: #e7e7ff; padding: 10px; border: 1px solid #000;">KPI:
-                {{ $planAcc->Kpi->KeyPeformanceIndicatorTs[0]->name }} - <u>Report for: {{ $activeQuarter[0]->reportingPeriodTs[0]->name }}</u></h3>
+                {{ $planAcc->Kpi?->KeyPeformanceIndicatorTs[0]->name ?? '-' }} - <u>Report for: {{ $activeQuarter ? $activeQuarter[0]->reportingPeriodTs->first()->name : '-' }}</u></h3>
 
             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
                 @forelse($offices  as $office)

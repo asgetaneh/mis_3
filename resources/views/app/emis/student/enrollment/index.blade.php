@@ -16,7 +16,8 @@
             <div class="card-header">
                 <div style="">
                     <h3 class="card-title">Enrollment List</h3>
-                </div>
+                </div>&nbsp;&nbsp;
+                <button class="btn btn-success">Download Excel</button>
             </div>
             <div class="card-body">
 
@@ -69,7 +70,6 @@
                 <!-- /.card-body -->
             </div> --}}
 
-                <button class="btn btn-success">Download Excel</button>
 
                 <div class="table-responsive mt-3">
                     <table class="table table-bordered table-hover">
@@ -81,6 +81,9 @@
                                 </th>
                                 <th class="text-left">
                                     student_national_id
+                                </th>
+                                 <th>
+                                    !impotant
                                 </th>
                                 <th>
                                     academic_year
@@ -148,9 +151,13 @@
                         </thead>
                         <tbody>
                             @forelse($enrollments as $key => $enrollment)
+                              @php
+                                  $nation_id = $nation_institute_id-> getNationalId($enrollment->student_id); 
+                                 @endphp
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $enrollment->institution_code ?? '' }}</td>
+                                     <td>{{ "dept_code" }}</td>
+                                    <td>{{ $nation_id[0]['nation_id'] ?? '' }}</td>
                                     <td>{{ $enrollment->student_id ?? '' }}</td>
                                     <td>{{ $enrollment->academic_year ? str_replace('/', '', $enrollment->academic_year) : '' }}</td>
                                     <td>{{ isset($enrollment->academic_period) ? 'S'.$enrollment->academic_period : '' }}</td>

@@ -1,14 +1,14 @@
 <tr>
     {{-- check if current office is approved or not so that show the select or an APPROVED badge --}}
-    @if (planStatusOffice($office, $planAcc->kpi_id, $planning_year[0]->id) > auth()->user()->offices[0]->level)
+    @if (planStatusOffice($office, $planAcc->kpi_id, $planning_year->id ?? NULL) > auth()->user()->offices[0]->level)
         <th class="bg-light">
-            {{-- <input class="form-check" type ="checkbox" name="approve[]" value="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}"
+            {{-- <input class="form-check" type ="checkbox" name="approve[]" value="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year->id ?? NULL}}"
             title="Appove for {{$office->officeTranslations[0]->name}}"/> --}}
 
             <div class="icheck-success d-inline">
                 <input class="office-checkbox-kpi-{{ $planAcc->kpi_id }}" name="approve[]" type="checkbox"
                     id="{{ $planAcc->kpi_id }}-{{ $office->id }}"
-                    value="{{ $planAcc->Kpi->id }}-{{ $office->id }}-{{ $planning_year[0]->id }}">
+                    value="{{ $planAcc->Kpi->id }}-{{ $office->id }}-{{ $planning_year->id ?? NULL }}">
                 <label for="{{ $planAcc->kpi_id }}-{{ $office->id }}">
                     Select Office
                 </label>
@@ -23,41 +23,41 @@
         Offices: {{ $office->officeTranslations[0]->name }}
         </td>
 
-        {{-- @if (planStatusOffice($office, $planAcc->kpi_id, $planning_year[0]->id) > auth()->user()->offices[0]->level)
+        {{-- @if (planStatusOffice($office, $planAcc->kpi_id, $planning_year->id ?? NULL) > auth()->user()->offices[0]->level)
             <a class="btn btn-sm float-right btn-info text-white write-comment"
                 data-toggle="modal" data-target="#modal-lg"
-                data-id="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}">
+                data-id="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year->id ?? NULL}}">
                 <i class="fas fa fa-comments mr-1"></i> Write Comment
             </a>
         @endif --}}
 
         <a class="btn btn-sm float-right btn-info text-white write-comment ml-2" data-toggle="modal"
-            data-target="#modal-lg" data-id="{{ $planAcc->Kpi->id }}-{{ $office->id }}-{{ $planning_year[0]->id }}">
+            data-target="#modal-lg" data-id="{{ $planAcc->Kpi->id }}-{{ $office->id }}-{{ $planning_year->id ?? NULL }}">
             <i class="fas fa fa-comments mr-1"></i> Write Comment
         </a>
-        {{-- @if (empty(commentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id)))
+        {{-- @if (empty(commentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year->id ?? NULL)))
                 <a class="btn btn-sm float-right btn-info text-white write-comment"
                     data-toggle="modal" data-target="#modal-lg"
-                    data-id="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year[0]->id}}">
+                    data-id="{{$planAcc->Kpi->id}}-{{$office->id}}-{{$planning_year->id ?? NULL}}">
                     <i class="fas fa fa-comments mr-1"></i> Write Comment
                 </a>
         @else --}}
-        {{-- @if (!empty(commentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id, 1))) --}}
-        @if (commentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id, 2)->count() >
+        {{-- @if (!empty(commentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year->id ?? NULL, 1))) --}}
+        @if (commentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year->id ?? NULL, 2)->count() >
                 0)
             <p class="float-right text-primary"><u>Waiting for reply!</u></p>
         @else
             @if (
-                !empty(commentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year[0]->id, 1)) &&
+                !empty(commentorTextStatus($office, auth()->user()->offices[0]->id, $planAcc->kpi_id, $planning_year->id ?? NULL, 1)) &&
                     commentorTextStatus(
                         $office,
                         auth()->user()->offices[0]->id,
                         $planAcc->kpi_id,
-                        $planning_year[0]->id,
+                        $planning_year->id ?? NULL,
                         1)->count() > 0)
                 <a class="btn btn-sm view-reply-comment text-primary float-right" data-toggle="modal"
                     data-target="#view-reply-comment"
-                    data-id="{{ $office->id }}-{{ 1 }}-{{ $planAcc->Kpi->id }}-{{ $planning_year[0]->id }}">
+                    data-id="{{ $office->id }}-{{ 1 }}-{{ $planAcc->Kpi->id }}-{{ $planning_year->id ?? NULL }}">
                     <u id="view-reply-tag"><mark>You've a reply! Click to view</mark></u>                </a>
             @endif
         @endif
@@ -91,7 +91,7 @@
         <td>
             @php
                 $planOne = planOne($planAcc->Kpi->id, $one->id, $office, $period->id, 2);
-                $narration = getNarration($planAcc->Kpi->id, $planning_year[0]->id, $office, $period->id);
+                $narration = getNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
             @endphp
             {{ $planOne }}
         </td>

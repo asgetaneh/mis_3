@@ -38,7 +38,7 @@ if (! function_exists('gettrans')) {
     }
     function  getKpiPlan($kpii,$list_offices,$selected_period)
     {
-        $planning_year = PlaningYear::where('is_active',true)->get();
+        $planning_year = PlaningYear::where('is_active',true)->first();
         $active_period = getReportingQuarter($kpii->reportingPeriodType->id);
         if($selected_period){
             $active_period = $selected_period;
@@ -50,7 +50,7 @@ if (! function_exists('gettrans')) {
             join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
             -> where('reporting_periods.id',"=", $active_period[0]->id)
             -> where('kpi_id' , '=', $kpii->id)
-            ->where('planning_year_id' , '=', $planning_year[0]->id)
+            ->where('planning_year_id' , '=', $planning_year->id ?? NULL)
             ->where('plan_status' , '=', 1)
          ->whereIn('office_id', $list_offices)
         // -> where('reporting_periods.slug',"=", 1)
@@ -61,7 +61,7 @@ if (! function_exists('gettrans')) {
             $planAccomplishments = PlanAccomplishment::
             join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
              -> where('kpi_id' , '=', $kpii->id)
-            ->where('planning_year_id' , '=', $planning_year[0]->id)
+            ->where('planning_year_id' , '=', $planning_year->id ?? NULL)
             ->where('plan_status' , '=', 1)
             ->whereIn('office_id', $list_offices)
             -> where('reporting_periods.slug',"=", 1)
@@ -346,4 +346,28 @@ if (! function_exists('gettrans')) {
            return $planAccomplishment;
        }
   }
+
+  function getBaselineLastYear($kpi, $planningYear, $period, $office, $one = null, $two = null, $three = null){
+
+    $previousYear = '';
+
+    $lessYear = Carbon::now();
+    $lessYear->year = $lessYear->year - 1;
+
+    $previousYear = PlaningYear::where('is_active', 0)
+        ->where('created_at', '<', $lessYear)
+        ->first();
+
+    $baseline = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
+        ->where('kpi_id', $kpi)
+        ->where('office_id', $office)
+        ->where('planning_year_id', $previousYear->id ?? null)
+        ->where('kpi_child_one_id', $one)
+        ->where('kpi_child_two_id', $two)
+        ->where('kpi_child_three_id', $three)
+        ->where('reporting_periods.slug',"=", 1)
+        ->first();
+
+    return $baseline->plan_value ?? '';
+}
 }
