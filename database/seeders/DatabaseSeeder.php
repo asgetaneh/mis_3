@@ -181,6 +181,13 @@ class DatabaseSeeder extends Seeder
         Permission::updateOrCreate(['name' => 'update suitablekpis']);
         Permission::updateOrCreate(['name' => 'delete suitablekpis']);
 
+        Permission::updateOrCreate(['name' => 'list task']);
+        Permission::updateOrCreate(['name' => 'view task']);
+        Permission::updateOrCreate(['name' => 'create task']);
+        Permission::updateOrCreate(['name' => 'delete task']);
+        Permission::updateOrCreate(['name' => 'update task']);
+        Permission::updateOrCreate(['name' => 'assign task']);
+
         // Create user role and assign existing permissions
         $currentPermissions = Permission::all();
         $userRole = Role::updateOrCreate(['name' => 'staff']);
@@ -214,19 +221,18 @@ class DatabaseSeeder extends Seeder
 
         if ($user) {
             $user->assignRole($adminRole);
-        }else{
+        } else {
 
             // Admin User Seeder
             $adminUser = User::create([
                 'username' => 'admin',
                 'name' => 'Super Admin',
                 'email' => 'admin@admin',
-                'is_admin'=> '1',
+                'is_admin' => '1',
                 'password' => bcrypt('admin')
             ]);
 
             $adminUser->assignRole($adminRole);
-
         }
 
         // Default System Language
@@ -238,9 +244,9 @@ class DatabaseSeeder extends Seeder
 
         // create imaginary office and assign admin
         $officeExists = Office::find(1);
-        if($officeExists) {
+        if ($officeExists) {
             // nothing to do
-        }else{
+        } else {
             $office = new Office;
             $office->parent_office_id = null;
             $office->level = 0;
