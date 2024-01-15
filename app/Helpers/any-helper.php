@@ -145,13 +145,14 @@ if (! function_exists('gettrans')) {
 
         return $reservations;
     }
-     function getReportingQuarter($type)
+     function getReportingQuarter($type) 
     {
         $acctive_period_list =[];
-        $report_period_list = ReportingPeriod::all();
+        //$report_period_list = ReportingPeriod::all();
+        $report_period_list = ReportingPeriod::where('reporting_period_type_id', '=', $type)->get();
         $date = new \DateTime() ;
         $ethiopic_today = DateTimeFactory::fromDateTime($date);
-        foreach ($report_period_list as $key => $value) {
+        foreach ($report_period_list as $key => $value) { 
             // today date
              $ethiopic_today_tostring = $ethiopic_today->getYear().'-'.$ethiopic_today->getMonth().'-'.$ethiopic_today->getDay();
             $now_et_date = DateTime::createFromFormat('Y-m-d',  $ethiopic_today_tostring);
@@ -164,17 +165,16 @@ if (! function_exists('gettrans')) {
             $from_String_end_date = [$year, $month, $day] = explode('-', $value->end_date);
             $end_date = DateTime::createFromFormat('Y-m-d',  $from_String_end_date[0].'-'.$from_String_end_date[1].'-'.$from_String_end_date[2]);
 
-             if($start_date < $now_et_date && $end_date > $now_et_date){
-                $report_period = ReportingPeriod::where('id' , '=', $value->id)->where('reporting_period_type_id', '=', $type)->get();
-                    if($report_period){
+             if($start_date < $now_et_date && $end_date > $now_et_date){ 
+                $report_period = ReportingPeriod::where('id' , '=', $value->id)->get();
+                    if($report_period){ 
                         foreach ($report_period as $key2 => $period) {
                             $acctive_period_list[$key2] = $period;
                         }
                      }
             }
         }
-        // dd($acctive_period_list);
-        return $acctive_period_list;
+         return $acctive_period_list;
 
      }
 
@@ -214,6 +214,13 @@ if (! function_exists('gettrans')) {
      $ReportNarrations = ReportNarration::select()->where('planing_year_id' , '=', $year)->where('office_id' , '=', $office)->where('key_peformance_indicator_id' , '=', $kpi)->get();//dd($planAccomplishments);
         foreach ($ReportNarrations as $key => $ReportNarration) {
             return $ReportNarration->plan_naration;
+        }
+    }
+    function getSavedPlanDocument($year,$period,$kpi, $office){
+     $ReportNarrationreports = ReportNarrationReport::select()->where('planing_year_id' , '=', $year)->where('reporting_period_id' , '=', $period)->where('office_id' , '=', $office)->where('key_peformance_indicator_id' , '=', $kpi)->get();//dd($ReportNarrationreports);
+        foreach ($ReportNarrationreports as $key => $ReportNarrationreport) {
+           // dd($ReportNarrationreport->approval_text);
+            return $ReportNarrationreport->approval_text;
         }
     }
     function getSavedReportNaration($year,$period,$kpi, $office){

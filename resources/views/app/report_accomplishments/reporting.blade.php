@@ -95,12 +95,12 @@
                         @if (app()->getLocale() == $obj_ts->locale)
                         @if ($isIterated)
                         <li class="nav-item">
-                            <a class="nav-link" id="{{ $obj_ts->translation_id . '-tab' }}" data-toggle="pill" href="{{ '#objective-' . $obj_ts->translation_id }}" role="tab" aria-controls="{{ $obj_ts->translation_id }}" aria-selected="false" title="{{ $obj_ts->name }}">{{ Str::of($obj_ts->name)->limit(10) }}
+                            <a class="nav-link  btn-info btn-rounded"  id="{{ $obj_ts->translation_id . '-tab' }}" data-toggle="pill" href="{{ '#objective-' . $obj_ts->translation_id }}" role="tab" aria-controls="{{ $obj_ts->translation_id }}" aria-selected="false" title="{{ $obj_ts->name }}">{{ Str::of($obj_ts->name)->limit(10) }}
                             </a>
                         </li>
                         @else
                         <li class="nav-item">
-                            <a class="nav-link active" id="{{ $obj_ts->translation_id . '-tab' }}" data-toggle="pill" href="{{ '#objective-' . $obj_ts->translation_id }}" role="tab" aria-controls="{{ $obj_ts->translation_id }}" aria-selected="true" title="{{ $obj_ts->name }}">{{ Str::of($obj_ts->name)->limit(10) }}
+                            <a class="nav-link active  btn-info btn-rounded" id="{{ $obj_ts->translation_id . '-tab' }}" data-toggle="pill" href="{{ '#objective-' . $obj_ts->translation_id }}" role="tab" aria-controls="{{ $obj_ts->translation_id }}" aria-selected="true" title="{{ $obj_ts->name }}">{{ Str::of($obj_ts->name)->limit(10) }}
                             </a>
                         </li>
 
@@ -139,7 +139,7 @@
                                 @endphp
                                 @endif
 
-                                <form action="{{ route('report.save') }}" method="POST" id="reporting-form" onsubmit="return validateReportForm()">
+                                <form action="{{ route('report.save') }}" method="POST" id="reporting-form" onsubmit="return validateReportForm()" enctype="multipart/form-data">
                                     @csrf
 
                                     {{-- @if ($objective) --}}
@@ -506,18 +506,29 @@
                                             @endif
                                             @php
                                             $report_naration = getSavedReportNaration($planning_year->id ?? NULL, $period->id, $kpi->id, auth()->user()->offices[0]->id);
+                                            $plan_docment = getSavedPlanDocument($planning_year->id ?? NULL, $period->id, $kpi->id, auth()->user()->offices[0]->id);
                                             @endphp
                                             @if ($report_naration)
-                                            <label for="summernote">Major Activities</label>
-                                            <input type="hidden" name="type" value="yes">
-                                            <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote" id="narration-field-{{ $kpi->id }}" placeholder="Narration here">{!! $report_naration !!}</textarea>
-                                            <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>
+                                                <label for="summernote">Major Activities</label>
+                                                <input type="hidden" name="type" value="yes">
+                                                <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote" id="narration-field-{{ $kpi->id }}" placeholder="Narration here">{!! $report_naration !!}
+                                                </textarea>
+                                                <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>
                                             @else
-                                            <label for="summernote">Major Activities</label>
-                                            <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote" id="narration-field-{{ $kpi->id }}" placeholder="Narration here"></textarea>
-                                            <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>
+                                                <label for="summernote">Major Activities</label>
+                                                <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote" id="narration-field-{{ $kpi->id }}" placeholder="Narration here"></textarea>
+                                                <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>
+                                            @endif  
+                                            @if ($plan_docment)
+                                                <label class="form-label" for="inputImage"> Supporting document(in pdf):
+                                                </label><br/>
+                                                <a  href="{{ route('view-file', $plan_docment) }}" title="MyPdf"> view file
+                                                </a> 
+                                            @else
+                                                <label class="form-label" for="inputImage">Supporting document(in pdf):
+                                                </label>
+                                                <input  type="file"  name="myfile"   id="inputImage" class="form-control"> 
                                             @endif
-
                                         </div>
                                     </div>
                                     @else
