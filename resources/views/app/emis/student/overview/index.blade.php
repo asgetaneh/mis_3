@@ -16,9 +16,9 @@
             <div class="card-header">
                 <div style="">
                     <h3 class="card-title">Overview List</h3> &nbsp;&nbsp;
-                    <button class="btn btn-success pull-right" style="float:50%"> Download Excel</button>
+                    {{-- <button class="btn btn-success pull-right" style="float:50%"> Download Excel</button> --}}
                  </div>
-                   
+
             </div>
             <div class="card-body">
 
@@ -72,8 +72,8 @@
             </div> --}}
 
 
-                <div class="table-responsive mt-3">
-                    <table class="table table-bordered table-hover">
+                <div class="mt-3">
+                    <table id="emisTable" class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -134,9 +134,9 @@
                         <tbody>
                             @forelse($overviews as $key => $overview)
                                 @php
-                                  $nation_id = $nation_institute_id-> getNationalId($overview->student_id); 
+                                  $nation_id = $nation_institute_id-> getNationalId($overview->student_id);
                                  @endphp
-                                
+
                                 <tr>
                                     <td>{{ $key+1 }}</td>
                                     <td>{{ $nation_id[0]['nation_id'] ?? '' }}</td>
@@ -176,9 +176,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="float-right mt-3">
+                {{-- <div class="float-right mt-3">
                     {!! $overviews->render() !!}
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

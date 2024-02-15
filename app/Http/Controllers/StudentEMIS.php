@@ -48,6 +48,7 @@ class StudentEMIS extends Controller
             'sd.place_of_birth',
             'sd.mother_name',
             'sd.family_phone',
+            'sd.entrance_total_mark as national_exam_score',
             'c.country_code',
             'st.region_code AS state_code',
             'z.zone_code',
@@ -78,8 +79,9 @@ class StudentEMIS extends Controller
         $overviews = DB::connection('mysql_srs')
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
+        ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
         ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
-        // ->join('country as c', 'sd.country_id', '=', 'c.id')
+        ->join('country as c', 'sd.country_id', '=', 'c.id')
         ->join('state as st', 'sd.state_id', '=', 'st.id')
         ->join('zone as z', 'sd.zone_id', '=', 'z.id')
         ->join('woreda as w', 'sd.woreda_id', '=', 'w.id')
@@ -100,16 +102,18 @@ class StudentEMIS extends Controller
             'sd.entrance_exam_id',
             // 'sd.mother_name',
             // 'sd.family_phone',
-            // 'c.code AS country_code',
+            'c.country_code AS country_code',
             'st.region_code AS state_code',
             'z.zone_code AS zone_code',
             'w.woreda_code AS woreda_code',
-            'd.code AS department_code',
-            'p.code AS program_code',
+            'd.department_code',
+            'p.program_code',
             'pl.code AS program_level_code'
         )
-        ->orderBy('s.student_id', 'desc')
-        ->paginate(50);
+        ->where([
+            'ifo.record_status' => 1 // only active students for this semester
+            ])
+        ->orderBy('s.student_id', 'desc')->get();
         //dd($overviews);
 
         return view(
