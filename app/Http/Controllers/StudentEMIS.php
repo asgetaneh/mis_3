@@ -22,9 +22,9 @@ class StudentEMIS extends Controller
         $applicants = DB::connection('mysql_srs')
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
-        // ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+        ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
         ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
-        // ->join('country as c', 'sd.country_id', '=', 'c.id')
+        ->join('country as c', 'sd.country_id', '=', 'c.id')
         ->join('state as st', 'sd.state_id', '=', 'st.id')
         ->join('zone as z', 'sd.zone_id', '=', 'z.id')
         ->join('woreda as w', 'sd.woreda_id', '=', 'w.id')
@@ -37,7 +37,7 @@ class StudentEMIS extends Controller
             // 'ifo.year',
             DB::raw('(SELECT MAX(academic_year) FROM student_info WHERE student_id = s.id) AS academic_year'),
             's.id',
-            'sf.username',
+            // 'sf.username',
             'sf.first_name',
             'sf.fathers_name',
             'sf.grand_fathers_name',
@@ -48,16 +48,20 @@ class StudentEMIS extends Controller
             'sd.place_of_birth',
             'sd.mother_name',
             'sd.family_phone',
-            // 'c.code AS country_code',
+            'c.country_code',
             'st.region_code AS state_code',
-            'z.zone_code AS zone_code',
-            'w.woreda_code AS woreda_code',
-            'd.code AS department_code',
-            'p.code AS program_code',
+            'z.zone_code',
+            'w.woreda_code',
+            'd.department_code',
+            'p.program_code',
             'pl.code AS program_level_code'
         )
-        ->orderBy('s.student_id', 'desc')
-        ->paginate(10);
+        ->where([
+            'ifo.year' => 1,
+            'ifo.semester' => 1,
+            'ifo.record_status' => 1
+            ])
+        ->orderBy('s.student_id', 'desc')->get();
 
         // dd($applicants);
 
@@ -70,7 +74,7 @@ class StudentEMIS extends Controller
     public function overview(Request $request): View
     {
         $search = $request->get('search', '');
-        $nation_institute_id = new NationInstitutionId; 
+        $nation_institute_id = new NationInstitutionId;
         $overviews = DB::connection('mysql_srs')
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
@@ -117,7 +121,7 @@ class StudentEMIS extends Controller
     public function enrollment(Request $request): View
     {
         $search = $request->get('search', '');
-        $nation_institute_id = new NationInstitutionId; 
+        $nation_institute_id = new NationInstitutionId;
         $enrollments = DB::connection('mysql_srs')
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
@@ -166,7 +170,7 @@ class StudentEMIS extends Controller
     public function results(Request $request): View
     {
         $search = $request->get('search', '');
-        $nation_institute_id = new NationInstitutionId; 
+        $nation_institute_id = new NationInstitutionId;
         $results = DB::connection('mysql_srs')
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')

@@ -69,13 +69,13 @@
                 <!-- /.card-body -->
             </div> --}}
 
-                <button class="btn btn-success">Download Excel</button>
+                {{-- <button class="btn btn-success">Download Excel</button> --}}
 
-                <div class="table-responsive mt-3">
-                    <table class="table table-bordered table-hover">
+                <div class="mt-3">
+                    <table id="emisTable" class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th class="text-left">#</th>
                                 <th class="text-left">
                                     applicant_id
                                 </th>
@@ -144,6 +144,7 @@
                                 </th>
                                 <th>hed_acceptance_status
                                 </th>
+                                <th>student_disabilty</th>
                                 <th>specially_gifted
                                 </th>
                             </tr>
@@ -183,6 +184,7 @@
                                     <td>{{ $applicant->public_hed_acceptance_score ?? '' }}</td>
                                     <td>{{ $applicant->national_exam_score ?? '' }}</td>
                                     <td>{{ $applicant->hed_acceptance_status ?? '' }}</td>
+                                    <td>{{ $applicant->student_disability ?? '' }}</td>
                                     <td>{{ $applicant->specially_gifted ?? 'N' }}</td>
                                 </tr>
                             @empty
@@ -195,9 +197,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="float-right mt-3">
+                {{-- <div class="float-right mt-3">
                     {!! $applicants->render() !!}
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>
