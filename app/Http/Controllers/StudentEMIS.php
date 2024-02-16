@@ -130,40 +130,44 @@ class StudentEMIS extends Controller
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
         ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
-        ->join('check_list as cl', 'ifo.check_list_id', '=', 'cl.id')
+        // ->join('check_list as cl', 'ifo.check_list_id', '=', 'cl.id')
         ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
+        ->leftJoin('campus as ca', 'sd.campus_id', '=', 'ca.id')
+        ->leftJoin('sponsor as sp', 'sd.sponsor_id', '=', 'sp.id')
         // ->join('disability as d', 'sd.disability_id', '=', 'd.id')
         ->join('program as p', 's.program_id', '=', 'p.id')
         ->join('program_level as pl', 'p.program_level_id', '=', 'pl.id')
         ->join('enrollment_type as et', 'p.enrollment_type_id', '=', 'et.id')
         ->join('department as d', 'd.id', '=', 'p.department_id')
         // ->join('college as col', 'd.college_id', '=', 'col.id')
-        // ->join('campus as ca', 'col.campus_id', '=', 'ca.id') // if the structure is thought like this
         ->select(
-            's.student_id',
+            's.student_id as student_id_number',
+            'sp.sponsor_code',
             'ifo.academic_year',
             'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
 
             // Not sure which columns match the excel colummns for gpa and ECTS based data, figure out later
             'ifo.total_ects AS cumulative_registered_credits',
             'ifo.semester_ects AS current_registered_credits',
-            'ifo.previous_total_ects AS cumulative_completed_credits',
-            'cl.required_credit as required_credits',
-            'cl.number_of_semesters AS required_academic_periods',
+            // 'ifo.previous_total_ects AS cumulative_completed_credits',
+            // 'cl.required_credit as required_credits',
+            // 'cl.number_of_semesters AS required_academic_periods',
 
             DB::raw('ROUND(ifo.total_grade_points / ifo.total_ects, 2) as cumulative_gpa'),
 
             'ifo.year AS year_level',
             // 'd.code AS student_disability',
-            // 'ca.code AS campus_code',
+            'ca.campus_name AS campus_code',
             // 'col.code AS college_code',
-            'd.code AS department_code',
-            'p.code AS program_code',
+            'd.department_code',
+            'p.program_code',
             'pl.code AS target_qualification',
-            'et.enrollment_type_name AS program_modality' // later change to et.code when code column is added in the table
+            'et.enrollment_type_code AS program_modality'
         )
-        ->orderBy('s.student_id', 'desc')
-        ->paginate(50);
+        ->where([
+            'ifo.record_status' => 1 // only active students for this semester
+        ])
+        ->orderBy('s.student_id', 'desc')->get();
 
         return view(
             'app.emis.student.enrollment.index',

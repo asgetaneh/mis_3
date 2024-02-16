@@ -17,7 +17,7 @@
                 <div style="">
                     <h3 class="card-title">Enrollment List</h3>
                 </div>&nbsp;&nbsp;
-                <button class="btn btn-success">Download Excel</button>
+                {{-- <button class="btn btn-success">Download Excel</button> --}}
             </div>
             <div class="card-body">
 
@@ -71,8 +71,8 @@
             </div> --}}
 
 
-                <div class="table-responsive mt-3">
-                    <table class="table table-bordered table-hover">
+                <div class="mt-3">
+                    <table id="emisTable" class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -152,13 +152,13 @@
                         <tbody>
                             @forelse($enrollments as $key => $enrollment)
                               @php
-                                  $nation_id = $nation_institute_id-> getNationalId($enrollment->student_id); 
+                                  $nation_id = $nation_institute_id-> getNationalId($enrollment->student_id_number);
                                  @endphp
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                     <td>{{ "dept_code" }}</td>
+                                     <td>{{ $enrollment->department_code ?? '' }}</td>
                                     <td>{{ $nation_id[0]['nation_id'] ?? '' }}</td>
-                                    <td>{{ $enrollment->student_id ?? '' }}</td>
+                                    <td>{{ $enrollment->student_id_number ?? '' }}</td>
                                     <td>{{ $enrollment->academic_year ? str_replace('/', '', $enrollment->academic_year) : '' }}</td>
                                     <td>{{ isset($enrollment->academic_period) ? 'S'.$enrollment->academic_period : '' }}</td>
                                     <td>{{ isset($enrollment->academic_term) ? 'T'.$enrollment->academic_term : '' }}</td>
@@ -181,10 +181,10 @@
                                     <td>{{ $enrollment->exchange_country ?? '' }}</td>
                                     <td>{{ $enrollment->exchange_institution ?? '' }}</td>
                                     <td>{{ $enrollment->exchange_institution_lng ?? '' }}</td>
-                                    <td>{{ $enrollment->sponsorship ?? '' }}</td>
+                                    <td>{{ $enrollment->sponsor_code ?? '' }}</td>
                                     <td>{{ $enrollment->student_economical_status ?? '' }}</td>
                                     <td>{{ $enrollment->student_disability ?? '' }}</td>
-                                    <td>{{ $enrollment->specially_gifted ?? '' }}</td>
+                                    <td>{{ $enrollment->specially_gifted ?? 'N' }}</td>
                                     <td>{{ $enrollment->food_service_type ?? '' }}</td>
                                     <td>{{ $enrollment->dormitory_service_type ?? '' }}</td>
                                     <td>{{ $enrollment->cost_sharing_loan ?? '' }}</td>
