@@ -254,12 +254,20 @@ class StudentEMIS extends Controller
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
         ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+        ->join('program as p', 's.program_id', '=', 'p.id')
+        ->join('department as d', 'd.id', '=', 'p.department_id')
+        ->join('action_on_student as ac', 'ifo.laction', 'ac.id')
         ->select(
+            'd.department_code as institution_code',
             'ifo.academic_year',
             'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
+            'ac.action_code as attrition_reason'
         )
+        ->where([
+            'ifo.record_status' => 1
+        ])
         ->orderBy('s.student_id', 'desc')
-        ->paginate(10);
+        ->get();
         return view(
             'app.emis.student.attrition.index',
             compact('attritions', 'search')
