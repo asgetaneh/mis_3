@@ -233,8 +233,13 @@ class StudentEMIS extends Controller
             // I think this is all the semester count taken in that year, not sure yet
             // DB::raw('count(ifo.semester) as total_academic_periods'),
         )
+        ->where([
+            'ifo.record_status' => 0, // take only graduates
+            'ifo.laction' => 20
+        ])
         ->orderBy('s.student_id', 'desc')
-        ->paginate(10);
+        ->get();
+
         return view(
             'app.emis.student.graduate.index',
             compact('graduates', 'search')

@@ -69,10 +69,10 @@
                 <!-- /.card-body -->
             </div> --}}
 
-                <button class="btn btn-success">Download Excel</button>
+                {{-- <button class="btn btn-success">Download Excel</button> --}}
 
-                <div class="table-responsive mt-3">
-                    <table class="table table-bordered table-hover">
+                <div class="mt-3">
+                    <table id="emisTable" class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -136,9 +136,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="float-right mt-3">
+                {{-- <div class="float-right mt-3">
                     {!! $graduates->render() !!}
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>
