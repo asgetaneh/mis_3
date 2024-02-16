@@ -183,12 +183,16 @@ class StudentEMIS extends Controller
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
         ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
-        ->join('student_status as ss', 'ifo.status_id', '=', 'ss.id')
+        // ->join('student_status as ss', 'ifo.status_id', '=', 'ss.id')
+        ->join('program as p', 's.program_id', '=', 'p.id')
+        ->join('department as d', 'd.id', '=', 'p.department_id')
         ->select(
             's.student_id',
+            'd.department_code',
             'ifo.academic_year',
+            'ifo.laction',
             'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
-            'ss.status_name AS result', // change later to ss.code if code column added on student_status table
+            // 'ss.status_name AS result', // change later to ss.code if code column added on student_status table
 
             // Not sure which columns match the excel columns for gpa and ECTS based data, figure out later
             'ifo.total_ects AS total_accumulated_credits',
@@ -198,8 +202,11 @@ class StudentEMIS extends Controller
             // I think this is all the semester count taken in that year, not sure yet
             // DB::raw('count(ifo.semester) as total_academic_periods'),
         )
+        ->where([
+            'ifo.record_status' => 1
+        ])
         ->orderBy('s.student_id', 'desc')
-        ->paginate(50);
+        ->get();
 
         return view(
             'app.emis.student.result.index',
