@@ -147,7 +147,7 @@
                                             @endphp
                                 @endif
 
-                                <form action="{{ route('plan.save') }}" method="POST" id="planning-form" onsubmit="return validateForm()">
+                                <form action="{{ route('plan.save') }}" method="POST" id="planning-form" onsubmit="return validateForm()"  enctype="multipart/form-data">
                                     @csrf
 
                                     {{-- @if ($objective) --}}
@@ -1110,8 +1110,9 @@
                             @endif
                             @php
                                 $plan_naration = getSavedPlanNaration($planning_year->id ?? NULL, $kpi->id, auth()->user()->offices[0]->id);
+                              //  $plan_docment = getSavedPlanDocument($planning_year->id ?? NULL, $kpi->id, auth()->user()->offices[0]->id);
                             @endphp
-                            @if ($plan_naration)
+                            @if ($plan_naration)  
                                 <label for="summernote">Major Activities</label>
                                 <input type="hidden" name="type" value="yes">
                                 <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;"
@@ -1122,13 +1123,15 @@
                                 <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;"
                                     class="form-control summernote" placeholder="Narration here" id="narration-field-{{ $kpi->id }}"></textarea>
                                     <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>
-                            @endif
-                             {{-- <label class="form-label" for="inputImage">Image:</label>
-                                <input  type="file"  name="image"   id="inputImage" class="form-control @error('image') is-invalid @enderror">
-                                @error('image')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror --}}
-
+                            @endif 
+                            {{-- @if ($plan_docment)
+                             <label class="form-label" for="inputImage">Supporting document(in pdf):</label><br/>
+                                <a  href="{{ route('view-file', $plan_docment) }}" title="MyPdf">view file
+                                </a> 
+                            @else
+                             <label class="form-label" for="inputImage">Supporting document(in pdf):</label>
+                            <input  type="file"  name="myfile"   id="inputImage" class="form-control"> 
+                            @endif --}}
                         </div>
                          </div>
 
@@ -1167,7 +1170,7 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <form action="{{ route('reply-comment.store') }}" method="POST" id="comment-form" enctype="multipart/form-data">
+                <form action="{{ route('reply-comment.store') }}" method="POST" id="comment-form" enctype="multipart/form-data" >
                     @csrf
                     <input type="hidden" id="hidden-input-view-comment" class="hidden-input-view-comment" value=""
                         name="view-commented-office-info">

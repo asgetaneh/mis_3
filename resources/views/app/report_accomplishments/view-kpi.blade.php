@@ -30,7 +30,7 @@
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @php
                 //$planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $office, $period->id,true,$planning_year);
-                $activeQuarter = getReportingQuarter($planAcc->Kpi->reportingPeriodType->id);
+                $activeQuarter = getReportingQuarter($planAcc->Kpi->reportingPeriodType->id); 
                  $planOfOfficePlan =$planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year->id ?? NULL ,null,null,null);
                 $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
             @endphp

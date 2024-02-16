@@ -271,7 +271,7 @@ Route::prefix('/')
                 Route::match(array('GET', 'POST'),'suitable-kpi/{recover_request}', [SuitableKpiController::class, 'officeSuitableKpi'])->name('suitable-kpi');
                 Route::GET('select-suitable-kpi', [SuitableKpiController::class, 'selectOfficeSuitableKpi'])->name('select-suitable-kpi');
                 Route::POST('suitable-kpi/save', [SuitableKpiController::class, 'kpiChainSave'])->name('kpi-Chain-sae');
-                // Route::DELETE('kpi_chain_remove/{kpi}/{childone}', [SuitableKpiController::class, 'kpiChainRemove'])->name('kpi-Chain-remove');
+                 Route::GET('view-file/{path}', [PlanAccomplishmentController::class, 'viewFile'])->name('view-file');
 
                 Route::GET('/get-objectives/{goal}', [PlanAccomplishmentController::class, 'getAllObjectives'])->name('get-objectives');
                 Route::POST('/plan-save', [PlanAccomplishmentController::class, 'savePlan'])->name('plan.save');
