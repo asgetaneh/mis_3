@@ -183,7 +183,7 @@ class StudentEMIS extends Controller
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
         ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
-        // ->join('student_status as ss', 'ifo.status_id', '=', 'ss.id')
+        ->join('student_status as ss', 'ifo.status_id', '=', 'ss.id')
         ->join('program as p', 's.program_id', '=', 'p.id')
         ->join('department as d', 'd.id', '=', 'p.department_id')
         ->select(
@@ -192,7 +192,7 @@ class StudentEMIS extends Controller
             'ifo.academic_year',
             'ifo.laction',
             'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
-            // 'ss.status_name AS result', // change later to ss.code if code column added on student_status table
+            'ss.id AS result', // used the id column to check the status of pass and fail
 
             // Not sure which columns match the excel columns for gpa and ECTS based data, figure out later
             'ifo.total_ects AS total_accumulated_credits',
@@ -235,7 +235,7 @@ class StudentEMIS extends Controller
         )
         ->where([
             'ifo.record_status' => 0, // take only graduates
-            'ifo.laction' => 20
+            'ifo.laction' => 20 // value 20 maps to graduates as of now
         ])
         ->orderBy('s.student_id', 'desc')
         ->get();
