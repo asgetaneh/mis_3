@@ -140,6 +140,8 @@
             $(function() {
                 $("#emisTable").DataTable({
                     // "responsive": true,
+                    "lengthChange": false,
+                    "autoWidth": false,
                     scrollX: true,
                     "buttons": ["excel"]
                 }).buttons().container().appendTo('#emisTable_wrapper .col-md-6:eq(0)');

@@ -125,7 +125,23 @@
                                     <td>{{ $result->total_accumulated_credits ?? '' }}</td>
                                     <td>{{ $result->cgpa ?? '' }}</td>
                                     <td>{{ $result->total_academic_periods ?? '' }}</td>
-                                    <td>{{ $result->result ?? '' }}</td>
+                                    {{-- <td>{{ $result->result ?? '' }}</td> --}}
+
+                                    <td>
+
+                                        {{-- This checking is based on the id to identify only pass and fail statuses. --}}
+                                        @if(isset($result->result))
+                                            @if($result->result == 1)
+                                                {{ 'P' }}
+                                            @elseif($result->result == 2)
+                                                {{ 'F' }}
+                                            @else
+                                                {{ '' }}
+                                            @endif
+                                        @else
+                                            {{ '' }}
+                                        @endif
+                                    </td>
                                     <td>{{ isset($result->laction) ? ($result->laction == 6 ? 'Y' : 'N') : 'N' }}</td>
                                     <td>{{ $result->gpa ?? '' }}</td>
                                     <td>{{ $result->digital_literacy_training ?? 'N' }}</td>

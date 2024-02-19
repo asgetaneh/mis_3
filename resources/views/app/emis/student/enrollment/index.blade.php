@@ -203,9 +203,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="float-right mt-3">
+                {{-- <div class="float-right mt-3">
                     {!! $enrollments->render() !!}
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

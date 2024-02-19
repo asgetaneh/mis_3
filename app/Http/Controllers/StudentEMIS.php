@@ -183,7 +183,7 @@ class StudentEMIS extends Controller
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
         ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
-        // ->join('student_status as ss', 'ifo.status_id', '=', 'ss.id')
+        ->join('student_status as ss', 'ifo.status_id', '=', 'ss.id')
         ->join('program as p', 's.program_id', '=', 'p.id')
         ->join('department as d', 'd.id', '=', 'p.department_id')
         ->select(
@@ -192,7 +192,7 @@ class StudentEMIS extends Controller
             'ifo.academic_year',
             'ifo.laction',
             'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
-            // 'ss.status_name AS result', // change later to ss.code if code column added on student_status table
+            'ss.id AS result', // used the id column to check the status of pass and fail
 
             // Not sure which columns match the excel columns for gpa and ECTS based data, figure out later
             'ifo.total_ects AS total_accumulated_credits',
@@ -233,8 +233,13 @@ class StudentEMIS extends Controller
             // I think this is all the semester count taken in that year, not sure yet
             // DB::raw('count(ifo.semester) as total_academic_periods'),
         )
+        ->where([
+            'ifo.record_status' => 0, // take only graduates
+            'ifo.laction' => 20 // value 20 maps to graduates as of now
+        ])
         ->orderBy('s.student_id', 'desc')
-        ->paginate(10);
+        ->get();
+
         return view(
             'app.emis.student.graduate.index',
             compact('graduates', 'search')
@@ -249,12 +254,20 @@ class StudentEMIS extends Controller
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
         ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+        ->join('program as p', 's.program_id', '=', 'p.id')
+        ->join('department as d', 'd.id', '=', 'p.department_id')
+        ->join('action_on_student as ac', 'ifo.laction', 'ac.id')
         ->select(
+            'd.department_code as institution_code',
             'ifo.academic_year',
             'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
+            'ac.action_code as attrition_reason'
         )
+        ->where([
+            'ifo.record_status' => 1
+        ])
         ->orderBy('s.student_id', 'desc')
-        ->paginate(10);
+        ->get();
         return view(
             'app.emis.student.attrition.index',
             compact('attritions', 'search')
