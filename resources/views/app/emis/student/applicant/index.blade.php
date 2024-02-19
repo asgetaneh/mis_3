@@ -157,7 +157,7 @@
                                     <td>{{ $applicant->academic_year ? str_replace('/', '', $applicant->academic_year) : '' }}</td>
                                     <td>{{ $applicant->secondary_education_stream ?? '' }}</td>
                                     <td>{{ $applicant->program_level_code ?? '' }}</td>
-                                    <td>{{ $applicant->hed_institution_code ?? '' }}</td>
+                                    <td>{{ $applicant->hed_institution_code ?? '' }} {{'JU-MAIN-CAMPUS'}}</td>
                                     <td>{{ $applicant->department_code ?? '' }}</td>
                                     <td>{{ $applicant->program_code ?? '' }}</td>
                                     <td>{{ $applicant->first_name ?? '' }}</td>
@@ -169,7 +169,7 @@
                                     <td>{{ $applicant->grand_fathers_name ?? '' }}</td>
                                     <td>{{ $applicant->last_name_lng ?? '' }}</td>
                                     <td>{{ $applicant->birth_date ?? '' }}</td>
-                                    <td>{{ $applicant->place_of_birth ?? '' }}</td>
+                                    <td>{{ $applicant->woreda_code ?? '' }}</td>
                                     <td>{{ $applicant->email_address ?? '' }}</td>
                                     <td>{{ $applicant->telephone ?? '' }}</td>
                                     <td>{{ $applicant->sex ?? '' }}</td>
@@ -178,7 +178,7 @@
                                     <td>{{ $applicant->state_code ?? '' }}</td>
                                     <td>{{ $applicant->zone_code ?? '' }}</td>
                                     <td>{{ $applicant->woreda_code ?? '' }}</td>
-                                    <td>{{ $applicant->kebele ?? '' }}</td>
+                                    <td>{{ $applicant->kebelee ?? '' }}</td>
                                     <td>{{ $applicant->area_type ?? 'NPS' }}</td>
                                     <td>{{ $applicant->hed_acceptance_score ?? '' }}</td>
                                     <td>{{ $applicant->public_hed_acceptance_score ?? '' }}</td>
