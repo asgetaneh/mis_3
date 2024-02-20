@@ -222,7 +222,10 @@ class StudentEMIS extends Controller
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
         ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+        ->join('program as p', 'ifo.program_id', '=', 'p.id')
+        ->join('department as d', 'd.id', '=', 'p.department_id')
         ->select(
+            'd.department_code as institution_code',
             'ifo.academic_year',
             'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
 

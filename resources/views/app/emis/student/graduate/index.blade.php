@@ -122,9 +122,9 @@
                                     <td>{{ $graduate->cgpa ?? '' }}</td>
                                     <td>{{ $graduate->total_academic_periods ?? '' }}</td>
                                     <td>{{ $graduate->exit_exam_score ?? '' }}</td>
-                                    <td>{{ $graduate->employability_training ?? '' }}</td>
-                                    <td>{{ $graduate->employability_training ?? '' }}</td>
-                                    <td>{{ $graduate->employability_training ?? '' }}</td>
+                                    <td>{{ $graduate->employability_training ?? 'N' }}</td>
+                                    <td>{{ $graduate->entrepreneurship_training ?? 'N' }}</td>
+                                    <td>{{ $graduate->graduation_date ?? '' }}</td>
                                 </tr>
                             @empty
                                 <tr>
