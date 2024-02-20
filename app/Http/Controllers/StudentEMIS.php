@@ -135,7 +135,7 @@ class StudentEMIS extends Controller
         ->leftJoin('campus as ca', 'sd.campus_id', '=', 'ca.id')
         ->leftJoin('sponsor as sp', 'sd.sponsor_id', '=', 'sp.id')
         // ->join('disability as d', 'sd.disability_id', '=', 'd.id')
-        ->join('program as p', 's.program_id', '=', 'p.id')
+        ->join('program as p', 'ifo.program_id', '=', 'p.id')
         ->join('program_level as pl', 'p.program_level_id', '=', 'pl.id')
         ->join('enrollment_type as et', 'p.enrollment_type_id', '=', 'et.id')
         ->join('department as d', 'd.id', '=', 'p.department_id')
@@ -184,7 +184,7 @@ class StudentEMIS extends Controller
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
         ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
         ->join('student_status as ss', 'ifo.status_id', '=', 'ss.id')
-        ->join('program as p', 's.program_id', '=', 'p.id')
+        ->join('program as p', 'ifo.program_id', '=', 'p.id')
         ->join('department as d', 'd.id', '=', 'p.department_id')
         ->select(
             's.student_id',
@@ -254,7 +254,7 @@ class StudentEMIS extends Controller
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
         ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
-        ->join('program as p', 's.program_id', '=', 'p.id')
+        ->join('program as p', 'ifo.program_id', '=', 'p.id')
         ->join('department as d', 'd.id', '=', 'p.department_id')
         ->join('action_on_student as ac', 'ifo.laction', 'ac.id')
         ->select(
