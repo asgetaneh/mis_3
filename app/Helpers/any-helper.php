@@ -145,14 +145,14 @@ if (! function_exists('gettrans')) {
 
         return $reservations;
     }
-     function getReportingQuarter($type) 
+     function getReportingQuarter($type)
     {
         $acctive_period_list =[];
         //$report_period_list = ReportingPeriod::all();
         $report_period_list = ReportingPeriod::where('reporting_period_type_id', '=', $type)->get();
         $date = new \DateTime() ;
         $ethiopic_today = DateTimeFactory::fromDateTime($date);
-        foreach ($report_period_list as $key => $value) { 
+        foreach ($report_period_list as $key => $value) {
             // today date
              $ethiopic_today_tostring = $ethiopic_today->getYear().'-'.$ethiopic_today->getMonth().'-'.$ethiopic_today->getDay();
             $now_et_date = DateTime::createFromFormat('Y-m-d',  $ethiopic_today_tostring);
@@ -165,9 +165,9 @@ if (! function_exists('gettrans')) {
             $from_String_end_date = [$year, $month, $day] = explode('-', $value->end_date);
             $end_date = DateTime::createFromFormat('Y-m-d',  $from_String_end_date[0].'-'.$from_String_end_date[1].'-'.$from_String_end_date[2]);
 
-             if($start_date < $now_et_date && $end_date > $now_et_date){ 
+             if($start_date < $now_et_date && $end_date > $now_et_date){
                 $report_period = ReportingPeriod::where('id' , '=', $value->id)->get();
-                    if($report_period){ 
+                    if($report_period){
                         foreach ($report_period as $key2 => $period) {
                             $acctive_period_list[$key2] = $period;
                         }
@@ -377,8 +377,8 @@ if (! function_exists('gettrans')) {
 
     return $baseline->plan_value ?? '';
 }
- function getAcademicRecords($enrollments) 
-    {  
+ function getAcademicRecords($enrollments)
+    {
     $stu_record = collect();
 
     foreach ($enrollments as $key => $enrolment) {
@@ -399,7 +399,9 @@ if (! function_exists('gettrans')) {
             ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
             ->leftJoin('campus as ca', 'sd.campus_id', '=', 'ca.id')
             ->leftJoin('sponsor as sp', 'sd.sponsor_id', '=', 'sp.id')
-            // ->join('disability as d', 'sd.disability_id', '=', 'd.id')
+            // ->join('disabled_students as ds', 's.student_id', '=', 'ds.disabled_student_id')
+            // ->join('disability as di', 'ds.disability_id', '=', 'di.id')
+            // ->join('foreign_program as fp', 'sd.foreign_program_id', '=', 'fp.id')
             ->join('program as p', 'ifo.program_id', '=', 'p.id')
             ->join('program_level as pl', 'p.program_level_id', '=', 'pl.id')
             ->join('enrollment_type as et', 'p.enrollment_type_id', '=', 'et.id')
@@ -428,14 +430,17 @@ if (! function_exists('gettrans')) {
                 'd.department_code',
                 'p.program_code',
                 'pl.code AS target_qualification',
-                'et.enrollment_type_code AS program_modality'
+                'et.enrollment_type_code AS program_modality',
+                // 'di.code as student_disability',
+                // 'fp.foreign_program_code as foreign_program',
+
             )
             ->where('ifo.id', $precedingRecordId)
             ->first(); // Retrieves the record
 
-            $stu_record->push($stud_enrolmet_var); 
+            $stu_record->push($stud_enrolmet_var);
      }
     }
-         return $stu_record;      
+         return $stu_record;
     }
 }
