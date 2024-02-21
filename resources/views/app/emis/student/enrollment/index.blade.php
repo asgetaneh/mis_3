@@ -169,7 +169,7 @@
                                     <td>{{ $enrollment->year_level ?? '' }}</td>
                                     <td>{{ $enrollment->enrollment_type ?? '' }}</td>
                                     <td>{{ $enrollment->foreign_program ?? '' }}</td>
-                                    <td>{{ $enrollment->economically_supported ?? '' }}</td>
+                                    <td>{{ $enrollment->economically_supported ?? 'N' }}</td>
                                     <td>{{ $enrollment->required_academic_periods ?? '' }}</td>
                                     <td>{{ $enrollment->required_credits ?? '' }}</td>
                                     <td>{{ $enrollment->current_registered_credits ?? '' }}</td>
