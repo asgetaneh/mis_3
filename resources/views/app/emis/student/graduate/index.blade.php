@@ -71,7 +71,7 @@
 
                 {{-- <button class="btn btn-success">Download Excel</button> --}}
 
-                <div class="mt-3">
+                <div class="table-responsive mt-3">
                     <table id="emisTable" class="table table-bordered table-hover">
                         <thead>
                             <tr>

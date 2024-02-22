@@ -2,14 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Gender;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
-use App\Models\GenderTranslation;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\RedirectResponse;
-use App\Http\Requests\GenderTranslationStoreRequest;
-use App\Http\Requests\GenderTranslationUpdateRequest;
 use App\Models\NationInstitutionId;
 
 class StudentEMIS extends Controller
@@ -135,7 +130,7 @@ class StudentEMIS extends Controller
         ->where([
             'ifo.record_status' => 1 // only active students for this semester
         ])
-        // exclude year 1 and semester 1 students
+         // exclude year 1 and semester 1 students
         ->where(function($query) {
             $query->where(function($subquery) {
                 $subquery->where('ifo.year', '<>', 1)
@@ -155,7 +150,7 @@ class StudentEMIS extends Controller
             'app.emis.student.enrollment.index',
             compact('enrollments', 'nation_institute_id', 'search')
         );
-    } 
+    }
 
     public function results(Request $request): View
     {
@@ -197,26 +192,30 @@ class StudentEMIS extends Controller
         $search = $request->get('search', '');
         $graduates = DB::connection('mysql_srs')
         ->table('student as s')
-        ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
         ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
         ->join('program as p', 'ifo.program_id', '=', 'p.id')
         ->join('department as d', 'd.id', '=', 'p.department_id')
+        ->join('graduation_list as gl', 'ifo.id', '=', 'gl.student_info_id')
         ->select(
+            'gl.certified_on as graduation_date',
+            'gl.cgpa as cgpa',
+            'gl.tcrd as total_accumulated_credits',
+            'gl.academic_year as academic_year',
+            'gl.exit_score as exit_exam_score',
             'd.department_code as institution_code',
             'ifo.academic_year',
             'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
 
+            DB::raw('COUNT(ifo.id) as total_academic_periods'),
+
             // Not sure which columns match the excel columns for gpa and ECTS based data, figure out later
-            'ifo.total_ects AS total_accumulated_credits',
-            DB::raw('ROUND(ifo.total_grade_points / ifo.total_ects, 2) as cgpa'),
+            // 'ifo.total_ects AS total_accumulated_credits',
+            // DB::raw('ROUND(ifo.total_grade_points / ifo.total_ects, 2) as cgpa'),
 
             // I think this is all the semester count taken in that year, not sure yet
             // DB::raw('count(ifo.semester) as total_academic_periods'),
         )
-        ->where([
-            'ifo.record_status' => 0, // take only graduates
-            'ifo.laction' => 20 // value 20 maps to graduates as of now
-        ])
+        ->groupBy('s.id') // Group by student ID to count rows per student
         ->orderBy('s.student_id', 'desc')
         ->get();
 
