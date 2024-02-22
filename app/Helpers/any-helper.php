@@ -399,9 +399,9 @@ if (! function_exists('gettrans')) {
             ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
             ->leftJoin('campus as ca', 'sd.campus_id', '=', 'ca.id')
             ->leftJoin('sponsor as sp', 'sd.sponsor_id', '=', 'sp.id')
-            // ->join('disabled_students as ds', 's.student_id', '=', 'ds.disabled_student_id')
-            // ->join('disability as di', 'ds.disability_id', '=', 'di.id')
-            // ->join('foreign_program as fp', 'sd.foreign_program_id', '=', 'fp.id')
+            ->join('disabled_students as ds', 's.student_id', '=', 'ds.disabled_student_id')
+            ->join('disability as di', 'ds.disability_id', '=', 'di.id')
+            ->join('foreign_program as fp', 'sd.foreign_program_id', '=', 'fp.id')
             ->join('program as p', 'ifo.program_id', '=', 'p.id')
             ->join('program_level as pl', 'p.program_level_id', '=', 'pl.id')
             ->join('enrollment_type as et', 'p.enrollment_type_id', '=', 'et.id')
@@ -424,15 +424,14 @@ if (! function_exists('gettrans')) {
                 DB::raw('ROUND(ifo.total_grade_points / ifo.total_ects, 2) as cumulative_gpa'),
 
                 'ifo.year AS year_level',
-                // 'd.code AS student_disability',
                 'ca.campus_name AS campus_code',
                 // 'col.code AS college_code',
                 'd.department_code',
                 'p.program_code',
                 'pl.code AS target_qualification',
                 'et.enrollment_type_code AS program_modality',
-                // 'di.code as student_disability',
-                // 'fp.foreign_program_code as foreign_program',
+                'di.disability_code as student_disability',
+                'fp.foreign_program_code as foreign_program',
 
             )
             ->where('ifo.id', $precedingRecordId)
