@@ -390,6 +390,14 @@ if (! function_exists('gettrans')) {
         ->max('id'); // Gets the maximum ID less than the active record's ID
 
     if ($precedingRecordId) {
+         // check previous record of active record is not active
+         $precedingRecordInactive = DB::connection('mysql_srs')
+            ->table('student_info as ifo')
+            ->select('ifo.record_status as record_status')
+            ->where('id', $precedingRecordId)
+             ->get();
+         if($precedingRecordInactive[0]->record_status==0){
+            //dd($precedingRecordInactive[0]->record_status);
         // 3. Fetch the Record with that Maximum ID
         $stud_enrolmet_var = DB::connection('mysql_srs')
             ->table('student as s')
@@ -436,6 +444,59 @@ if (! function_exists('gettrans')) {
             $stu_record->push($stud_enrolmet_var); 
      }
     }
+    }
          return $stu_record;      
     }
+
+     function getAcademicRecordsOfStudentResult($forresults) 
+        {  
+        $stu_record_result = collect();
+
+        foreach ($forresults as $key => $forresult) {
+            // code...
+        $precedingRecordId = DB::connection('mysql_srs')
+            ->table('student_info')
+            ->where('student_id', $forresult->stu_info_stu_id)
+            ->where('id', '<', $forresult->stu_info_id)
+            ->max('id'); // Gets the maximum ID less than the active record's ID
+        $precedingRecordInactive = DB::connection('mysql_srs')
+                ->table('student_info as ifo')
+                ->select('ifo.student_id as student_id')
+                ->where('ifo.id', $precedingRecordId)
+                ->where('ifo.record_status', 0)
+                 ->get(); 
+             // check previous record of active record is not active and also has prevous records
+        if ($precedingRecordInactive) {
+                     // 3. Fetch the Record with that Maximum ID
+            $stud_result_var = DB::connection('mysql_srs')
+                ->table('student as s')
+                ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
+                ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+                ->join('student_status as ss', 'ifo.status_id', '=', 'ss.id')
+                ->join('program as p', 'ifo.program_id', '=', 'p.id')
+                ->join('department as d', 'd.id', '=', 'p.department_id')
+                ->select(
+                's.student_id',
+                'd.department_code',
+                'ifo.academic_year',
+                'ifo.laction',
+                'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
+                'ss.id AS result', // used the id column to check the status of pass and fail
+
+                // Not sure which columns match the excel columns for gpa and ECTS based data, figure out later
+                'ifo.total_ects AS total_accumulated_credits',
+                DB::raw('ROUND(ifo.semester_grade_points / ifo.semester_ects ,2) as gpa'),
+                DB::raw('ROUND(ifo.total_grade_points / ifo.total_ects, 2) as cgpa'),
+
+                // I think this is all the semester count taken in that year, not sure yet
+                // DB::raw('count(ifo.semester) as total_academic_periods'),
+            )
+            ->orderBy('d.department_code', 'desc')
+            ->get();
+
+                $stu_record_result->push($stud_result_var); 
+        }
+        }dd( $stu_record_result);
+             return $stu_record_result;      
+        }
 }

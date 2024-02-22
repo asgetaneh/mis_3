@@ -124,7 +124,7 @@ class StudentEMIS extends Controller
 
     public function enrollment(Request $request): View
     {
-         $search = $request->get('search', '');
+        $search = $request->get('search', '');
         $nation_institute_id = new NationInstitutionId;
         $enroll  = DB::connection('mysql_srs')
         ->table('student_info as ifo')
@@ -135,7 +135,21 @@ class StudentEMIS extends Controller
         ->where([
             'ifo.record_status' => 1 // only active students for this semester
         ])
-       ->get(); 
+        // exclude year 1 and semester 1 students
+        ->where(function($query) {
+            $query->where(function($subquery) {
+                $subquery->where('ifo.year', '<>', 1)
+                         ->where('ifo.semester', '<>', 1);
+            })->orWhere(function($subquery) {
+                $subquery->where('ifo.year', '=', 1)
+                         ->where('ifo.semester', '<>', 1);
+            })->orWhere(function($subquery) {
+                $subquery->where('ifo.year', '<>', 1)
+                         ->where('ifo.semester', '=', 1);
+            });
+        }) 
+        ->get() ; 
+       //dd($enroll);
         $enrollments = getAcademicRecords($enroll);
         return view(
             'app.emis.student.enrollment.index',
@@ -147,35 +161,31 @@ class StudentEMIS extends Controller
     {
         $search = $request->get('search', '');
         $nation_institute_id = new NationInstitutionId;
-        $results = DB::connection('mysql_srs')
-        ->table('student as s')
-        ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
-        ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
-        ->join('student_status as ss', 'ifo.status_id', '=', 'ss.id')
-        ->join('program as p', 'ifo.program_id', '=', 'p.id')
-        ->join('department as d', 'd.id', '=', 'p.department_id')
+        $query_for_result  = DB::connection('mysql_srs')
+        ->table('student_info as ifo')
         ->select(
-            's.student_id',
-            'd.department_code',
-            'ifo.academic_year',
-            'ifo.laction',
-            'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
-            'ss.id AS result', // used the id column to check the status of pass and fail
-
-            // Not sure which columns match the excel columns for gpa and ECTS based data, figure out later
-            'ifo.total_ects AS total_accumulated_credits',
-            DB::raw('ROUND(ifo.semester_grade_points / ifo.semester_ects ,2) as gpa'),
-            DB::raw('ROUND(ifo.total_grade_points / ifo.total_ects, 2) as cgpa'),
-
-            // I think this is all the semester count taken in that year, not sure yet
-            // DB::raw('count(ifo.semester) as total_academic_periods'),
+            'ifo.student_id as stu_info_stu_id',
+            'ifo.id as stu_info_id'
         )
         ->where([
-            'ifo.record_status' => 1
+            'ifo.record_status' => 1 // only active students for this semester
         ])
-        ->orderBy('s.student_id', 'desc')
-        ->get();
-
+        // exclude year 1 and semester 1 students
+        ->where(function($query) {
+            $query->where(function($subquery) {
+                $subquery->where('ifo.year', '<>', 1)
+                         ->where('ifo.semester', '<>', 1);
+            })->orWhere(function($subquery) {
+                $subquery->where('ifo.year', '=', 1)
+                         ->where('ifo.semester', '<>', 1);
+            })->orWhere(function($subquery) {
+                $subquery->where('ifo.year', '<>', 1)
+                         ->where('ifo.semester', '=', 1);
+            });
+        }) 
+        ->get() ; 
+        //dd($query_for_result);
+        $results = getAcademicRecordsOfStudentResult($query_for_result);
         return view(
             'app.emis.student.result.index',
             compact('results', 'nation_institute_id', 'search')
@@ -185,7 +195,6 @@ class StudentEMIS extends Controller
     public function graduates(Request $request): View
     {
         $search = $request->get('search', '');
-
         $graduates = DB::connection('mysql_srs')
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
