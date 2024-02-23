@@ -474,7 +474,8 @@ if (! function_exists('gettrans')) {
             ->max('id'); // Gets the maximum ID less than the active record's ID
         $precedingRecordInactive = DB::connection('mysql_srs')
                 ->table('student_info as ifo')
-                ->select('ifo.student_id as student_id')
+                ->select('ifo.student_id as student_id',
+                    'ifo.id as preceding_record_id')
                 ->where('ifo.id', $precedingRecordId)
                 ->where('ifo.record_status', 0)
                  ->first(); 
@@ -485,6 +486,7 @@ if (! function_exists('gettrans')) {
                 ->table('student as s')
                 ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
                 ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+               // ->join('check_list as cl', 'ifo.check_list_id', '=', 'cl.id')
                 ->join('student_status as ss', 'ifo.status_id', '=', 'ss.id')
                 ->join('program as p', 'ifo.program_id', '=', 'p.id')
                 ->join('department as d', 'd.id', '=', 'p.department_id')
@@ -493,6 +495,8 @@ if (! function_exists('gettrans')) {
                 'd.department_code',
                 'ifo.academic_year',
                 'ifo.laction',
+                //'cl.number_of_semesters AS required_academic_periods',
+
                 'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
                 'ss.id AS result', // used the id column to check the status of pass and fail
 
@@ -500,13 +504,16 @@ if (! function_exists('gettrans')) {
                 'ifo.total_ects AS total_accumulated_credits',
                 DB::raw('ROUND(ifo.semester_grade_points / ifo.semester_ects ,2) as gpa'),
                 DB::raw('ROUND(ifo.total_grade_points / ifo.total_ects, 2) as cgpa'),
+                DB::raw('(SELECT COUNT(*) FROM student_info si WHERE si.student_id = '.$forresult->stu_info_stu_id.' and id<'.$forresult->stu_info_id.' ) as total_academic_periods') 
+
 
                 // I think this is all the semester count taken in that year, not sure yet
                 // DB::raw('count(ifo.semester) as total_academic_periods'),
             )
+             ->where('ifo.id', $precedingRecordInactive->preceding_record_id)
             ->orderBy('d.department_code', 'desc')
             ->first();
-
+            //dd($stud_result_var);
                 $stu_record_result->push($stud_result_var); 
         }
         }//dd( $stu_record_result);

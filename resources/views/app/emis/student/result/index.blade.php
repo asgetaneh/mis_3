@@ -82,6 +82,9 @@
                                 <th class="text-left">
                                     student_national_id
                                 </th>
+                                 <th class="text-left">
+                                    JU stu id
+                                </th>
                                 <th>
                                     academic_year
                                 </th>
@@ -120,6 +123,7 @@
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $result->department_code ?? '' }}</td>
                                     <td>{{ $nation_id[0]['nation_id'] ?? '' }}</td>
+                                     <td>{{ $result->student_id ?? '' }}</td>
                                     <td>{{ $result->academic_year ? str_replace('/', '', $result->academic_year) : '' }}</td>
                                     <td>{{ isset($result->academic_period) ? 'S'.$result->academic_period : '' }}</td>
                                     <td>{{ $result->total_accumulated_credits ?? '' }}</td>
@@ -131,9 +135,9 @@
 
                                         {{-- This checking is based on the id to identify only pass and fail statuses. --}}
                                         @if(isset($result->result))
-                                            @if($result->result == 1)
+                                            @if(in_array($result->result, [0,1,4,5]))
                                                 {{ 'P' }}
-                                            @elseif($result->result == 2)
+                                            @elseif(in_array($result->result, [2,3,10]))
                                                 {{ 'F' }}
                                             @else
                                                 {{ '' }}

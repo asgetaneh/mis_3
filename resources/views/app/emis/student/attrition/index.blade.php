@@ -100,7 +100,31 @@
                                     <td>{{ $attrition->national_id ?? '' }}</td>
                                     <td>{{ $attrition->academic_year ? str_replace('/', '', $attrition->academic_year) : '' }}</td>
                                     <td>{{ isset($attrition->academic_period) ? 'S'.$attrition->academic_period : '' }}</td>
-                                    <td>{{ $attrition->attrition_reason ?? '' }}</td>
+                                    <td>
+
+                                        {{-- 
+
+                                            3,
+                                            4,
+                                            7,11,10
+
+                                        --}}
+
+                                        @if($attrition->laction_id == 3)
+                                            {{'10'}}
+                                        @elseif($attrition->laction_id == 4)
+                                            {{'4'}}
+                                        @elseif($attrition->laction_id == 7)
+                                            {{'7'}}
+                                        @elseif($attrition->laction_id == 10)
+                                            {{'10'}}
+                                        @elseif($attrition->laction_id == 11)
+                                            {{ '8' }}
+                                        @else
+                                            {{ '10' }}
+                                        @endif
+
+                                        {{ $attrition->attrition_reason ?? '' }}</td>
                                 </tr>
                             @empty
                                 <tr>

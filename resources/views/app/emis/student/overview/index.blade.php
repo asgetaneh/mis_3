@@ -151,7 +151,7 @@
                                     <td>{{ $overview->last_name_lng ?? '' }}</td>
                                     <td>{{ $overview->birth_date ?? '' }}</td>
                                     <td>{{ $overview->place_of_birth ?? '' }}</td>
-                                    <td>{{ $overview->email_address ?? '' }}</td>
+                                    <td>{{ $overview->email ?? '' }}</td>
                                     <td>{{ $overview->telephone ?? '' }}</td>
                                     <td>{{ $overview->sex ?? '' }}</td>
                                     <td>{{ $overview->country_code ?? '' }}</td>
