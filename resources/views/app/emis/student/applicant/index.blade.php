@@ -170,7 +170,7 @@
                                     <td>{{ $applicant->last_name_lng ?? '' }}</td>
                                     <td>{{ $applicant->birth_date ?? '' }}</td>
                                     <td>{{ $applicant->woreda_code ?? '' }}</td>
-                                    <td>{{ $applicant->email_address ?? '' }}</td>
+                                    <td>{{ $applicant->email ?? '' }}</td>
                                     <td>{{ $applicant->telephone ?? '' }}</td>
                                     <td>{{ $applicant->sex ?? '' }}</td>
                                     <td>{{ $applicant->country_code ?? '' }}</td>
@@ -178,7 +178,7 @@
                                     <td>{{ $applicant->state_code ?? '' }}</td>
                                     <td>{{ $applicant->zone_code ?? '' }}</td>
                                     <td>{{ $applicant->woreda_code ?? '' }}</td>
-                                    <td>{{ $applicant->kebelee ?? '' }}</td>
+                                    <td>{{ $applicant->kebele ?? '' }}</td>
                                     <td>{{ $applicant->area_type ?? 'NPS' }}</td>
                                     <td>{{ $applicant->hed_acceptance_score ?? '' }}</td>
                                     <td>{{ $applicant->public_hed_acceptance_score ?? '' }}</td>

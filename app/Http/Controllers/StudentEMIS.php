@@ -26,6 +26,8 @@ class StudentEMIS extends Controller
         ->join('program as p', 's.program_id', '=', 'p.id')
         ->join('program_level as pl', 'p.program_level_id', '=', 'pl.id')
         ->join('department as d', 'd.id', '=', 'p.department_id')
+        ->leftjoin('disabled_students as ds', 's.student_id', '=', 'ds.disabled_student_id')
+        ->leftjoin('disability as di', 'ds.disability_id', '=', 'di.id')
         ->select(
             's.student_id',
             // 'ifo.academic_year',
@@ -41,7 +43,7 @@ class StudentEMIS extends Controller
             'sd.telephone',
             'sd.kebele',
             'sd.place_of_birth',
-            'sd.mother_name',
+            'sd.alternative_email as email',
             'sd.family_phone',
             'sd.entrance_total_mark as national_exam_score',
             'c.country_code',
@@ -50,7 +52,8 @@ class StudentEMIS extends Controller
             'w.woreda_code',
             'd.department_code',
             'p.program_code',
-            'pl.code AS program_level_code'
+            'pl.code AS program_level_code',
+            'di.disability_code as student_disability',
         )
         ->where([
             'ifo.year' => 1,
@@ -95,7 +98,7 @@ class StudentEMIS extends Controller
             'sd.kebele',
             'sd.place_of_birth',
             'sd.entrance_exam_id',
-            // 'sd.mother_name',
+            'sd.alternative_email as email',
             // 'sd.family_phone',
             'c.country_code AS country_code',
             'st.region_code AS state_code',
@@ -142,8 +145,8 @@ class StudentEMIS extends Controller
                 $subquery->where('ifo.year', '<>', 1)
                          ->where('ifo.semester', '=', 1);
             });
-        }) 
-        ->get() ; 
+        })
+        ->get() ;
        //dd($enroll);
         $enrollments = getAcademicRecords($enroll);
         return view(
@@ -177,8 +180,8 @@ class StudentEMIS extends Controller
                 $subquery->where('ifo.year', '<>', 1)
                          ->where('ifo.semester', '=', 1);
             });
-        }) 
-        ->get() ; 
+        })
+        ->get() ;
         //dd($query_for_result);
         $results = getAcademicRecordsOfStudentResult($query_for_result);
         return view(
@@ -197,6 +200,7 @@ class StudentEMIS extends Controller
         ->join('department as d', 'd.id', '=', 'p.department_id')
         ->join('graduation_list as gl', 'ifo.id', '=', 'gl.student_info_id')
         ->select(
+            's.student_id as stud_id',
             'gl.certified_on as graduation_date',
             'gl.cgpa as cgpa',
             'gl.tcrd as total_accumulated_credits',
@@ -206,7 +210,8 @@ class StudentEMIS extends Controller
             'ifo.academic_year',
             'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
 
-            DB::raw('COUNT(ifo.id) as total_academic_periods'),
+            // DB::raw('COUNT(ifo.id) as total_academic_periods'),
+            DB::raw('(SELECT COUNT(*) FROM student_info si WHERE si.student_id = s.id) as total_academic_periods')
 
             // Not sure which columns match the excel columns for gpa and ECTS based data, figure out later
             // 'ifo.total_ects AS total_accumulated_credits',
@@ -215,7 +220,6 @@ class StudentEMIS extends Controller
             // I think this is all the semester count taken in that year, not sure yet
             // DB::raw('count(ifo.semester) as total_academic_periods'),
         )
-        ->groupBy('s.id') // Group by student ID to count rows per student
         ->orderBy('s.student_id', 'desc')
         ->get();
 
