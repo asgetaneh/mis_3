@@ -393,23 +393,28 @@ if (! function_exists('gettrans')) {
          // check previous record of active record is not active
          $precedingRecordInactive = DB::connection('mysql_srs')
             ->table('student_info as ifo')
-            ->select('ifo.record_status as record_status')
-            ->where('id', $precedingRecordId)
-             ->get();
-         if($precedingRecordInactive[0]->record_status==0){
+            ->select('ifo.record_status as record_status',
+                'ifo.id as preceding_record_id')
+             ->where('id', $precedingRecordId)
+             ->first();
+             
+
+         if($precedingRecordInactive->record_status == 0){
             //dd($precedingRecordInactive[0]->record_status);
         // 3. Fetch the Record with that Maximum ID
         $stud_enrolmet_var = DB::connection('mysql_srs')
             ->table('student as s')
             ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
             ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+            ->leftJoin('action_on_student as astu', 'ifo.action', '=', 'astu.id')
+
              ->join('check_list as cl', 'ifo.check_list_id', '=', 'cl.id')
             ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
             ->leftJoin('campus as ca', 'sd.campus_id', '=', 'ca.id')
             ->leftJoin('sponsor as sp', 'sd.sponsor_id', '=', 'sp.id')
-            ->join('disabled_students as ds', 's.student_id', '=', 'ds.disabled_student_id')
-            ->join('disability as di', 'ds.disability_id', '=', 'di.id')
-            ->join('foreign_program as fp', 'sd.foreign_program_id', '=', 'fp.id')
+            ->leftJoin('disabled_students as ds', 's.student_id', '=', 'ds.disabled_student_id')
+            ->leftJoin('disability as di', 'ds.disability_id', '=', 'di.id')
+            ->leftJoin('foreign_program as fp', 'sd.foreign_program_id', '=', 'fp.id')
             ->join('program as p', 'ifo.program_id', '=', 'p.id')
             ->join('program_level as pl', 'p.program_level_id', '=', 'pl.id')
             ->join('enrollment_type as et', 'p.enrollment_type_id', '=', 'et.id')
@@ -420,6 +425,8 @@ if (! function_exists('gettrans')) {
                 'ifo.student_id as stu_info_stu_id',
                 'ifo.id as stu_info_id',
                 'ifo.academic_year',
+                'astu.action_code as enrollment_type',
+                'astu.id as exchange_type',
                 'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
 
                 // Not sure which columns match the excel colummns for gpa and ECTS based data, figure out later
@@ -442,10 +449,12 @@ if (! function_exists('gettrans')) {
                 'fp.foreign_program_code as foreign_program',
 
             )
-            ->where('ifo.id', $precedingRecordId)
+             ->where('ifo.id', $precedingRecordInactive->preceding_record_id)
             ->first(); // Retrieves the record
+             if($stud_enrolmet_var){
+             $stu_record->push($stud_enrolmet_var);
+            }
 
-            $stu_record->push($stud_enrolmet_var);
      }
     }
     }
@@ -468,7 +477,7 @@ if (! function_exists('gettrans')) {
                 ->select('ifo.student_id as student_id')
                 ->where('ifo.id', $precedingRecordId)
                 ->where('ifo.record_status', 0)
-                 ->get(); 
+                 ->first(); 
              // check previous record of active record is not active and also has prevous records
         if ($precedingRecordInactive) {
                      // 3. Fetch the Record with that Maximum ID
@@ -496,11 +505,11 @@ if (! function_exists('gettrans')) {
                 // DB::raw('count(ifo.semester) as total_academic_periods'),
             )
             ->orderBy('d.department_code', 'desc')
-            ->get();
+            ->first();
 
                 $stu_record_result->push($stud_result_var); 
         }
-        }dd( $stu_record_result);
+        }//dd( $stu_record_result);
              return $stu_record_result;      
         }
 }

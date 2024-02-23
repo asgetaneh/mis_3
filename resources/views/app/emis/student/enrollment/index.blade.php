@@ -152,8 +152,8 @@
                         <tbody>
                             @forelse($enrollments as $key => $enrollment)
                               @php
-                                  $nation_id = $nation_institute_id-> getNationalId($enrollment->student_id_number);
-                                 @endphp
+                                     $nation_id = $nation_institute_id-> getNationalId($enrollment->student_id_number);
+                             @endphp
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
                                      <td>{{ $enrollment->department_code ?? '' }}</td>
@@ -176,13 +176,25 @@
                                     <td>{{ $enrollment->cumulative_registered_credits ?? '' }}</td>
                                     <td>{{ $enrollment->cumulative_completed_credits ?? '' }}</td>
                                     <td>{{ $enrollment->cumulative_gpa ?? '' }}</td>
-                                    <td>{{ $enrollment->outgoing_exchange ?? '' }}</td>
-                                    <td>{{ $enrollment->incoming_exchange ?? '' }}</td>
+                                    <td>
+                                        @if($enrollment->exchange_type==6 && $enrollment->exchange_type==10)
+                                            {{'Y'}}
+                                        @else
+                                            {{'N'}}
+                                        @endif
+                                    </td>
+                                    <td> 
+                                        @if($enrollment->exchange_type==6 && $enrollment->exchange_type==8)
+                                            {{'Y'}}
+                                        @else
+                                            {{'N'}}
+                                        @endif
+                                    </td>
                                     <td>{{ $enrollment->exchange_country ?? '' }}</td>
                                     <td>{{ $enrollment->exchange_institution ?? '' }}</td>
                                     <td>{{ $enrollment->exchange_institution_lng ?? '' }}</td>
                                     <td>{{ $enrollment->sponsor_code ?? '' }}</td>
-                                    <td>{{ $enrollment->student_economical_status ?? '' }}</td>
+                                    <td>{{ '2' }}</td>
                                     <td>{{ $enrollment->student_disability ?? '' }}</td>
                                     <td>{{ $enrollment->specially_gifted ?? 'N' }}</td>
                                     <td>{{ $enrollment->food_service_type ?? '' }}</td>

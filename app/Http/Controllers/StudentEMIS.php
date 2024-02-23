@@ -144,8 +144,9 @@ class StudentEMIS extends Controller
             });
         }) 
         ->get() ; 
-       //dd($enroll);
+      
         $enrollments = getAcademicRecords($enroll);
+        //dd($enrollments);
         return view(
             'app.emis.student.enrollment.index',
             compact('enrollments', 'nation_institute_id', 'search')
