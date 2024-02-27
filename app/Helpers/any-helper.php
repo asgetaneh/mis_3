@@ -16,7 +16,7 @@ use App\Models\PlaningYear;
 // use DateTime;
 // use Redirect;
 
-
+use Illuminate\Support\Collection;
 
 /**
  * Write code on Method
@@ -148,7 +148,8 @@ if (! function_exists('gettrans')) {
      function getReportingQuarter($type)
     {
         $acctive_period_list =[];
-        $report_period_list = ReportingPeriod::all();
+        //$report_period_list = ReportingPeriod::all();
+        $report_period_list = ReportingPeriod::where('reporting_period_type_id', '=', $type)->get();
         $date = new \DateTime() ;
         $ethiopic_today = DateTimeFactory::fromDateTime($date);
         foreach ($report_period_list as $key => $value) {
@@ -165,7 +166,7 @@ if (! function_exists('gettrans')) {
             $end_date = DateTime::createFromFormat('Y-m-d',  $from_String_end_date[0].'-'.$from_String_end_date[1].'-'.$from_String_end_date[2]);
 
              if($start_date < $now_et_date && $end_date > $now_et_date){
-                $report_period = ReportingPeriod::where('id' , '=', $value->id)->where('reporting_period_type_id', '=', $type)->get();
+                $report_period = ReportingPeriod::where('id' , '=', $value->id)->get();
                     if($report_period){
                         foreach ($report_period as $key2 => $period) {
                             $acctive_period_list[$key2] = $period;
@@ -173,8 +174,7 @@ if (! function_exists('gettrans')) {
                      }
             }
         }
-        // dd($acctive_period_list);
-        return $acctive_period_list;
+         return $acctive_period_list;
 
      }
 
@@ -214,6 +214,13 @@ if (! function_exists('gettrans')) {
      $ReportNarrations = ReportNarration::select()->where('planing_year_id' , '=', $year)->where('office_id' , '=', $office)->where('key_peformance_indicator_id' , '=', $kpi)->get();//dd($planAccomplishments);
         foreach ($ReportNarrations as $key => $ReportNarration) {
             return $ReportNarration->plan_naration;
+        }
+    }
+    function getSavedPlanDocument($year,$period,$kpi, $office){
+     $ReportNarrationreports = ReportNarrationReport::select()->where('planing_year_id' , '=', $year)->where('reporting_period_id' , '=', $period)->where('office_id' , '=', $office)->where('key_peformance_indicator_id' , '=', $kpi)->get();//dd($ReportNarrationreports);
+        foreach ($ReportNarrationreports as $key => $ReportNarrationreport) {
+           // dd($ReportNarrationreport->approval_text);
+            return $ReportNarrationreport->approval_text;
         }
     }
     function getSavedReportNaration($year,$period,$kpi, $office){
@@ -370,4 +377,146 @@ if (! function_exists('gettrans')) {
 
     return $baseline->plan_value ?? '';
 }
+ function getAcademicRecords($enrollments)
+    {
+    $stu_record = collect();
+
+    foreach ($enrollments as $key => $enrolment) {
+        // code...
+    $precedingRecordId = DB::connection('mysql_srs')
+        ->table('student_info')
+        ->where('student_id', $enrolment->stu_info_stu_id)
+        ->where('id', '<', $enrolment->stu_info_id)
+        ->max('id'); // Gets the maximum ID less than the active record's ID
+
+    if ($precedingRecordId) {
+         // check previous record of active record is not active
+         $precedingRecordInactive = DB::connection('mysql_srs')
+            ->table('student_info as ifo')
+            ->select('ifo.record_status as record_status',
+                'ifo.id as preceding_record_id')
+             ->where('id', $precedingRecordId)
+             ->first();
+             
+
+         if($precedingRecordInactive->record_status == 0){
+            //dd($precedingRecordInactive[0]->record_status);
+        // 3. Fetch the Record with that Maximum ID
+        $stud_enrolmet_var = DB::connection('mysql_srs')
+            ->table('student as s')
+            ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
+            ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+            ->leftJoin('action_on_student as astu', 'ifo.action', '=', 'astu.id')
+
+             ->join('check_list as cl', 'ifo.check_list_id', '=', 'cl.id')
+            ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
+            ->leftJoin('campus as ca', 'sd.campus_id', '=', 'ca.id')
+            ->leftJoin('sponsor as sp', 'sd.sponsor_id', '=', 'sp.id')
+            ->leftJoin('disabled_students as ds', 's.student_id', '=', 'ds.disabled_student_id')
+            ->leftJoin('disability as di', 'ds.disability_id', '=', 'di.id')
+            ->leftJoin('foreign_program as fp', 'sd.foreign_program_id', '=', 'fp.id')
+            ->join('program as p', 'ifo.program_id', '=', 'p.id')
+            ->join('program_level as pl', 'p.program_level_id', '=', 'pl.id')
+            ->join('enrollment_type as et', 'p.enrollment_type_id', '=', 'et.id')
+            ->join('department as d', 'd.id', '=', 'p.department_id')
+             ->select(
+                's.student_id as student_id_number',
+                'sp.sponsor_code',
+                'ifo.student_id as stu_info_stu_id',
+                'ifo.id as stu_info_id',
+                'ifo.academic_year',
+                'astu.action_code as enrollment_type',
+                'astu.id as exchange_type',
+                'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
+
+                // Not sure which columns match the excel colummns for gpa and ECTS based data, figure out later
+                'ifo.total_ects AS cumulative_registered_credits',
+                'ifo.semester_ects AS current_registered_credits',
+                 'ifo.previous_total_ects AS cumulative_completed_credits',
+                 'cl.required_credit as required_credits',
+                 'cl.number_of_semesters AS required_academic_periods',
+
+                DB::raw('ROUND(ifo.total_grade_points / ifo.total_ects, 2) as cumulative_gpa'),
+
+                'ifo.year AS year_level',
+                'ca.campus_name AS campus_code',
+                // 'col.code AS college_code',
+                'd.department_code',
+                'p.program_code',
+                'pl.code AS target_qualification',
+                'et.enrollment_type_code AS program_modality',
+                'di.disability_code as student_disability',
+                'fp.foreign_program_code as foreign_program',
+
+            )
+             ->where('ifo.id', $precedingRecordInactive->preceding_record_id)
+            ->first(); // Retrieves the record
+             if($stud_enrolmet_var){
+             $stu_record->push($stud_enrolmet_var);
+            }
+
+     }
+    }
+    }
+         return $stu_record; 
+    }
+
+     function getAcademicRecordsOfStudentResult($forresults) 
+        {  
+        $stu_record_result = collect();
+
+        foreach ($forresults as $key => $forresult) {
+            // code...
+        $precedingRecordId = DB::connection('mysql_srs')
+            ->table('student_info')
+            ->where('student_id', $forresult->stu_info_stu_id)
+            ->where('id', '<', $forresult->stu_info_id)
+            ->max('id'); // Gets the maximum ID less than the active record's ID
+        $precedingRecordInactive = DB::connection('mysql_srs')
+                ->table('student_info as ifo')
+                ->select('ifo.student_id as student_id',
+                    'ifo.id as preceding_record_id')
+                ->where('ifo.id', $precedingRecordId)
+                ->where('ifo.record_status', 0)
+                 ->first(); 
+             // check previous record of active record is not active and also has prevous records
+        if ($precedingRecordInactive) {
+                     // 3. Fetch the Record with that Maximum ID
+            $stud_result_var = DB::connection('mysql_srs')
+                ->table('student as s')
+                ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
+                ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+               // ->join('check_list as cl', 'ifo.check_list_id', '=', 'cl.id')
+                ->join('student_status as ss', 'ifo.status_id', '=', 'ss.id')
+                ->join('program as p', 'ifo.program_id', '=', 'p.id')
+                ->join('department as d', 'd.id', '=', 'p.department_id')
+                ->select(
+                's.student_id',
+                'd.department_code',
+                'ifo.academic_year',
+                'ifo.laction',
+                //'cl.number_of_semesters AS required_academic_periods',
+
+                'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
+                'ss.id AS result', // used the id column to check the status of pass and fail
+
+                // Not sure which columns match the excel columns for gpa and ECTS based data, figure out later
+                'ifo.total_ects AS total_accumulated_credits',
+                DB::raw('ROUND(ifo.semester_grade_points / ifo.semester_ects ,2) as gpa'),
+                DB::raw('ROUND(ifo.total_grade_points / ifo.total_ects, 2) as cgpa'),
+                DB::raw('(SELECT COUNT(*) FROM student_info si WHERE si.student_id = '.$forresult->stu_info_stu_id.' and id<'.$forresult->stu_info_id.' ) as total_academic_periods') 
+
+
+                // I think this is all the semester count taken in that year, not sure yet
+                // DB::raw('count(ifo.semester) as total_academic_periods'),
+            )
+             ->where('ifo.id', $precedingRecordInactive->preceding_record_id)
+            ->orderBy('d.department_code', 'desc')
+            ->first();
+            //dd($stud_result_var);
+                $stu_record_result->push($stud_result_var); 
+        }
+        }//dd( $stu_record_result);
+             return $stu_record_result;      
+        }
 }

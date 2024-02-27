@@ -34,9 +34,8 @@ use Illuminate\Http\RedirectResponse;
 use App\Models\KeyPeformanceIndicator;
 use App\Http\Requests\PlanAccomplishmentStoreRequest;
 use App\Http\Requests\PlanAccomplishmentUpdateRequest;
-
-
-
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 
 
 class PlanAccomplishmentController extends Controller
@@ -286,7 +285,7 @@ class PlanAccomplishmentController extends Controller
    public function savePlan(Request $request){
 
     // dd($request->all());
-       $kpi = $request->input();
+       $kpi = $request->all();
        $user = auth()->user()->id;
        $getuser = User::find($user);
        $user_offices = $getuser->offices[0]->id;
@@ -298,17 +297,17 @@ class PlanAccomplishmentController extends Controller
          $submit = "create";
 
         if($request->has('type') && $request->type == "yes"){ $submit = "update";}
-
+         $getNaration =null;
          $index = [];
         $planning = PlaningYear::where('is_active',true)->first();
          foreach ($kpi as $key => $value) {
             $str_key= (string)$key ;
-            // dd($kpi);
+             //dd($kpi);
               if($str_key!='_token'){
                 if($value=="yes"){ $submit = "update";}
                 // first time planning
-                if($submit == "create"){ //dd($submit);
-                if($str_key[0]!='d'){
+                if($submit == "create"){ 
+                if($str_key[0]!='d' && $str_key!="myfile"){ 
                     $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
                     $trueindex =0;
                     $index = [];
@@ -368,9 +367,8 @@ class PlanAccomplishmentController extends Controller
                         $plan_accom->save();
                         $kpi_match_for_naration = $index[0];
                     }
-
                 }
-                else{ //dd($index[0]);
+                elseif($str_key[0]=='d'){ // continue; dd("x");
                     $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
                     $trueindex =0;
                      $index =[];
@@ -386,7 +384,17 @@ class PlanAccomplishmentController extends Controller
                    // $naration->reporting_period_id=$index[2];
                     $naration->planing_year_id=$planning->id;
                     $naration->save();
+                    $getNaration =$naration;
                  }
+                 elseif($str_key=="myfile"){  
+                   
+                    $fileName = $request->file('myfile')->getClientOriginalName();
+                    $fileName = date('Y-m-d')."_".time().'_'.$fileName;
+                    // $filePath = 'uploads/' . $fileName; 
+                    $path = $request->file('myfile')->storeAs( 'uploads', $fileName); 
+                    $getNaration->approval_text=$fileName;
+                    $getNaration->save();
+                }
                 }
                 else{
                     if($key!="type"){
@@ -404,7 +412,6 @@ class PlanAccomplishmentController extends Controller
 
                             if($index[0] == 'baseline'){
                                 $length =  count($index) - 1;
-
                                 if($length > 1){
                                     $kpi_one_id = (int)$index[2];
                                         if($length > 2){
@@ -497,7 +504,7 @@ class PlanAccomplishmentController extends Controller
                 }
               }
           }
-         } //dd("end");
+         } 
         $search = $request->get('search', '');
           $planAccomplishments = PlanAccomplishment::where('office_id' , '=', $user_offices)->where('planning_year_id' , '=', $planning->id ?? NULL)
 
@@ -1173,7 +1180,7 @@ class PlanAccomplishmentController extends Controller
        ]);
      }
      public function saveReport(Request $request){
-       $kpi = $request->input();
+       $kpi = $request->all();
        $user = auth()->user()->id;
        $getuser = User::find($user);
        $user_offices = $getuser->offices[0]->id;
@@ -1189,7 +1196,7 @@ class PlanAccomplishmentController extends Controller
             $str_key= (string)$key ;
               //dd($kpi);
               if($str_key!='_token'){
-                if($str_key[0]!='d' && $str_key!='type'){
+                if($str_key[0]!='d' && $str_key!='type' && $str_key!="myfile"){
                     $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
                     $trueindex =0;
                     $index =[];
@@ -1215,7 +1222,7 @@ class PlanAccomplishmentController extends Controller
                         }
                     }
                     else{
-                            $kpi_child_one_id= NULL;
+                        $kpi_child_one_id= NULL;
                         $kpi_child_two_id= NULL;
                         $kpi_child_three_id= NULL;
                     }
@@ -1230,33 +1237,61 @@ class PlanAccomplishmentController extends Controller
                         ->where('kpi_child_three_id' , '=',$kpi_child_three_id))
                             ->update(['accom_value' => (string)$value])
                             ->update(['accom_status' => (string)$accom_status]);
-                      }
-                    else{
-                        if($value=="yes"){ $submit = "update"; continue;}
+                }
+                else{
+                    if($str_key=='type'){  $submit = "update";}
+                    if($submit == "create"){
+                        if($str_key[0]=='d'){ 
+                            $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
+                            $index = [];
+                            foreach ($arr_to_split_text as $splitkey => $splitvalue) {
+                            $index[$splitkey] =$splitvalue;
+                            }  
+                            $naration =new ReportNarrationReport;
+                            $naration->report_naration=$value;
+                            $naration->key_peformance_indicator_id=$index[1];
+                            $naration->office_id=$user_offices;
+                            $naration->reporting_period_id=$index[2];
+                            $naration->planing_year_id=$planning->id;
+                            $naration->save();
+                            $getNaration =$naration;
+                        }
+                        elseif($str_key=="myfile"){  
+                            $fileName = $request->file('myfile')->getClientOriginalName();
+                            $fileName = date('Y-m-d')."_".time().'_'.$fileName; 
+                            // $filePath = 'uploads/' . $fileName; 
+                            $path = $request->file('myfile')->storeAs( 'uploads', $fileName); 
+                            $getNaration->approval_text=$fileName;
+                            $getNaration->save();
+                        }
+                    } 
+                    else{ 
+                       if($str_key[0]=='d' ){
                          $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
                          $index = [];
-                             foreach ($arr_to_split_text as $splitkey => $splitvalue) {
-                                $index[$splitkey] =$splitvalue;
-                              }
-                              if($submit == "create"){
-                                $naration =new ReportNarrationReport;
-                                $naration->report_naration=$value;
-                                $naration->key_peformance_indicator_id=$index[1];
-                                $naration->office_id=$user_offices;
-                                $naration->reporting_period_id=$index[2];
-                                $naration->planing_year_id=$planning->id;
-                                $naration->save();
-                            }
-                            else{
-                                $updated2 = tap(DB::table('report_narration_reports')
-                                ->where('planing_year_id' , '=', $planning
-                                ->id ?? NULL)->where('office_id' , '=', $user_offices)
-                                ->where('key_peformance_indicator_id' , '=', $index[1])
-                                ->where('reporting_period_id' , '=', $index[2]))
-                                ->update(['report_naration' => $value])
-                                    ->first();
-                            }
+                         foreach ($arr_to_split_text as $splitkey => $splitvalue) {
+                            $index[$splitkey] =$splitvalue;
+                        }
+                        $updated2 = tap(DB::table('report_narration_reports')
+                        ->where('planing_year_id' , '=', $planning
+                        ->id ?? NULL)
+                        ->where('office_id' , '=', $user_offices)
+                        ->where('key_peformance_indicator_id' , '=', $index[1])
+                        ->where('reporting_period_id' , '=', $index[2]))
+                        ->update(['report_naration' => $value])
+                        ->first();
+                        $report_narration_report_ob = ReportNarrationReport::find($updated2->id);
+                          }
+                         elseif($str_key=="myfile"){   
+                            $fileName = $request->file('myfile')->getClientOriginalName();
+                            $fileName = date('Y-m-d')."_".time().'_'.$fileName; 
+                            // $filePath = 'uploads/' . $fileName; 
+                            $path = $request->file('myfile')->storeAs( 'uploads', $fileName); 
+                            $report_narration_report_ob->approval_text=$fileName;
+                            $report_narration_report_ob->save();
+                         }
                     }
+                }
               }
           } //dd("end");
         $search = $request->get('search', '');
@@ -2312,5 +2347,15 @@ class PlanAccomplishmentController extends Controller
                 }
             }
         }
+    }
+    public function viewFile($path){
+        $filename = 'test.pdf';
+        $path = storage_path('app/uploads/'.$path);
+        //dd($path);
+        return Response::make(file_get_contents($path), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'.$filename.'"'
+        ]);
+        dd($path);
     }
 }

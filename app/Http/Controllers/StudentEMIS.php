@@ -2,14 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Gender;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
-use App\Models\GenderTranslation;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\RedirectResponse;
-use App\Http\Requests\GenderTranslationStoreRequest;
-use App\Http\Requests\GenderTranslationUpdateRequest;
 use App\Models\NationInstitutionId;
 
 class StudentEMIS extends Controller
@@ -22,22 +17,25 @@ class StudentEMIS extends Controller
         $applicants = DB::connection('mysql_srs')
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
-        // ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+        ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
         ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
-        // ->join('country as c', 'sd.country_id', '=', 'c.id')
+        ->join('country as c', 'sd.country_id', '=', 'c.id')
         ->join('state as st', 'sd.state_id', '=', 'st.id')
         ->join('zone as z', 'sd.zone_id', '=', 'z.id')
         ->join('woreda as w', 'sd.woreda_id', '=', 'w.id')
-        ->join('program as p', 's.program_id', '=', 'p.id')
+        ->join('program as p', 'ifo.program_id', '=', 'p.id')
         ->join('program_level as pl', 'p.program_level_id', '=', 'pl.id')
         ->join('department as d', 'd.id', '=', 'p.department_id')
+        ->join('college as col', 'col.id', '=', 'd.college_id')
+        ->leftjoin('disabled_students as ds', 's.student_id', '=', 'ds.disabled_student_id')
+        ->leftjoin('disability as di', 'ds.disability_id', '=', 'di.id')
         ->select(
             's.student_id',
             // 'ifo.academic_year',
             // 'ifo.year',
             DB::raw('(SELECT MAX(academic_year) FROM student_info WHERE student_id = s.id) AS academic_year'),
             's.id',
-            'sf.username',
+            // 'sf.username',
             'sf.first_name',
             'sf.fathers_name',
             'sf.grand_fathers_name',
@@ -46,18 +44,24 @@ class StudentEMIS extends Controller
             'sd.telephone',
             'sd.kebele',
             'sd.place_of_birth',
-            'sd.mother_name',
+            'sd.alternative_email as email',
             'sd.family_phone',
-            // 'c.code AS country_code',
+            'sd.entrance_total_mark as national_exam_score',
+            'c.country_code',
             'st.region_code AS state_code',
-            'z.zone_code AS zone_code',
-            'w.woreda_code AS woreda_code',
-            'd.code AS department_code',
-            'p.code AS program_code',
-            'pl.code AS program_level_code'
-        )
-        ->orderBy('s.student_id', 'desc')
-        ->paginate(10);
+            'z.zone_code',
+            'w.woreda_code',
+            'd.department_code',
+            'p.program_code',
+            'pl.code AS program_level_code',
+            'di.disability_code as student_disability',
+            'col.id as college_id'        )
+        ->where([
+            'ifo.year' => 1,
+            'ifo.semester' => 1,
+            'ifo.record_status' => 1
+            ])
+        ->orderBy('s.student_id', 'desc')->get();
 
         // dd($applicants);
 
@@ -70,12 +74,13 @@ class StudentEMIS extends Controller
     public function overview(Request $request): View
     {
         $search = $request->get('search', '');
-        $nation_institute_id = new NationInstitutionId; 
+        $nation_institute_id = new NationInstitutionId;
         $overviews = DB::connection('mysql_srs')
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
+        ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
         ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
-        // ->join('country as c', 'sd.country_id', '=', 'c.id')
+        ->join('country as c', 'sd.country_id', '=', 'c.id')
         ->join('state as st', 'sd.state_id', '=', 'st.id')
         ->join('zone as z', 'sd.zone_id', '=', 'z.id')
         ->join('woreda as w', 'sd.woreda_id', '=', 'w.id')
@@ -94,18 +99,20 @@ class StudentEMIS extends Controller
             'sd.kebele',
             'sd.place_of_birth',
             'sd.entrance_exam_id',
-            // 'sd.mother_name',
+            'sd.alternative_email as email',
             // 'sd.family_phone',
-            // 'c.code AS country_code',
+            'c.country_code AS country_code',
             'st.region_code AS state_code',
             'z.zone_code AS zone_code',
             'w.woreda_code AS woreda_code',
-            'd.code AS department_code',
-            'p.code AS program_code',
+            'd.department_code',
+            'p.program_code',
             'pl.code AS program_level_code'
         )
-        ->orderBy('s.student_id', 'desc')
-        ->paginate(50);
+        ->where([
+            'ifo.record_status' => 1 // only active students for this semester
+            ])
+        ->orderBy('s.student_id', 'desc')->get();
         //dd($overviews);
 
         return view(
@@ -117,46 +124,34 @@ class StudentEMIS extends Controller
     public function enrollment(Request $request): View
     {
         $search = $request->get('search', '');
-        $nation_institute_id = new NationInstitutionId; 
-        $enrollments = DB::connection('mysql_srs')
-        ->table('student as s')
-        ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
-        ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
-        ->join('check_list as cl', 'ifo.check_list_id', '=', 'cl.id')
-        ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
-        // ->join('disability as d', 'sd.disability_id', '=', 'd.id')
-        ->join('program as p', 's.program_id', '=', 'p.id')
-        ->join('program_level as pl', 'p.program_level_id', '=', 'pl.id')
-        ->join('enrollment_type as et', 'p.enrollment_type_id', '=', 'et.id')
-        ->join('department as d', 'd.id', '=', 'p.department_id')
-        // ->join('college as col', 'd.college_id', '=', 'col.id')
-        // ->join('campus as ca', 'col.campus_id', '=', 'ca.id') // if the structure is thought like this
+        $nation_institute_id = new NationInstitutionId;
+        $enroll  = DB::connection('mysql_srs')
+        ->table('student_info as ifo')
         ->select(
-            's.student_id',
-            'ifo.academic_year',
-            'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
-
-            // Not sure which columns match the excel colummns for gpa and ECTS based data, figure out later
-            'ifo.total_ects AS cumulative_registered_credits',
-            'ifo.semester_ects AS current_registered_credits',
-            'ifo.previous_total_ects AS cumulative_completed_credits',
-            'cl.required_credit as required_credits',
-            'cl.number_of_semesters AS required_academic_periods',
-
-            DB::raw('ROUND(ifo.total_grade_points / ifo.total_ects, 2) as cumulative_gpa'),
-
-            'ifo.year AS year_level',
-            // 'd.code AS student_disability',
-            // 'ca.code AS campus_code',
-            // 'col.code AS college_code',
-            'd.code AS department_code',
-            'p.code AS program_code',
-            'pl.code AS target_qualification',
-            'et.enrollment_type_name AS program_modality' // later change to et.code when code column is added in the table
+            'ifo.student_id as stu_info_stu_id',
+            'ifo.id as stu_info_id'
         )
-        ->orderBy('s.student_id', 'desc')
-        ->paginate(50);
+        ->where([
+            'ifo.record_status' => 1 // only active students for this semester
+        ])
+         // exclude year 1 and semester 1 students
+        ->where(function($query) {
+            $query->where(function($subquery) {
+                $subquery->where('ifo.year', '<>', 1)
+                         ->where('ifo.semester', '<>', 1);
+            })->orWhere(function($subquery) {
+                $subquery->where('ifo.year', '=', 1)
+                         ->where('ifo.semester', '<>', 1);
+            })->orWhere(function($subquery) {
+                $subquery->where('ifo.year', '<>', 1)
+                         ->where('ifo.semester', '=', 1);
+            });
+        }) 
+        ->get() ; 
+      
 
+        $enrollments = getAcademicRecords($enroll);
+        //dd($enrollments);
         return view(
             'app.emis.student.enrollment.index',
             compact('enrollments', 'nation_institute_id', 'search')
@@ -166,29 +161,32 @@ class StudentEMIS extends Controller
     public function results(Request $request): View
     {
         $search = $request->get('search', '');
-        $nation_institute_id = new NationInstitutionId; 
-        $results = DB::connection('mysql_srs')
-        ->table('student as s')
-        ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
-        ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
-        ->join('student_status as ss', 'ifo.status_id', '=', 'ss.id')
+        $nation_institute_id = new NationInstitutionId;
+        $query_for_result  = DB::connection('mysql_srs')
+        ->table('student_info as ifo')
         ->select(
-            's.student_id',
-            'ifo.academic_year',
-            'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
-            'ss.status_name AS result', // change later to ss.code if code column added on student_status table
-
-            // Not sure which columns match the excel columns for gpa and ECTS based data, figure out later
-            'ifo.total_ects AS total_accumulated_credits',
-            DB::raw('ROUND(ifo.semester_grade_points / ifo.semester_ects ,2) as gpa'),
-            DB::raw('ROUND(ifo.total_grade_points / ifo.total_ects, 2) as cgpa'),
-
-            // I think this is all the semester count taken in that year, not sure yet
-            // DB::raw('count(ifo.semester) as total_academic_periods'),
+            'ifo.student_id as stu_info_stu_id',
+            'ifo.id as stu_info_id'
         )
-        ->orderBy('s.student_id', 'desc')
-        ->paginate(50);
-
+        ->where([
+            'ifo.record_status' => 1 // only active students for this semester
+        ])
+        // exclude year 1 and semester 1 students
+        ->where(function($query) {
+            $query->where(function($subquery) {
+                $subquery->where('ifo.year', '<>', 1)
+                         ->where('ifo.semester', '<>', 1);
+            })->orWhere(function($subquery) {
+                $subquery->where('ifo.year', '=', 1)
+                         ->where('ifo.semester', '<>', 1);
+            })->orWhere(function($subquery) {
+                $subquery->where('ifo.year', '<>', 1)
+                         ->where('ifo.semester', '=', 1);
+            });
+        })
+        ->get() ;
+        //dd($query_for_result);
+        $results = getAcademicRecordsOfStudentResult($query_for_result);
         return view(
             'app.emis.student.result.index',
             compact('results', 'nation_institute_id', 'search')
@@ -198,47 +196,70 @@ class StudentEMIS extends Controller
     public function graduates(Request $request): View
     {
         $search = $request->get('search', '');
-
+        $nation_institute_id = new NationInstitutionId;
         $graduates = DB::connection('mysql_srs')
         ->table('student as s')
-        ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
         ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+        ->join('program as p', 'ifo.program_id', '=', 'p.id')
+        ->join('department as d', 'd.id', '=', 'p.department_id')
+        ->join('graduation_list as gl', 'ifo.id', '=', 'gl.student_info_id')
         ->select(
+            's.student_id as stud_id',
+            'gl.certified_on as graduation_date',
+            'gl.cgpa as cgpa',
+            'gl.tcrd as total_accumulated_credits',
+            'gl.academic_year as academic_year',
+            'gl.exit_score as exit_exam_score',
+            'd.department_code as institution_code',
             'ifo.academic_year',
             'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
 
+            // DB::raw('COUNT(ifo.id) as total_academic_periods'),
+            DB::raw('(SELECT COUNT(*) FROM student_info si WHERE si.student_id = s.id) as total_academic_periods')
+
             // Not sure which columns match the excel columns for gpa and ECTS based data, figure out later
-            'ifo.total_ects AS total_accumulated_credits',
-            DB::raw('ROUND(ifo.total_grade_points / ifo.total_ects, 2) as cgpa'),
+            // 'ifo.total_ects AS total_accumulated_credits',
+            // DB::raw('ROUND(ifo.total_grade_points / ifo.total_ects, 2) as cgpa'),
 
             // I think this is all the semester count taken in that year, not sure yet
             // DB::raw('count(ifo.semester) as total_academic_periods'),
-        )
+        ) 
+        ->where('gl.certified_on', 'like', '%2023%')
         ->orderBy('s.student_id', 'desc')
-        ->paginate(10);
+        ->get();
+
         return view(
             'app.emis.student.graduate.index',
-            compact('graduates', 'search')
+            compact('graduates', 'nation_institute_id', 'search')
         );
     }
 
     public function attrition(Request $request): View
     {
         $search = $request->get('search', '');
-
+        $nation_institute_id = new NationInstitutionId;
         $attritions = DB::connection('mysql_srs')
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
         ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+        ->join('program as p', 'ifo.program_id', '=', 'p.id')
+        ->join('department as d', 'd.id', '=', 'p.department_id')
+        ->join('action_on_student as ac', 'ifo.laction', 'ac.id')
         ->select(
+            's.student_id as stud_id',
+            'd.department_code as institution_code',
             'ifo.academic_year',
             'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
+            'ac.action_code as attrition_reason',
+            'ac.id as laction_id'
         )
+        ->whereIn('ifo.laction', [3,4,7,11,10])
+        ->where('ifo.academic_year', 'like', '2023/%')
         ->orderBy('s.student_id', 'desc')
-        ->paginate(10);
+        ->get();
         return view(
             'app.emis.student.attrition.index',
-            compact('attritions', 'search')
+            compact('attritions', 'nation_institute_id', 'search')
         );
     }
 
