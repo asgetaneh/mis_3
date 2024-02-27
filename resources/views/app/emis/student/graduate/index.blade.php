@@ -82,6 +82,9 @@
                                 <th class="text-left">
                                     student_national_id
                                 </th>
+                                <th class="text-left">
+                                    Institutional_id
+                                </th>
                                 <th>
                                     academic_year
                                 </th>
@@ -112,10 +115,17 @@
                         </thead>
                         <tbody>
                             @forelse($graduates as $key => $graduate)
-                                <tr>
+                                 @php
+                                     $nation_id = $nation_institute_id-> getNationalId($graduate->stud_id);
+                                @endphp
+                                <tr> 
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $graduate->institution_code ?? '' }}</td>
-                                    <td>{{ $graduate->national_id ?? '' }}</td>
+                                    <td>{{ $graduate->institution_code ?? '' }}
+                                    </td>
+                                     <td>{{ $nation_id[0]['nation_id'] ?? '' }}
+                                     </td>
+                                     <td>{{ $graduate->stud_id ?? '' }}
+                                     </td>
                                     <td>{{ $graduate->academic_year ? str_replace('/', '', $graduate->academic_year) : '' }}</td>
                                     <td>{{ isset($graduate->academic_period) ? 'S'.$graduate->academic_period : '' }}</td>
                                     <td>{{ $graduate->total_accumulated_credits ?? '' }}</td>

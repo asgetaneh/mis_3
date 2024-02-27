@@ -155,7 +155,19 @@
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $applicant->student_id ?? '' }}</td>
                                     <td>{{ $applicant->academic_year ? str_replace('/', '', $applicant->academic_year) : '' }}</td>
-                                    <td>{{ $applicant->secondary_education_stream ?? '' }}</td>
+                                    <td>
+                                        @if(isset($applicant->college_id))
+                                            @if(in_array($applicant->college_id, [1,3,4,6,11,14,23,25]))
+                                                {{ 'NS' }}
+                                            @elseif(in_array($applicant->college_id, [2,5,7,8,12,13,24]))
+                                                {{ 'SS' }}
+                                            @else
+                                                {{ 'TVE' }}
+                                            @endif
+                                        @else
+                                            {{ '' }}
+                                        @endif
+                                        {{ $applicant->secondary_education_stream ?? '' }}</td>
                                     <td>{{ $applicant->program_level_code ?? '' }}</td>
                                     <td>{{ $applicant->hed_institution_code ?? '' }} {{'JU-MAIN-CAMPUS'}}</td>
                                     <td>{{ $applicant->department_code ?? '' }}</td>

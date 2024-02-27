@@ -23,9 +23,10 @@ class StudentEMIS extends Controller
         ->join('state as st', 'sd.state_id', '=', 'st.id')
         ->join('zone as z', 'sd.zone_id', '=', 'z.id')
         ->join('woreda as w', 'sd.woreda_id', '=', 'w.id')
-        ->join('program as p', 's.program_id', '=', 'p.id')
+        ->join('program as p', 'ifo.program_id', '=', 'p.id')
         ->join('program_level as pl', 'p.program_level_id', '=', 'pl.id')
         ->join('department as d', 'd.id', '=', 'p.department_id')
+        ->join('college as col', 'col.id', '=', 'd.college_id')
         ->leftjoin('disabled_students as ds', 's.student_id', '=', 'ds.disabled_student_id')
         ->leftjoin('disability as di', 'ds.disability_id', '=', 'di.id')
         ->select(
@@ -54,7 +55,7 @@ class StudentEMIS extends Controller
             'p.program_code',
             'pl.code AS program_level_code',
             'di.disability_code as student_disability',
-        )
+            'col.id as college_id'        )
         ->where([
             'ifo.year' => 1,
             'ifo.semester' => 1,
@@ -195,6 +196,7 @@ class StudentEMIS extends Controller
     public function graduates(Request $request): View
     {
         $search = $request->get('search', '');
+        $nation_institute_id = new NationInstitutionId;
         $graduates = DB::connection('mysql_srs')
         ->table('student as s')
         ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
@@ -228,14 +230,14 @@ class StudentEMIS extends Controller
 
         return view(
             'app.emis.student.graduate.index',
-            compact('graduates', 'search')
+            compact('graduates', 'nation_institute_id', 'search')
         );
     }
 
     public function attrition(Request $request): View
     {
         $search = $request->get('search', '');
-
+        $nation_institute_id = new NationInstitutionId;
         $attritions = DB::connection('mysql_srs')
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
@@ -244,6 +246,7 @@ class StudentEMIS extends Controller
         ->join('department as d', 'd.id', '=', 'p.department_id')
         ->join('action_on_student as ac', 'ifo.laction', 'ac.id')
         ->select(
+            's.student_id as stud_id',
             'd.department_code as institution_code',
             'ifo.academic_year',
             'ifo.semester AS academic_period', // later check where each academic period data code is stored, for now just the value
@@ -252,14 +255,11 @@ class StudentEMIS extends Controller
         )
         ->whereIn('ifo.laction', [3,4,7,11,10])
         ->where('ifo.academic_year', 'like', '2023/%')
-        // ->where([
-        //     'ifo.laction IN' => [3,4,7,11,10,19]
-        // ])
         ->orderBy('s.student_id', 'desc')
         ->get();
         return view(
             'app.emis.student.attrition.index',
-            compact('attritions', 'search')
+            compact('attritions', 'nation_institute_id', 'search')
         );
     }
 

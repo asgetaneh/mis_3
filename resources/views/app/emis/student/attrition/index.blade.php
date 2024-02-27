@@ -82,6 +82,9 @@
                                 <th class="text-left">
                                     student_national_id
                                 </th>
+                                 <th class="text-left">
+                                    Institutional_id
+                                </th>
                                 <th>
                                     academic_year
                                 </th>
@@ -94,10 +97,16 @@
                         </thead>
                         <tbody>
                             @forelse($attritions as $key => $attrition)
+                                @php
+                                     $nation_id = $nation_institute_id-> getNationalId($attrition->stud_id);
+                                @endphp
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $attrition->institution_code ?? '' }}</td>
-                                    <td>{{ $attrition->national_id ?? '' }}</td>
+                                    <td>{{ $nation_id[0]['nation_id'] ?? '' }}
+                                     </td>
+                                    <td>{{ $attrition->stud_id ?? '' }}
+                                     </td>
                                     <td>{{ $attrition->academic_year ? str_replace('/', '', $attrition->academic_year) : '' }}</td>
                                     <td>{{ isset($attrition->academic_period) ? 'S'.$attrition->academic_period : '' }}</td>
                                     <td>
