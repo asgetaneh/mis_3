@@ -140,7 +140,7 @@
             $(function() {
                 $("#emisTable").DataTable({
                     // "responsive": true,
-                     dom: 'Bfrtip',
+                    //  dom: 'Bfrtip',
                     "lengthChange": false,
                     "autoWidth": false,
                     scrollX: true,

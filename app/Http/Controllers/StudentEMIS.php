@@ -59,8 +59,9 @@ class StudentEMIS extends Controller
         ->where([
             'ifo.year' => 1,
             'ifo.semester' => 1,
-            'ifo.record_status' => 1
-            ])
+            'ifo.record_status' => 1,
+             ])
+            // ->where('s.student_id', 'not like', '%RR%')
         ->orderBy('s.student_id', 'desc')->get();
 
         // dd($applicants);
@@ -75,15 +76,62 @@ class StudentEMIS extends Controller
     {
         $search = $request->get('search', '');
         $nation_institute_id = new NationInstitutionId;
-        $overviews = DB::connection('mysql_srs')
-        ->table('student as s')
+
+        $over_view  = DB::connection('mysql_srs')
+        ->table('student_info as ifo')
+        ->select(
+            'ifo.student_id as stu_info_stu_id',
+            'ifo.id as stu_info_id'
+        )
+        ->where([
+            'ifo.record_status' => 1 // only active students for this semester
+        ])
+         // exclude year 1 and semester 1 students
+        ->where(function($query) {
+            $query->where(function($subquery) {
+                $subquery->where('ifo.year', '<>', 1)
+                         ->where('ifo.semester', '<>', 1);
+            })->orWhere(function($subquery) {
+                $subquery->where('ifo.year', '=', 1)
+                         ->where('ifo.semester', '<>', 1);
+            })->orWhere(function($subquery) {
+                $subquery->where('ifo.year', '<>', 1)
+                         ->where('ifo.semester', '=', 1);
+            });
+        }) 
+        ->get() ; 
+
+    $overviews = collect();
+    foreach ($over_view as $key => $over_vi) {
+        // code...
+    $precedingRecordId = DB::connection('mysql_srs')
+        ->table('student_info')
+        ->where('student_id', $over_vi->stu_info_stu_id)
+        ->where('id', '<', $over_vi->stu_info_id)
+        ->max('id'); // Gets the maximum ID less than the active record's ID
+
+    if ($precedingRecordId) {
+         // check previous record of active record is not active
+         $precedingRecordInactive = DB::connection('mysql_srs')
+            ->table('student_info as ifo')
+            ->select('ifo.record_status as record_status',
+                'ifo.id as preceding_record_id')
+             ->where('id', $precedingRecordId)
+             ->first();
+             
+
+         if($precedingRecordInactive->record_status == 0){
+            //dd($precedingRecordInactive[0]->record_status);
+        // 3. Fetch the Record with that Maximum ID
+        $stud_over_var = DB::connection('mysql_srs')
+            ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
         ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
         ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
-        ->join('country as c', 'sd.country_id', '=', 'c.id')
-        ->join('state as st', 'sd.state_id', '=', 'st.id')
-        ->join('zone as z', 'sd.zone_id', '=', 'z.id')
-        ->join('woreda as w', 'sd.woreda_id', '=', 'w.id')
+        ->leftjoin('country as c', 'sd.country_id', '=', 'c.id')
+        ->leftjoin('state as st', 'sd.state_id', '=', 'st.id')
+        ->leftjoin('zone as z', 'sd.zone_id', '=', 'z.id')
+        ->leftjoin('woreda as w', 'sd.woreda_id', '=', 'w.id')
         ->join('program as p', 's.program_id', '=', 'p.id')
         ->join('program_level as pl', 'p.program_level_id', '=', 'pl.id')
         ->join('department as d', 'd.id', '=', 'p.department_id')
@@ -109,16 +157,76 @@ class StudentEMIS extends Controller
             'p.program_code',
             'pl.code AS program_level_code'
         )
-        ->where([
-            'ifo.record_status' => 1 // only active students for this semester
-            ])
-        ->orderBy('s.student_id', 'desc')->get();
-        //dd($overviews);
+                 ->where('ifo.id', $precedingRecordInactive->preceding_record_id)
+            ->first(); // Retrieves the record
+             if($stud_over_var){
+             $overviews->push($stud_over_var);
+            }
 
-        return view(
+     }
+    }
+    }
+          return view(
             'app.emis.student.overview.index',
             compact('overviews', 'nation_institute_id','search')
         );
+
+        // $overviews = DB::connection('mysql_srs')
+        // ->table('student as s')
+        // ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
+        // ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+        // ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
+        // ->leftjoin('country as c', 'sd.country_id', '=', 'c.id')
+        // ->leftjoin('state as st', 'sd.state_id', '=', 'st.id')
+        // ->leftjoin('zone as z', 'sd.zone_id', '=', 'z.id')
+        // ->leftjoin('woreda as w', 'sd.woreda_id', '=', 'w.id')
+        // ->join('program as p', 's.program_id', '=', 'p.id')
+        // ->join('program_level as pl', 'p.program_level_id', '=', 'pl.id')
+        // ->join('department as d', 'd.id', '=', 'p.department_id')
+        // ->select(
+        //     's.student_id',
+        //     's.id',
+        //     'sf.first_name',
+        //     'sf.fathers_name',
+        //     'sf.grand_fathers_name',
+        //     's.birth_date',
+        //     's.sex',
+        //     'sd.telephone',
+        //     'sd.kebele',
+        //     'sd.place_of_birth',
+        //     'sd.entrance_exam_id',
+        //     'sd.alternative_email as email',
+        //     // 'sd.family_phone',
+        //     'c.country_code AS country_code',
+        //     'st.region_code AS state_code',
+        //     'z.zone_code AS zone_code',
+        //     'w.woreda_code AS woreda_code',
+        //     'd.department_code',
+        //     'p.program_code',
+        //     'pl.code AS program_level_code'
+        // )
+        // ->where([
+        //     'ifo.record_status' => 1 // only active students for this semester
+        //     ])
+        // ->where(function($query) {
+        //     $query->where(function($subquery) {
+        //         $subquery->where('ifo.year', '<>', 1)
+        //                  ->where('ifo.semester', '<>', 1);
+        //     })->orWhere(function($subquery) {
+        //         $subquery->where('ifo.year', '=', 1)
+        //                  ->where('ifo.semester', '<>', 1);
+        //     })->orWhere(function($subquery) {
+        //         $subquery->where('ifo.year', '<>', 1)
+        //                  ->where('ifo.semester', '=', 1);
+        //     });
+        // }) 
+        // ->orderBy('s.student_id', 'desc')->get();
+        // //dd($overviews);
+
+        // return view(
+        //     'app.emis.student.overview.index',
+        //     compact('overviews', 'nation_institute_id','search')
+        // );
     }
 
     public function enrollment(Request $request): View
@@ -146,12 +254,12 @@ class StudentEMIS extends Controller
                 $subquery->where('ifo.year', '<>', 1)
                          ->where('ifo.semester', '=', 1);
             });
-        }) 
-        ->get() ; 
-      
+        })
+        ->get() ;
+
 
         $enrollments = getAcademicRecords($enroll);
-        //dd($enrollments);
+            //dd($enrollments);
         return view(
             'app.emis.student.enrollment.index',
             compact('enrollments', 'nation_institute_id', 'search')
@@ -160,6 +268,7 @@ class StudentEMIS extends Controller
 
     public function results(Request $request): View
     {
+        set_time_limit(900);
         $search = $request->get('search', '');
         $nation_institute_id = new NationInstitutionId;
         $query_for_result  = DB::connection('mysql_srs')
@@ -223,10 +332,15 @@ class StudentEMIS extends Controller
 
             // I think this is all the semester count taken in that year, not sure yet
             // DB::raw('count(ifo.semester) as total_academic_periods'),
-        ) 
+        )
         ->where('gl.certified_on', 'like', '%2023%')
+        ->when(!empty($request->filter), function ($q) {
+            return $q->where('gl.academic_year', request('academic_year'));
+        })
         ->orderBy('s.student_id', 'desc')
         ->get();
+
+        $request->flashExcept('_token');
 
         return view(
             'app.emis.student.graduate.index',
