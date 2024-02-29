@@ -13,7 +13,9 @@ class StudentEMIS extends Controller
 
     public function applicant(Request $request): View
     {
-        $search = $request->get('search', '');
+
+	set_time_limit(900);
+     $search = $request->get('search', '');
         $applicants = DB::connection('mysql_srs')
         ->table('student as s')
         ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
@@ -74,6 +76,7 @@ class StudentEMIS extends Controller
 
     public function overview(Request $request): View
     {
+	set_time_limit(900);
         $search = $request->get('search', '');
         $nation_institute_id = new NationInstitutionId;
 
@@ -231,6 +234,7 @@ class StudentEMIS extends Controller
 
     public function enrollment(Request $request): View
     {
+	set_time_limit(900);
         $search = $request->get('search', '');
         $nation_institute_id = new NationInstitutionId;
         $enroll  = DB::connection('mysql_srs')
@@ -259,7 +263,7 @@ class StudentEMIS extends Controller
 
 
         $enrollments = getAcademicRecords($enroll);
-            //dd($enrollments);
+        //    dd($enrollments);
         return view(
             'app.emis.student.enrollment.index',
             compact('enrollments', 'nation_institute_id', 'search')
