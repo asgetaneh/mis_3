@@ -125,33 +125,98 @@ class StudentEMIS extends Controller
     {
         $search = $request->get('search', '');
         $nation_institute_id = new NationInstitutionId;
-        $enroll  = DB::connection('mysql_srs')
-        ->table('student_info as ifo')
-        ->select(
-            'ifo.student_id as stu_info_stu_id',
-            'ifo.id as stu_info_id'
-        )
-        ->where([
-            'ifo.record_status' => 1 // only active students for this semester
-        ])
-         // exclude year 1 and semester 1 students
-        ->where(function($query) {
-            $query->where(function($subquery) {
-                $subquery->where('ifo.year', '<>', 1)
-                         ->where('ifo.semester', '<>', 1);
-            })->orWhere(function($subquery) {
-                $subquery->where('ifo.year', '=', 1)
-                         ->where('ifo.semester', '<>', 1);
-            })->orWhere(function($subquery) {
-                $subquery->where('ifo.year', '<>', 1)
-                         ->where('ifo.semester', '=', 1);
-            });
-        })
-        ->get() ;
+        // $enroll  = DB::connection('mysql_srs')
+        // ->table('student_info as ifo')
+        // ->select(
+        //     'ifo.student_id as stu_info_stu_id',
+        //     'ifo.id as stu_info_id'
+        // )
+        // ->where([
+        //     'ifo.record_status' => 1 // only active students for this semester
+        // ])
+        //  // exclude year 1 and semester 1 students
+        // ->where(function($query) {
+        //     $query->where(function($subquery) {
+        //         $subquery->where('ifo.year', '<>', 1)
+        //                  ->where('ifo.semester', '<>', 1);
+        //     })->orWhere(function($subquery) {
+        //         $subquery->where('ifo.year', '=', 1)
+        //                  ->where('ifo.semester', '<>', 1);
+        //     })->orWhere(function($subquery) {
+        //         $subquery->where('ifo.year', '<>', 1)
+        //                  ->where('ifo.semester', '=', 1);
+        //     });
+        // })
+        // ->get() ;
 
 
-        $enrollments = getAcademicRecords($enroll);
-        //dd($enrollments);
+        // $enrollments = getAcademicRecords($enroll);
+
+        $enrollments = DB::connection('mysql_srs')->select('
+
+            SELECT
+                s.student_id AS student_id_number,
+                sp.sponsor_code,
+                ifo.student_id AS stu_info_stu_id,
+                ifo.id AS stu_info_id,
+                ifo.academic_year,
+                astu.action_code AS enrollment_type,
+                astu.id AS exchange_type,
+                ifo.semester AS academic_period,
+                ifo.total_ects AS cumulative_registered_credits,
+                ifo.semester_ects AS current_registered_credits,
+                ifo.previous_total_ects AS cumulative_completed_credits,
+                cl.required_credit AS required_credits,
+                cl.number_of_semesters AS required_academic_periods,
+                ROUND(ifo.total_grade_points / ifo.total_ects, 2) AS cumulative_gpa,
+                ifo.year AS year_level,
+                ca.campus_name AS campus_code,
+                d.department_code,
+                p.program_code,
+                pl.code AS target_qualification,
+                et.enrollment_type_code AS program_modality,
+                di.disability_code AS student_disability,
+                fp.foreign_program_code AS foreign_program
+            FROM
+                student_info ifo
+            JOIN student s ON ifo.student_id = s.id
+            JOIN sf_guard_user sf ON s.sf_guard_user_id = sf.id
+            LEFT JOIN action_on_student astu ON ifo.action = astu.id
+            JOIN check_list cl ON ifo.check_list_id = cl.id
+            JOIN student_detail sd ON s.id = sd.student_id
+            LEFT JOIN campus ca ON sd.campus_id = ca.id
+            LEFT JOIN sponsor sp ON sd.sponsor_id = sp.id
+            LEFT JOIN disabled_students ds ON s.student_id = ds.disabled_student_id
+            LEFT JOIN disability di ON ds.disability_id = di.id
+            LEFT JOIN foreign_program fp ON sd.foreign_program_id = fp.id
+            JOIN program p ON ifo.program_id = p.id
+            JOIN program_level pl ON p.program_level_id = pl.id
+            JOIN enrollment_type et ON p.enrollment_type_id = et.id
+            JOIN department d ON d.id = p.department_id
+            WHERE
+                ifo.id = (
+                    SELECT MAX(id)
+                    FROM student_info s
+                    WHERE ifo.student_id = s.student_id
+                    AND s.record_status = 0
+                    AND s.id < (
+                        SELECT MAX(id)
+                        FROM student_info
+                        WHERE student_id = ifo.student_id
+                        AND record_status = 1
+                    )
+                ) and (
+                    (
+                        ifo.year <> 1 AND ifo.semester <> 1
+                    ) OR(
+                        ifo.year = 1 AND ifo.semester <> 1
+                    ) OR(
+                        ifo.year <> 1 AND ifo.semester = 1
+                    )
+                );
+
+        ');
+        // dd($enrollments);
         return view(
             'app.emis.student.enrollment.index',
             compact('enrollments', 'nation_institute_id', 'search')
