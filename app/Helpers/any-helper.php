@@ -450,6 +450,7 @@ if (! function_exists('gettrans')) {
 
             )
              ->where('ifo.id', $precedingRecordInactive->preceding_record_id)
+              ->where('ifo.laction','<>',20)
             ->first(); // Retrieves the record
              if($stud_enrolmet_var){
              $stu_record->push($stud_enrolmet_var);
