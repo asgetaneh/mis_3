@@ -254,9 +254,9 @@ class StudentEMIS extends Controller
                 $subquery->where('ifo.year', '<>', 1)
                          ->where('ifo.semester', '=', 1);
             });
-        }) 
-        ->get() ; 
-      
+        })
+        ->get() ;
+
 
         $enrollments = getAcademicRecords($enroll);
             //dd($enrollments);
@@ -332,10 +332,15 @@ class StudentEMIS extends Controller
 
             // I think this is all the semester count taken in that year, not sure yet
             // DB::raw('count(ifo.semester) as total_academic_periods'),
-        ) 
+        )
         ->where('gl.certified_on', 'like', '%2023%')
+        ->when(!empty($request->filter), function ($q) {
+            return $q->where('gl.academic_year', request('academic_year'));
+        })
         ->orderBy('s.student_id', 'desc')
         ->get();
+
+        $request->flashExcept('_token');
 
         return view(
             'app.emis.student.graduate.index',
