@@ -144,7 +144,14 @@
                     "lengthChange": false,
                     "autoWidth": false,
                     scrollX: true,
-                    "buttons": ["excel"]
+                    buttons: [
+                        {
+                            extend: 'excel',
+                            text: 'Download Excel',
+                            exportOptions: {
+                            }
+                        }
+                    ]
                 }).buttons().container().appendTo('#emisTable_wrapper .col-md-6:eq(0)');
 
             });
