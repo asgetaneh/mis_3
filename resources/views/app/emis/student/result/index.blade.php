@@ -17,7 +17,7 @@
                 <div style="">
                     <h3 class="card-title">Results List</h3>
                 </div> &nbsp;&nbsp;
-                <button class="btn btn-success">Download Excel</button>
+                {{-- <button class="btn btn-success">Download Excel</button> --}}
             </div>
             <div class="card-body">
 
@@ -72,7 +72,7 @@
 
 
                 <div class="table-responsive mt-3">
-                    <table class="table table-bordered table-hover">
+                    <table id="emisTable" class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -81,6 +81,9 @@
                                 </th>
                                 <th class="text-left">
                                     student_national_id
+                                </th>
+                                 <th class="text-left">
+                                    JU stu id
                                 </th>
                                 <th>
                                     academic_year
@@ -114,21 +117,38 @@
                         <tbody>
                             @forelse($results as $key => $result)
                              @php
-                                  $nation_id = $nation_institute_id-> getNationalId($result->student_id); 
+                                  $nation_id = $nation_institute_id-> getNationalId($result->student_id);
                                  @endphp
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                     <td>{{ "dept_code" }}</td>
+                                    <td>{{ $result->department_code ?? '' }}</td>
                                     <td>{{ $nation_id[0]['nation_id'] ?? '' }}</td>
+                                     <td>{{ $result->student_id ?? '' }}</td>
                                     <td>{{ $result->academic_year ? str_replace('/', '', $result->academic_year) : '' }}</td>
                                     <td>{{ isset($result->academic_period) ? 'S'.$result->academic_period : '' }}</td>
                                     <td>{{ $result->total_accumulated_credits ?? '' }}</td>
                                     <td>{{ $result->cgpa ?? '' }}</td>
                                     <td>{{ $result->total_academic_periods ?? '' }}</td>
-                                    <td>{{ $result->result ?? '' }}</td>
-                                    <td>{{ $result->transfer ?? '' }}</td>
+                                    {{-- <td>{{ $result->result ?? '' }}</td> --}}
+
+                                    <td>
+
+                                        {{-- This checking is based on the id to identify only pass and fail statuses. --}}
+                                        @if(isset($result->result))
+                                            @if(in_array($result->result, [0,1,4,5]))
+                                                {{ 'P' }}
+                                            @elseif(in_array($result->result, [2,3,10]))
+                                                {{ 'F' }}
+                                            @else
+                                                {{ '' }}
+                                            @endif
+                                        @else
+                                            {{ '' }}
+                                        @endif
+                                    </td>
+                                    <td>{{ isset($result->laction) ? ($result->laction == 6 ? 'Y' : 'N') : 'N' }}</td>
                                     <td>{{ $result->gpa ?? '' }}</td>
-                                    <td>{{ $result->digital_literacy_training ?? '' }}</td>
+                                    <td>{{ $result->digital_literacy_training ?? 'N' }}</td>
                                 </tr>
                             @empty
                                 <tr>
@@ -140,9 +160,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="float-right mt-3">
+                {{-- <div class="float-right mt-3">
                     {!! $results->render() !!}
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

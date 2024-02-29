@@ -17,7 +17,7 @@
                 <div style="">
                     <h3 class="card-title">Enrollment List</h3>
                 </div>&nbsp;&nbsp;
-                <button class="btn btn-success">Download Excel</button>
+                {{-- <button class="btn btn-success">Download Excel</button> --}}
             </div>
             <div class="card-body">
 
@@ -71,8 +71,8 @@
             </div> --}}
 
 
-                <div class="table-responsive mt-3">
-                    <table class="table table-bordered table-hover">
+                <div class=" table-responsive mt-3">
+                    <table id="emisTable" class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -152,13 +152,13 @@
                         <tbody>
                             @forelse($enrollments as $key => $enrollment)
                               @php
-                                  $nation_id = $nation_institute_id-> getNationalId($enrollment->student_id); 
-                                 @endphp
+                                     $nation_id = $nation_institute_id-> getNationalId($enrollment->student_id_number);
+                             @endphp
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                     <td>{{ "dept_code" }}</td>
+                                     <td>{{ $enrollment->department_code ?? '' }}</td>
                                     <td>{{ $nation_id[0]['nation_id'] ?? '' }}</td>
-                                    <td>{{ $enrollment->student_id ?? '' }}</td>
+                                    <td>{{ $enrollment->student_id_number ?? '' }}</td>
                                     <td>{{ $enrollment->academic_year ? str_replace('/', '', $enrollment->academic_year) : '' }}</td>
                                     <td>{{ isset($enrollment->academic_period) ? 'S'.$enrollment->academic_period : '' }}</td>
                                     <td>{{ isset($enrollment->academic_term) ? 'T'.$enrollment->academic_term : '' }}</td>
@@ -169,22 +169,34 @@
                                     <td>{{ $enrollment->year_level ?? '' }}</td>
                                     <td>{{ $enrollment->enrollment_type ?? '' }}</td>
                                     <td>{{ $enrollment->foreign_program ?? '' }}</td>
-                                    <td>{{ $enrollment->economically_supported ?? '' }}</td>
+                                    <td>{{ $enrollment->economically_supported ?? 'N' }}</td>
                                     <td>{{ $enrollment->required_academic_periods ?? '' }}</td>
                                     <td>{{ $enrollment->required_credits ?? '' }}</td>
                                     <td>{{ $enrollment->current_registered_credits ?? '' }}</td>
                                     <td>{{ $enrollment->cumulative_registered_credits ?? '' }}</td>
                                     <td>{{ $enrollment->cumulative_completed_credits ?? '' }}</td>
                                     <td>{{ $enrollment->cumulative_gpa ?? '' }}</td>
-                                    <td>{{ $enrollment->outgoing_exchange ?? '' }}</td>
-                                    <td>{{ $enrollment->incoming_exchange ?? '' }}</td>
+                                    <td>
+                                        @if($enrollment->exchange_type==6 && $enrollment->exchange_type==10)
+                                            {{'Y'}}
+                                        @else
+                                            {{'N'}}
+                                        @endif
+                                    </td>
+                                    <td> 
+                                        @if($enrollment->exchange_type==6 && $enrollment->exchange_type==8)
+                                            {{'Y'}}
+                                        @else
+                                            {{'N'}}
+                                        @endif
+                                    </td>
                                     <td>{{ $enrollment->exchange_country ?? '' }}</td>
                                     <td>{{ $enrollment->exchange_institution ?? '' }}</td>
                                     <td>{{ $enrollment->exchange_institution_lng ?? '' }}</td>
-                                    <td>{{ $enrollment->sponsorship ?? '' }}</td>
-                                    <td>{{ $enrollment->student_economical_status ?? '' }}</td>
+                                    <td>{{ $enrollment->sponsor_code ?? '' }}</td>
+                                    <td>{{ '2' }}</td>
                                     <td>{{ $enrollment->student_disability ?? '' }}</td>
-                                    <td>{{ $enrollment->specially_gifted ?? '' }}</td>
+                                    <td>{{ $enrollment->specially_gifted ?? 'N' }}</td>
                                     <td>{{ $enrollment->food_service_type ?? '' }}</td>
                                     <td>{{ $enrollment->dormitory_service_type ?? '' }}</td>
                                     <td>{{ $enrollment->cost_sharing_loan ?? '' }}</td>
@@ -203,9 +215,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="float-right mt-3">
+                {{-- <div class="float-right mt-3">
                     {!! $enrollments->render() !!}
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

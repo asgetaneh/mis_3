@@ -69,10 +69,10 @@
                 <!-- /.card-body -->
             </div> --}}
 
-                <button class="btn btn-success">Download Excel</button>
+                {{-- <button class="btn btn-success">Download Excel</button> --}}
 
                 <div class="table-responsive mt-3">
-                    <table class="table table-bordered table-hover">
+                    <table id="emisTable" class="table table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -81,6 +81,9 @@
                                 </th>
                                 <th class="text-left">
                                     student_national_id
+                                </th>
+                                <th class="text-left">
+                                    Institutional_id
                                 </th>
                                 <th>
                                     academic_year
@@ -112,19 +115,26 @@
                         </thead>
                         <tbody>
                             @forelse($graduates as $key => $graduate)
-                                <tr>
+                                 @php
+                                     $nation_id = $nation_institute_id-> getNationalId($graduate->stud_id);
+                                @endphp
+                                <tr> 
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $graduate->institution_code ?? '' }}</td>
-                                    <td>{{ $graduate->national_id ?? '' }}</td>
+                                    <td>{{ $graduate->institution_code ?? '' }}
+                                    </td>
+                                     <td>{{ $nation_id[0]['nation_id'] ?? '' }}
+                                     </td>
+                                     <td>{{ $graduate->stud_id ?? '' }}
+                                     </td>
                                     <td>{{ $graduate->academic_year ? str_replace('/', '', $graduate->academic_year) : '' }}</td>
                                     <td>{{ isset($graduate->academic_period) ? 'S'.$graduate->academic_period : '' }}</td>
                                     <td>{{ $graduate->total_accumulated_credits ?? '' }}</td>
                                     <td>{{ $graduate->cgpa ?? '' }}</td>
                                     <td>{{ $graduate->total_academic_periods ?? '' }}</td>
                                     <td>{{ $graduate->exit_exam_score ?? '' }}</td>
-                                    <td>{{ $graduate->employability_training ?? '' }}</td>
-                                    <td>{{ $graduate->employability_training ?? '' }}</td>
-                                    <td>{{ $graduate->employability_training ?? '' }}</td>
+                                    <td>{{ $graduate->employability_training ?? 'N' }}</td>
+                                    <td>{{ $graduate->entrepreneurship_training ?? 'N' }}</td>
+                                    <td>{{ $graduate->graduation_date ?? '' }}</td>
                                 </tr>
                             @empty
                                 <tr>
@@ -136,9 +146,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="float-right mt-3">
+                {{-- <div class="float-right mt-3">
                     {!! $graduates->render() !!}
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

@@ -69,13 +69,13 @@
                 <!-- /.card-body -->
             </div> --}}
 
-                <button class="btn btn-success">Download Excel</button>
+                {{-- <button class="btn btn-success">Download Excel</button> --}}
 
                 <div class="table-responsive mt-3">
-                    <table class="table table-bordered table-hover">
+                    <table id="emisTable" class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th class="text-left">#</th>
                                 <th class="text-left">
                                     applicant_id
                                 </th>
@@ -144,6 +144,7 @@
                                 </th>
                                 <th>hed_acceptance_status
                                 </th>
+                                <th>student_disabilty</th>
                                 <th>specially_gifted
                                 </th>
                             </tr>
@@ -154,9 +155,21 @@
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $applicant->student_id ?? '' }}</td>
                                     <td>{{ $applicant->academic_year ? str_replace('/', '', $applicant->academic_year) : '' }}</td>
-                                    <td>{{ $applicant->secondary_education_stream ?? '' }}</td>
+                                    <td>
+                                        @if(isset($applicant->college_id))
+                                            @if(in_array($applicant->college_id, [1,3,4,6,11,14,23,25]))
+                                                {{ 'NS' }}
+                                            @elseif(in_array($applicant->college_id, [2,5,7,8,12,13,24]))
+                                                {{ 'SS' }}
+                                            @else
+                                                {{ 'TVE' }}
+                                            @endif
+                                        @else
+                                            {{ '' }}
+                                        @endif
+                                        {{ $applicant->secondary_education_stream ?? '' }}</td>
                                     <td>{{ $applicant->program_level_code ?? '' }}</td>
-                                    <td>{{ $applicant->hed_institution_code ?? '' }}</td>
+                                    <td>{{ $applicant->hed_institution_code ?? '' }} {{'JU-MAIN-CAMPUS'}}</td>
                                     <td>{{ $applicant->department_code ?? '' }}</td>
                                     <td>{{ $applicant->program_code ?? '' }}</td>
                                     <td>{{ $applicant->first_name ?? '' }}</td>
@@ -168,8 +181,8 @@
                                     <td>{{ $applicant->grand_fathers_name ?? '' }}</td>
                                     <td>{{ $applicant->last_name_lng ?? '' }}</td>
                                     <td>{{ $applicant->birth_date ?? '' }}</td>
-                                    <td>{{ $applicant->place_of_birth ?? '' }}</td>
-                                    <td>{{ $applicant->email_address ?? '' }}</td>
+                                    <td>{{ $applicant->woreda_code ?? '' }}</td>
+                                    <td>{{ $applicant->email ?? '' }}</td>
                                     <td>{{ $applicant->telephone ?? '' }}</td>
                                     <td>{{ $applicant->sex ?? '' }}</td>
                                     <td>{{ $applicant->country_code ?? '' }}</td>
@@ -183,6 +196,7 @@
                                     <td>{{ $applicant->public_hed_acceptance_score ?? '' }}</td>
                                     <td>{{ $applicant->national_exam_score ?? '' }}</td>
                                     <td>{{ $applicant->hed_acceptance_status ?? '' }}</td>
+                                    <td>{{ $applicant->student_disability ?? '' }}</td>
                                     <td>{{ $applicant->specially_gifted ?? 'N' }}</td>
                                 </tr>
                             @empty
@@ -195,9 +209,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="float-right mt-3">
+                {{-- <div class="float-right mt-3">
                     {!! $applicants->render() !!}
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>
