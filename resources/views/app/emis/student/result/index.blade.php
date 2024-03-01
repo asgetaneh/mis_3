@@ -83,7 +83,7 @@
                                     student_national_id
                                 </th>
                                  <th class="text-left">
-                                    JU stu id
+                                    JU_student_id
                                 </th>
                                 <th>
                                     academic_year

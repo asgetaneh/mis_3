@@ -75,45 +75,104 @@ class StudentEMIS extends Controller
     {
         $search = $request->get('search', '');
         $nation_institute_id = new NationInstitutionId;
-        $overviews = DB::connection('mysql_srs')
-        ->table('student as s')
-        ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
-        ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
-        ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
-        ->join('country as c', 'sd.country_id', '=', 'c.id')
-        ->join('state as st', 'sd.state_id', '=', 'st.id')
-        ->join('zone as z', 'sd.zone_id', '=', 'z.id')
-        ->join('woreda as w', 'sd.woreda_id', '=', 'w.id')
-        ->join('program as p', 's.program_id', '=', 'p.id')
-        ->join('program_level as pl', 'p.program_level_id', '=', 'pl.id')
-        ->join('department as d', 'd.id', '=', 'p.department_id')
-        ->select(
-            's.student_id',
-            's.id',
-            'sf.first_name',
-            'sf.fathers_name',
-            'sf.grand_fathers_name',
-            's.birth_date',
-            's.sex',
-            'sd.telephone',
-            'sd.kebele',
-            'sd.place_of_birth',
-            'sd.entrance_exam_id',
-            'sd.alternative_email as email',
-            // 'sd.family_phone',
-            'c.country_code AS country_code',
-            'st.region_code AS state_code',
-            'z.zone_code AS zone_code',
-            'w.woreda_code AS woreda_code',
-            'd.department_code',
-            'p.program_code',
-            'pl.code AS program_level_code'
-        )
-        ->where([
-            'ifo.record_status' => 1 // only active students for this semester
-            ])
-        ->orderBy('s.student_id', 'desc')->get();
+        // $overviews = DB::connection('mysql_srs')
+        // ->table('student as s')
+        // ->join('sf_guard_user as sf', 'sf.id', '=', 's.sf_guard_user_id')
+        // ->join('student_info as ifo', 's.id', '=', 'ifo.student_id')
+        // ->join('student_detail as sd', 's.id', '=', 'sd.student_id')
+        // ->join('country as c', 'sd.country_id', '=', 'c.id')
+        // ->join('state as st', 'sd.state_id', '=', 'st.id')
+        // ->join('zone as z', 'sd.zone_id', '=', 'z.id')
+        // ->join('woreda as w', 'sd.woreda_id', '=', 'w.id')
+        // ->join('program as p', 's.program_id', '=', 'p.id')
+        // ->join('program_level as pl', 'p.program_level_id', '=', 'pl.id')
+        // ->join('department as d', 'd.id', '=', 'p.department_id')
+        // ->select(
+        //     's.student_id',
+        //     's.id',
+        //     'sf.first_name',
+        //     'sf.fathers_name',
+        //     'sf.grand_fathers_name',
+        //     's.birth_date',
+        //     's.sex',
+        //     'sd.telephone',
+        //     'sd.kebele',
+        //     'sd.place_of_birth',
+        //     'sd.entrance_exam_id',
+        //     'sd.alternative_email as email',
+        //     // 'sd.family_phone',
+        //     'c.country_code AS country_code',
+        //     'st.region_code AS state_code',
+        //     'z.zone_code AS zone_code',
+        //     'w.woreda_code AS woreda_code',
+        //     'd.department_code',
+        //     'p.program_code',
+        //     'pl.code AS program_level_code'
+        // )
+        // ->where([
+        //     'ifo.record_status' => 1 // only active students for this semester
+        //     ])
+        // ->orderBy('s.student_id', 'desc')->get();
         //dd($overviews);
+
+        $overviews = DB::connection('mysql_srs')->select('
+
+        SELECT
+            s.student_id,
+            s.id,
+            sf.first_name,
+            sf.fathers_name,
+            sf.grand_fathers_name,
+            s.birth_date,
+            s.sex,
+            sd.telephone,
+            sd.kebele,
+            sd.place_of_birth,
+            sd.entrance_exam_id,
+            sd.alternative_email as email,
+            c.country_code AS country_code,
+            st.region_code AS state_code,
+            z.zone_code AS zone_code,
+            w.woreda_code AS woreda_code,
+            d.department_code,
+            p.program_code,
+            pl.code AS program_level_code
+        FROM student_info ifo
+            INNER JOIN student as s ON s.id = ifo.student_id
+            INNER JOIN sf_guard_user as sf ON sf.id = s.sf_guard_user_id
+            INNER JOIN student_detail as sd ON s.id = sd.student_id
+            INNER JOIN country as c ON sd.country_id = c.id
+            LEFT Join state as st ON sd.state_id = st.id
+            LEFT Join zone as z ON sd.zone_id = z.id
+            LEFT Join woreda as w ON sd.woreda_id = w.id
+            INNER JOIN program as p ON s.program_id = p.id
+            INNER JOIN program_level as pl ON p.program_level_id = pl.id
+            INNER JOIN department as d ON d.id = p.department_id
+        WHERE
+            ifo.id = (
+                SELECT MAX(s1.id)
+                FROM student_info s1
+                WHERE ifo.student_id = s1.student_id
+                AND s1.record_status = 0
+                AND s1.id < (
+                    SELECT MAX(s2.id)
+                    FROM student_info s2
+                    WHERE s2.student_id = ifo.student_id
+                    AND s2.record_status = 1
+                )
+            ) and (
+                (
+                    ifo.year <> 1 AND ifo.semester <> 1
+                ) OR(
+                    ifo.year = 1 AND ifo.semester <> 1
+                ) OR(
+                    ifo.year <> 1 AND ifo.semester = 1
+                )
+            )
+
+        ');
+
+        // dd($overviews);
 
         return view(
             'app.emis.student.overview.index',
@@ -195,15 +254,15 @@ class StudentEMIS extends Controller
             JOIN department d ON d.id = p.department_id
             WHERE
                 ifo.id = (
-                    SELECT MAX(id)
-                    FROM student_info s
-                    WHERE ifo.student_id = s.student_id
-                    AND s.record_status = 0
-                    AND s.id < (
-                        SELECT MAX(id)
-                        FROM student_info
-                        WHERE student_id = ifo.student_id
-                        AND record_status = 1
+                    SELECT MAX(s1.id)
+                    FROM student_info s1
+                    WHERE ifo.student_id = s1.student_id
+                    AND s1.record_status = 0
+                    AND s1.id < (
+                        SELECT MAX(s2.id)
+                        FROM student_info s2
+                        WHERE s2.student_id = ifo.student_id
+                        AND s2.record_status = 1
                     )
                 ) and (
                     (
@@ -227,31 +286,76 @@ class StudentEMIS extends Controller
     {
         $search = $request->get('search', '');
         $nation_institute_id = new NationInstitutionId;
-        $query_for_result  = DB::connection('mysql_srs')
-        ->table('student_info as ifo')
-        ->select(
-            'ifo.student_id as stu_info_stu_id',
-            'ifo.id as stu_info_id'
-        )
-        ->where([
-            'ifo.record_status' => 1 // only active students for this semester
-        ])
-        // exclude year 1 and semester 1 students
-        ->where(function($query) {
-            $query->where(function($subquery) {
-                $subquery->where('ifo.year', '<>', 1)
-                         ->where('ifo.semester', '<>', 1);
-            })->orWhere(function($subquery) {
-                $subquery->where('ifo.year', '=', 1)
-                         ->where('ifo.semester', '<>', 1);
-            })->orWhere(function($subquery) {
-                $subquery->where('ifo.year', '<>', 1)
-                         ->where('ifo.semester', '=', 1);
-            });
-        })
-        ->get() ;
+        // $query_for_result  = DB::connection('mysql_srs')
+        // ->table('student_info as ifo')
+        // ->select(
+        //     'ifo.student_id as stu_info_stu_id',
+        //     'ifo.id as stu_info_id'
+        // )
+        // ->where([
+        //     'ifo.record_status' => 1 // only active students for this semester
+        // ])
+        // // exclude year 1 and semester 1 students
+        // ->where(function($query) {
+        //     $query->where(function($subquery) {
+        //         $subquery->where('ifo.year', '<>', 1)
+        //                  ->where('ifo.semester', '<>', 1);
+        //     })->orWhere(function($subquery) {
+        //         $subquery->where('ifo.year', '=', 1)
+        //                  ->where('ifo.semester', '<>', 1);
+        //     })->orWhere(function($subquery) {
+        //         $subquery->where('ifo.year', '<>', 1)
+        //                  ->where('ifo.semester', '=', 1);
+        //     });
+        // })
+        // ->get() ;
         //dd($query_for_result);
-        $results = getAcademicRecordsOfStudentResult($query_for_result);
+        // $results = getAcademicRecordsOfStudentResult($query_for_result);
+
+        $results = DB::connection('mysql_srs')->select('
+
+            SELECT
+                s.student_id,
+                d.department_code,
+                ifo.academic_year,
+                ifo.laction,
+                ifo.semester AS academic_period,
+                ss.id AS result,
+                ifo.total_ects AS total_accumulated_credits,
+                ROUND(ifo.semester_grade_points / ifo.semester_ects ,2) as gpa,
+                ROUND(ifo.total_grade_points / ifo.total_ects, 2) AS cgpa,
+                (SELECT COUNT(*) FROM student_info si WHERE si.student_id = ifo.student_id and si.id < ifo.id ) as total_academic_periods
+
+            FROM
+                student_info ifo
+            JOIN student s ON ifo.student_id = s.id
+            JOIN student_status ss ON ifo.status_id = ss.id
+            JOIN program p ON ifo.program_id = p.id
+            JOIN department d ON d.id = p.department_id
+            WHERE
+                ifo.id = (
+                    SELECT MAX(s1.id)
+                    FROM student_info s1
+                    WHERE ifo.student_id = s1.student_id
+                    AND s1.record_status = 0
+                    AND s1.id < (
+                        SELECT MAX(s2.id)
+                        FROM student_info s2
+                        WHERE s2.student_id = ifo.student_id
+                        AND s2.record_status = 1
+                    )
+                ) and (
+                    (
+                        ifo.year <> 1 AND ifo.semester <> 1
+                    ) OR(
+                        ifo.year = 1 AND ifo.semester <> 1
+                    ) OR(
+                        ifo.year <> 1 AND ifo.semester = 1
+                    )
+                );
+
+        ');
+
         return view(
             'app.emis.student.result.index',
             compact('results', 'nation_institute_id', 'search')
