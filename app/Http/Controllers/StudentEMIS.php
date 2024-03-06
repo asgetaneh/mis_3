@@ -60,7 +60,8 @@ class StudentEMIS extends Controller
             'ifo.year' => 1,
             'ifo.semester' => 1,
             'ifo.record_status' => 1
-            ])
+             ])
+        -> where('d.department_name', 'not like', '%remedial%')
         ->orderBy('s.student_id', 'desc')->get();
 
         // dd($applicants);
@@ -198,8 +199,7 @@ class StudentEMIS extends Controller
                     SELECT MAX(id)
                     FROM student_info s
                     WHERE ifo.student_id = s.student_id
-                    AND s.record_status = 0
-                    AND s.id < (
+                     AND s.id < (
                         SELECT MAX(id)
                         FROM student_info
                         WHERE student_id = ifo.student_id
