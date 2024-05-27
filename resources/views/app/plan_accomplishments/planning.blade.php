@@ -332,7 +332,13 @@
 
                                                                             $baselineLastYear = getBaselineLastYear($kpi->id, $planning_year->id ?? NULL, 1, auth()->user()->offices[0]->id, $one->id, $two->id, $kpiThree->id);
                                                                         @endphp
-                                                                        {{-- @if ($baseline)
+                                                                         
+                                                                        @if (!empty($baselineLastYear))
+                                                                            <td>
+                                                                                {{ $baselineLastYear }}
+                                                                            </td>
+                                                                        @else
+                                                                             @if ($baseline)
                                                                             @if($off_level === 1)
                                                                                 @if ($off_level === $baseline->plan_status)
                                                                                     @php $disabled ="disabled"; @endphp
@@ -361,15 +367,7 @@
                                                                                     type="number" required>
 
                                                                             </td>
-                                                                        @endif --}}
-                                                                        @if (!empty($baselineLastYear))
-                                                                            <td>
-                                                                                {{ $baselineLastYear }}
-                                                                            </td>
-                                                                        @else
-                                                                            <td>
-                                                                                -
-                                                                            </td>
+                                                                        @endif
                                                                         @endif
                                                                             @endforeach
 
@@ -544,7 +542,13 @@
                                                                                 $baseline = getBaselineIndividualOneTwo($planning_year->id ?? NULL, $kpi->id, $one->id, $two->id, auth()->user()->offices[0]->id);
                                                                                 $baselineLastYear = getBaselineLastYear($kpi->id, $planning_year->id ?? NULL, 1, auth()->user()->offices[0]->id, $one->id, $two->id);
                                                                             @endphp
-                                                                            {{-- @if ($baseline)
+                                                                            <!-- base line display -->
+                                                                            @if (!empty($baselineLastYear))
+                                                                                <td>
+                                                                                    {{ $baselineLastYear }}
+                                                                                </td>
+                                                                            @else
+                                                                                @if ($baseline)
                                                                                 @php
                                                                                     $inputname = $kpi->id;
                                                                                     $off_level = auth()->user()->offices[0]->level;
@@ -575,16 +579,7 @@
                                                                                         class="form-control" type="number"
                                                                                         required>
                                                                                 </td>
-                                                                            @endif --}}
-
-                                                                            @if (!empty($baselineLastYear))
-                                                                                <td>
-                                                                                    {{ $baselineLastYear }}
-                                                                                </td>
-                                                                            @else
-                                                                                <td>
-                                                                                    -
-                                                                                </td>
+                                                                            @endif 
                                                                             @endif
 
                                                                             @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
@@ -796,8 +791,12 @@
                                                             $disabled = '';
                                                             $baselineLastYear = getBaselineLastYear($kpi->id, $planning_year->id ?? NULL, 1, auth()->user()->offices[0]->id, $one->id);
                                                         @endphp
-
-                                                        {{-- @if ($baseline)
+                                                        @if (!empty($baselineLastYear))
+                                                            <td>
+                                                                {{ $baselineLastYear }}
+                                                            </td>
+                                                        @else
+                                                            @if ($baseline)
                                                             @if($off_level === 1)
                                                                 @if ($off_level === $baseline->plan_status)
                                                                     @php $disabled ="disabled"; @endphp
@@ -820,16 +819,7 @@
                                                                     value="" type="number"
                                                                     required>
                                                             </td>
-                                                        @endif --}}
-
-                                                        @if (!empty($baselineLastYear))
-                                                            <td>
-                                                                {{ $baselineLastYear }}
-                                                            </td>
-                                                        @else
-                                                            <td>
-                                                                -
-                                                            </td>
+                                                        @endif 
                                                         @endif
 
                                                         @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
@@ -914,8 +904,14 @@
                                     $disabled = '';
                                     $baselineLastYear = getBaselineLastYear($kpi->id, $planning_year->id ?? NULL, 1, auth()->user()->offices[0]->id);
                                 @endphp
-
-                                {{-- @if ($baseline)
+                                @if (!empty($baselineLastYear))
+                                    <td>
+                                        {{ $baselineLastYear }}
+                                    </td>
+                                @else
+                                    <td>
+                                        {{-- base line input for no baseline because of new mis version --}}
+                                  @if ($baseline)
                                     @if($off_level === 1)
                                         @if ($off_level === $baseline->plan_status)
                                             @php $disabled ="disabled"; @endphp
@@ -923,33 +919,20 @@
                                     @elseif ($off_level != $baseline->plan_status)
                                         @php $disabled ="disabled"; @endphp
                                     @endif
-                                    <td>
-                                        <input
+                                         <input
                                             name="baseline-{{ $kpi->id }}"
                                             class="form-control"
                                             value="{{ $baseline->baseline }}" type="number"
                                             required {{ $disabled }}>
-                                    </td>
-                                @else
-                                    <td>
-                                        <input
+                                 @else
+                                         <input
                                             name="baseline-{{ $kpi->id }}"
                                             class="form-control"
                                             value="" type="number"
                                             required placeholder="Enter baseline">
-                                    </td>
-                                @endif --}}
-
-                                @if (!empty($baselineLastYear))
-                                    <td>
-                                        {{ $baselineLastYear }}
-                                    </td>
-                                @else
-                                    <td>
-                                        -
+                                 @endif
                                     </td>
                                 @endif
-
                                 @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
                                     <p class="mb-3">
                                         @php
@@ -1007,6 +990,9 @@
                                         var behavior = String({{ $behavior }});
                                         var idd_y = String({{ $kpi->id }}) + String(1);
                                         var yearly = document.getElementById(idd_y).value;
+                                            var last_p= String({{ $kpi->id }}) + String(loop);
+                                            var LastPeriod = document.getElementById(last_p).value;
+                                            
                                         // addtive
                                         if (behavior == 1) {
                                             for (var i = loop; i > 1; i--) {
@@ -1035,6 +1021,8 @@
                                                 var values = document.getElementById(idd).value;
                                                 var values2 = document.getElementById(iddd).value;
                                                 if (values != values2) {
+                                                   // document.write(values);
+                                                    //document.write(values2);
                                                     document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
                                                         "Plan should be constant";
                                                     for (var i = loop; i > 1; i--) {
@@ -1052,12 +1040,13 @@
                                         }
                                         // incremental
                                         else if (behavior == 3) {
+                                             // compare each period
                                             for (var i = loop; i > 2; i--) {
                                                 var idd = String({{ $kpi->id }}) + String(i);
                                                 var iddd = String({{ $kpi->id }}) + String(i - 1);
                                                 var values = document.getElementById(idd).value;
                                                 var values2 = document.getElementById(iddd).value;
-                                                if (values < values2) {
+                                                if (values < values2 || yearly!= LastPeriod){
                                                     document.getElementById("s{{ $kpi->id }}{{ 1 }}")
                                                         .innerHTML = "Plan should be incremental";
                                                     for (var i = loop; i > 1; i--) {
@@ -1078,9 +1067,9 @@
                                                 var iddd = String({{ $kpi->id }}) + String(i - 1);
                                                 var values = document.getElementById(idd).value;
                                                 var values2 = document.getElementById(iddd).value;
-                                             if (values > values2) {
+                                             if (values > values2 || yearly!= LastPeriod) {
                                                 document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
-                                                    "Plan should be incremental";
+                                                    "Plan should be decrimental";
                                                 for (var i = loop; i > 1; i--) {
                                                     var idd = String({{ $kpi->id }}) + String(i);
                                                     $('#' + idd).val("");
