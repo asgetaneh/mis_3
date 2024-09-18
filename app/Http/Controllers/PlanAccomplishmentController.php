@@ -296,11 +296,14 @@ class PlanAccomplishmentController extends Controller
        }
          $submit = "create";
 
-        if($request->has('type') && $request->type == "yes"){ $submit = "update";}
          $getNaration =null;
          $index = [];
         $planning = PlaningYear::where('is_active',true)->first();
          foreach ($kpi as $key => $value) {
+            if($request->has('type') && $request->type == "yes"){
+              $submit = "update";
+            }
+
             $str_key= (string)$key ;
              //dd($kpi);
               if($str_key!='_token'){

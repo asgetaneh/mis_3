@@ -131,7 +131,7 @@ class StudentEMIS extends Controller
             sd.place_of_birth,
             sd.entrance_exam_id,
             sd.alternative_email as email,
-            c.country_code AS country_code,
+            c.code AS country_code,
             st.region_code AS state_code,
             z.zone_code AS zone_code,
             w.woreda_code AS woreda_code,
@@ -394,7 +394,7 @@ class StudentEMIS extends Controller
             // I think this is all the semester count taken in that year, not sure yet
             // DB::raw('count(ifo.semester) as total_academic_periods'),
         )
-        ->where('gl.certified_on', 'like', '%2023%')
+        ->where('gl.certified_on', 'like', '%2024%')
         ->when(!empty($request->filter), function ($q) {
             return $q->where('gl.academic_year', request('academic_year'));
         })
