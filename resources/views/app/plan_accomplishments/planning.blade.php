@@ -987,6 +987,7 @@
                                     $('input[id={{ $inputid }}]').on( 'change', function() {
                                         var sum = 0;
                                         var loop = {{ $last_period }};
+                                        if(loop==1){ loop =2;}
                                         var behavior = String({{ $behavior }});
                                         var idd_y = String({{ $kpi->id }}) + String(1);
                                         var yearly = document.getElementById(idd_y).value;
@@ -995,12 +996,12 @@
                                             
                                         // addtive
                                         if (behavior == 1) {
-                                            for (var i = loop; i > 1; i--) {
+                                            for (var i = loop; i > 1; i--) { 
                                                 var idd = String({{ $kpi->id }}) + String(i);
                                                 var values = document.getElementById(idd).value;
                                                 sum = parseFloat(sum) + parseFloat(values);
                                             }
-                                            if (yearly != sum) {
+                                            if (yearly != sum) { //alert(yearly);
                                                 document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
                                                     "Period plan not matched with yearly";
                                                 for (var i = loop; i > 1; i--) {
