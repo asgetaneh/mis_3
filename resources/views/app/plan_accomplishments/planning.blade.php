@@ -993,7 +993,6 @@
                                         var yearly = document.getElementById(idd_y).value;
                                             var last_p= String({{ $kpi->id }}) + String(loop);
                                             var LastPeriod = document.getElementById(last_p).value;
-                                            
                                         // addtive
                                         if (behavior == 1) {
                                             for (var i = loop; i > 1; i--) { 

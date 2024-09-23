@@ -10,7 +10,7 @@
                             <div class="login-wrap p-4 p-md-5 shadow-sm bg-light" style="border: 1px solid rgb(218, 218, 218); border-radius: 15px;">
                                 <div class="icon d-flex align-items-center justify-content-center">
                                     <!-- Change below img tag to use the image from the project folder -->
-                                    <img src="{{ asset('images/logo.png') }}" alt=""
+                                    <img src="{{ asset('images/ju-logo.png') }}" alt=""
                                         class="img-fluid d-block mx-auto mb-4" width="150" height="150">
                                 </div>
                                 <h4 class="text-center text-secondary mb-4">JU MIS</h4>
