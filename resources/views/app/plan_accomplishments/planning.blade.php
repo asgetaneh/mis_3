@@ -976,14 +976,6 @@
                             </table>
 
                              <script>
-                                /* function validateTheForm(){
-                                        var validation = (document.getElementById('{{ $kpi->id }}{{ $period->slug }}').value == 'gmail');
-                                        if(!validation){
-                                            alert('Something went wrong...Plese write gmail intext box and click');
-                                            return false;
-                                        }
-                                        return true;
-                                    }*/
                                 $(function() {
                                     $('input[id={{ $inputid }}]').on( 'change', function() {
                                         var sum = 0;
