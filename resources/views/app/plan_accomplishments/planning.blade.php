@@ -966,6 +966,7 @@
                                                 id="{{ $kpi->id }}{{ $period->slug }}"
                                                 name="{{ $kpi->id }}-{{ $period->id }}" required>
                                             <span class="text-danger" id="s{{ $kpi->id }}{{ $period->slug }}"></span>
+                                           {{--{{ $kpi->id }}{{ $period->slug }}--}} 
                                         </td>
                                     @endif
 
@@ -993,6 +994,7 @@
                                         var yearly = document.getElementById(idd_y).value;
                                             var last_p= String({{ $kpi->id }}) + String(loop);
                                             var LastPeriod = document.getElementById(last_p).value;
+
                                         // addtive
                                         if (behavior == 1) {
                                             for (var i = loop; i > 1; i--) { 
