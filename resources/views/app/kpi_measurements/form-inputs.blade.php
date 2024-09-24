@@ -34,7 +34,7 @@
             >
         </x-inputs.group>
 
-        <x-inputs.group class="col-sm-12">
+        {{-- <x-inputs.group class="col-sm-12">
             <x-inputs.text
                 name="{{'slug_'.$lang->locale}}"
                 label="{{'Slug in '.$lang->name}}"
@@ -45,6 +45,16 @@
             ></x-inputs.text>
 
             <span></span>
+        </x-inputs.group> --}}
+
+        <x-inputs.group class="col-sm-12">
+            <x-inputs.select name="slug" label="Slug" class="form-control select2" required>
+                @php $selected = old('slug', ($editing ? $kpiMeasurement->measurement->slug : '')) @endphp
+                <option disabled {{ empty($selected) ? 'selected' : '' }} value="">Please select the measurement</option>
+                <option value="number" {{ $editing ? ($kpiMeasurement->measurement->slug == 'number' ? 'selected' : '') : '' }}>Number</option>
+                <option value="percent" {{ $editing ? ($kpiMeasurement->measurement->slug == 'percent' ? 'selected' : '') : '' }}>Percent</option>
+                <option value="ratio" {{  $editing ? ($kpiMeasurement->measurement->slug == 'ratio' ? 'selected' : '') : ''  }}>Ratio</option>
+             </x-inputs.select>
         </x-inputs.group>
 
     @endforeach

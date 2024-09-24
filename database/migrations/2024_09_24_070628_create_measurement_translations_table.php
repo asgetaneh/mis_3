@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('measurement_translations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->text('slug');
+            // $table->text('slug');
             $table->text('description')->nullable();
             $table->boolean('status')->default(true);
             $table->unsignedBigInteger('translation_id');

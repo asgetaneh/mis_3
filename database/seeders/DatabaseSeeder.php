@@ -280,21 +280,21 @@ class DatabaseSeeder extends Seeder
         }
 
         // seed initial measurements information
-        $number = Measurement::firstOrCreate(['id' => 1]);
+        $number = Measurement::firstOrCreate(['id' => 1, 'slug' => 'number']);
         MeasurementTranslation::firstOrCreate(
-            ['slug' => 'number', 'translation_id' => $number->id],
+            ['translation_id' => $number->id],
             ['name' => 'Number', 'description' => 'Number level measurement.']
         );
 
-        $percent = Measurement::firstOrCreate(['id' => 2]);
+        $percent = Measurement::firstOrCreate(['id' => 2, 'slug' => 'percent']);
         MeasurementTranslation::firstOrCreate(
-            ['slug' => 'percent', 'translation_id' => $percent->id],
+            ['translation_id' => $percent->id],
             ['name' => 'Percent', 'description' => 'Percentage level measurement.']
         );
 
-        $ratio = Measurement::firstOrCreate(['id' => 3]);
+        $ratio = Measurement::firstOrCreate(['id' => 3, 'slug' => 'ratio']);
         MeasurementTranslation::firstOrCreate(
-            ['slug' => 'ratio', 'translation_id' => $ratio->id],
+            ['translation_id' => $ratio->id],
             ['name' => 'Ratio', 'description' => 'Ratio level measurement.']
         );
     }

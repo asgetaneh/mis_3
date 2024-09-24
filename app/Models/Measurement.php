@@ -9,6 +9,10 @@ class Measurement extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'slug',
+    ];
+
     protected $searchableFields = ['*'];
 
     public function keyPerformanceIndicators()

@@ -77,16 +77,16 @@ class MeasurementController extends Controller
 
         $data = $request->input();
         $language = Language::all();
-        //$lastGoal = Goal::select('id')->orderBy('id','desc')->first();
         try {
             $Measurement = new Measurement;
+            $Measurement->slug = $data['slug'];
             $Measurement->save();
 
             foreach ($language as $key => $value) {
                 $measurementTranslation = new MeasurementTranslation;
                 $measurementTranslation->translation_id = $Measurement->id;
                 $measurementTranslation->name = $data['name_' . $value->locale];
-                $measurementTranslation->slug = $data['slug_' . $value->locale];
+                // $measurementTranslation->slug = $data['slug_' . $value->locale];
                 $measurementTranslation->locale = $value->locale;
                 $measurementTranslation->description = $data['description_' . $value->locale];
                 $measurementTranslation->save();
@@ -151,9 +151,13 @@ class MeasurementController extends Controller
         $isNewLangAdded = false;
         $localeArray = [];
 
-        foreach ($request->except('_token', '_method') as $key => $value) {
+        $kpiMeasurement?->measurement?->update([
+            'slug' => $request['slug']
+        ]);
 
-            $locale = str_replace(['name_', 'description_', 'slug_'], '', $key);
+        foreach ($request->except('_token', '_method', 'slug') as $key => $value) {
+
+            $locale = str_replace(['name_', 'description_'], '', $key);
 
             $measurementTranslation = $kpiMeasurement->measurement->measurementTranslations->where('locale', $locale)->first();
 
@@ -178,17 +182,17 @@ class MeasurementController extends Controller
                 $loc = $locale;
                 $inputName = 'name_' . $loc;
                 $inputDescription = 'description_' . $loc;
-                $inputSlug = 'slug_' . $loc;
+                // $inputSlug = 'slug_' . $loc;
 
                 $name = $request->input($inputName);
                 $description = $request->input($inputDescription);
-                $slug = $request->input($inputSlug);
+                // $slug = $request->input($inputSlug);
 
                 $MeasurementT = new MeasurementTranslation;
                 $MeasurementT->name = $name;
                 $MeasurementT->locale = $locale;
                 $MeasurementT->description = $description;
-                $MeasurementT->slug = $slug;
+                // $MeasurementT->slug = $slug;
                 $MeasurementT->save();
             }
         }
