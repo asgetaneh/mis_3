@@ -50,6 +50,7 @@ use App\Http\Controllers\NationInstitutionIdController;
 use App\Http\Controllers\CampusController;
 use App\Http\Controllers\BuildingPurposeController;
 use App\Http\Controllers\BuildingController;
+use App\Http\Controllers\MeasurementController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskAssignController;
 use App\Http\Controllers\TaskMeasurementController;
@@ -161,6 +162,10 @@ Route::prefix('/')
                     Route::POST('kpi-assign-tooffices/save', [KeyPeformanceIndicatorController::class, 'kpiAssignToOfficesSave'])->name('kpi-assign-tooffices-save');
                     Route::DELETE('kpi-remove-from-office/{kpi}/{office}', [KeyPeformanceIndicatorController::class, 'kpiRemoveFromOffice'])->name('kpi-remove-from-office');
 
+                    Route::resource(
+                        'kpi-measurements',
+                        MeasurementController::class
+                    );
 
                     Route::resource(
                         'key-peformance-indicators',
