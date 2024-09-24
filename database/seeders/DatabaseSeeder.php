@@ -6,10 +6,12 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\Office;
 use App\Models\Language;
+use App\Models\Measurement;
 use Illuminate\Database\Seeder;
 use App\Models\OfficeTranslation;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use App\Models\MeasurementTranslation;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -263,5 +265,24 @@ class DatabaseSeeder extends Seeder
 
             $assignOfficeToAdmin = DB::insert('insert into manager (user_id, office_id) values (?, ?)', [$adminUser->id, $office->id]);
         }
+
+        // seed initial measurements information
+        $number = Measurement::firstOrCreate(['id' => 1]);
+        MeasurementTranslation::firstOrCreate(
+            ['slug' => 'number', 'translation_id' => $number->id],
+            ['name' => 'Number', 'description' => 'Number level measurement.']
+        );
+
+        $percent = Measurement::firstOrCreate(['id' => 2]);
+        MeasurementTranslation::firstOrCreate(
+            ['slug' => 'percent', 'translation_id' => $percent->id],
+            ['name' => 'Percent', 'description' => 'Percentage level measurement.']
+        );
+
+        $ratio = Measurement::firstOrCreate(['id' => 3]);
+        MeasurementTranslation::firstOrCreate(
+            ['slug' => 'ratio', 'translation_id' => $ratio->id],
+            ['name' => 'Ratio', 'description' => 'Ratio level measurement.']
+        );
     }
 }

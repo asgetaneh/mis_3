@@ -101,7 +101,9 @@ class KeyPeformanceIndicator extends Model
         return $this->hasMany(Task::class);
     }
 
-
-
+    public function measurement()
+    {
+        return $this->belongsTo(Measurement::class);
+    }
 
 }
