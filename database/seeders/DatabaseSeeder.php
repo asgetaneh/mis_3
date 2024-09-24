@@ -190,6 +190,19 @@ class DatabaseSeeder extends Seeder
         Permission::updateOrCreate(['name' => 'update task']);
         Permission::updateOrCreate(['name' => 'assign task']);
 
+
+        Permission::updateOrCreate(['name' => 'list measurements']);
+        Permission::updateOrCreate(['name' => 'view measurements']);
+        Permission::updateOrCreate(['name' => 'create measurements']);
+        Permission::updateOrCreate(['name' => 'update measurements']);
+        Permission::updateOrCreate(['name' => 'delete measurements']);
+
+        Permission::updateOrCreate(['name' => 'list measurementtranslations']);
+        Permission::updateOrCreate(['name' => 'view measurementtranslations']);
+        Permission::updateOrCreate(['name' => 'create measurementtranslations']);
+        Permission::updateOrCreate(['name' => 'update measurementtranslations']);
+        Permission::updateOrCreate(['name' => 'delete measurementtranslations']);
+
         // Create user role and assign existing permissions
         $currentPermissions = Permission::all();
         $userRole = Role::updateOrCreate(['name' => 'staff']);
