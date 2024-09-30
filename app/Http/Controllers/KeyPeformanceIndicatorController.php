@@ -29,6 +29,8 @@ use App\Http\Requests\KeyPeformanceIndicatorUpdateRequest;
 use App\Models\Behavior;
 use App\Models\BehaviorTranslation;
 use App\Models\KpiTypeTranslation;
+use App\Models\Measurement;
+use App\Models\MeasurementTranslation;
 
 class KeyPeformanceIndicatorController extends Controller
 {
@@ -90,6 +92,8 @@ class KeyPeformanceIndicatorController extends Controller
         $offices = OfficeTranslation::all();
         $reportingPeriodTypes = ReportingPeriodTypeT::all();
         $kpiTypes = KpiTypeTranslation::all();
+        $kpiMeasurements = MeasurementTranslation::all();
+
         // $offices = OfficeTranslation::whereHas('office', function ($query) {
         //     $query->where('parent_office_id', 1);
         // })->get();
@@ -102,7 +106,7 @@ class KeyPeformanceIndicatorController extends Controller
 
         return view(
             'app.key_peformance_indicators.create',
-            compact('objectives', 'strategies', 'users', 'reportingPeriodTypes', 'kpiTypes', 'languages', 'offices', 'behaviors')
+            compact('objectives', 'strategies', 'users', 'reportingPeriodTypes', 'kpiTypes', 'languages', 'offices', 'behaviors', 'kpiMeasurements')
         );
     }
 
@@ -130,6 +134,7 @@ class KeyPeformanceIndicatorController extends Controller
             $keyPeformanceIndicator->reporting_period_type_id= $data['reporting_period_type_id'];
             $keyPeformanceIndicator->behavior_id = $data['behavior_id'];
             $keyPeformanceIndicator->kpi_type_id = $data['kpi_type_id'];
+            $keyPeformanceIndicator->measurement_id = $data['measurement_id'];
             $keyPeformanceIndicator->created_by_id= auth()->user()->id;
             $keyPeformanceIndicator->save();
              foreach ($language as $key => $value) {

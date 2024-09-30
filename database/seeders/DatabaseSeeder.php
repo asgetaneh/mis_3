@@ -6,10 +6,12 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\Office;
 use App\Models\Language;
+use App\Models\Measurement;
 use Illuminate\Database\Seeder;
 use App\Models\OfficeTranslation;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use App\Models\MeasurementTranslation;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -188,6 +190,19 @@ class DatabaseSeeder extends Seeder
         Permission::updateOrCreate(['name' => 'update task']);
         Permission::updateOrCreate(['name' => 'assign task']);
 
+
+        Permission::updateOrCreate(['name' => 'list measurements']);
+        Permission::updateOrCreate(['name' => 'view measurements']);
+        Permission::updateOrCreate(['name' => 'create measurements']);
+        Permission::updateOrCreate(['name' => 'update measurements']);
+        Permission::updateOrCreate(['name' => 'delete measurements']);
+
+        Permission::updateOrCreate(['name' => 'list measurementtranslations']);
+        Permission::updateOrCreate(['name' => 'view measurementtranslations']);
+        Permission::updateOrCreate(['name' => 'create measurementtranslations']);
+        Permission::updateOrCreate(['name' => 'update measurementtranslations']);
+        Permission::updateOrCreate(['name' => 'delete measurementtranslations']);
+
         // Create user role and assign existing permissions
         $currentPermissions = Permission::all();
         $userRole = Role::updateOrCreate(['name' => 'staff']);
@@ -263,5 +278,24 @@ class DatabaseSeeder extends Seeder
 
             $assignOfficeToAdmin = DB::insert('insert into manager (user_id, office_id) values (?, ?)', [$adminUser->id, $office->id]);
         }
+
+        // seed initial measurements information
+        $number = Measurement::firstOrCreate(['id' => 1, 'slug' => 'number']);
+        MeasurementTranslation::firstOrCreate(
+            ['translation_id' => $number->id],
+            ['name' => 'Number', 'description' => 'Number level measurement.']
+        );
+
+        $percent = Measurement::firstOrCreate(['id' => 2, 'slug' => 'percent']);
+        MeasurementTranslation::firstOrCreate(
+            ['translation_id' => $percent->id],
+            ['name' => 'Percent', 'description' => 'Percentage level measurement.']
+        );
+
+        $ratio = Measurement::firstOrCreate(['id' => 3, 'slug' => 'ratio']);
+        MeasurementTranslation::firstOrCreate(
+            ['translation_id' => $ratio->id],
+            ['name' => 'Ratio', 'description' => 'Ratio level measurement.']
+        );
     }
 }

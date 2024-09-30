@@ -337,7 +337,15 @@
                                                 </a>
                                                 <ul class="nav nav-treeview">
 
-
+                                                    @can('view-any', App\Models\Measurement::class)
+                                                        <li class="nav-item">
+                                                            <a href="{{ route('kpi-measurements.index') }}"
+                                                                class="nav-link {{ Request::is('smis/setting/kpi/kpi-measurements/*') || Request::is('smis/setting/kpi/kpi-measurements') ? 'active' : '' }}">
+                                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                                <p>Measurement</p>
+                                                            </a>
+                                                        </li>
+                                                    @endcan
                                                     @can('view-any', App\Models\Behavior::class)
                                                         <li class="nav-item">
                                                             <a href="{{ route('types.index') }}"
