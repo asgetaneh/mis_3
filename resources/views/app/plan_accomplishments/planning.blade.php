@@ -996,7 +996,7 @@
                                             }
                                             if (yearly != sum) { //alert(yearly);
                                                 document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
-                                                    "Period plan not matched with yearly";
+                                                    "Period plan not matched with yearly with additive behavior.";
                                                 for (var i = loop; i > 1; i--) {
                                                     var idd = String({{ $kpi->id }}) + String(i);
                                                     $('#' + idd).val("");
@@ -1040,9 +1040,12 @@
                                                 var iddd = String({{ $kpi->id }}) + String(i - 1);
                                                 var values = document.getElementById(idd).value;
                                                 var values2 = document.getElementById(iddd).value;
-                                                if (values < values2 || yearly!= LastPeriod){
+                                                //document.write(idd,"-->",values,"<br>");
+                                                       // document.write(iddd,"-->",values2);
+                                                if (yearly!= LastPeriod || values < values2){
                                                     document.getElementById("s{{ $kpi->id }}{{ 1 }}")
                                                         .innerHTML = "Plan should be incremental";
+                                                        
                                                     for (var i = loop; i > 1; i--) {
                                                         var idd = String({{ $kpi->id }}) + String(i);
                                                         $('#' + idd).val("");
@@ -1056,19 +1059,25 @@
                                         }
                                         // decrimental
                                         else if (behavior == 4) {
-                                            for (var i = loop; i > 2; i--) {
+                                            for (var i = loop; i > 2; i--) { 
                                                 var idd = String({{ $kpi->id }}) + String(i);
-                                                var iddd = String({{ $kpi->id }}) + String(i - 1);
+                                                var iddd = String({{ $kpi->id }}) + String(i-1);
                                                 var values = document.getElementById(idd).value;
                                                 var values2 = document.getElementById(iddd).value;
-                                             if (values > values2 || yearly!= LastPeriod) {
+                                             if (yearly!= LastPeriod || values > values2 ) {
+                                                //document.write(idd,"-->",values,"<br>");
+                                                //document.write(iddd,"-->",values2);
                                                 document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
-                                                    "Plan should be decrimental";
+                                                    "Plan should be decrimental and (yearly and last period plan should be equal).";
                                                 for (var i = loop; i > 1; i--) {
                                                     var idd = String({{ $kpi->id }}) + String(i);
                                                     $('#' + idd).val("");
                                                 }
                                                 $('#' + idd_y).val("");
+                                            }
+                                            else{
+                                                document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
+                                                    "";
                                             }
                                         }
                                         } else {
