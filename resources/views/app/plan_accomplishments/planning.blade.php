@@ -823,6 +823,11 @@
                                                         @endif
 
                                                         @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
+                                                        @php
+                                                            $last_period = count(getQuarter($kpi->reportingPeriodType->id));
+                                                            $inputid_one = $kpi->id . $last_period;
+                                                            $off_level = auth()->user()->offices[0]->level;
+                                                        @endphp
                                                             @php
                                                                 $inputname = '{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}';
                                                                 $plan1 = getSavedPlanIndividualOne($planning_year->id ?? NULL, $kpi->id, $period->id, $one->id, auth()->user()->offices[0]->id);
@@ -849,33 +854,110 @@
                                                                 <td>
                                                                     <input
                                                                         name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}"
-                                                                        id="kone{{ $one->id }}{{ $period->slug }}"
+                                                                        id="kone{{ $kpi->id }}{{ $one->id }}{{ $period->slug }}"
                                                                         class="form-control" type="number" required>
-                                                                    <span class="text-danger" id="spankOne{{ $one->id }}{{ $period->slug }}"></span>
+                                                                    <span class="text-danger" id="spankOne{{ $kpi->id }}{{ $one->id }}{{ $period->slug }}"></span>
                                                                 </td>
                                                             @endif
                                                         @empty
                                                         @endforelse
                                                         <script>
                                                             $(function() {
-                                                                $('input[id=kone{{ $one->id }}5]').on('change', function() {
-                                                                    var KOvalues1 = document.getElementById('kone{{ $one->id }}1').value;
-                                                                    var KOvalues2 = document.getElementById('kone{{ $one->id }}2').value;
-                                                                    var KOvalues2 = document.getElementById('kone{{ $one->id }}2').value;
-                                                                    var KOvalues3 = document.getElementById('kone{{ $one->id }}3').value;
-                                                                    var KOvalues4 = document.getElementById('kone{{ $one->id }}4').value;
-                                                                    var KOvalues5 = document.getElementById('kone{{ $one->id }}5').value;
-                                                                    sum = parseFloat(KOvalues2) + parseFloat(KOvalues3) + parseFloat(KOvalues4) + parseFloat(
-                                                                        KOvalues5);
-                                                                    if (KOvalues1 != sum) {
-                                                                        document.getElementById("spankOne{{ $one->id }}1").innerHTML =
-                                                                            "Period plan not matched with yearly";
-                                                                        $('#kone{{ $one->id }}1').val("");
+                                                                var loop = {{ $last_period }};
+                                                                $('input[id=kone{{ $kpi->id }}{{ $one->id }}{{ $last_period }}]').on('change', function() {
+                                                                var sum = 0;
+                                                                var last_p= String('kone')+String({{ $kpi->id }}) + String({{ $one->id }}) + String(loop); 
+                                                                var last_period_value = document.getElementById(last_p).value;
+                                                                if(loop==1){ loop =2;} 
+                                                               
+                                                                var behavior = String({{ $behavior }});
+                                                                var yearly_plan = String('kone')+String({{ $kpi->id }}) +String({{ $one->id }}) + String(1);
+                                                                var yearly = document.getElementById(yearly_plan).value; 
+                                                                 // addtive
+                                                                if (behavior == 1) {
+                                                                    for (var i = loop; i > 1; i--) { 
+                                                                        var idd = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i);
+                                                                        var values = document.getElementById(idd).value;
+                                                                        sum = parseFloat(sum) + parseFloat(values);
+                                                                       
+                                                                    }
+                                                                    if (yearly != sum) { 
+                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1").innerHTML =
+                                                                            "Period plan not matched with yearly with additive behavior.";
+                                                                        for (var i = loop; i > 1; i--) {
+                                                                            var idd = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i);
+                                                                            $('#' + idd).val("");
+                                                                         }
+                                                                        $('#' + yearly_plan).val("");
                                                                     }else{
-                                                                        document.getElementById("spankOne{{ $one->id }}1").innerHTML =
+                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1").innerHTML =
                                                                             "";
                                                                     }
-
+                                                                }
+                                                                // constant kpi with child one
+                                                                else if (behavior == 2) {
+                                                                    for (var i = loop; i > 1; i--) { 
+                                                                        var idd = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i);
+                                                                        var idd2 = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i-1);
+                                                                        var values = document.getElementById(idd).value;
+                                                                        var values2 = document.getElementById(idd2).value;
+                                                                        sum = parseFloat(sum) + parseFloat(values);
+                                                                    if (values != values2) { 
+                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1").innerHTML =
+                                                                            "Each Period plan not matched with yearly plan in constant behavior.";
+                                                                        for (var i = loop; i > 1; i--) {
+                                                                            var idd = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i);
+                                                                            $('#' + idd).val("");
+                                                                         }
+                                                                        $('#' + yearly_plan).val("");
+                                                                    }else{
+                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1").innerHTML =
+                                                                            "";
+                                                                    }
+                                                                }
+                                                                }
+                                                                 // incremental kpi with child one
+                                                                else if (behavior == 3) {
+                                                                    for (var i = loop; i > 2; i--) { 
+                                                                        var idd = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i);
+                                                                        var idd2 = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i-1);
+                                                                        var values = document.getElementById(idd).value;
+                                                                        var values2 = document.getElementById(idd2).value;
+                                                                     if (yearly!= last_period_value || values < values2){
+                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1").innerHTML =
+                                                                            "Each Period plan not matched with yearly plan in incremental behavior.";
+                                                                        for (var i = loop; i > 1; i--) {
+                                                                            var idd = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i);
+                                                                            $('#' + idd).val("");
+                                                                         }
+                                                                        $('#' + yearly_plan).val("");
+                                                                    }else{
+                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1").innerHTML =
+                                                                            "";
+                                                                    }
+                                                                }
+                                                                }
+                                                                 // Decremental kpi with child one
+                                                                else if (behavior == 4) {
+                                                                    for (var i = loop; i > 2; i--) { 
+                                                                        var idd = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i);
+                                                                        var idd2 = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i-1);
+                                                                        var values = document.getElementById(idd).value;
+                                                                        var values2 = document.getElementById(idd2).value;
+                                                                     if (yearly!= last_period_value || values > values2){
+                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1").innerHTML =
+                                                                            "Each Period plan not matched with yearly plan in Decremetal behavior.";
+                                                                        for (var i = loop; i > 1; i--) {
+                                                                            var idd = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i);
+                                                                            $('#' + idd).val("");
+                                                                         }
+                                                                        $('#' + yearly_plan).val("");
+                                                                    }else{
+                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1").innerHTML =
+                                                                            "";
+                                                                    }
+                                                                }
+                                                                }
 
                                                                 });
                                                             });
