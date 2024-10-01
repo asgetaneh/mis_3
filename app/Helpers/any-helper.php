@@ -23,6 +23,65 @@ use Illuminate\Support\Collection;
  *
  * @return response()
  */
+  function calculateAveragePlan($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three)
+    {
+        // Fetch the office with its children
+        $office = Office::with('offices')->find($office->id);
+
+        // Initialize values for calculating the sum and number of offices (for averaging)
+        $totalPlan = 0;
+        $validPlansCount = 0;
+
+        // If this office's plan is non-zero, include it in the total and count
+        $office_plan = getOfficePlan($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three);
+        $office_plan =$office_plan?->plan_value ?? NULL;
+              
+        if ($office_plan !== NULL) {
+            $totalPlan += $office_plan;
+            $validPlansCount++;
+        }
+  
+  
+          
+        foreach ($office->offices as $child) {
+            // Recursively calculate the average plan of the child
+            list($childPlanTotal, $childCount) =  calculateAveragePlan($kkp,$child,$period,$is_report,$planning_year ,$one,$two,$three);
+            
+            // Include the child's plan (as it's already averaged if it has children)
+            if ($childCount > 0) {
+                $totalPlan += $childPlanTotal / $childCount;
+                $validPlansCount++;
+            }
+        }
+
+
+        // If there are valid plans (non-zero plans), calculate the average
+        if ($validPlansCount > 0) {
+            $averagePlan = $totalPlan / $validPlansCount; 
+           // echo $office->officeTranslations[0]->name.' num of child='.$validPlansCount.' plan='.$totalPlan."<br/>";  dump($averagePlan);  
+        return [$totalPlan, $validPlansCount];         
+        }
+
+        // Return the total plan value and the count of valid plans (used by the parent in recursion)
+        //return [$totalPlan, $validPlansCount];
+    }
+ 
+if (! function_exists('getOfficePlan')) {
+ function  getOfficePlan($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three)
+    { 
+        $planAccomplishments = PlanAccomplishment::select('*')
+            ->where('office_id', $office->id)
+            ->where('kpi_id' , '=', $kkp)
+            ->where('planning_year_id','=', $planning_year)
+            ->where('kpi_child_one_id' , '=', $one)
+            ->where('kpi_child_two_id' , '=', $two)
+            ->where('kpi_child_three_id' , '=', $three)
+            ->where('reporting_period_id' , '=', $period)
+        ->first(); 
+        return $planAccomplishments;//dd($planAccomplishments);
+    }
+}
+
 if (! function_exists('gettrans')) {
     function getAllOffices()
     {
