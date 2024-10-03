@@ -134,6 +134,9 @@
                                                         <th  rowspan="2"></th>
                                                          <th  rowspan="2" style="width:60%">
                                                             KPI:   {{$kpiT->name }}
+                                                             @if ($kpiT->keyPeformanceIndicator ->measurement)
+                                                                {{"( in "}}{{$kpiT->keyPeformanceIndicator ->measurement['slug'] }} {{")" }}
+                                                             @endif
                                                         </th>
                                                          @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                                                             <th> {{ $period->reportingPeriodTs[0]->name }} </th>

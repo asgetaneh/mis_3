@@ -103,11 +103,12 @@
                             $c = 1;
                             $objective_array = [];
                         @endphp
-                        @forelse($planAccomplishments as $planAcc)
+                         @forelse($planAccomplishments as $planAcc)
                             @php
                                 $offices = $planAcc->getOfficeFromKpiAndOfficeList($only_child_array,$off_level);
 
                             @endphp
+
 
                             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
                                 <div class="card collapsed-card p-2">
@@ -128,7 +129,10 @@
                                                     <tr style="background:#21212121;">
                                                         <th  rowspan="2"></th>
                                                          <th  rowspan="2" style="width:60%">
-                                                            KPI:   {{$kpiT->name }}
+                                                            KPI:   {{$kpiT->name }} 
+                                                            @if ($kpiT->keyPeformanceIndicator ->measurement)
+                                                                {{"( in "}}{{$kpiT->keyPeformanceIndicator ->measurement['slug'] }} {{")" }}
+                                                             @endif
                                                         </th>
                                                          @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                                                                 <th> {{ $period->reportingPeriodTs[0]->name }} </th>
@@ -182,7 +186,7 @@
                                                 @php
                                                     $isOfficeBelongToKpi = isOfficeBelongToKpi($office, $planAcc->Kpi->id);
                                                 @endphp
-
+ 
                                                 @if ($isOfficeBelongToKpi->count() > 0)
                                                     @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
                                                         {{-- <table class="table table-bordered">

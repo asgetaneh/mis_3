@@ -37,7 +37,7 @@ function isOfficeBelongToKpi($office, $kpi)
         ->join('offices', 'offices.id', '=', 'kpi_office.office_id')
         ->where('kpi_office.kpi_id', '=', $kpi)
         ->whereIn('kpi_office.office_id', $allOffices)
-        ->get();
+        ->get();//dump($data);
 
     return $data;
 }

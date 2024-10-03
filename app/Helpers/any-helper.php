@@ -34,15 +34,19 @@ use Illuminate\Support\Collection;
 
         // If this office's plan is non-zero, include it in the total and count
         $office_plan = getOfficePlan($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three);
+        
         $office_plan =$office_plan?->plan_value ?? NULL;
-              
+
+        if($is_report){
+             $office_plan =$office_plan?->accom_value ?? NULL; //dump($office_plan); 
+        }
+             
         if ($office_plan !== NULL) {
             $totalPlan += $office_plan;
             $validPlansCount++;
         }
   
-  
-          
+
         foreach ($office->offices as $child) {
             // Recursively calculate the average plan of the child
             list($childPlanTotal, $childCount) =  calculateAveragePlan($kkp,$child,$period,$is_report,$planning_year ,$one,$two,$three);
@@ -69,6 +73,8 @@ use Illuminate\Support\Collection;
 if (! function_exists('getOfficePlan')) {
  function  getOfficePlan($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three)
     { 
+        $office_level = $office->level;
+        if($office_level == 0) $office_level=1;
         $planAccomplishments = PlanAccomplishment::select('*')
             ->where('office_id', $office->id)
             ->where('kpi_id' , '=', $kkp)
@@ -77,8 +83,22 @@ if (! function_exists('getOfficePlan')) {
             ->where('kpi_child_two_id' , '=', $two)
             ->where('kpi_child_three_id' , '=', $three)
             ->where('reporting_period_id' , '=', $period)
-        ->first(); 
-        return $planAccomplishments;//dd($planAccomplishments);
+            ->where('plan_status' , '<=', $office_level)
+
+        ->first(); //dump($office_level);
+         if($is_report){
+             $planAccomplishments = PlanAccomplishment::select('*')
+                 ->where('office_id', $office->id)
+                ->where('kpi_id' , '=', $kkp)
+                ->where('planning_year_id','=', $planning_year)
+                ->where('kpi_child_one_id' , '=', $one)
+                ->where('kpi_child_two_id' , '=', $two)
+                ->where('kpi_child_three_id' , '=', $three)
+                ->where('reporting_period_id' , '=', $period)
+                ->where('accom_status' , '<=', $office_level)
+            ->first();
+         }  
+        return $planAccomplishments;
     }
 }
 

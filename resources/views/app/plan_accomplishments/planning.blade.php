@@ -288,7 +288,7 @@
                                                                                     @endif
                                                                                     <td>
                                                                                     <!-- <input type="hidden"
-                                                                                            name="type"
+                                                                                            name="type{{$kpi->id}}"
                                                                                             value="yes"> -->
                                                                                         <input
                                                                                             name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
@@ -348,7 +348,7 @@
                                                                             @endif
                                                                             <td>
                                                                             <!-- <input type="hidden"
-                                                                                    name="type"
+                                                                                    name="type{{$kpi->id}}"
                                                                                     value="yes"> -->
                                                                                 <input
                                                                                     name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
@@ -391,8 +391,8 @@
                                                                                         @endif
                                                                                         <td>
                                                                                             <input type="hidden"
-                                                                                                name="type"
-                                                                                                value="yes">
+                                                                                                name="type{{$kpi->id}}"
+                                                                                                value="yes-{{$kpi->id}}">
                                                                                             <input
                                                                                                 name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
                                                                                                 value="{{ $plan->plan_value }}"
@@ -467,7 +467,7 @@
                                                                                         @endif
                                                                                         <td>
                                                                                             <input type="hidden"
-                                                                                                name="type"
+                                                                                                name="type{{$kpi->id}}"
                                                                                                 value="yes">
                                                                                             <input
                                                                                                 name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
@@ -563,7 +563,7 @@
                                                                                     @php $disabled ="disabled"; @endphp
                                                                                 @endif
                                                                                 <td>
-                                                                                    <!-- <input type="hidden" name="type"
+                                                                                    <!-- <input type="hidden" name="type{{$kpi->id}}"
                                                                                         value="yes"> -->
                                                                                     <input
                                                                                         name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}"
@@ -604,7 +604,7 @@
                                                                                         @php $disabled ="disabled"; @endphp
                                                                                     @endif
                                                                                     <td>
-                                                                                        <input type="hidden" name="type"
+                                                                                        <input type="hidden" name="type{{$kpi->id}}"
                                                                                             value="yes">
                                                                                         <input
                                                                                             name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}"
@@ -660,7 +660,7 @@
                                                                                     @php $disabled ="disabled"; @endphp
                                                                                 @endif
                                                                                 <td>
-                                                                                    <!-- <input type="hidden" name="type"
+                                                                                    <!-- <input type="hidden" name="type{{$kpi->id}}"
                                                                                         value="yes"> -->
                                                                                     <input
                                                                                         name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}"
@@ -714,7 +714,7 @@
                                                                                     @php $disabled ="disabled"; @endphp
                                                                                 @endif
                                                                                 <td>
-                                                                                    <input type="hidden" name="type"
+                                                                                    <input type="hidden" name="type{{$kpi->id}}"
                                                                                         value="yes">
                                                                                     <input
                                                                                         name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}"
@@ -843,7 +843,7 @@
                                                                     @php $disabled ="disabled"; @endphp
                                                                 @endif
                                                                 <td>
-                                                                    <input type="hidden" name="type" value="yes">
+                                                                    <input type="hidden" name="type{{$kpi->id}}" value="yes">
                                                                     <input
                                                                         name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}";
                                                                         class="form-control"
@@ -852,6 +852,7 @@
                                                                 </td>
                                                             @else
                                                                 <td>
+                                                                     <input type="hidden" name="type{{$kpi->id}}" value="no">
                                                                     <input
                                                                         name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}"
                                                                         id="kone{{ $kpi->id }}{{ $one->id }}{{ $period->slug }}"
@@ -1034,7 +1035,7 @@
                                                 @php $disabled ="disabled"; @endphp
                                              @endif
                                             <td>
-                                                <input type="hidden" name="type" value="yes">
+                                                <input type="hidden" name="type{{$kpi->id}}" value="yes">
                                                 <input name="{{ $kpi->id }}-{{ $period->id }}"
                                                     class="form-control" value="{{ $plan->plan_value }}"
                                                     id="{{ $kpi->id }}{{ $period->slug }}" type="number"
@@ -1044,6 +1045,7 @@
 
                                     @else
                                         <td>
+                                            <input type="hidden" name="type{{$kpi->id}}" value="no">
                                             <input class="form-control" type="number" placeholder="Enter KPI value"
                                                 id="{{ $kpi->id }}{{ $period->slug }}"
                                                 name="{{ $kpi->id }}-{{ $period->id }}" required>
@@ -1188,12 +1190,13 @@
                             @endphp
                             @if ($plan_naration)  
                                 <label for="summernote">Major Activities</label>
-                                <input type="hidden" name="type" value="yes">
+                                <input type="hidden" name="type{{$kpi->id}}" value="yes">
                                 <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;"
                                     class="form-control summernote" placeholder="Narration here" id="narration-field-{{ $kpi->id }}">{!! $plan_naration !!}</textarea>
                                     <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>
                             @else
                                 <label for="summernote">Major Activities</label>
+                                <input type="hidden" name="type{{$kpi->id}}" value="no">
                                 <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;"
                                     class="form-control summernote" placeholder="Narration here" id="narration-field-{{ $kpi->id }}"></textarea>
                                     <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>

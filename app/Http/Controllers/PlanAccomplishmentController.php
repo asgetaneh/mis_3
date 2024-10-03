@@ -285,7 +285,7 @@ class PlanAccomplishmentController extends Controller
    public function savePlan(Request $request){
 
     // dd($request->all());
-       $kpi = $request->all();
+       $kpi = $request->except('_token');
        $user = auth()->user()->id;
        $getuser = User::find($user);
        $user_offices = $getuser->offices[0]->id;
@@ -294,113 +294,115 @@ class PlanAccomplishmentController extends Controller
        if($getoffice->level ===1){
         $plan_status =11;
        }
-         $submit = "create";
-
+        $submit = "create";
          $getNaration =null;
          $index = [];
         $planning = PlaningYear::where('is_active',true)->first();
-         foreach ($kpi as $key => $value) {
-            if($request->has('type') && $request->type == "yes"){
-              $submit = "update";
+         foreach ($kpi as $key => $value) {  //dd($kpi);
+             if(str_contains($key, 'baseline') && next($kpi) == 'yes') {
+              $submit = "update";  //dump($requested_to_update);
+            }else if (str_contains($key, 'baseline') && next($kpi) == 'no'){
+                $submit = "create";
             }
-
-            $str_key= (string)$key ;
-             //dd($kpi);
+             $str_key= (string)$key ;
+           
               if($str_key!='_token'){
-                if($value=="yes"){ $submit = "update";}
+               // if($value=="yes"){ $submit = "update";}
                 // first time planning
                 if($submit == "create"){ 
-                if($str_key[0]!='d' && $str_key!="myfile"){ 
-                    $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
-                    $trueindex =0;
-                    $index = [];
-                    foreach ($arr_to_split_text as $splitkey => $splitvalue) {
-                        $index[$trueindex] =$splitvalue;
-                        $trueindex++;
-                        //echo $splitvalue;
-                    }
-                    if($index[0] == 'files') continue;
+                    if($str_key[0]!='d' && $str_key!="myfile" && !str_contains($str_key, 'type')){ 
+                        $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
+                        $trueindex =0;
+                        $index = [];  
+                        foreach ($arr_to_split_text as $splitkey => $splitvalue) {
+                            $index[$trueindex] =$splitvalue;
+                            $trueindex++;
+                            //echo $splitvalue;
+                        }
+                        if($index[0] == 'files') continue;
 
-                    if($index[0] == 'baseline'){
-                        $length =  count($index) - 1;
-                        $baseline = new Baseline;
-                        $baseline->kpi_id = $index[1];
-                        $baseline->baseline = $value;
-                        $baseline->plan_status = $plan_status;
+                        if($index[0] == 'baseline'){ //dd();
+                            $length =  count($index) - 1;
+                            $baseline = new Baseline;
+                            $baseline->kpi_id = $index[1];
+                            $baseline->baseline = $value;
+                            $baseline->plan_status = $plan_status;
 
-                        if ($length > 1) {
-                            $baseline->kpi_one_id = $index[2];
+                            if ($length > 1) {
+                                $baseline->kpi_one_id = $index[2];
+                                if ($length > 2) {
+                                    $baseline->kpi_two_id = $index[3];
+                                    if ($length > 3) {
+                                        $baseline->kpi_three_id = $index[4];
+                                    }
+                                }
+                            }
+
+                            $baseline->office_id = $user_offices;
+                            $baseline->planning_year_id = $planning->id;
+                            $baseline->save();
+
+                        }else{
+                            $length =  count($index);
+                            $plan_accom = new PlanAccomplishment;
+                            $plan_accom->kpi_id = $index[0]; //dd($index);
+                            $quarter = $index[1];
+                            $plan_accom->reporting_period_id = $index[1];
+
+                            $getkpi = KeyPeformanceIndicator::find($plan_accom->kpi_id);
+                            //dump($getkpi);
+                            $report_period_type = $getkpi->reportingPeriodType->id;
                             if ($length > 2) {
-                                $baseline->kpi_two_id = $index[3];
+                                $plan_accom->kpi_child_one_id = $index[2];
                                 if ($length > 3) {
-                                    $baseline->kpi_three_id = $index[4];
+                                    $plan_accom->kpi_child_two_id = $index[3];
+                                    if ($length > 4) {
+                                        $plan_accom->kpi_child_three_id = $index[4];
+                                    }
                                 }
                             }
+                            $plan_accom->office_id = $user_offices;
+                            $plan_accom->plan_value = $value;
+                            //$plan_accom->accom_value=0;
+                            $plan_accom->plan_status = $plan_status;
+                            $plan_accom->accom_status = $getoffice->level;
+                            $plan_accom->planning_year_id = $planning->id;
+                            $plan_accom->save();
+                            $kpi_match_for_naration = $index[0];
                         }
-
-                        $baseline->office_id = $user_offices;
-                        $baseline->planning_year_id = $planning->id;
-                        $baseline->save();
-
-                    }else{
-                        $length =  count($index);
-                        $plan_accom = new PlanAccomplishment;
-                        $plan_accom->kpi_id = $index[0];
-                        $quarter = $index[1];
-                        $plan_accom->reporting_period_id = $index[1];
-
-                        $getkpi = KeyPeformanceIndicator::find($plan_accom->kpi_id);
-                        //dump($getkpi);
-                        $report_period_type = $getkpi->reportingPeriodType->id;
-                        if ($length > 2) {
-                            $plan_accom->kpi_child_one_id = $index[2];
-                            if ($length > 3) {
-                                $plan_accom->kpi_child_two_id = $index[3];
-                                if ($length > 4) {
-                                    $plan_accom->kpi_child_three_id = $index[4];
-                                }
+                    }
+                    elseif($str_key[0]=='d'){ // continue; dd("x");
+                        $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
+                        $trueindex =0;
+                         $index =[];
+                        foreach ($arr_to_split_text as $splitkey => $splitvalue) {
+                            $index[$trueindex] =$splitvalue;
+                            $trueindex++;
                             }
-                        }
-                        $plan_accom->office_id = $user_offices;
-                        $plan_accom->plan_value = $value;
-                        //$plan_accom->accom_value=0;
-                        $plan_accom->plan_status = $plan_status;
-                        $plan_accom->accom_status = $getoffice->level;
-                        $plan_accom->planning_year_id = $planning->id;
-                        $plan_accom->save();
-                        $kpi_match_for_naration = $index[0];
+                       $naration =new ReportNarration;
+                       $naration->plan_naration=$value;
+                        $naration->key_peformance_indicator_id=$index[1];
+                        $naration->office_id=$user_offices;
+                        $naration->approval_status=$getoffice->level;
+                       // $naration->reporting_period_id=$index[2];
+                        $naration->planing_year_id=$planning->id;
+                        $naration->save();
+                        $getNaration =$naration;
+                     }
+                     elseif($str_key=="myfile"){  
+                       
+                        $fileName = $request->file('myfile')->getClientOriginalName();
+                        $fileName = date('Y-m-d')."_".time().'_'.$fileName;
+                        // $filePath = 'uploads/' . $fileName; 
+                        $path = $request->file('myfile')->storeAs( 'uploads', $fileName); 
+                        $getNaration->approval_text=$fileName;
+                        $getNaration->save();
                     }
                 }
-                elseif($str_key[0]=='d'){ // continue; dd("x");
-                    $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
-                    $trueindex =0;
-                     $index =[];
-                    foreach ($arr_to_split_text as $splitkey => $splitvalue) {
-                        $index[$trueindex] =$splitvalue;
-                        $trueindex++;
-                        }
-                   $naration =new ReportNarration;
-                   $naration->plan_naration=$value;
-                    $naration->key_peformance_indicator_id=$index[1];
-                    $naration->office_id=$user_offices;
-                    $naration->approval_status=$getoffice->level;
-                   // $naration->reporting_period_id=$index[2];
-                    $naration->planing_year_id=$planning->id;
-                    $naration->save();
-                    $getNaration =$naration;
-                 }
-                 elseif($str_key=="myfile"){  
-                   
-                    $fileName = $request->file('myfile')->getClientOriginalName();
-                    $fileName = date('Y-m-d')."_".time().'_'.$fileName;
-                    // $filePath = 'uploads/' . $fileName; 
-                    $path = $request->file('myfile')->storeAs( 'uploads', $fileName); 
-                    $getNaration->approval_text=$fileName;
-                    $getNaration->save();
-                }
-                }
-                else{
-                    if($key!="type"){
+
+                else{ 
+                    if(!str_contains($key, 'type')){ //dd($kpi);
+
                        // $this->updatePlan($key,$str_key,$length);
                         if($str_key[0]!='d'){
                             $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
@@ -413,7 +415,7 @@ class PlanAccomplishmentController extends Controller
                             }
                             if($index[0] == 'files') continue;
 
-                            if($index[0] == 'baseline'){
+                            if($index[0] == 'baseline'){ //dd(next($kpi));
                                 $length =  count($index) - 1;
                                 if($length > 1){
                                     $kpi_one_id = (int)$index[2];
@@ -492,7 +494,7 @@ class PlanAccomplishmentController extends Controller
                             }
 
 
-                     }
+                     } 
                     else{
                          $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
                          $index = [];
@@ -1057,6 +1059,7 @@ class PlanAccomplishmentController extends Controller
         -> where('reporting_periods.slug',"=", 1)
         -> where('planning_year_id','=', $planning_year->id ?? NULL)
        ->groupBy('kpi_id')  ->get();
+       //dd($only_child_array);
          if( $is_admin){
             $imagen_off = Office::find(1); //immaginery office of which contain all office kpi plan
             $off_level = 1;

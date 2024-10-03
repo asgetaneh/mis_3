@@ -60,16 +60,57 @@ class PlanAccomplishment extends Model
         if($getkpi->measurement){     //->isEmpty()
             // kpi measurement is in percent
             if($getkpi->measurement?->slug == 'percent'){
-                // dd($getkpi->measurement);
-                $avarage_plan = calculateAveragePlan($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three);
+                 $avarage_plan = calculateAveragePlan($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three); //echo $kkp." ".$office->id." ".$period." ".$is_report." ".$planning_year." ".$one."<br/> ";
                 $avarage_plan_of_percent = 0;
                 if($avarage_plan!=0){
                     $avarage_plan_of_percent = (double)number_format($avarage_plan[0]/$avarage_plan[1], 2, ".", "");
                     // dd($avarage_plan_of_percent);
                 }
-                // dd($avarage_plan);
+                 $plan_accom = array_merge( $plan_accom,array($avarage_plan_of_percent));
                 $plan_accom = array_merge( $plan_accom,array($avarage_plan_of_percent));
-                $plan_accom = array_merge( $plan_accom,array(0));
+                return $plan_accom;
+            }
+            else{
+                
+                //dd($avarage_plan[0]/$avarage_plan[1]);
+                $childAndHimOffKpi_array =[];
+                $childAndHimOffKpi = office_all_childs_ids($office);
+                $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
+                $sum_of_sub_office_plan = 0;
+                $sum_of_sub_office_report = 0;
+               
+                $office_level = $office->level;
+                if($office_level == 0) $office_level=1;
+                $planAccomplishments = PlanAccomplishment::select('*')
+                    ->whereIn('office_id', $childAndHimOffKpi_array)
+                    ->where('kpi_id' , '=', $kkp)
+                    ->where('planning_year_id','=', $planning_year)
+                    ->where('kpi_child_one_id' , '=', $one)
+                    ->where('kpi_child_two_id' , '=', $two)
+                    ->where('kpi_child_three_id' , '=', $three)
+                    ->where('reporting_period_id' , '=', $period)
+                    ->where('plan_status' , '<=', $office_level)
+                ->get();
+                //dump($planning_year);
+                if($is_report){
+                     $planAccomplishments = PlanAccomplishment::select('*')
+                     ->whereIn('office_id', $childAndHimOffKpi_array)
+                    ->where('kpi_id' , '=', $kkp)
+                    ->where('planning_year_id','=', $planning_year)
+                    ->where('kpi_child_one_id' , '=', $one)
+                    ->where('kpi_child_two_id' , '=', $two)
+                    ->where('kpi_child_three_id' , '=', $three)
+                    ->where('reporting_period_id' , '=', $period)
+                    ->where('accom_status' , '<=', $office_level)
+                ->get();
+                }
+                //dump($planAccomplishments);
+                foreach ($planAccomplishments as $key => $planAccomplishment) {
+                   $sum_of_sub_office_plan = $sum_of_sub_office_plan+$planAccomplishment->plan_value;
+                   $sum_of_sub_office_report = $sum_of_sub_office_report+$planAccomplishment->accom_value;
+                }
+                $plan_accom = array_merge( $plan_accom,array($sum_of_sub_office_plan));
+                $plan_accom = array_merge( $plan_accom,array($sum_of_sub_office_report));
                 return $plan_accom;
             }
 
@@ -119,39 +160,100 @@ class PlanAccomplishment extends Model
     }
     // get total for kpi
     public function ForKpi($kkp,$office,$period,$is_report,$planning_year){
-        $childAndHimOffKpi_array =[];
-        $childAndHimOffKpi = office_all_childs_ids($office);
-        $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
-        $sum_of_sub_office_plan = 0;
-        $sum_of_sub_office_report = 0;
         $plan_accom = [];
-        $office_level = $office->level;
-        if($office_level == 0) $office_level=1;
-        $planAccomplishments = PlanAccomplishment::select('*')
-            ->whereIn('office_id', $childAndHimOffKpi_array)
-            ->where('kpi_id' , '=', $kkp)
-            ->where('planning_year_id','=', $planning_year)
-            ->where('reporting_period_id' , '=', $period)
-            ->where('plan_status' , '<=', $office_level)
-        ->get();
-        //dump($planning_year);
-        if($is_report){
-             $planAccomplishments = PlanAccomplishment::select('*')
-             ->whereIn('office_id', $childAndHimOffKpi_array)
-            ->where('kpi_id' , '=', $kkp)
-            ->where('reporting_period_id' , '=', $period)
-            ->where('accom_status' , '<=', $office_level)
-        ->get();
-        }
-        //dump($planAccomplishments);
-        foreach ($planAccomplishments as $key => $planAccomplishment) {
-           $sum_of_sub_office_plan = $sum_of_sub_office_plan+$planAccomplishment->plan_value;
-           $sum_of_sub_office_report = $sum_of_sub_office_report+$planAccomplishment->accom_value;
-        }
-        $plan_accom = array_merge( $plan_accom,array($sum_of_sub_office_plan));
-        $plan_accom = array_merge( $plan_accom,array($sum_of_sub_office_report));
-         return $plan_accom;
+         $getkpi = KeyPeformanceIndicator::find($kkp); 
+         
+        if($getkpi->measurement){    //dump("measurement");
+            // kpi measurement is in percent
+            if($getkpi->measurement?->slug == 'percent'){ //dump("kpi measurement is in percent");
+                $avarage_plan = calculateAveragePlan($kkp,$office,$period,$is_report,$planning_year ,null,null,null);//dump($office->id);
+                $avarage_plan_of_percent = 0;
+                if($avarage_plan!=0){
+                    $avarage_plan_of_percent = (double)number_format($avarage_plan[0]/$avarage_plan[1], 2, ".", "");
+                    // dd($avarage_plan_of_percent);
+                }
+                // dd($avarage_plan);
+                $plan_accom = array_merge( $plan_accom,array($avarage_plan_of_percent));
+                $plan_accom = array_merge( $plan_accom,array($avarage_plan_of_percent));
+                return $plan_accom;
+            }
+            // if kpi with  any measurement except percent.
+            else{  //dump("if kpi with  any measurement except percent");
+                $childAndHimOffKpi_array =[];
+                $childAndHimOffKpi = office_all_childs_ids($office);
+                $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
+                $sum_of_sub_office_plan = 0;
+                $sum_of_sub_office_report = 0;
+                 $office_level = $office->level;
+                if($office_level == 0) $office_level=1;
+                $planAccomplishments = PlanAccomplishment::select('*')
+                    ->whereIn('office_id', $childAndHimOffKpi_array)
+                    ->where('kpi_id' , '=', $kkp)
+                    ->where('planning_year_id','=', $planning_year)
+                    ->where('reporting_period_id' , '=', $period)
+                    ->where('plan_status' , '<=', $office_level)
+                ->get(); 
+                
+                if($is_report){
+                     $planAccomplishments = PlanAccomplishment::select('*')
+                     ->whereIn('office_id', $childAndHimOffKpi_array)
+                    ->where('kpi_id' , '=', $kkp)
+                    ->where('reporting_period_id' , '=', $period)
+                    ->where('accom_status' , '<=', $office_level)
+                ->get();
+                }
+
+                foreach ($planAccomplishments as $key => $planAccomplishment) {
+                   $sum_of_sub_office_plan = $sum_of_sub_office_plan+$planAccomplishment->plan_value;
+                   $sum_of_sub_office_report = $sum_of_sub_office_report+$planAccomplishment->accom_value;
+                }
+                $plan_accom = array_merge( $plan_accom,array($sum_of_sub_office_plan));
+                $plan_accom = array_merge( $plan_accom,array($sum_of_sub_office_report));
+                 //dd($plan_accom);
+                 return $plan_accom;
+            }
+
+        } 
+        // if kpi with out any measurement.
+        else{ //dump("if kpi with out any measurement");
+                $childAndHimOffKpi_array =[];
+                $childAndHimOffKpi = office_all_childs_ids($office);
+                $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
+                $sum_of_sub_office_plan = 0;
+                $sum_of_sub_office_report = 0;
+                 $office_level = $office->level;
+                if($office_level == 0) $office_level=1;
+                $planAccomplishments = PlanAccomplishment::select('*')
+                    ->whereIn('office_id', $childAndHimOffKpi_array)
+                    ->where('kpi_id' , '=', $kkp)
+                    ->where('planning_year_id','=', $planning_year)
+                    ->where('reporting_period_id' , '=', $period)
+                    ->where('plan_status' , '<=', $office_level)
+                ->get(); 
+                //dump($planAccomplishments);
+                //d/ump($office_level);
+                //dump($planning_year);
+                if($is_report){
+                     $planAccomplishments = PlanAccomplishment::select('*')
+                     ->whereIn('office_id', $childAndHimOffKpi_array)
+                    ->where('kpi_id' , '=', $kkp)
+                    ->where('reporting_period_id' , '=', $period)
+                    ->where('accom_status' , '<=', $office_level)
+                ->get();
+                }
+
+                foreach ($planAccomplishments as $key => $planAccomplishment) {
+                   $sum_of_sub_office_plan = $sum_of_sub_office_plan+$planAccomplishment->plan_value;
+                   $sum_of_sub_office_report = $sum_of_sub_office_report+$planAccomplishment->accom_value;
+                }
+                $plan_accom = array_merge( $plan_accom,array($sum_of_sub_office_plan));
+                $plan_accom = array_merge( $plan_accom,array($sum_of_sub_office_report));
+                 return $plan_accom;
     }
+    //dump("why");
+    //dd("last");
+    return $plan_accom;
+}
 
     // public function planIndividual($kkp,$one,$two,$three,$office,$period){
     //     $childAndHimOffKpi_array =[];

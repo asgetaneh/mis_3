@@ -34,15 +34,20 @@
                  $planOfOfficePlan =$planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year->id ?? NULL ,null,null,null);
                 $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
             @endphp
-
-            @if($period->id!= $activeQuarter[0]->id)
-            <td>
-                {{ $planOfOfficePlan[1] }}
-            </td>
+            @if($activeQuarter)
+                @if($period->id!= $activeQuarter[0]?->id)
+                <td>
+                    {{ $planOfOfficePlan[1] }}
+                </td>
+                @else
+                <td style="background-color:#99cd99;">
+                  <span >  {{ $planOfOfficePlan[1] }}</span>
+                </td>
+                @endif
             @else
-            <td style="background-color:#99cd99;">
-              <span >  {{ $planOfOfficePlan[1] }}</span>
-            </td>
+                <td style="background-color:red;">
+                  <span >  {{ " Period not set" }}</span>
+                </td>
             @endif
          @empty
         @endforelse
