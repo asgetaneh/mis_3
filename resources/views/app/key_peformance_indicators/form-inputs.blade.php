@@ -132,7 +132,7 @@
             <option disabled {{ empty($selected) ? 'selected' : '' }} value="">Please select the KPI Measurement</option>
             @foreach($kpiMeasurements as $value => $label)
                 @if(app()->getLocale() == $label->locale)
-                    <option value="{{ $label->translation_id }}" {{ $selected == $label->id ? 'selected' : '' }} >{{ $label->name }}</option>
+                    <option value="{{ $label->translation_id }}" {{ $selected == $label->translation_id ? 'selected' : '' }} >{{ $label->name }}</option>
                 @endif
             @endforeach
         </x-inputs.select>

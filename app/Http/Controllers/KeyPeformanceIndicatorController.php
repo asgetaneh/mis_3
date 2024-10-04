@@ -204,6 +204,7 @@ class KeyPeformanceIndicatorController extends Controller
         $reportingPeriodTypes = ReportingPeriodTypeT::all();
         $kpiTypes = KpiTypeTranslation::all();
         $selectedOffices = $keyPeformanceIndicator->offices;
+        $kpiMeasurements = MeasurementTranslation::all();
 
         return view(
             'app.key_peformance_indicators.edit',
@@ -218,7 +219,8 @@ class KeyPeformanceIndicatorController extends Controller
                 'offices',
                 'languages',
                 'selectedOffices',
-                'behaviors'
+                'behaviors',
+                'kpiMeasurements'
             )
         );
     }
@@ -242,6 +244,7 @@ class KeyPeformanceIndicatorController extends Controller
             'behavior_id' => $request->behavior_id,
             'weight' => $request->weight ?? null,
             'kpi_type_id' => $request->kpi_type_id,
+            'measurement_id' => $request->measurement_id,
             'updated_at' => new \DateTime(),
             // 'updated_by_id' => auth()->user()->id,
             // 'created_by_id' => $goal->created_by_id || '',
@@ -250,7 +253,7 @@ class KeyPeformanceIndicatorController extends Controller
         $isNewLangAdded = false;
         $localeArray = [];
 
-        foreach ($request->except('_token', '_method', 'objective_id', 'strategy_id', 'reporting_period_type_id', 'weight', 'offices', 'behavior_id', 'kpi_type_id') as $key => $value) {
+        foreach ($request->except('_token', '_method', 'objective_id', 'strategy_id', 'reporting_period_type_id', 'weight', 'offices', 'behavior_id', 'kpi_type_id', 'measurement_id') as $key => $value) {
 
             $locale = str_replace(['name_', 'description_'], '', $key);
 

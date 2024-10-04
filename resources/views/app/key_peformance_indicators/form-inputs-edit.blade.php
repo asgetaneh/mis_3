@@ -124,6 +124,23 @@
         </x-inputs.select>
     </x-inputs.group>
 
+    <x-inputs.group class="col-sm-12">
+        <x-inputs.select
+            name="measurement_id"
+            label="Measurement Type"
+            class="form-control select2"
+            required
+        >
+            @php $selected = old('measurement_id', ($editing ? $keyPeformanceIndicator->measurement_id : '')) @endphp
+            <option disabled {{ empty($selected) ? 'selected' : '' }} value="">Please select the KPI Measurement</option>
+            @foreach($kpiMeasurements as $value => $label)
+                @if(app()->getLocale() == $label->locale)
+                    <option value="{{ $label->translation_id }}" {{ $selected == $label->id ? 'selected' : '' }} >{{ $label->name }}</option>
+                @endif
+            @endforeach
+        </x-inputs.select>
+    </x-inputs.group>
+
     {{-- <x-inputs.group class="col-sm-12">
         <x-inputs.select name="created_by_id" label="User" required>
             @php $selected = old('created_by_id', ($editing ? $keyPeformanceIndicator->created_by_id : '')) @endphp

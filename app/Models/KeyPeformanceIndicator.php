@@ -19,6 +19,7 @@ class KeyPeformanceIndicator extends Model
         'reporting_period_type_id',
         'behavior_id',
         'kpi_type_id',
+        'measurement_id',
     ];
 
     protected $searchableFields = ['*'];
