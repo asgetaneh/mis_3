@@ -43,13 +43,15 @@ class KeyPeformanceIndicatorController extends Controller
                     abort(403);
                 }
         $search = $request->get('search', '');
-        $objectives = Objective::latest()
-            ->paginate(15)
+        $objectives = Objective::oldest() //latest()
+            ->paginate(8)
             ->withQueryString();
+        // $objectives = Objective::join('objective_translations', 'objective_translations.translation_id', '=', 'objectives.id')
+        //     ->orderBy('objective_translations.name') ->get();//dd($objectives);
         $keyPeformanceIndicator_ts = KeyPeformanceIndicatorT::search($search)
             ->latest()
             ->paginate(15)
-            ->withQueryString();
+            ->withQueryString();//dd( $keyPeformanceIndicator_ts);
 
         $kpiChildOneTranslations = KpiChildOneTranslation::search($search)
              ->latest()
