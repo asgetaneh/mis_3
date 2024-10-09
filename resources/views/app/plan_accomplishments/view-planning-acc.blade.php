@@ -106,8 +106,7 @@
                          @forelse($planAccomplishments as $planAcc)
                             @php
                                 $offices = $planAcc->getOfficeFromKpiAndOfficeList($only_child_array,$off_level);
-
-                            @endphp
+                             @endphp
 
 
                             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
@@ -178,7 +177,7 @@
                                             <h4>No KPI name!</h4>
                                         @endforelse
                                     </div>
-                                    <div class="card-body" style="display: none;">
+                                    <div class="card-body" style="display: block;">
                                         {{-- If KPI has Child ones (UG, PG) --}}
                                         <x-form method="POST" action="{{ route('approve-plan') }}" class="mt-4">
 
@@ -186,7 +185,8 @@
                                                 @php
                                                     $isOfficeBelongToKpi = isOfficeBelongToKpi($office, $planAcc->Kpi->id);
                                                 @endphp
- 
+                                                  <!-- @dump($office); -->
+
                                                 @if ($isOfficeBelongToKpi->count() > 0)
                                                     @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
                                                         {{-- <table class="table table-bordered">

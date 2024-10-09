@@ -61,8 +61,9 @@ class PlanAccomplishment extends Model
             // kpi measurement is in percent
             if($getkpi->measurement?->slug == 'percent'){
                  $avarage_plan = calculateAveragePlan($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three); //echo $kkp." ".$office->id." ".$period." ".$is_report." ".$planning_year." ".$one."<br/> ";
+                 ///dump($avarage_plan);
                 $avarage_plan_of_percent = 0;
-                if($avarage_plan!=0){
+                if($avarage_plan && $avarage_plan[1]>0){
                     $avarage_plan_of_percent = (double)number_format($avarage_plan[0]/$avarage_plan[1], 2, ".", "");
                     // dd($avarage_plan_of_percent);
                 }
@@ -166,15 +167,20 @@ class PlanAccomplishment extends Model
         if($getkpi->measurement){    //dump("measurement");
             // kpi measurement is in percent
             if($getkpi->measurement?->slug == 'percent'){ //dump("kpi measurement is in percent");
-                $avarage_plan = calculateAveragePlan($kkp,$office,$period,$is_report,$planning_year ,null,null,null);//dump($office->id);
+                $avarage_plan = calculateAveragePlan($kkp,$office,$period,$is_report,$planning_year ,null,null,null);
                 $avarage_plan_of_percent = 0;
-                if($avarage_plan!=0){
+                 if($avarage_plan && $avarage_plan[1]>0){
                     $avarage_plan_of_percent = (double)number_format($avarage_plan[0]/$avarage_plan[1], 2, ".", "");
                     // dd($avarage_plan_of_percent);
                 }
-                // dd($avarage_plan);
                 $plan_accom = array_merge( $plan_accom,array($avarage_plan_of_percent));
-                $plan_accom = array_merge( $plan_accom,array($avarage_plan_of_percent));
+                $plan_accom = array_merge( $plan_accom,array(0));
+                if($is_report){
+                    $plan_accom = array_merge( $plan_accom,array(0));
+                    $plan_accom = array_merge( $plan_accom,array($avarage_plan_of_percent));
+                }
+                //echo $kkp."-> ".$office->id." ->".$period."-> ".$is_report."-> ".$planning_year. "<br/> ";
+                //dump($plan_accom);
                 return $plan_accom;
             }
             // if kpi with  any measurement except percent.

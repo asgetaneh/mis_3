@@ -136,7 +136,7 @@
                                                             KPI:   {{$kpiT->name }}
                                                              @if ($kpiT->keyPeformanceIndicator ->measurement)
                                                                 {{"( in "}}{{$kpiT->keyPeformanceIndicator ->measurement['slug'] }} {{")" }}
-                                                             @endif
+                                                             @endif 
                                                         </th>
                                                          @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                                                             <th> {{ $period->reportingPeriodTs[0]->name }} </th>

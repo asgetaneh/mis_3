@@ -36,14 +36,14 @@ use Illuminate\Support\Collection;
         $office_plan = getOfficePlan($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three);
         
         $office_plan =$office_plan?->plan_value ?? NULL;
-
+       
         if($is_report){
              $office_plan =$office_plan?->accom_value ?? NULL; //dump($office_plan); 
         }
-             
-        if ($office_plan !== NULL) {
+        if ($office_plan !== NULL && $office->plan_status  <= $office->office_level) {
             $totalPlan += $office_plan;
             $validPlansCount++;
+            //echo $kkp."-> ".$office->id." ->".$period."-> ".$is_report."-> ".$office_plan. "<br/> ";
         }
   
 
@@ -52,19 +52,20 @@ use Illuminate\Support\Collection;
             list($childPlanTotal, $childCount) =  calculateAveragePlan($kkp,$child,$period,$is_report,$planning_year ,$one,$two,$three);
             
             // Include the child's plan (as it's already averaged if it has children)
-            if ($childCount > 0) {
+            if ($childCount > 0 && $office->plan_status  <= $office->office_level) {
                 $totalPlan += $childPlanTotal / $childCount;
                 $validPlansCount++;
             }
         }
+        return [$totalPlan, $validPlansCount];   
 
 
         // If there are valid plans (non-zero plans), calculate the average
-        if ($validPlansCount > 0) {
-            $averagePlan = $totalPlan / $validPlansCount; 
-           // echo $office->officeTranslations[0]->name.' num of child='.$validPlansCount.' plan='.$totalPlan."<br/>";  dump($averagePlan);  
-        return [$totalPlan, $validPlansCount];         
-        }
+                // if ($validPlansCount > 0) {
+                //     $averagePlan = $totalPlan / $validPlansCount; 
+                //    // echo $office->officeTranslations[0]->name.' num of child='.$validPlansCount.' plan='.$totalPlan."<br/>";  dump($averagePlan);  
+                // return [$totalPlan, $validPlansCount];         
+                // }
 
         // Return the total plan value and the count of valid plans (used by the parent in recursion)
         //return [$totalPlan, $validPlansCount];
@@ -85,7 +86,10 @@ if (! function_exists('getOfficePlan')) {
             ->where('reporting_period_id' , '=', $period)
             ->where('plan_status' , '<=', $office_level)
 
-        ->first(); //dump($office_level);
+        ->first(); 
+        
+       // if($planAccomplishments){dump($planAccomplishments->plan_value);}
+        
          if($is_report){
              $planAccomplishments = PlanAccomplishment::select('*')
                  ->where('office_id', $office->id)

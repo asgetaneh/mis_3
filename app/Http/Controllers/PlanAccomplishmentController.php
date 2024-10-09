@@ -582,7 +582,7 @@ class PlanAccomplishmentController extends Controller
         $off_level = $office->level;
         $planning_year = PlaningYear::where('is_active',true)->first();
         $all_office_list = $this->allChildAndChildChild($office);
-        $only_child_array = array_merge($all_office_list,array($office_id));
+        $only_child_array = array_merge($all_office_list,array($office_id)); 
 
            DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
         $is_admin = auth()->user()->isSuperAdmin();
@@ -1100,6 +1100,8 @@ class PlanAccomplishmentController extends Controller
                 $all_ids=array_merge($all_ids,is_array(office_all_childs_ids($child))?office_all_childs_ids($child):[] );
             }
         }
+        $all_ids=array_merge($all_ids,array($office->id));
+        //dd($all_ids);
         return $all_ids;
    }
       public function planApproved(Request $request){
