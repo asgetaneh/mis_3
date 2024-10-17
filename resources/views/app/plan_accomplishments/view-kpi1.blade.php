@@ -46,8 +46,15 @@
                    // $planOne = $planAcc->planOne($planAcc->Kpi->id, $one->id, $office, $period->id,false);
                     $planOne = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year->id ?? NULL ,$one->id,null,null);
                     $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
+                    $office_level = $office->level;
+                    if($office_level == 0) $office_level=1;
                 @endphp
-                {{ $planOne[0] }}
+                @if($planOne[2] <= $office_level)
+                     {{ $planOne[0] }} 
+                @else
+                    {{0}}
+                @endif
+                 <!-- {{ $planOne[0] }} -->
             </td>
         @empty
         @endforelse

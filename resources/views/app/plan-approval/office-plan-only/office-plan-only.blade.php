@@ -61,18 +61,24 @@
         <th>
             Offices
         </th>
+        <th>
+            Baseline
+        </th>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             <th> {{ $period->reportingPeriodTs[0]->name }} </th>
         @empty
         @endforelse
     </tr>
-    @php $first =0; @endphp
+    @php $first =0; 
+        $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id,$office, $planning_year->id, $period->id,null,null,null);
+    @endphp
     @endif
     <tr>
         <td rowspan="2">{{ $office->officeTranslations[0]->name }}</td>
+        <td>{{$baselineOfOfficePlan?->baseline}}</td>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @php
-                $planOfOfficePlan = planSum($planAcc->Kpi->id, $office, $period->id, 2);
+                $planOfOfficePlan = planSum($planAcc->Kpi->id, $office, $period->id, 2, $planning_year);
                 $narration = getNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
             @endphp
             <td>
@@ -85,7 +91,7 @@
         <td>
             Major Activities
         </td>
-        <td colspan="4">
+        <td colspan="5">
             @foreach ($narration as $key => $plannaration)
                 {!! html_entity_decode($plannaration->plan_naration) !!}
                 @php

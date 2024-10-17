@@ -27,9 +27,16 @@
               //  $planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $office, $period->id,false,$planning_year);
                 $planOfOfficePlan = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year->id ?? NULL ,null,null,null);//dump($planOfOfficePlan[0]);
                 $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
+                 $office_level = $office->level;
+                if($office_level == 0) $office_level=1;
             @endphp
             <td>
-                {{ $planOfOfficePlan[0] }}
+                 @if($planOfOfficePlan[2] <= $office_level)
+                     {{ $planOfOfficePlan[0] }} 
+                @else
+                    {{0}}
+                @endif
+                <!-- {{ $planOfOfficePlan[0] }} -->
             </td>
         @empty
         @endforelse

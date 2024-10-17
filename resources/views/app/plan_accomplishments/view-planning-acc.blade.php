@@ -144,10 +144,19 @@
                                                             @php
                                                                 $planOfOfficePlan = $planAcc->ForKpi($planAcc->Kpi->id, $imagen_off, $period->id,false,$planning_year->id ?? NULL);
                                                                 $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $imagen_off);
+                                                                $userOffice =auth()->user()->offices[0];
+                                                                $userOffice =auth()->user()->offices[0];
+                                                                $office_level = $userOffice->level;
+                                                                if($office_level == 0) $office_level=1;
+
                                                             @endphp
                                                             <td>
-                                                                {{ $planOfOfficePlan[0] }}
-                                                            </td>
+                                                                @if($planOfOfficePlan[2] <= $office_level)
+                                                                     {{ $planOfOfficePlan[0] }} 
+                                                                @else
+                                                                    {{$planOfOfficePlan[2]}}
+                                                                @endif
+                                                             </td>
                                                         @empty
                                                         @endforelse
                                                         <th>
@@ -177,7 +186,7 @@
                                             <h4>No KPI name!</h4>
                                         @endforelse
                                     </div>
-                                    <div class="card-body" style="display: block;">
+                                    <div class="card-body" style="display: none;">
                                         {{-- If KPI has Child ones (UG, PG) --}}
                                         <x-form method="POST" action="{{ route('approve-plan') }}" class="mt-4">
 

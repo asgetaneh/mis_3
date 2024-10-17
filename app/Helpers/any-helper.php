@@ -27,6 +27,8 @@ use Illuminate\Support\Collection;
     {
         // Fetch the office with its children
         $office = Office::with('offices')->find($office->id);
+        $office_level = $office->level;
+        if($office_level == 0) $office_level=1;
 
         // Initialize values for calculating the sum and number of offices (for averaging)
         $totalPlan = 0;
@@ -34,16 +36,19 @@ use Illuminate\Support\Collection;
 
         // If this office's plan is non-zero, include it in the total and count
         $office_plan = getOfficePlan($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three);
+        //dd($office);
+        $var =$office_plan;
         
         $office_plan =$office_plan?->plan_value ?? NULL;
        
         if($is_report){
              $office_plan =$office_plan?->accom_value ?? NULL; //dump($office_plan); 
         }
-        if ($office_plan !== NULL && $office->plan_status  <= $office->office_level) {
+        
+        if ($var !== NULL ) {  // && $var->plan_status  <= $office->level
             $totalPlan += $office_plan;
             $validPlansCount++;
-            //echo $kkp."-> ".$office->id." ->".$period."-> ".$is_report."-> ".$office_plan. "<br/> ";
+           // echo $kkp."-> ".$office->id." ->".$period."-> ".$is_report."-> ".$office_plan. "<br/> ";
         }
   
 
@@ -52,11 +57,12 @@ use Illuminate\Support\Collection;
             list($childPlanTotal, $childCount) =  calculateAveragePlan($kkp,$child,$period,$is_report,$planning_year ,$one,$two,$three);
             
             // Include the child's plan (as it's already averaged if it has children)
-            if ($childCount > 0 && $office->plan_status  <= $office->office_level) {
+            if ($childCount > 0 && $office->plan_status  <= $office_level) {
                 $totalPlan += $childPlanTotal / $childCount;
                 $validPlansCount++;
             }
         }
+         //echo $kkp."-> ".$office->id." ->".$period."-> ".$is_report."-> ".$totalPlan. "-> ".$validPlansCount."<br/> ";
         return [$totalPlan, $validPlansCount];   
 
 
@@ -84,7 +90,7 @@ if (! function_exists('getOfficePlan')) {
             ->where('kpi_child_two_id' , '=', $two)
             ->where('kpi_child_three_id' , '=', $three)
             ->where('reporting_period_id' , '=', $period)
-            ->where('plan_status' , '<=', $office_level)
+            // ->where('plan_status' , '<=', $office_level)
 
         ->first(); 
         
@@ -105,7 +111,26 @@ if (! function_exists('getOfficePlan')) {
         return $planAccomplishments;
     }
 }
-
+if (! function_exists('getStatus')) {
+ function  getStatus($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three)
+    { 
+       $childAndHimOffKpi_array =[];
+                $childAndHimOffKpi = office_all_childs_ids($office);
+                $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
+        $planAccomplishments = PlanAccomplishment::select('*')
+            //->whereIn('office_id', $childAndHimOffKpi_array)
+            ->where('office_id' , '=', $office->id)
+            ->where('kpi_id' , '=', $kkp)
+            ->where('planning_year_id','=', $planning_year)
+            ->where('kpi_child_one_id' , '=', $one)
+            ->where('kpi_child_two_id' , '=', $two)
+            ->where('kpi_child_three_id' , '=', $three)
+            ->where('reporting_period_id' , '=', $period)
+        ->first(); 
+        //dd($planAccomplishments);
+        return $planAccomplishments;
+    }
+}
 if (! function_exists('gettrans')) {
     function getAllOffices()
     {
@@ -227,6 +252,13 @@ if (! function_exists('gettrans')) {
     	$reservations = ReportingPeriod::where('reporting_period_type_id', '=', $type) ->get();
 
         return $reservations;
+    }
+    function getQuarterWithRTypeAndSlug($type,$slug)
+    {    
+    	$period = ReportingPeriod::where('reporting_period_type_id', '=', $type->id)
+            ->where('slug', '=', $slug) ->first();
+
+        return $period;
     }
      function getReportingQuarter($type)
     {

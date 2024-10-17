@@ -74,8 +74,15 @@
                                 @php
                                     //$planOneTwo = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id, $office, $period->id,false);
                                     $planOneTwo = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year->id ?? NULL ,$one->id, $two->id,null);
+                                    $office_level = $office->level;
+                                    if($office_level == 0) $office_level=1;
                                 @endphp
-                                {{ $planOneTwo[0] }}
+                                @if($planOneTwo[2] <= $office_level)
+                                     {{ $planOneTwo[0] }} 
+                                @else
+                                    {{0}}
+                                @endif
+                                <!-- {{ $planOneTwo[0] }} -->
                             </td>
                         {{-- @endforeach --}}
                         {{-- total ch2 --}}

@@ -469,9 +469,14 @@
                                         ->whereIn('office_id', $all_office_list)
                                         ->distinct('kpi_id')
                                         ->get();
-
                                     $planning_year = App\Models\PlaningYear::where('is_active', true)->first();
-
+                                    $planSubmited = App\Models\PlanAccomplishment::select('approved_by_id')
+                                        ->where('planning_year_id', '=', $planning_year->id)
+                                        ->where('plan_status', '=', 1)
+                                        ->distinct('approved_by_id')
+                                         ->get();
+                                    $count_planSubmited = count($planSubmited);
+ 
                                 @endphp
 
                                 {{-- @dump($planAccomplishments) --}}
@@ -561,7 +566,7 @@
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Plan Approval
                                                         @if ($planCounter > 0)
-                                                                <span class="badge bg-info ml-2 rounded-circle px-2 py-1" title="You've {{ $planCounter }} unapproved office">
+                                                                <span class="badge bg-danger ml-2 rounded-circle px-2 py-1" title="You've {{ $planCounter }} unapproved office">
                                                                     {{ $planCounter }}
                                                                 </span>
                                                             @endif
@@ -577,7 +582,13 @@
                                             <a href="{{ route('view-plan-accomplishment') }}"
                                                 class="nav-link {{ Request::is('smis/plan/view-plan-accomplishment/*') || Request::is('smis/plan/view-plan-accomplishment') ? 'active' : '' }}">
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>View Plan</p>
+                                                <p>View Plan
+                                                @if ($count_planSubmited > 0)
+                                                        <span class="badge bg-info ml-2 rounded-circle px-2 py-1" title="You've {{ $count_planSubmited }}  office who is submitted the plan">
+                                                            {{ $count_planSubmited }}
+                                                        </span>
+                                                    @endif
+                                                </p>
                                             </a>
                                         </li>
                                     @endif

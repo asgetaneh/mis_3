@@ -38,19 +38,27 @@
         <th>
             Offices
         </th>
+        <th>
+            Baseline
+        </th>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
              <th>  {{ $period->reportingPeriodTs[0]->name }}   </th>
         @empty
         @endforelse
     </tr>
-    @php $first =0; @endphp
+    @php 
+        $first =0; 
+        $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id,auth()->user()->offices[0], $planning_year->id, $period->id,null,null,null);
+    @endphp
     @endif
     <tr>
            <td rowspan="2">{{auth()->user()->offices[0]->officeTranslations[0]->name}} <span class="mark">{{ isset($setter) ? '(Own Plan)' : '' }}</span></td>
+           <td>{{$baselineOfOfficePlan?->baseline}}</td>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @php
                 $planOfOfficePlan
-                = planSum($planAcc->Kpi->id,auth()->user()->offices[0], $period->id, 7);
+                = planSum($planAcc->Kpi->id,auth()->user()->offices[0], $period->id, 7,$planning_year);
+
                $narration = getNarration($planAcc->Kpi->id,$planning_year->id ?? NULL, auth()->user()->offices[0], $period->id);
             @endphp
             <td>
@@ -63,7 +71,7 @@
     <td>
         Major Activities
     </td>
-    <td colspan="4">
+    <td colspan="5">
          @foreach ($narration as $key => $plannaration)
               {!! html_entity_decode($plannaration->plan_naration) !!}
               @php

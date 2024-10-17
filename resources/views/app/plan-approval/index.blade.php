@@ -278,7 +278,22 @@
                                                             </p>
                                                         </th>
                                                         <th style="width: 25%;" class="bg-light border">
-                                                            <p class="m-auto py-2 px-1">Total: <u>{{ $planAcc->sum }}</u>
+                                                            <p class="m-auto py-2 px-1">Total Yearly Plan : <u>                                                                
+                                                                @php
+                                                                $avarage =0;
+                                                                $getPeriod = getQuarterWithRTypeAndSlug($planAcc->Kpi->reportingPeriodType,1);
+                                                                if($planAcc->Kpi->measurement){
+                                                                        if($planAcc->Kpi->measurement->slug=='percent'){
+                                                                            $avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $getPeriod->id, false, $planning_year->id, null,null,null);
+                                                                        }
+                                                                    }
+                                                                @endphp
+                                                                @if ($avarage > 0)
+                                                                    {{ $avarage[0] }} {{" %"}}
+                                                                @else
+                                                                {{ $planAcc->sum }}
+                                                                @endif
+                                                            </u>
                                                             </p>
                                                         </th>
                                                         <th>
@@ -830,13 +845,7 @@
                 }
 
             }
-
-        });
-    </script>
-
-    <script>
-        function checkSelectedOffices(kpiId, offices) {
-
+            hasChildrenOfficesPlannedAndApproved
             let selector = `.office-checkbox-kpi-${kpiId}`;
             let officeNamesObject = offices;
 

@@ -7,7 +7,7 @@ use App\Models\PlanAccomplishment;
 use App\Models\KeyPeformanceIndicator;
 use App\Models\OfficeTranslation;
 use App\Models\PlanComment;
-
+use App\Models\Baseline;
 /**
  * Write code on Method
  *
@@ -794,7 +794,7 @@ function planOneTwo($kkp, $one, $two, $office, $period, $suffix)
     }
     return $sum12;
 }
-function planSum($kkp, $office, $period, $suffix)
+function planSum($kkp, $office, $period, $suffix, $planning_year)
 {
     $childAndHimOffKpi_array = [];
     $childAndHimOffKpi = office_all_childs_ids($office);
@@ -848,6 +848,7 @@ function planSum($kkp, $office, $period, $suffix)
             // ->where('office_id', $office->id)
             ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
             ->where('kpi_id', $kkp)
+            ->where('planning_year_id', '=', $planning_year)
             ->where('reporting_period_id', '=', $period)
             ->where(function ($q) {
                 $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
@@ -867,7 +868,11 @@ function planSum($kkp, $office, $period, $suffix)
     $childAndHimOffKpi = office_all_childs_ids($office);
     $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
     $sum = 0;
-    $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('reporting_period_id', '=', $period)->get();
+    $planAccomplishments = PlanAccomplishment::select('plan_value')
+        ->where('office_id', $office->id)->where('kpi_id', '=', $kkp)
+        ->where('planning_year_id', '=', $planning_year->id)
+        ->where('reporting_period_id', '=', $period)
+        ->get();
     foreach ($planAccomplishments as $key => $planAccomplishment) {
         $sum = $sum + $planAccomplishment->plan_value;
     }
@@ -1008,6 +1013,30 @@ function commentorTextStatus($office, $commentorId, $kpi, $year, $suffix){
     // dd($status);
     return $status ?? '';
 }
+
+function planBaseline($kpi_id,$office, $planning_year_id, $period)
+{
+    $childAndHimOffKpi_array = [];
+    $childAndHimOffKpi = office_all_childs_ids($office);
+    // $all_office_list = array_merge( $childAndHimOffKpi,array($office->id));
+    $planAccomplishmentsCurrent = '';
+    $planAccomplishmentsChildren = '';
+
+        // get baseline for kpi 
+        $planBaseline = Baseline::select()
+             ->where('office_id', $office->id)
+           // ->whereIn('office_id', $office->id)
+            ->where('kpi_id', $kpi_id)
+            ->where('planning_year_id', '=', $planning_year_id)
+           // ->where('reporting_period_id', '=', $period)
+            // ->where(function ($q) {
+            //     $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+            // })
+            ->first();
+            //dump($office->id);
+    return $planBaseline;
+}
+
 
 
 // below function is used for the Update functionality of office CRUD, it's out of this helper file purpose
