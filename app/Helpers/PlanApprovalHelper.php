@@ -8,6 +8,8 @@ use App\Models\KeyPeformanceIndicator;
 use App\Models\OfficeTranslation;
 use App\Models\PlanComment;
 use App\Models\Baseline;
+use App\Models\PlaningYear;
+
 /**
  * Write code on Method
  *
@@ -800,7 +802,7 @@ function planSum($kkp, $office, $period, $suffix, $planning_year)
     $childAndHimOffKpi = office_all_childs_ids($office);
     $planAccomplishmentsCurrent = '';
     $planAccomplishmentsChildren = '';
-
+    $kpi = KeyPeformanceIndicator::find($kkp);
     if ($suffix == 1) {
 
         // All current office children if exist with the logged in user office level
@@ -844,22 +846,31 @@ function planSum($kkp, $office, $period, $suffix, $planning_year)
         return $sum1;
     } elseif ($suffix == 3) {
         // All current office children if exist with the logged in user office level
-        $planAccomplishments = PlanAccomplishment::select()
-            // ->where('office_id', $office->id)
-            ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
-            ->where('kpi_id', $kkp)
-            ->where('planning_year_id', '=', $planning_year)
-            ->where('reporting_period_id', '=', $period)
-            ->where(function ($q) {
-                $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
-            })
-            ->get();
-
         $sum1 = 0;
-
-        foreach ($planAccomplishments as $key => $planAccomplishment) {
-            $sum1 += $planAccomplishment->plan_value;
+        if($kpi->measurement){
+            if($kpi->measurement->slug =="percent"){
+                $planAccomplishments = calculateAveragePlan($kkp,$office,$period,false,$planning_year ,null,null,null);
+                $sum1 = $planAccomplishments[0]/$planAccomplishments[1];
+                //dump($planAccomplishments);
+            }else{
+                $planAccomplishments = PlanAccomplishment::select()
+                // ->where('office_id', $office->id)
+                ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
+                ->where('kpi_id', $kkp)
+                ->where('planning_year_id', '=', $planning_year)
+                ->where('reporting_period_id', '=', $period)
+                ->where(function ($q) {
+                    $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+                })
+                ->get();
+                foreach ($planAccomplishments as $key => $planAccomplishment) {
+                    $sum1 += $planAccomplishment->plan_value;
+                }
+            }
+        }else{
+            echo "please set KPI measurement Type?";
         }
+        
         // dd($sum1);
         return $sum1;
     }
@@ -1018,23 +1029,68 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period)
 {
     $childAndHimOffKpi_array = [];
     $childAndHimOffKpi = office_all_childs_ids($office);
-    // $all_office_list = array_merge( $childAndHimOffKpi,array($office->id));
+     $all_office_list = array_merge( $childAndHimOffKpi,array($office->id));
     $planAccomplishmentsCurrent = '';
-    $planAccomplishmentsChildren = '';
-
-        // get baseline for kpi 
+    $office_baseline = 0;
+    $kpi = KeyPeformanceIndicator::find($kpi_id);
+    //echo "kpi= ".$kpi_id." and office =".$office->id."<br/>"; dump($kpi->measurement);
+    // get baseline for kpi 
+    if($kpi->measurement){
+        if($kpi->measurement->slug =="percent"){
+            $planBaseline = calculateAverageBaseline($kpi_id,$office,$period,false,$planning_year_id ,null,null,null);
+            $office_baseline = $planBaseline[0]/$planBaseline[1];
+        }else{
+            $planBaseline = Baseline::select()
+            ->whereIn('office_id', $all_office_list)
+            ->where('kpi_id', $kpi_id)
+            ->where('planning_year_id', '=', $planning_year_id)
+            ->get();
+            if(!$planBaseline){
+                $planning_year = PlaningYear::where('is_active',true)->first();
+                $previous_year = PlaningYear::where('id', '<', $planning_year_id)->orderby('id', 'desc')->first();
+                if($previous_year){
+                    $planBaseline = Baseline::select()
+                    ->whereIn('office_id', $all_office_list)
+                     ->where('kpi_id', $kpi_id)
+                    ->where('planning_year_id', '=', $previous_year->id)
+                    ->first();
+                }
+                
+            }
+            foreach ($planBaseline as $key => $value) {
+                $office_baseline = $office_baseline+$value->baseline;
+            }
+        }
+    }else{
         $planBaseline = Baseline::select()
-             ->where('office_id', $office->id)
-           // ->whereIn('office_id', $office->id)
+            // ->where('office_id', $office->id)
+            ->whereIn('office_id', $all_office_list)
             ->where('kpi_id', $kpi_id)
             ->where('planning_year_id', '=', $planning_year_id)
            // ->where('reporting_period_id', '=', $period)
             // ->where(function ($q) {
             //     $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
             // })
-            ->first();
-            //dump($office->id);
-    return $planBaseline;
+            ->get();
+            if(!$planBaseline){
+                $planning_year = PlaningYear::where('is_active',true)->first();
+                $previous_year = PlaningYear::where('id', '<', $planning_year_id)->orderby('id', 'desc')->first();
+                if($previous_year){
+                    $planBaseline = Baseline::select()
+                    ->whereIn('office_id', $all_office_list)
+                     ->where('kpi_id', $kpi_id)
+                    ->where('planning_year_id', '=', $previous_year->id)
+                    ->first();
+                }
+                
+            }
+            foreach ($planBaseline as $key => $value) {
+                $office_baseline = $office_baseline+$value->baseline;
+            }
+    }
+        
+        
+    return $office_baseline;
 }
 
 

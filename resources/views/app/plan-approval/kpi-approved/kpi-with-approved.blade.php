@@ -38,7 +38,7 @@
     @endif
     <tr>
            <td rowspan="2">{{$office->officeTranslations[0]->name}}</td>
-           <td>{{$baselineOfOfficePlan?->baseline}}</td>
+           <td>{{ $baselineOfOfficePlan }}</td>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @php
                 $planOfOfficePlan

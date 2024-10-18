@@ -584,9 +584,14 @@
                                                 <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                 <p>View Plan
                                                 @if ($count_planSubmited > 0)
+                                                    @if (auth()->check())
+                                                        @if (auth()->user()->isSuperAdmin())
                                                         <span class="badge bg-info ml-2 rounded-circle px-2 py-1" title="You've {{ $count_planSubmited }}  office who is submitted the plan">
                                                             {{ $count_planSubmited }}
-                                                        </span>
+                                                        </span> 
+                                                        @endif
+                                                    @endif
+                                                        
                                                     @endif
                                                 </p>
                                             </a>

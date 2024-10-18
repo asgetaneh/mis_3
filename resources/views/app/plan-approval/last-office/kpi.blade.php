@@ -53,7 +53,7 @@
     @endif
     <tr>
            <td rowspan="2">{{auth()->user()->offices[0]->officeTranslations[0]->name}} <span class="mark">{{ isset($setter) ? '(Own Plan)' : '' }}</span></td>
-           <td>{{$baselineOfOfficePlan?->baseline}}</td>
+           <td>{{$baselineOfOfficePlan }}</td>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @php
                 $planOfOfficePlan

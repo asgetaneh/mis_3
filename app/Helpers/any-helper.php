@@ -7,7 +7,7 @@
   use App\Models\ReportNarration;
  use App\Models\KeyPeformanceIndicator;
 use App\Models\ReportNarrationReport;
-
+ 
 use Carbon\Carbon;
 use Andegna\DateTime as Et_date;
 use Andegna\DateTimeFactory;
@@ -76,7 +76,59 @@ use Illuminate\Support\Collection;
         // Return the total plan value and the count of valid plans (used by the parent in recursion)
         //return [$totalPlan, $validPlansCount];
     }
- 
+    function calculateAverageBaseline($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three)
+    {
+        // Fetch the office with its children
+        $office = Office::with('offices')->find($office->id);
+        $office_level = $office->level;
+        if($office_level == 0) $office_level=1;
+
+        // Initialize values for calculating the sum and number of offices (for averaging)
+        $totalPlan = 0;
+        $validPlansCount = 0;
+
+        // If this office's plan is non-zero, include it in the total and count
+        $office_baseline = getOfficeBaseline($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three);
+        //dd($office);
+        $var =$office_baseline;
+        
+        $office_baseline =$office_baseline?->baseline ?? NULL;
+       
+        if($is_report){
+             $office_baseline =$office_baseline?->accom_value ?? NULL; //dump($office_plan); 
+        }
+        
+        if ($var !== NULL ) {  // && $var->plan_status  <= $office->level
+            $totalPlan += $office_baseline;
+            $validPlansCount++;
+           // echo $kkp."-> ".$office->id." ->".$period."-> ".$is_report."-> ".$office_plan. "<br/> ";
+        }
+  
+
+        foreach ($office->offices as $child) {
+            // Recursively calculate the average plan of the child
+            list($childPlanTotal, $childCount) =  calculateAveragePlan($kkp,$child,$period,$is_report,$planning_year ,$one,$two,$three);
+            
+            // Include the child's plan (as it's already averaged if it has children)
+            if ($childCount > 0 && $office->plan_status  <= $office_level) {
+                $totalPlan += $childPlanTotal / $childCount;
+                $validPlansCount++;
+            }
+        }
+         //echo $kkp."-> ".$office->id." ->".$period."-> ".$is_report."-> ".$totalPlan. "-> ".$validPlansCount."<br/> ";
+        return [$totalPlan, $validPlansCount];   
+
+
+        // If there are valid plans (non-zero plans), calculate the average
+                // if ($validPlansCount > 0) {
+                //     $averagePlan = $totalPlan / $validPlansCount; 
+                //    // echo $office->officeTranslations[0]->name.' num of child='.$validPlansCount.' plan='.$totalPlan."<br/>";  dump($averagePlan);  
+                // return [$totalPlan, $validPlansCount];         
+                // }
+
+        // Return the total plan value and the count of valid plans (used by the parent in recursion)
+        //return [$totalPlan, $validPlansCount];
+    }
 if (! function_exists('getOfficePlan')) {
  function  getOfficePlan($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three)
     { 
@@ -111,6 +163,36 @@ if (! function_exists('getOfficePlan')) {
         return $planAccomplishments;
     }
 }
+if (! function_exists('getOfficeBaseline')) {
+    function  getOfficeBaseline($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three)
+       { 
+           $office_level = $office->level;
+           if($office_level == 0) $office_level=1;
+           $planBaseline = Baseline::select()
+            ->where('office_id', $office->id)
+           //->whereIn('office_id', $office)
+           ->where('kpi_id', $kkp)
+           ->where('planning_year_id', '=', $planning_year)
+          // ->where('reporting_period_id', '=', $period)
+           // ->where(function ($q) {
+           //     $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
+           // })
+           ->first();
+           if(!$planBaseline){
+               $planning_year = PlaningYear::where('is_active',true)->first();
+               $previous_year = PlaningYear::where('id', '<', $planning_year)->orderby('id', 'desc')->first();
+               if($previous_year){
+                   $planBaseline = Baseline::select()
+                   ->where('kpi_id', $kkp)
+                    ->where('kpi_id', $kkp)
+                   ->where('planning_year_id', '=', $previous_year->id)
+                   ->first();
+               }
+               
+           } 
+           return $planBaseline;
+       }
+   }
 if (! function_exists('getStatus')) {
  function  getStatus($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three)
     { 

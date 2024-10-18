@@ -60,14 +60,16 @@
     @endif
     <tr>
            <td rowspan="2">{{$office->officeTranslations[0]->name}}</td>
-           <td>{{$baselineOfOfficePlan?->baseline}}</td>
+           <td>{{$baselineOfOfficePlan }}</td>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @php
                 $planOfOfficePlan
-                = planSum($planAcc->Kpi->id,$office, $period->id, 1);
+                = planSum($planAcc->Kpi->id,$office, $period->id, 1,$planning_year->id);
                $narration = getNarrationApproved($planAcc->Kpi->id,$planning_year->id ?? NULL, $office, $period->id);
             @endphp
-            
+            <td>
+               {{$planOfOfficePlan}}
+            </td>
         @empty
         @endforelse
  </tr>
