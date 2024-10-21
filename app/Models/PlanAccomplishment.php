@@ -53,6 +53,7 @@ class PlanAccomplishment extends Model
                       ->get();
              return $offices;
     }
+      
      // get plan and report with parametres for only one office
     public function OnlyKpiOTT($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three){
          $plan_accom = [];

@@ -4,6 +4,7 @@
             <th>
                 Offices
             </th>
+            <th  rowspan="">{{"Baseline"}}</th>
             @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             <th>
              {{ $period->reportingPeriodTs[0]->name }}
@@ -27,6 +28,10 @@
     @endif
     <tr>
         <td rowspan="2">{{ $office->officeTranslations[0]->name }}</td>
+        @php 
+            $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id,$office, $planning_year->id, $period->id,null,null,null);
+         @endphp
+        <td>{{ $baselineOfOfficePlan }}</td>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @php
                 //$planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $office, $period->id,false,$planning_year);
@@ -52,7 +57,7 @@
         <td>
             Major Activities
         </td>
-        <td colspan="4">
+        <td colspan="5">
              @foreach ($narration as $key => $plannaration)
                 <p>
                     {!! html_entity_decode($plannaration->plan_naration) !!}
@@ -65,7 +70,6 @@
 <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
     <div class="card card-body" style="background:#12cd4322;" >
        
-
         @php
             $offices_twos = $office->offices;
             $office_one_self = $office;
@@ -126,6 +130,7 @@
                                         <th>
                                             Offices
                                         </th>
+                                        <th  rowspan="">{{"Baseline"}}</th>
                                         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                                             <th> {{ $period->reportingPeriodTs[0]->name }} </th>
                                         @empty
@@ -134,6 +139,10 @@
                                     <tr>
                                           <td rowspan="4">{{ $office_three_self->officeTranslations[0]->name }}</td>
                                     </tr>
+                                    @php 
+                                        $baselineOfOfficePlan  = OnlyKpiOttBaseline($planAcc->Kpi->id,$office_three_self, $planning_year->id, $period->id);
+                                    @endphp
+                                    <td>{{ $baselineOfOfficePlan }}</td>
                                          @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                                         @php
                                             $planOfOfficePlan = $planAcc->OnlyKpiOTT($planAcc->Kpi->id, $office_three_self, $period->id,false,$planning_year->id ?? NULL ,null,null,null);//dump($planOfOfficePlan[0]);
@@ -156,7 +165,7 @@
                                     <td rowspan="2">
                                         Major Activities
                                     </td>
-                                    <td colspan="4">
+                                    <td colspan="5">
                                         @foreach ($narration as $key => $plannaration)
                                             <p>
                                                 {!! html_entity_decode($plannaration->plan_naration) !!}
@@ -178,6 +187,7 @@
                             <th>
                                 Offices
                             </th>
+                            <th  rowspan="">{{"Baseline"}}</th>
                             @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                                 <th> {{ $period->reportingPeriodTs[0]->name }} </th>
                             @empty
@@ -185,8 +195,11 @@
                         </tr>
                         <tr>
                               <td rowspan="4">{{ $office_two_self->officeTranslations[0]->name }}</td>
-                        </tr>
-                             @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+                              @php 
+                                    $baselineOfOfficePlan  = OnlyKpiOttBaseline($planAcc->Kpi->id,$office_two_self, $planning_year->id, $period->id);
+                              @endphp
+                              <td>{{ $baselineOfOfficePlan }}</td>
+                              @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                             @php
                                 $planOfOfficePlan = $planAcc->OnlyKpiOTT($planAcc->Kpi->id, $office_two_self, $period->id,false,$planning_year->id ?? NULL ,null,null,null);//dump($planOfOfficePlan[0]);
                                 $narration = $planAcc->OnlygetNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office_two_self, $period->id);
@@ -208,7 +221,7 @@
                         <td rowspan="2">
                             Major Activities
                         </td>
-                        <td colspan="4">
+                        <td colspan="5">
                             @foreach ($narration as $key => $plannaration)
                                 <p>
                                     {!! html_entity_decode($plannaration->plan_naration) !!}
@@ -229,6 +242,7 @@
                 <th>
                     Offices
                 </th>
+                <th  rowspan="">{{"Baseline"}}</th>
                 @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                     <th> {{ $period->reportingPeriodTs[0]->name }} </th>
                 @empty
@@ -236,7 +250,11 @@
             </tr>
             <tr>
                   <td rowspan="4">{{ $office_one_self->officeTranslations[0]->name }}</td>
-            </tr>
+                    @php 
+                                                 
+                        $baselineOfOfficePlan  = OnlyKpiOttBaseline($planAcc->Kpi->id,$office_one_self, $planning_year->id, $period->id);
+                    @endphp 
+                <td>{{ $baselineOfOfficePlan }}</td>
                  @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                 @php
                     $planOfOfficePlan = $planAcc->OnlyKpiOTT($planAcc->Kpi->id, $office_one_self, $period->id,false,$planning_year->id ?? NULL ,null,null,null);//dump($planOfOfficePlan[0]);
@@ -258,7 +276,7 @@
             <td rowspan="2">
                 Major Activities
             </td>
-            <td colspan="4">
+            <td colspan="5">
                 @foreach ($narration as $key => $plannaration)
                     <p>
                         {!! html_entity_decode($plannaration->plan_naration) !!}

@@ -117,7 +117,7 @@
                                                 <table class="table">
                                                     <tr style="background:#87cdc6;">
                                                         @if (!in_array($planAcc->Kpi->objective->id, $objective_array))
-                                                             <th colspan="8" style="width:100%;"> Objective:
+                                                             <th colspan="9" style="width:100%;"> Objective:
                                                                 {{ $planAcc->Kpi->objective->objectiveTranslations[0]->name }}
                                                             </th>
                                                          @endif
@@ -133,6 +133,7 @@
                                                                 {{"( in "}}{{$kpiT->keyPeformanceIndicator ->measurement['slug'] }} {{")" }}
                                                              @endif
                                                         </th>
+                                                        <th  rowspan="">{{"Baseline"}}</th>
                                                          @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                                                                 <th> {{ $period->reportingPeriodTs[0]->name }} </th>
                                                             @empty
@@ -140,6 +141,11 @@
                                                              <th> Action  </th>
                                                         </tr>
                                                         <tr>
+                                                        @php 
+                                                            $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id,$imagen_off, $planning_year->id, $period->id,null,null,null);
+                                                             
+                                                        @endphp
+                                                        <td>{{ $baselineOfOfficePlan }}</td>
                                                         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                                                             @php
                                                                 $planOfOfficePlan = $planAcc->ForKpi($planAcc->Kpi->id, $imagen_off, $period->id,false,$planning_year->id ?? NULL);

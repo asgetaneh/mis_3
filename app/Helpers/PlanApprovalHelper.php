@@ -1024,6 +1024,43 @@ function commentorTextStatus($office, $commentorId, $kpi, $year, $suffix){
     // dd($status);
     return $status ?? '';
 }
+// get basline  with parametres for only one office
+function OnlyKpiOttBaseline($kpi_id,$office, $planning_year_id, $period){
+    $plan_accom = [];
+    $getkpi = KeyPeformanceIndicator::find($kpi_id);
+    $status = getStatus($kpi_id,$office,$period,false,$planning_year_id ,null,null,null);
+   
+   
+   //dd($avarage_plan[0]/$avarage_plan[1]);
+   $childAndHimOffKpi_array =[];
+   $childAndHimOffKpi = office_all_childs_ids($office);
+   $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
+   $office_baseline = 0;
+   $office_level = $office->level;
+   if($office_level == 0) $office_level=1;
+   $planBaseline = Baseline::select()
+    ->where('office_id','=', $office->id)
+    //->where('office_id', $off_list)
+    ->where('kpi_id', $kpi_id)
+    ->where('planning_year_id', '=', $planning_year_id)
+    ->get();
+    if($planBaseline->isEmpty()){ 
+        $planning_year = PlaningYear::where('is_active',true)->first();
+        $previous_year = PlaningYear::where('id', '<', $planning_year_id)->orderby('id', 'desc')->first();
+        if($previous_year){
+            $planBaseline = Baseline::select()
+            ->where('office_id','=', $office->id)
+             ->where('kpi_id', $kpi_id)
+            ->where('planning_year_id', '=', $previous_year->id)
+            ->get();
+        } //dump($kpi_id);
+        
+    }
+    foreach ($planBaseline as $key => $value) {//dump($value);
+        $office_baseline = $office_baseline+$value->baseline;
+    }
+   return $office_baseline;
+}
 
 function planBaseline($kpi_id,$office, $planning_year_id, $period)
 {
@@ -1038,28 +1075,35 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period)
     if($kpi->measurement){
         if($kpi->measurement->slug =="percent"){
             $planBaseline = calculateAverageBaseline($kpi_id,$office,$period,false,$planning_year_id ,null,null,null);
-            $office_baseline = $planBaseline[0]/$planBaseline[1];
+            if($planBaseline[1]!=0){ //dump($planBaseline);
+                $office_baseline = $planBaseline[0]/$planBaseline[1];
+            }else{ $office_baseline =0; }  
         }else{
-            $planBaseline = Baseline::select()
-            ->whereIn('office_id', $all_office_list)
-            ->where('kpi_id', $kpi_id)
-            ->where('planning_year_id', '=', $planning_year_id)
-            ->get();
-            if(!$planBaseline){
-                $planning_year = PlaningYear::where('is_active',true)->first();
-                $previous_year = PlaningYear::where('id', '<', $planning_year_id)->orderby('id', 'desc')->first();
-                if($previous_year){
-                    $planBaseline = Baseline::select()
-                    ->whereIn('office_id', $all_office_list)
-                     ->where('kpi_id', $kpi_id)
-                    ->where('planning_year_id', '=', $previous_year->id)
-                    ->first();
+            foreach ($all_office_list as $key => $off_list) {
+                $planBaseline = Baseline::select()
+                //->whereIn('office_id', $all_office_list)
+                ->where('office_id', $off_list)
+                ->where('kpi_id', $kpi_id)
+                ->where('planning_year_id', '=', $planning_year_id)
+                ->get();//dump($off_list);
+                if($planBaseline->isEmpty()){
+                    $planning_year = PlaningYear::where('is_active',true)->first();
+                    $previous_year = PlaningYear::where('id', '<', $planning_year_id)->orderby('id', 'desc')->first();
+                    if($previous_year){
+                        $planBaseline = Baseline::select()
+                        ->where('office_id', $off_list)
+                        //->whereIn('office_id', $all_office_list)
+                         ->where('kpi_id', $kpi_id)
+                        ->where('planning_year_id', '=', $previous_year->id)
+                        ->get();
+                    } //dump($kpi_id);
+                    
                 }
-                
+                foreach ($planBaseline as $key => $value) {
+                    $office_baseline = $office_baseline+$value->baseline;
+                }
             }
-            foreach ($planBaseline as $key => $value) {
-                $office_baseline = $office_baseline+$value->baseline;
-            }
+           
         }
     }else{
         $planBaseline = Baseline::select()
