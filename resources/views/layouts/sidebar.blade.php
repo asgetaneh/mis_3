@@ -464,12 +464,12 @@
                                         ->where('office_id', $currentLoggedInOffice)
                                         ->distinct('kpi_id')
                                         ->get();
-
-                                    $planStatus = App\Models\PlanAccomplishment::select('kpi_id', 'office_id', 'plan_status')
+                                        $planning_year = App\Models\PlaningYear::where('is_active', true)->first();
+                                        $planStatus = App\Models\PlanAccomplishment::select('kpi_id', 'office_id', 'plan_status')
                                         ->whereIn('office_id', $all_office_list)
+                                        ->where('planning_year_id', '=', $planning_year->id)
                                         ->distinct('kpi_id')
                                         ->get();
-                                    $planning_year = App\Models\PlaningYear::where('is_active', true)->first();
                                     $planSubmited = App\Models\PlanAccomplishment::select('approved_by_id')
                                         ->where('planning_year_id', '=', $planning_year->id)
                                         ->where('plan_status', '=', 1)
@@ -565,7 +565,7 @@
                                                     class="nav-link {{ Request::is('smis/plan/approve/*') || Request::is('smis/plan/approve') ? 'active' : '' }}">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Plan Approval
-                                                        @if ($planCounter > 0)
+                                                        @if ($planCounter > 0 && auth()->user()->offices[0]->level >0)
                                                                 <span class="badge bg-danger ml-2 rounded-circle px-2 py-1" title="You've {{ $planCounter }} unapproved office">
                                                                     {{ $planCounter }}
                                                                 </span>

@@ -220,8 +220,9 @@
                         @php
                             $unapprovedOfficeCount = 0;
                             $kpiListForApproval = [];
+                            $user_level = auth()->user()->offices[0]->level;
                         @endphp
-
+                        @if($user_level > 0){
                         @forelse($planAccomplishments as $planAcc)
                             @php
 
@@ -609,6 +610,9 @@
                         @empty
                             <p>No KPI!</p>
                         @endforelse
+                        @else
+                        {{ "Supper Admin user can't approve" }}
+                        @endif
                     </div>
                 </div>
             </div>
