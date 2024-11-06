@@ -1,7 +1,7 @@
 <table class="table table-bordered" >
 {{-- style="background:#34214322;" --}}
     <tr>
-        <th colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 1 }} ">
+        <th colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 2 }} ">
             Offices: {{ $office->officeTranslations[0]->name }}
             </td>
         <td rowspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 3 }}">
@@ -19,6 +19,7 @@
     </tr>
     <tr>
         <th>#</th>
+        <th  rowspan="">{{"Baseline"}}</th>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             <th>
                 {{ $period->reportingPeriodTs[0]->name }}
@@ -39,6 +40,13 @@
     <tr>
         <td>
             {{ $one->kpiChildOneTranslations[0]->name }}
+        </td>
+        @php
+            $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id,$office, $planning_year->id, $period->id,$one->id,null,null);
+            //dump($office);
+        @endphp
+        <td>
+            {{ $baselineOfOfficePlan }}
         </td>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             <td>
@@ -61,10 +69,10 @@
     </tr>
     @endforeach
     <tr>
-        <td>
+        <th>
             Major Activities
-        </td>
-        <td colspan="{{count(getQuarter($planAcc->Kpi->reportingPeriodType->id))}}">
+        </th>
+        <td colspan="{{count(getQuarter($planAcc->Kpi->reportingPeriodType->id))+1}}">
             @foreach ($narration as $key => $plannaration)
                 {!! html_entity_decode($plannaration->plan_naration) !!}
                 @php

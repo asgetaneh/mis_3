@@ -69,6 +69,7 @@
             }
             $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
             $planKpiOfficeYear = planSumOfKpi($planAcc->Kpi->id, $office, 1);
+            $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id,$office, $planning_year->id, $period->id,$planAcc->kpi_child_one_id,null,null);
         @endphp
     @empty
     @endforelse
@@ -78,10 +79,11 @@
     <td>
         {{ $one->kpiChildOneTranslations[0]->name }}
     </td>
+    <td> {{ $baselineOfOfficePlan }} </td>
     @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
         <td>
             @php
-                $planOne = planOne($planAcc->Kpi->id, $one->id, $office, $period->id, 1);
+                $planOne = planOne($planAcc->Kpi->id, $one->id, $office, $period->id, 1,$planning_year);
                 $narration = getNarrationApproved($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
             @endphp
             {{ $planOne }}

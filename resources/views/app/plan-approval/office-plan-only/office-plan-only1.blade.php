@@ -21,7 +21,7 @@
     @endif
     <th colspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 1 }} ">
         Offices: {{ $office->officeTranslations[0]->name }}
-        </td>
+            </th>
 
         {{-- @if (planStatusOffice($office, $planAcc->kpi_id, $planning_year->id ?? NULL) > auth()->user()->offices[0]->level)
             <a class="btn btn-sm float-right btn-info text-white write-comment"
@@ -66,6 +66,7 @@
 </tr>
 <tr>
     <th>#</th>
+    <th> Baseline </th>
     @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
         <th>
             {{ $period->reportingPeriodTs[0]->name }}
@@ -78,6 +79,7 @@
             }
             $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
             $planKpiOfficeYear = planSumOfKpi($planAcc->Kpi->id, $office, 2);
+            $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id,$office, $planning_year->id, $period->id,$planAcc->kpi_child_one_id,null,null);
         @endphp
     @empty
     @endforelse
@@ -87,10 +89,11 @@
     <td>
         {{ $one->kpiChildOneTranslations[0]->name }}
     </td>
+    <td> {{ $baselineOfOfficePlan }} </td>
     @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
         <td>
             @php
-                $planOne = planOne($planAcc->Kpi->id, $one->id, $office, $period->id, 2);
+                $planOne = planOne($planAcc->Kpi->id, $one->id, $office, $period->id, 2,$planning_year);
                 $narration = getNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
             @endphp
             {{ $planOne }}

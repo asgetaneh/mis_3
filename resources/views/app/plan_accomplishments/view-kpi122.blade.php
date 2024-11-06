@@ -81,7 +81,7 @@
                     @else
                         {{0}}
                     @endif
-                    {{ $planOneTwo[0] }}
+                    <!-- {{ $planOneTwo[0] }} -->
                 </td>
             {{-- @endforeach
     </tr>

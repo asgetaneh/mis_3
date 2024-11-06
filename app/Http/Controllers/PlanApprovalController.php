@@ -76,10 +76,15 @@ class PlanApprovalController extends Controller
 
             $planAccomplishments = PlanAccomplishment::join('reporting_periods', 
             'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
+                ->join('key_peformance_indicators', 
+                'key_peformance_indicators.id', '=', 'plan_accomplishments.office_id')
+                ->join('objectives', 
+                'objectives.id', '=', 'key_peformance_indicators.objective_id')
                 ->whereIn('office_id', $all_office_list)
                 ->select('*', DB::raw('SUM(plan_value) AS sum'))
                 ->where('reporting_periods.slug', "=", 1)
                 ->where('planning_year_id', '=', $planning_year->id)
+                //->groupBy('objectives.id')
                 ->groupBy('kpi_id')
                 ->get();//dd($planAccomplishments);
 

@@ -625,7 +625,7 @@ function planSumOfKpi($kkp, $office, $suffix)
     } //dd($sumch1ch3_value);
     return $sumch1ch3_value;
 }
-function planOne($kkp, $one, $office, $period, $suffix)
+function planOne($kkp, $one, $office, $period, $suffix, $planning_year)
 {
     $childAndHimOffKpi_array = [];
     $childAndHimOffKpi = office_all_childs_ids($office);
@@ -651,6 +651,7 @@ function planOne($kkp, $one, $office, $period, $suffix)
             ->where('office_id', $office->id)
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', $one)
+            ->where('planning_year_id', '=', $planning_year->id)
             ->where('reporting_period_id', '=', $period)
             ->get();
 
@@ -683,6 +684,7 @@ function planOne($kkp, $one, $office, $period, $suffix)
             ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', $one)
+            ->where('planning_year_id', '=', $planning_year->id)
             ->where('reporting_period_id', '=', $period)
             ->where(function ($q) {
                 $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
@@ -702,10 +704,16 @@ function planOne($kkp, $one, $office, $period, $suffix)
     $childAndHimOffKpi = office_all_childs_ids($office);
     $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
     $sum1 = 0;
-    $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('kpi_child_one_id', '=', $one)->where('reporting_period_id', '=', $period)->get();
+    $planAccomplishments = PlanAccomplishment::select('plan_value')
+        ->where('office_id', $office->id)
+        ->where('kpi_id', '=', $kkp)
+        ->where('kpi_child_one_id', '=', $one)
+        ->where('planning_year_id', '=', $planning_year->id)
+        ->where('reporting_period_id', '=', $period)
+        ->get();
     foreach ($planAccomplishments as $key => $planAccomplishment) {
         $sum1 = $sum1 + $planAccomplishment->plan_value;
-    }
+    }//dump($office);
     return $sum1;
 }
 function planOneTwo($kkp, $one, $two, $office, $period, $suffix)
@@ -1062,7 +1070,7 @@ function OnlyKpiOttBaseline($kpi_id,$office, $planning_year_id, $period){
    return $office_baseline;
 }
 
-function planBaseline($kpi_id,$office, $planning_year_id, $period)
+function planBaseline($kpi_id,$office, $planning_year_id, $period,$one,$two,$three)
 {
     $childAndHimOffKpi_array = [];
     $childAndHimOffKpi = office_all_childs_ids($office);
@@ -1074,7 +1082,7 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period)
     // get baseline for kpi 
     if($kpi->measurement){
         if($kpi->measurement->slug =="percent"){
-            $planBaseline = calculateAverageBaseline($kpi_id,$office,$period,false,$planning_year_id ,null,null,null);
+            $planBaseline = calculateAverageBaseline($kpi_id,$office,$period,false,$planning_year_id ,$one,$two,$three);
             if($planBaseline[1]!=0){ //dump($planBaseline);
                 $office_baseline = $planBaseline[0]/$planBaseline[1];
             }else{ $office_baseline =0; }  
@@ -1085,6 +1093,9 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period)
                 ->where('office_id', $off_list)
                 ->where('kpi_id', $kpi_id)
                 ->where('planning_year_id', '=', $planning_year_id)
+                ->where('kpi_one_id', '=', $one)
+                ->where('kpi_two_id', '=', $two)
+                ->where('kpi_three_id', '=', $three)
                 ->get();//dump($off_list);
                 if($planBaseline->isEmpty()){
                     $planning_year = PlaningYear::where('is_active',true)->first();
@@ -1095,6 +1106,9 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period)
                         //->whereIn('office_id', $all_office_list)
                          ->where('kpi_id', $kpi_id)
                         ->where('planning_year_id', '=', $previous_year->id)
+                        ->where('kpi_one_id', '=', $one)
+                        ->where('kpi_two_id', '=', $two)
+                        ->where('kpi_three_id', '=', $three)
                         ->get();
                     } //dump($kpi_id);
                     
@@ -1135,6 +1149,33 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period)
         
         
     return $office_baseline;
+}
+
+function planBaselineSelf($kpi_id, $office, $planning_year_id, $one, $two, $three){
+    $planBaseline = Baseline::select()
+        ->where('office_id', $office->id)
+        ->where('kpi_id', $kpi_id)
+        ->where('planning_year_id', '=', $planning_year_id)
+        ->where('kpi_one_id', '=', $one)
+        ->where('kpi_two_id', '=', $two)
+        ->where('kpi_three_id', '=', $three)
+        ->first(); 
+    if(!$planBaseline){
+        $planning_year = PlaningYear::where('is_active',true)->first();
+        $previous_year = PlaningYear::where('id', '<', $planning_year_id)->orderby('id', 'desc')->first();
+        if($previous_year){
+            $planBaseline = Baseline::select()
+            ->where('office_id', $office->id)
+        ->where('kpi_id', $kpi_id)
+            ->where('planning_year_id', '=', $previous_year->id)
+            ->where('kpi_one_id', '=', $one)
+            ->where('kpi_two_id', '=', $two)
+            ->where('kpi_three_id', '=', $three)
+            ->first();
+        } //
+        
+    }//dump($planBaseline);
+    return $planBaseline->baseline;
 }
 
 

@@ -227,15 +227,15 @@ class PlanAccomplishment extends Model
          }
     }
     // get total for kpi
-    public function ForKpi($kkp,$office,$period,$is_report,$planning_year){
+    public function ForKpi($kkp,$office,$period,$is_report,$planning_year, $one, $two, $three){
         $plan_accom = [];
          $getkpi = KeyPeformanceIndicator::find($kkp); 
-         $status = getStatus($kkp,$office,$period,$is_report,$planning_year ,null,null,null);          
+         $status = getStatus($kkp,$office,$period,$is_report,$planning_year ,$one, $two, $three);          
          //dd($status);
         if($getkpi->measurement){    //dump("measurement");
             // kpi measurement is in percent
             if($getkpi->measurement?->slug == 'percent'){ //dump("kpi measurement is in percent");
-                $avarage_plan = calculateAveragePlan($kkp,$office,$period,$is_report,$planning_year ,null,null,null); 
+                $avarage_plan = calculateAveragePlan($kkp,$office,$period,$is_report,$planning_year ,$one, $two, $three); 
                 
                 $avarage_plan_of_percent = 0;
                  if($avarage_plan && $avarage_plan[1]>0){
@@ -287,7 +287,7 @@ class PlanAccomplishment extends Model
                 $plan_accom = array_merge( $plan_accom,array($sum_of_sub_office_plan));
                 $plan_accom = array_merge( $plan_accom,array($sum_of_sub_office_report));
                 $plan_accom = array_merge( $plan_accom,array($my_status));
-                 //dd($plan_accom);
+                 //dump($planAccomplishments);
                  return $plan_accom;
             }
 

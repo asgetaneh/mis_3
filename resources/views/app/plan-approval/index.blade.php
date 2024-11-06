@@ -148,7 +148,11 @@
                                                                     {{-- @endif --}}
                                                                 </tr>
                                                                 <tr class="bg-light border">
-                                                                    <th style="width:75%;"> KPI: {{ $kpiT->name }}</th>
+                                                                    <th style="width:75%;"> KPI: {{ $kpiT->name }}
+                                                                        @if ($kpiT->keyPeformanceIndicator ->measurement)
+                                                                            {{"( in "}}{{$kpiT->keyPeformanceIndicator ->measurement['slug'] }} {{")" }}
+                                                                        @endif
+                                                                    </th>
                                                                     <th style="width: 25%;" class="bg-light border">
                                                                         <p class="m-auto py-2 px-1">Total:
                                                                             <u>{{ $planAcc->sum }}</u>
@@ -275,6 +279,9 @@
                                                     <tr style="" class="border">
                                                         <th style="width:75%;" class="">
                                                             <p class="m-auto py-2 px-1">KPI: {{ $kpiT->name }}
+                                                            @if ($kpiT->keyPeformanceIndicator ->measurement)
+                                                                {{"( in "}}{{$kpiT->keyPeformanceIndicator ->measurement['slug'] }} {{")" }}
+                                                            @endif
                                                                 <span style="font-size: 16px !important;" class="badge bg-info ml-2 px-2 py-1" id="{{ $kpiT->translation_id }}-unapproved"></span>
                                                             </p>
                                                         </th>
@@ -282,15 +289,45 @@
                                                             <p class="m-auto py-2 px-1">Total Yearly Plan : <u>                                                                
                                                                 @php
                                                                 $avarage =0;
+                                                                $avarage_total =0;
+                                                                $denominator = 1;
                                                                 $getPeriod = getQuarterWithRTypeAndSlug($planAcc->Kpi->reportingPeriodType,1);
                                                                 if($planAcc->Kpi->measurement){
-                                                                        if($planAcc->Kpi->measurement->slug=='percent'){
-                                                                            $avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $getPeriod->id, false, $planning_year->id, null,null,null);
+                                                                    if($planAcc->Kpi->measurement->slug=='percent'){
+                                                                        if(!$planAcc->kpi_child_three_id == null){
+                                                                            foreach($planAcc->Kpi->kpiChildThrees as $key=>$value3){
+                                                                                foreach($planAcc->Kpi->kpiChildTwos as $key=>$value2){
+                                                                                    foreach($planAcc->Kpi->kpiChildOnes as $key=>$value1){
+                                                                                        $avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $getPeriod->id, false, $planning_year->id, $value1->id,$value2->id,$value3->id);
+                                                                                        $avarage_total = $avarage_total+$avarage[0];  
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                            $denominator = $planAcc->Kpi->kpiChildOnes->count()*$planAcc->Kpi->kpiChildTwos->count()*$planAcc->Kpi->kpiChildThrees->count(); 
+                                                                        }else if(!$planAcc->kpi_child_two_id == null){
+                                                                            foreach($planAcc->Kpi->kpiChildTwos as $key=>$value2){
+                                                                                foreach($planAcc->Kpi->kpiChildOnes as $key=>$value1){
+                                                                                    $avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $getPeriod->id, false, $planning_year->id,  $value1->id,$value2->id,null);
+                                                                                    $avarage_total = $avarage_total+$avarage[0];  
+                                                                                }
+                                                                            }
+                                                                            $denominator = $planAcc->Kpi->kpiChildOnes->count()*$planAcc->Kpi->kpiChildTwos->count(); 
+                                                                        }else if(!$planAcc->kpi_child_one_id == null){
+                                                                            foreach($planAcc->Kpi->kpiChildOnes as $key=>$value1){
+                                                                                $avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $getPeriod->id, false, $planning_year->id,  $value1->id,null,null);
+                                                                                $avarage_total = $avarage_total+$avarage[0];   
+                                                                            }
+                                                                            $denominator = $planAcc->Kpi->kpiChildOnes->count();
+                                                                        }else{
+                                                                            $avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $getPeriod->id, false, $planning_year->id,  null,null,null);
+                                                                            $avarage_total = $avarage_total+$avarage[0];
+                                                                            $denominator = 1; 
                                                                         }
                                                                     }
+                                                                }
                                                                 @endphp
-                                                                @if ($avarage > 0)
-                                                                    {{ $avarage[0] }} {{" %"}}
+                                                                @if ($avarage_total >0 && $denominator >0)
+                                                                    {{ $avarage_total/$denominator }} {{" %"}}
                                                                 @else
                                                                 {{ $planAcc->sum }}
                                                                 @endif
