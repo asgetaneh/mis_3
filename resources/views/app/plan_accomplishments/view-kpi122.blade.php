@@ -28,7 +28,7 @@
 
 <tr>
     <th colspan="2">#</th>
-
+    <th colspan="">Baseline</th>
     @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
     <th>
             {{ $period->reportingPeriodTs[0]->name }}
@@ -48,7 +48,10 @@
         <th>
             {{ $two->kpiChildTwoTranslations[0]->name }}
         </th>
-
+        @php
+            $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id,$office, $planning_year->id, $period->id,$one->id,$two->id,null);
+        @endphp
+        <td>{{ $baselineOfOfficePlan }}</td>
 @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
     @php
         $childAndHimOffKpi_array = [];

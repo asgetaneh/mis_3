@@ -267,8 +267,12 @@ class PlanAccomplishment extends Model
                     ->where('kpi_id' , '=', $kkp)
                     ->where('planning_year_id','=', $planning_year)
                     ->where('reporting_period_id' , '=', $period)
+                    ->where('kpi_child_one_id' , '=', $one)
+                    ->where('kpi_child_two_id' , '=', $two)
+                    ->where('kpi_child_three_id' , '=', $three)
                     ->where('plan_status' , '<=', $office_level)
                 ->get(); 
+                //dump($planAccomplishments);
                 $my_status = $status?->plan_status;
                 if($is_report){
                      $planAccomplishments = PlanAccomplishment::select('*')
@@ -306,6 +310,9 @@ class PlanAccomplishment extends Model
                     ->where('kpi_id' , '=', $kkp)
                     ->where('planning_year_id','=', $planning_year)
                     ->where('reporting_period_id' , '=', $period)
+                    ->where('kpi_child_one_id' , '=', $one)
+                    ->where('kpi_child_two_id' , '=', $two)
+                    ->where('kpi_child_three_id' , '=', $three)
                     ->where('plan_status' , '<=', $office_level)
                 ->get(); 
                 $my_status = $status?->plan_status;
@@ -317,6 +324,9 @@ class PlanAccomplishment extends Model
                      ->whereIn('office_id', $childAndHimOffKpi_array)
                     ->where('kpi_id' , '=', $kkp)
                     ->where('reporting_period_id' , '=', $period)
+                    ->where('kpi_child_one_id' , '=', $one)
+                    ->where('kpi_child_two_id' , '=', $two)
+                    ->where('kpi_child_three_id' , '=', $three)
                     ->where('accom_status' , '<=', $office_level)
                 ->get();
                  $my_status = $status?->accom_status;

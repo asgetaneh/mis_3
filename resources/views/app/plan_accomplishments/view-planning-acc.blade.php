@@ -178,13 +178,13 @@
                                                              
                                                         @endphp
                                                         <td> 
-                                                            @php
-                                                                $final_avarage_basline = number_format($baseline_avarage_total/$denominator, 2, '.', ',');
-                                                            @endphp 
                                                             @if ($planAcc->Kpi->measurement && $planAcc->Kpi->measurement->slug=='percent' && $denominator >0)
+                                                                @php
+                                                                    $final_avarage_basline = number_format($baseline_avarage_total/$denominator, 2, '.', ',');
+                                                                @endphp 
                                                                  {{ $final_avarage_basline }} {{" %"}}
                                                             @else
-                                                                {{ $final_avarage_basline }}
+                                                                {{ $baseline_avarage_total }}
                                                             @endif
                                                         </td>
                                                         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
@@ -235,7 +235,11 @@
                                                                     @endphp   
                                                                 {{ $final_avarage }} {{" %"}}
                                                                 @else
-                                                                {{ $planAcc->sum }}
+                                                                    @php
+                                                                        $plan_value = $planAcc->ForKpi($planAcc->Kpi->id, $imagen_off, $period->id,false,$planning_year->id ?? NULL,$planAcc->kpi_child_one_id,$planAcc->kpi_child_two_id,$planAcc->kpi_child_three_id);
+                                                                      @endphp
+                                                                    {{ $plan_value[0] }}
+                                                                <!-- {{ $planAcc->sum }} -->
                                                                 @endif
                                                              </td>
                                                         @empty

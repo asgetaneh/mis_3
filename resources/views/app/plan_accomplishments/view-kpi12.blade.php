@@ -29,7 +29,7 @@
 
     <tr>
         <th colspan="2">#</th>
-
+        <th colspan="">Baseline</th>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
         <th>
                 {{ $period->reportingPeriodTs[0]->name }}
@@ -49,7 +49,10 @@
             <th>
                 {{ $two->kpiChildTwoTranslations[0]->name }}
             </th>
-
+            @php
+                $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id,$office, $planning_year->id, $period->id,$one->id,$two->id,null);
+             @endphp
+            <td>{{ $baselineOfOfficePlan }}</td>
             @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                 @php
                     $childAndHimOffKpi_array = [];
@@ -70,13 +73,13 @@
                             {{ $two->kpiChildTwoTranslations[0]->name }}
                         </td>
                         @foreach ($planAcc->Kpi->kpiChildOnes as $one) --}}
+                        @php
+                            //$planOneTwo = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id, $office, $period->id,false);
+                            $planOneTwo = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year->id ?? NULL ,$one->id, $two->id,null);
+                             $office_level = $office->level;
+                            if($office_level == 0) $office_level=1;
+                        @endphp
                             <td>
-                                @php
-                                    //$planOneTwo = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id, $office, $period->id,false);
-                                    $planOneTwo = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year->id ?? NULL ,$one->id, $two->id,null);
-                                    $office_level = $office->level;
-                                    if($office_level == 0) $office_level=1;
-                                @endphp
                                 @if($planOneTwo[2] <= $office_level)
                                      {{ $planOneTwo[0] }} 
                                 @else
@@ -109,46 +112,11 @@
         @endforeach
     </tr>
 @endforeach
-    {{-- total ch1ch3 --}}
-    {{-- <tr>
-        <th colspan='2' style="background:#ffeecc;">
-            {{ 'Total' }}
-            </td>
-            @foreach ($planAcc->Kpi->kpiChildOnes as $one)
-        <td>
-            @php
-                $offices_array = [];
-                $userChild = $office->offices;
-                foreach ($userChild as $key => $value) {
-                    $offices_array[$key] = $value->id;
-                }
-                $offices_array = array_merge($offices_array, [$office->id]);
-
-                $planSumch1ch3 = $planAcc->planIndividualChOnech($planAcc->Kpi->id, $one->id, $two->id, $offices_array);
-            @endphp
-            {{ $planSumch1ch3 }}
-        </td>
-        @endforeach
-        <td> {{ $planKpiOfficeYear }}</td>
-    </tr>
     <tr>
-       <td>
-        Major Activities
-    </td>
-    <td colspan="5">
-        @foreach ($narration as $key => $plannaration)
-              {!! html_entity_decode($plannaration->plan_naration) !!}
-              @php
-              echo "<br/>"
-              @endphp
-        @endforeach
-    </td>
-    </tr> --}}
-    <tr>
-        <td>
+        <th collapse="2">
             Major Activities
-        </td>
-        <td colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 2 }}">
+        </th>
+        <td colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 3 }}">
             @foreach ($narration as $key => $plannaration)
                 {!! html_entity_decode($plannaration->plan_naration) !!}
                 @php

@@ -140,7 +140,7 @@
                                           <td rowspan="4">{{ $office_three_self->officeTranslations[0]->name }}</td>
                                     </tr>
                                     @php 
-                                        $baselineOfOfficePlan  = OnlyKpiOttBaseline($planAcc->Kpi->id,$office_three_self, $planning_year->id, $period->id);
+                                        $baselineOfOfficePlan  = OnlyKpiOttBaseline($planAcc->Kpi->id,$office_three_self, $planning_year->id, $period->id,null,null,null);
                                     @endphp
                                     <td>{{ $baselineOfOfficePlan }}</td>
                                          @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
@@ -196,7 +196,7 @@
                         <tr>
                               <td rowspan="4">{{ $office_two_self->officeTranslations[0]->name }}</td>
                               @php 
-                                    $baselineOfOfficePlan  = OnlyKpiOttBaseline($planAcc->Kpi->id,$office_two_self, $planning_year->id, $period->id);
+                                    $baselineOfOfficePlan  = OnlyKpiOttBaseline($planAcc->Kpi->id,$office_two_self, $planning_year->id, $period->id,null,null,null);
                               @endphp
                               <td>{{ $baselineOfOfficePlan }}</td>
                               @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
@@ -252,7 +252,7 @@
                   <td rowspan="4">{{ $office_one_self->officeTranslations[0]->name }}</td>
                     @php 
                                                  
-                        $baselineOfOfficePlan  = OnlyKpiOttBaseline($planAcc->Kpi->id,$office_one_self, $planning_year->id, $period->id);
+                        $baselineOfOfficePlan  = OnlyKpiOttBaseline($planAcc->Kpi->id,$office_one_self, $planning_year->id, $period->id,null,null,null);
                     @endphp 
                 <td>{{ $baselineOfOfficePlan }}</td>
                  @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)

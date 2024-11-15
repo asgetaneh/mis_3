@@ -1,6 +1,6 @@
 <table class="table table-bordered" style="background:#12cd4322;">
     @php
-         $ospan = $planAcc->Kpi->kpiChildThrees->count() * getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 2;
+         $ospan = $planAcc->Kpi->kpiChildThrees->count() * (getQuarter($planAcc->Kpi->reportingPeriodType->id)->count()+1) + 2;
     @endphp
     <!-- <tr id="child-ones"> -->
     <tr>
@@ -25,7 +25,7 @@
 
     <tr>
         <th rowspan="2" colspan="2">#</th>
-
+        <th colspan="{{ $planAcc->Kpi->kpiChildThrees->count() }}">Baseline</th>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             <th colspan="{{ $planAcc->Kpi->kpiChildThrees->count() }}">
                 {{ $period->reportingPeriodTs[0]->name }}
@@ -35,7 +35,9 @@
     </tr>
 
     <tr>
-
+    @foreach ($planAcc->Kpi->kpiChildThrees as $kpiThree)
+        <th>{{ $kpiThree->kpiChildThreeTranslations[0]->name }} </th>
+    @endforeach
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @foreach ($planAcc->Kpi->kpiChildThrees as $kpiThree)
                 <th>{{ $kpiThree->kpiChildThreeTranslations[0]->name }}
@@ -86,6 +88,13 @@
                 <th>
                     {{ $two->kpiChildTwoTranslations[0]->name }}
                 </th>
+                @foreach ($planAcc->Kpi->kpiChildThrees as $three)
+                    @php
+                        $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id,$office, $planning_year->id, $period->id,$one->id,$two->id,$three->id);
+                    @endphp
+                <td>{{ $baselineOfOfficePlan }}</td>
+                @endforeach
+                
 
             @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                 {{-- <tr>
@@ -178,7 +187,7 @@
         <td>
             Major Activities
         </td>
-        <td colspan="{{ $planAcc->Kpi->kpiChildOnes->count() *$planAcc->Kpi->kpiChildThrees->count()+1}}">
+        <td colspan="{{ (getQuarter($planAcc->Kpi->reportingPeriodType->id)->count()+1) *$planAcc->Kpi->kpiChildThrees->count()+1}}">
             @foreach ($narration as $key => $plannaration)
                 {!! html_entity_decode($plannaration->plan_naration) !!}
                 @php

@@ -554,7 +554,7 @@ if (! function_exists('gettrans')) {
 
    function getBaselineIndividualOneTwoThree($year,$kpi, $one, $two,$three,$office){
     $planAccomplishments = Baseline::select()->where('planning_year_id' , '=', $year)->where('office_id' , '=', $office)->where('kpi_id' , '=', $kpi)->where('kpi_one_id' , '=', $one)->where('kpi_two_id' , '=', $two)->where('kpi_three_id' , '=', $three)->get();
-       foreach ($planAccomplishments as $key => $planAccomplishment) {
+       foreach ($planAccomplishments as $key => $planAccomplishment) { 
            return $planAccomplishment;
        }
   }

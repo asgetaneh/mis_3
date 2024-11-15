@@ -1055,11 +1055,16 @@ class PlanAccomplishmentController extends Controller
 
         }
         else{
-        $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $only_child_array)->select('*', DB::raw('SUM(plan_value) AS sum'))
-        -> where('reporting_periods.slug',"=", 1)
+        $planAccomplishments = PlanAccomplishment::join('reporting_periods',
+         'reporting_periods.id', '=', 
+         'plan_accomplishments.reporting_period_id')
+        ->whereIn('office_id', $only_child_array)
+        ->select('*', DB::raw('SUM(plan_value) AS sum'))
+        // -> where('reporting_periods.slug',"=", 1)
         -> where('planning_year_id','=', $planning_year->id ?? NULL)
+        ->groupBy('reporting_period_id')
        ->groupBy('kpi_id')  ->get();
-       //dd($only_child_array);
+       //dd($planAccomplishments);
          if( $is_admin){
             $imagen_off = Office::find(1); //immaginery office of which contain all office kpi plan
             $off_level = 1;

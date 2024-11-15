@@ -1033,13 +1033,13 @@ function commentorTextStatus($office, $commentorId, $kpi, $year, $suffix){
     return $status ?? '';
 }
 // get basline  with parametres for only one office
-function OnlyKpiOttBaseline($kpi_id,$office, $planning_year_id, $period){
+function OnlyKpiOttBaseline($kpi_id,$office, $planning_year_id, $period, $one, $two, $three){
     $plan_accom = [];
     $getkpi = KeyPeformanceIndicator::find($kpi_id);
     $status = getStatus($kpi_id,$office,$period,false,$planning_year_id ,null,null,null);
    
    
-   //dd($avarage_plan[0]/$avarage_plan[1]);
+   //dd($kpi_id);
    $childAndHimOffKpi_array =[];
    $childAndHimOffKpi = office_all_childs_ids($office);
    $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
@@ -1063,8 +1063,8 @@ function OnlyKpiOttBaseline($kpi_id,$office, $planning_year_id, $period){
             ->get();
         } //dump($kpi_id);
         
-    }
-    foreach ($planBaseline as $key => $value) {//dump($value);
+    }  
+    foreach ($planBaseline as $key => $value) {
         $office_baseline = $office_baseline+$value->baseline;
     }
    return $office_baseline;
@@ -1096,7 +1096,7 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period,$one,$two,$thr
                 ->where('kpi_one_id', '=', $one)
                 ->where('kpi_two_id', '=', $two)
                 ->where('kpi_three_id', '=', $three)
-                ->get();//dump($off_list);
+                ->get(); 
                 if($planBaseline->isEmpty()){
                     $planning_year = PlaningYear::where('is_active',true)->first();
                     $previous_year = PlaningYear::where('id', '<', $planning_year_id)->orderby('id', 'desc')->first();
@@ -1112,10 +1112,10 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period,$one,$two,$thr
                         ->get();
                     } //dump($kpi_id);
                     
-                }
+                } 
                 foreach ($planBaseline as $key => $value) {
                     $office_baseline = $office_baseline+$value->baseline;
-                }
+                 }
             }
            
         }
