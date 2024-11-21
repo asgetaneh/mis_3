@@ -36,19 +36,18 @@ use Illuminate\Support\Collection;
 
         // If this office's plan is non-zero, include it in the total and count
         $office_plan = getOfficePlan($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three);
-        //dd($office);
+        //dump($office_plan?->accom_value);
         $var =$office_plan;
-        
-        $office_plan =$office_plan?->plan_value ?? NULL;
-       
-        if($is_report){
-             $office_plan =$office_plan?->accom_value ?? NULL; //dump($office_plan); 
+        if(!$is_report){
+             $office_plan =$office_plan?->plan_value ?? NULL;
         }
-        
-        if ($var !== NULL ) {  // && $var->plan_status  <= $office->level
+        else  {
+             $office_plan =$office_plan?->accom_value ?? NULL;  
+        }
+         if ($var !== NULL ) {  // && $var->plan_status  <= $office->level
             $totalPlan += $office_plan;
             $validPlansCount++;
-           // echo $kkp."-> ".$office->id." ->".$period."-> ".$is_report."-> ".$office_plan. "<br/> ";
+            //echo $kkp."-> ".$office->id." ->".$period."-> ".$is_report."-> ".$totalPlan."->". $validPlansCount."<br/> ";
         }
   
 
@@ -57,10 +56,24 @@ use Illuminate\Support\Collection;
             list($childPlanTotal, $childCount) =  calculateAveragePlan($kkp,$child,$period,$is_report,$planning_year ,$one,$two,$three);
             
             // Include the child's plan (as it's already averaged if it has children)
-            if ($childCount > 0 && $office->plan_status  <= $office_level) {
-                $totalPlan += $childPlanTotal / $childCount;
-                $validPlansCount++;
+            if(!$is_report){
+                if ($childCount > 0 && $office->plan_status  <= $office_level) {
+                    $totalPlan += $childPlanTotal ;
+                    $totalPlan = $totalPlan/ $childCount;
+                    $validPlansCount++;
+                    //echo $totalPlan."->".$validPlansCount."<br/>";
+                }
             }
+            else{
+                // Include the child's plan (as it's already averaged if it has children)
+                if ($childCount > 0 && $office->accom_status  <= $office_level && $childPlanTotal!=null) {
+                    $totalPlan += $childPlanTotal / $childCount;
+                    $validPlansCount++;
+                  //  echo $childPlanTotal."->".$validPlansCount."<br/>";
+                }
+            }
+           
+            
         }
          //echo $kkp."-> ".$office->id." ->".$period."-> ".$is_report."-> ".$totalPlan. "-> ".$validPlansCount."<br/> ";
         return [$totalPlan, $validPlansCount];   
@@ -135,22 +148,23 @@ if (! function_exists('getOfficePlan')) {
  function  getOfficePlan($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three)
     { 
         $office_level = $office->level;
-        if($office_level == 0) $office_level=1;
-        $planAccomplishments = PlanAccomplishment::select('*')
-            ->where('office_id', $office->id)
-            ->where('kpi_id' , '=', $kkp)
-            ->where('planning_year_id','=', $planning_year)
-            ->where('kpi_child_one_id' , '=', $one)
-            ->where('kpi_child_two_id' , '=', $two)
-            ->where('kpi_child_three_id' , '=', $three)
-            ->where('reporting_period_id' , '=', $period)
-            // ->where('plan_status' , '<=', $office_level)
+        if($office_level == 0) $office_level=1; 
+        if(!$is_report){
+            $planAccomplishments = PlanAccomplishment::select('*')
+                ->where('office_id', $office->id)
+                ->where('kpi_id' , '=', $kkp)
+                ->where('planning_year_id','=', $planning_year)
+                ->where('kpi_child_one_id' , '=', $one)
+                ->where('kpi_child_two_id' , '=', $two)
+                ->where('kpi_child_three_id' , '=', $three)
+                ->where('reporting_period_id' , '=', $period)
+                // ->where('plan_status' , '<=', $office_level)
 
-        ->first(); 
-        
-       // if($planAccomplishments){dump($planAccomplishments->plan_value);}
-        
-         if($is_report){
+            ->first();  
+        }       
+         if($is_report){ 
+            $kpi_ob = KeyPeformanceIndicator::find($kkp);
+            $active_period = getReportingQuarter($kpi_ob->reportingPeriodType->id); 
              $planAccomplishments = PlanAccomplishment::select('*')
                  ->where('office_id', $office->id)
                 ->where('kpi_id' , '=', $kkp)
@@ -159,9 +173,9 @@ if (! function_exists('getOfficePlan')) {
                 ->where('kpi_child_two_id' , '=', $two)
                 ->where('kpi_child_three_id' , '=', $three)
                 ->where('reporting_period_id' , '=', $period)
-                ->where('accom_status' , '<=', $office_level)
+                // ->where('accom_status' , '<=', $office_level)
             ->first();
-         }  
+         }  //dump($planAccomplishments->accom_value);
         return $planAccomplishments;
     }
 }

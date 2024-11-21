@@ -1076,14 +1076,14 @@ class PlanAccomplishmentController extends Controller
             $planAccomplishments = PlanAccomplishment::
             // join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
             //     ->join('offices', 'offices.id', '=', 'plan_accomplishments.office_id')
-            //      ->join('key_peformance_indicators', 'plan_accomplishments.kpi_id', '=', 'key_peformance_indicators.id')
-            //     ->join('objectives', 'key_peformance_indicators.objective_id', '=', 'objectives.id')
+                  join('key_peformance_indicators', 'plan_accomplishments.kpi_id', '=', 'key_peformance_indicators.id')
+                ->join('objectives', 'key_peformance_indicators.objective_id', '=', 'objectives.id')
                // select('*', DB::raw('SUM(plan_value) AS sum'))
                 // -> where('reporting_periods.slug',"=", 1)
                 // -> where('plan_status',"=", 2)
-                  where('planning_year_id','=', $planning_year->id ?? NULL)
+                 -> where('planning_year_id','=', $planning_year->id ?? NULL)
                 //->groupBy('reporting_period_id')
-                //->groupBy('objective_id')
+                ->orderBy('objective_id')
                 ->groupBy('kpi_id')
                 ->orderBy('reporting_period_id')
                 ->get();

@@ -114,8 +114,7 @@ class PlanAccomplishment extends Model
             // kpi measurement is in percent
             if($getkpi->measurement?->slug == 'percent'){
                  $avarage_plan = calculateAveragePlan($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three); //echo $kkp." ".$office->id." ".$period." ".$is_report." ".$planning_year." ".$one."<br/> ";
-                 ///dump($avarage_plan);
-                $avarage_plan_of_percent = 0;
+                 $avarage_plan_of_percent = 0;
                 if($avarage_plan && $avarage_plan[1]>0){
                     $avarage_plan_of_percent = (double)number_format($avarage_plan[0]/$avarage_plan[1], 2, ".", "");
                     // dd($avarage_plan_of_percent);
@@ -126,7 +125,7 @@ class PlanAccomplishment extends Model
                     $plan_accom = array_merge( $plan_accom,array($status?->plan_status));
                 }
                 if($is_report){
-                    $plan_accom = array_merge( $plan_accom,array(0));
+                    $plan_accom = array_merge( $plan_accom,array($avarage_plan_of_percent));
                     $plan_accom = array_merge( $plan_accom,array($avarage_plan_of_percent));
                     $plan_accom = array_merge( $plan_accom,array($status?->accom_status));
                 }
@@ -243,10 +242,10 @@ class PlanAccomplishment extends Model
                      //dump($avarage_plan_of_percent);
                 }
                 $plan_accom = array_merge( $plan_accom,array($avarage_plan_of_percent));
-                $plan_accom = array_merge( $plan_accom,array(0));
+                $plan_accom = array_merge( $plan_accom,array($avarage_plan_of_percent));
                 $plan_accom = array_merge( $plan_accom,array($status?->plan_status));
                 if($is_report){
-                    $plan_accom = array_merge( $plan_accom,array(0));
+                    $plan_accom = array_merge( $plan_accom,array($avarage_plan_of_percent));
                     $plan_accom = array_merge( $plan_accom,array($avarage_plan_of_percent));
                     $plan_accom = array_merge( $plan_accom,array($status?->accom_status));
                 }

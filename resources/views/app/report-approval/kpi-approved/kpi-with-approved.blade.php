@@ -35,12 +35,12 @@
            <td rowspan="2">{{$office->officeTranslations[0]->name}}</td>
         @forelse(getReportingQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @php
-                $planOfOfficePlan
-                = reportSum($planAcc->Kpi->id,$office, $period->id, 3);
-               $narration = getReportNarration($planAcc->Kpi->id,$planning_year->id ?? NULL, $office, $period->id);
+               // $planOfOfficePlan  = reportSum($planAcc->Kpi->id,$office, $period->id, 3);
+                $planOfOfficePlan = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $active_period[0]->id, true, $planning_year->id,  null,null,null);
+                $narration = getReportNarration($planAcc->Kpi->id,$planning_year->id ?? NULL, $office, $period->id);
             @endphp
             <td>
-               {{$planOfOfficePlan}}
+               {{$planOfOfficePlan[1]}}
             </td>
         @empty
         @endforelse

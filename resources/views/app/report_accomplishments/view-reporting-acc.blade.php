@@ -132,12 +132,12 @@
                                                     </tr>
                                                     <tr style="background:#21212121;">
                                                         <th  rowspan="2"></th>
-                                                         <th  rowspan="2" style="width:60%">
+                                                         <td  rowspan="2" style="width:30%">
                                                             KPI:   {{$kpiT->name }}
                                                              @if ($kpiT->keyPeformanceIndicator ->measurement)
-                                                                {{"( in "}}{{$kpiT->keyPeformanceIndicator ->measurement['slug'] }} {{")" }}
+                                                               <b> {{"( in "}}{{$kpiT->keyPeformanceIndicator ->measurement['slug'] }} {{")" }}</b>
                                                              @endif 
-                                                        </th>
+                                                        </td>
                                                          @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                                                             <th> {{ $period->reportingPeriodTs[0]->name }} </th>
                                                         @empty
@@ -149,8 +149,8 @@
                                                             @php
                                                                 $one =null;
                                                                 $three =null;
-                                                                $two =null;
-                                                                $planOfOfficePlan = $planAcc->ForKpi($planAcc->Kpi->id, $imagen_off, $period->id,true,$planning_year->id ?? NULL);//dump($planOfOfficePlan);
+                                                                $two =null; //dump($planAcc);
+                                                                $planOfOfficePlan = $planAcc->ForKpi($planAcc->Kpi->id, $imagen_off, $period->id,true,$planning_year->id ?? NULL,$planAcc->kpi_child_one_id ,$planAcc->kpi_child_two_id ,$planAcc->kpi_child_three_id);//dump($planOfOfficePlan);
                                                                 $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $imagen_off, $period->id);
                                                                  $activeQuarter = getReportingQuarter($planAcc->Kpi->reportingPeriodType->id);
 

@@ -8,6 +8,7 @@ use App\Models\KeyPeformanceIndicator;
 use App\Models\OfficeTranslation;
 use App\Models\ReportComment;
 use App\Models\ReportNarrationReport;
+use App\Models\PlaningYear;
 
 /**
  * Write code on Method
@@ -808,46 +809,60 @@ function reportSum($kkp, $office, $period, $suffix)
     $planAccomplishmentsCurrent = '';
     $planAccomplishmentsChildren = '';
     $activeReportingPeriodList = getReportingPeriod();
-
+    $kpi = KeyPeformanceIndicator::find($kkp);
+    $planning_year = PlaningYear::where('is_active',true)->first();
 
     if ($suffix == 1) {
+        if($kpi->measurement){
+            if($kpi->measurement->slug =="percent"){
+                $sum1 =0;
+                $planAccomplishments = calculateAveragePlan($kkp,$office,$period,true,$planning_year ,null,null,null);
+                dump($planAccomplishments[0]);
+                if($planAccomplishments[1]!=0){
+                    $sum1 = $planAccomplishments[0]/$planAccomplishments[1]; 
+                }                
+            }else{
 
-        // All current office children if exist with the logged in user office level
-        $planAccomplishmentsChildParent = PlanAccomplishment::select()
-            // ->where('office_id', $office->id)
-            ->whereIn('office_id', $childAndHimOffKpi)
-            ->where('kpi_id', $kkp)
-            ->whereIn('reporting_period_id', $activeReportingPeriodList)
-            ->where(function ($q) {
-                $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
-            })
-            ->get();
+                // All current office children if exist with the logged in user office level
+                $planAccomplishmentsChildParent = PlanAccomplishment::select()
+                    // ->where('office_id', $office->id)
+                    ->whereIn('office_id', $childAndHimOffKpi)
+                    ->where('kpi_id', $kkp)
+                    ->whereIn('reporting_period_id', $activeReportingPeriodList)
+                    ->where(function ($q) {
+                        $q->where('accom_status', '<', auth()->user()->offices[0]->level)->orWhere('accom_status', '=', auth()->user()->offices[0]->level);
+                    })
+                    ->get();
 
-        // Current offices record
-        $planAccomplishmentsCurrent = PlanAccomplishment::select()
-            ->where('office_id', $office->id)
-            ->where('kpi_id', $kkp)
-            ->whereIn('reporting_period_id', $activeReportingPeriodList)
-            ->get();
+                // Current offices record
+                $planAccomplishmentsCurrent = PlanAccomplishment::select()
+                    ->where('office_id', $office->id)
+                    ->where('kpi_id', $kkp)
+                    ->whereIn('reporting_period_id', $activeReportingPeriodList)
+                    ->get();
 
-        // Current office children record if exists
-        $planAccomplishmentsChildren = PlanAccomplishment::select()
-            ->whereIn('office_id', $childAndHimOffKpi)
-            ->where('kpi_id', '=', $kkp)
-            ->where('accom_status', $office->level)
-            ->whereIn('reporting_period_id', $activeReportingPeriodList)
-            ->get();
+                // Current office children record if exists
+                $planAccomplishmentsChildren = PlanAccomplishment::select()
+                    ->whereIn('office_id', $childAndHimOffKpi)
+                    ->where('kpi_id', '=', $kkp)
+                    ->where('accom_status', $office->level)
+                    ->whereIn('reporting_period_id', $activeReportingPeriodList)
+                    ->get();
 
-        $sum1 = 0;
+                $sum1 = 0;
 
-        foreach ($planAccomplishmentsCurrent as $key => $planAccomplishment) {
-            $sum1 += $planAccomplishment->accom_value;
-        }
-        foreach ($planAccomplishmentsChildren as $key => $planAccomplishment) {
-            $sum1 += $planAccomplishment->accom_value;
-        }
-        foreach ($planAccomplishmentsChildParent as $key => $planAccomplishment) {
-            $sum1 += $planAccomplishment->accom_value;
+                foreach ($planAccomplishmentsCurrent as $key => $planAccomplishment) {
+                    $sum1 += $planAccomplishment->accom_value;
+                }
+                foreach ($planAccomplishmentsChildren as $key => $planAccomplishment) {
+                    $sum1 += $planAccomplishment->accom_value;
+                }
+                foreach ($planAccomplishmentsChildParent as $key => $planAccomplishment) {
+                    $sum1 += $planAccomplishment->accom_value;
+                }
+            }
+        }else {
+            echo'KPI measurement is unknown';
         }
         // dd($sum1);
         return $sum1;

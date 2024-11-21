@@ -108,7 +108,6 @@
                                 $offices = $planAcc->getOfficeFromKpiAndOfficeList($only_child_array,$off_level);
                              @endphp
 
-
                             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
                                 <div class="card collapsed-card p-2">
                                     <div class="card-header">
@@ -235,10 +234,7 @@
                                                                     @endphp   
                                                                 {{ $final_avarage }} {{" %"}}
                                                                 @else
-                                                                    @php
-                                                                        $plan_value = $planAcc->ForKpi($planAcc->Kpi->id, $imagen_off, $period->id,false,$planning_year->id ?? NULL,$planAcc->kpi_child_one_id,$planAcc->kpi_child_two_id,$planAcc->kpi_child_three_id);
-                                                                      @endphp
-                                                                    {{ $plan_value[0] }}
+                                                                    {{ $avarage_total }}
                                                                 <!-- {{ $planAcc->sum }} -->
                                                                 @endif
                                                              </td>

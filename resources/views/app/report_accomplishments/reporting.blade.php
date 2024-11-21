@@ -162,12 +162,20 @@
                                         <div class="card-header bg-light">
                                             <h3 class="card-title">KPI:
                                                 {{ $kpi->KeyPeformanceIndicatorTs[0]->name }}
+                                                 @if ($kpi ->measurement)
+                                                       <b> {{"( in "}}{{$kpi ->measurement['slug'] }} {{")" }}</b>
+                                                @endif
+                                                @php
+                                                    $kpi_id = $kpi->id;
+                                                    $behavior = $kpi->behavior->slug;
+                                                @endphp
+                                                <b>({{ $kpi->behavior->behaviorTranslations[0]->name }})</b>
+                                                (Reporting:{{ $kpi->reportingPeriodType->reportingPeriodTypeTs[0]->name }})
                                                 @php
                                                 $kpi_id = $kpi->id;
                                                 $checkPlanedForKpi = checkPlanedForKpi($planning_year->id ?? NULL, $kpi->id, auth()->user()->offices[0]->id);
                                                 @endphp
-                                                (Reporting:{{ $kpi->reportingPeriodType->reportingPeriodTypeTs[0]->name }})
-
+ 
                                             </h3>
                                             <div class="card-tools">
                                                 <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>

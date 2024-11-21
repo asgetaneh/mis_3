@@ -276,7 +276,53 @@
                                                             </p>
                                                         </th>
                                                         <th style="width: 25%;" class="bg-light border">
-                                                            <p class="m-auto py-2 px-1">Total: <u>{{ $planAcc->sum }}</u>
+                                                            <p class="m-auto py-2 px-1">Total : <u>                                                                
+                                                                @php
+                                                                $avarage =0;
+                                                                $avarage_total =0;
+                                                                $denominator = 1;
+                                                                $getPeriod = getQuarterWithRTypeAndSlug($planAcc->Kpi->reportingPeriodType,1);
+                                                                $active_period = getReportingQuarter($planAcc->Kpi->reportingPeriodType->id);
+                                                                if($planAcc->Kpi->measurement){
+                                                                    if($planAcc->Kpi->measurement->slug=='percent'){
+                                                                        if(!$planAcc->kpi_child_three_id == null){
+                                                                            foreach($planAcc->Kpi->kpiChildThrees as $key=>$value3){
+                                                                                foreach($planAcc->Kpi->kpiChildTwos as $key=>$value2){
+                                                                                    foreach($planAcc->Kpi->kpiChildOnes as $key=>$value1){
+                                                                                        $avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $active_period[0]->id, true, $planning_year->id, $value1->id,$value2->id,$value3->id);
+                                                                                        $avarage_total = $avarage_total+$avarage[0];  
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                            $denominator = $planAcc->Kpi->kpiChildOnes->count()*$planAcc->Kpi->kpiChildTwos->count()*$planAcc->Kpi->kpiChildThrees->count(); 
+                                                                        }else if(!$planAcc->kpi_child_two_id == null){
+                                                                            foreach($planAcc->Kpi->kpiChildTwos as $key=>$value2){
+                                                                                foreach($planAcc->Kpi->kpiChildOnes as $key=>$value1){
+                                                                                    $avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $active_period[0]->id, true, $planning_year->id,  $value1->id,$value2->id,null);
+                                                                                    $avarage_total = $avarage_total+$avarage[0];  
+                                                                                }
+                                                                            }
+                                                                            $denominator = $planAcc->Kpi->kpiChildOnes->count()*$planAcc->Kpi->kpiChildTwos->count(); 
+                                                                        }else if(!$planAcc->kpi_child_one_id == null){
+                                                                            foreach($planAcc->Kpi->kpiChildOnes as $key=>$value1){
+                                                                                $avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $active_period[0]->id, true, $planning_year->id,  $value1->id,null,null);
+                                                                                $avarage_total = $avarage_total+$avarage[0];   
+                                                                            }
+                                                                            $denominator = $planAcc->Kpi->kpiChildOnes->count();
+                                                                        }else{
+                                                                            $avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $active_period[0]->id, true, $planning_year->id,  null,null,null);
+                                                                            $avarage_total = $avarage_total+$avarage[0];
+                                                                             $denominator = 1; 
+                                                                        }
+                                                                    }
+                                                                }
+                                                                @endphp
+                                                                @if ($avarage_total >0 && $denominator >0)
+                                                                    {{ $avarage_total/$denominator }} {{" %"}}
+                                                                @else
+                                                                 {{ $planAcc->sum }}
+                                                                @endif
+                                                            </u>
                                                             </p>
                                                         </th>
                                                         <th class="">

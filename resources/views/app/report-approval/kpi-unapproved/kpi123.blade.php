@@ -103,11 +103,12 @@
                 $childAndHim_array[$key] = $value->id;
                 }
                 $childAndHim_array = array_merge($childAndHim_array,array($office->id));
-                $plan123 = reportIndividual($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,$office,$period->id, 1);
+                //$plan123 = reportIndividual($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,$office,$period->id, 1);
+                $plan123 = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year->id ?? NULL ,$one->id, $two->id, $kpiThree->id);
                 $narration = getReportNarration($planAcc->Kpi->id,$planning_year->id ?? NULL, $office, $period->id);
 
             @endphp
-            {{$plan123}}
+            {{$plan123[1]}}
             </td>
         @endforeach
     @endforeach

@@ -58,9 +58,11 @@
                     @foreach ($planAcc->Kpi->kpiChildOnes as $one)
                         <td>
                             @php
-                                $planOneTwo = reportOneTwo($planAcc->Kpi->id, $one->id, $two->id, $office, $period->id, 3);
+                                //$planOneTwo = reportOneTwo($planAcc->Kpi->id, $one->id, $two->id, $office, $period->id, 3);
+                            $planOneTwo = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year->id ?? NULL ,$one->id, $two->id,null);
+
                             @endphp
-                            {{ $planOneTwo }}
+                            {{ $planOneTwo[1] }}
                         </td>
                     @endforeach
                     {{-- total ch2 --}}

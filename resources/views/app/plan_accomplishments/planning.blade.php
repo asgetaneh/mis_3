@@ -12,7 +12,8 @@
         table {
             border-collapse: collapse;
         }
-        #view-comment-paragraph *{
+
+        #view-comment-paragraph * {
             margin-bottom: 0 !important;
         }
     </style>
@@ -95,18 +96,20 @@
                                     @if (app()->getLocale() == $obj_ts->locale)
                                         @if ($isIterated)
                                             <li class="nav-item">
-                                                <a class="nav-link   btn-info btn-rounded"   id="{{ $obj_ts->translation_id . '-tab' }}"
-                                                    data-toggle="pill" href="{{ '#objective-' . $obj_ts->translation_id }}"
-                                                    role="tab" aria-controls="{{ $obj_ts->translation_id }}"
-                                                    aria-selected="false" title="{{ $obj_ts->name }}"> {{ Str::of($obj_ts->name)->limit(20) }}
+                                                <a class="nav-link   btn-info btn-rounded"
+                                                    id="{{ $obj_ts->translation_id . '-tab' }}" data-toggle="pill"
+                                                    href="{{ '#objective-' . $obj_ts->translation_id }}" role="tab"
+                                                    aria-controls="{{ $obj_ts->translation_id }}" aria-selected="false"
+                                                    title="{{ $obj_ts->name }}"> {{ Str::of($obj_ts->name)->limit(20) }}
                                                 </a>
                                             </li>
                                         @else
                                             <li class="nav-item">
-                                                <a class="nav-link active btn-rounded  btn-info"   id="{{ $obj_ts->translation_id . '-tab' }}"
-                                                    data-toggle="pill" href="{{ '#objective-' . $obj_ts->translation_id }}"
-                                                    role="tab" aria-controls="{{ $obj_ts->translation_id }}"
-                                                    aria-selected="true" title="{{ $obj_ts->name }}">{{ Str::of($obj_ts->name)->limit(20) }}
+                                                <a class="nav-link active btn-rounded  btn-info"
+                                                    id="{{ $obj_ts->translation_id . '-tab' }}" data-toggle="pill"
+                                                    href="{{ '#objective-' . $obj_ts->translation_id }}" role="tab"
+                                                    aria-controls="{{ $obj_ts->translation_id }}" aria-selected="true"
+                                                    title="{{ $obj_ts->name }}">{{ Str::of($obj_ts->name)->limit(20) }}
                                                 </a>
                                             </li>
 
@@ -147,16 +150,20 @@
                                             @endphp
                                 @endif
 
-                                <form action="{{ route('plan.save') }}" method="POST" id="planning-form" onsubmit="return validateForm()"  enctype="multipart/form-data">
+                                <form action="{{ route('plan.save') }}" method="POST" id="planning-form"
+                                    onsubmit="return validateForm()" enctype="multipart/form-data">
                                     @csrf
 
                                     {{-- @if ($objective) --}}
                                     @php
-                                        $KeyPeformanceIndicators = getKeyperormanceIndicators($objective, $user_offices);
+                                        $KeyPeformanceIndicators = getKeyperormanceIndicators(
+                                            $objective,
+                                            $user_offices,
+                                        );
                                     @endphp
                                     @forelse($KeyPeformanceIndicators as $kpi)
                                         @php
-                                            array_push($kpiList, $kpi->id)
+                                            array_push($kpiList, $kpi->id);
                                         @endphp
 
                                         <p class="kpi-under-obj-{{ $objective->id }}"></p>
@@ -165,12 +172,16 @@
                                             <div class="card-header bg-light">
                                                 <h3 class="card-title">KPI:
                                                     {{ $kpi->KeyPeformanceIndicatorTs[0]->name }}
+                                                     @if ($kpi ->measurement)
+                                                       <b> {{"( in "}}{{$kpi ->measurement['slug'] }} {{")" }}</b>
+                                                    @endif
                                                     @php
                                                         $kpi_id = $kpi->id;
-                                                        $behavior =  $kpi->behavior->slug;
-                                                      @endphp
+                                                        $behavior = $kpi->behavior->slug;
+                                                    @endphp
+                                                    <b>({{ $kpi->behavior->behaviorTranslations[0]->name }})</b>
                                                     (Reporting:{{ $kpi->reportingPeriodType->reportingPeriodTypeTs[0]->name }})
-                                                    ({{ $kpi->behavior->behaviorTranslations[0]->name }})
+                                                    
                                                     {{--  <strong  > ({{ $period->reportingPeriodTs[0]->name }})</strong> --}}
                                                     {{--
                                                           getReportingPeriod($kpi->reportingPeriodType->id,$date) --}}
@@ -182,12 +193,13 @@
                                                 </div>
                                             </div>
                                             <div class="card-body planning-container">
-                                                @if (hasOfficeActiveComment(auth()->user()->offices[0]->id, $kpi_id, $planning_year->id ?? NULL)->count() > 0)
+                                                @if (hasOfficeActiveComment(auth()->user()->offices[0]->id, $kpi_id, $planning_year->id ?? null)->count() > 0)
                                                     <div class="bg-light w-5 float-right p-3">
-                                                        <p class="m-auto">You have comment from <u>{{ getPlanCommentorInfo(auth()->user()->offices[0]->id, $kpi_id, $planning_year->id ?? NULL)->name ?? '-' }}</u>
-                                                            <a  class="btn btn-sm btn-flat btn-info text-white view-comment"
+                                                        <p class="m-auto">You have comment from
+                                                            <u>{{ getPlanCommentorInfo(auth()->user()->offices[0]->id, $kpi_id, $planning_year->id ?? null)->name ?? '-' }}</u>
+                                                            <a class="btn btn-sm btn-flat btn-info text-white view-comment"
                                                                 data-toggle="modal" data-target="#view-comment-modal"
-                                                                data-id="{{ getPlanCommentorInfo(auth()->user()->offices[0]->id, $kpi_id, $planning_year->id ?? NULL)->translation_id ?? 0 }}-{{$kpi_id}}-{{$planning_year->id ?? NULL}}">
+                                                                data-id="{{ getPlanCommentorInfo(auth()->user()->offices[0]->id, $kpi_id, $planning_year->id ?? null)->translation_id ?? 0 }}-{{ $kpi_id }}-{{ $planning_year->id ?? null }}">
                                                                 <i class="fas fa fa-eye mr-1"></i>View Comment
                                                             </a>
                                                             {{-- <a
@@ -200,14 +212,14 @@
                                                     </div>
                                                 @endif
 
-                                            <table class="table table-bordered">
-                                                <thead>
-                                                    {{-- If KPI has Child ones (UG, PG) --}}
-                                                    @if (!$kpi->kpiChildOnes->isEmpty())
-                                                        @if (!$kpi->kpiChildTwos->isEmpty())
-                                                            @if (!$kpi->kpiChildThrees->isEmpty())
-                                                                <!-- <tr id="child-ones"> -->
-                                                                {{-- <tr>
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        {{-- If KPI has Child ones (UG, PG) --}}
+                                                        @if (!$kpi->kpiChildOnes->isEmpty())
+                                                            @if (!$kpi->kpiChildTwos->isEmpty())
+                                                                @if (!$kpi->kpiChildThrees->isEmpty())
+                                                                    <!-- <tr id="child-ones"> -->
+                                                                    {{-- <tr>
                                                                     <th rowspan="2" colspan="2">#</th>
                                                                     @foreach ($kpi->kpiChildOnes as $one)
                                                                         <th colspan="{{ $kpi->kpiChildThrees->count() }}">
@@ -230,40 +242,41 @@
                                                                     @endforeach
                                                                 </tr> --}}
 
-                                                                <tr>
-                                                                    <th rowspan="2" colspan="2">#</th>
-                                                                    <th colspan="{{ $kpi->kpiChildThrees->count() }}">
-                                                                        Baseline
-                                                                    </th>
-
-                                                                    @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
+                                                                    <tr>
+                                                                        <th rowspan="2" colspan="2">#</th>
                                                                         <th colspan="{{ $kpi->kpiChildThrees->count() }}">
-                                                                            {{ $period->reportingPeriodTs[0]->name }}
+                                                                            Baseline
                                                                         </th>
-                                                                    @empty
-                                                                    @endforelse
-                                                                </tr>
 
-                                                                <tr>
+                                                                        @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
+                                                                            <th
+                                                                                colspan="{{ $kpi->kpiChildThrees->count() }}">
+                                                                                {{ $period->reportingPeriodTs[0]->name }}
+                                                                            </th>
+                                                                        @empty
+                                                                        @endforelse
+                                                                    </tr>
 
-                                                                    {{-- Display level 3 for baseline column --}}
-                                                                    @foreach ($kpi->kpiChildThrees as $kpiThree)
-                                                                        <th>{{ $kpiThree->kpiChildThreeTranslations[0]->name }}
-                                                                        </th>
-                                                                    @endforeach
+                                                                    <tr>
 
-                                                                    @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
+                                                                        {{-- Display level 3 for baseline column --}}
                                                                         @foreach ($kpi->kpiChildThrees as $kpiThree)
                                                                             <th>{{ $kpiThree->kpiChildThreeTranslations[0]->name }}
                                                                             </th>
                                                                         @endforeach
-                                                                    @empty
-                                                                    @endforelse
-                                                                </tr>
+
+                                                                        @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
+                                                                            @foreach ($kpi->kpiChildThrees as $kpiThree)
+                                                                                <th>{{ $kpiThree->kpiChildThreeTranslations[0]->name }}
+                                                                                </th>
+                                                                            @endforeach
+                                                                        @empty
+                                                                        @endforelse
+                                                                    </tr>
 
 
-                                                                {{-- Baseline row added --}}
-                                                                {{-- <tr>
+                                                                    {{-- Baseline row added --}}
+                                                                    {{-- <tr>
                                                                     <th rowspan="{{ $kpi->kpiChildTwos->count() }}">
                                                                         Baseline
                                                                     </th>
@@ -279,7 +292,7 @@
                                                                                     $disabled = '';
                                                                                 @endphp
                                                                                 @if ($baseline)
-                                                                                    @if($off_level === 1)
+                                                                                    @if ($off_level === 1)
                                                                                         @if ($off_level === $baseline->plan_status)
                                                                                             @php $disabled ="disabled"; @endphp
                                                                                         @endif
@@ -313,123 +326,154 @@
                                                                 </tr>
                                                                 @endforeach --}}
 
-                                                                @foreach ($kpi->kpiChildOnes as $one)
-                                                                    <tr>
-                                                                        <th rowspan="{{ $kpi->kpiChildTwos->count() }}">
-                                                                            {{ $one->kpiChildOneTranslations[0]->name }}
-                                                                        </th>
-
-                                                                        @foreach ($kpi->kpiChildTwos as $two)
-                                                                            <th>
-                                                                                {{ $two->kpiChildTwoTranslations[0]->name }}
+                                                                    @foreach ($kpi->kpiChildOnes as $one)
+                                                                        <tr>
+                                                                            <th
+                                                                                rowspan="{{ $kpi->kpiChildTwos->count() }}">
+                                                                                {{ $one->kpiChildOneTranslations[0]->name }}
                                                                             </th>
 
-                                                                            @foreach ($kpi->kpiChildThrees as $kpiThree)
-                                                                            @php
-                                                                            $baseline = getBaselineIndividualOneTwoThree($planning_year->id ?? NULL, $kpi->id, $one->id, $two->id, $kpiThree->id, auth()->user()->offices[0]->id);
-                                                                            $off_level = auth()->user()->offices[0]->level;
-                                                                            $disabled = '';
+                                                                            @foreach ($kpi->kpiChildTwos as $two)
+                                                                                <th>
+                                                                                    {{ $two->kpiChildTwoTranslations[0]->name }}
+                                                                                </th>
 
-                                                                            $baselineLastYear = getBaselineLastYear($kpi->id, $planning_year->id ?? NULL, 1, auth()->user()->offices[0]->id, $one->id, $two->id, $kpiThree->id);
-                                                                        @endphp
-                                                                         
-                                                                        @if (!empty($baselineLastYear))
-                                                                            <td>
-                                                                                {{ $baselineLastYear }}
-                                                                            </td>
-                                                                        @else
-                                                                             @if ($baseline)
-                                                                            @if($off_level === 1)
-                                                                                @if ($off_level === $baseline->plan_status)
-                                                                                    @php $disabled ="disabled"; @endphp
-                                                                                @endif
-                                                                            @elseif ($off_level != $baseline->plan_status)
-                                                                                @php $disabled ="disabled"; @endphp
-                                                                            @endif
-                                                                            <td>
-                                                                            <!-- <input type="hidden"
-                                                                                    name="type{{$kpi->id}}"
-                                                                                    value="yes"> -->
-                                                                                <input
-                                                                                    name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
-                                                                                    value="{{ $baseline->baseline }}"
-                                                                                    class="form-control"
-                                                                                    type="number" required
-                                                                                    {{ $disabled }}>
-
-
-                                                                            </td>
-                                                                        @else
-                                                                            <td>
-                                                                                <input
-                                                                                    name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
-                                                                                    class="form-control"
-                                                                                    type="number" required>
-
-                                                                            </td>
-                                                                        @endif
-                                                                        @endif
-                                                                            @endforeach
-
-                                                                            @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
-                                                                            @foreach ($kpi->kpiChildThrees as $kpiThree)
-
+                                                                                @foreach ($kpi->kpiChildThrees as $kpiThree)
                                                                                     @php
-                                                                                        $inputname = $kpi->id . $period->id;
-                                                                                        //echo ($inputname)."<br/>";
-                                                                                        $plan = getSavedPlanIndividualOneTwoThree($planning_year->id ?? NULL, $kpi->id, $period->id, $one->id, $two->id, $kpiThree->id, auth()->user()->offices[0]->id);
-                                                                                        $off_level = auth()->user()->offices[0]->level;
+                                                                                        $baseline = getBaselineIndividualOneTwoThree(
+                                                                                            $planning_year->id ?? null,
+                                                                                            $kpi->id,
+                                                                                            $one->id,
+                                                                                            $two->id,
+                                                                                            $kpiThree->id,
+                                                                                            auth()->user()->offices[0]
+                                                                                                ->id,
+                                                                                        );
+                                                                                        $off_level = auth()->user()
+                                                                                            ->offices[0]->level;
                                                                                         $disabled = '';
+
+                                                                                        $baselineLastYear = getBaselineLastYear(
+                                                                                            $kpi->id,
+                                                                                            $planning_year->id ?? null,
+                                                                                            1,
+                                                                                            auth()->user()->offices[0]
+                                                                                                ->id,
+                                                                                            $one->id,
+                                                                                            $two->id,
+                                                                                            $kpiThree->id,
+                                                                                        );
                                                                                     @endphp
-                                                                                    @if ($plan)
-                                                                                        @if($off_level ===1)
-                                                                                            @if ($off_level === $plan->plan_status)
-                                                                                                @php $disabled ="disabled"; @endphp
-                                                                                            @endif
-                                                                                        @elseif ($off_level != $plan->plan_status)
-                                                                                            @php $disabled ="disabled"; @endphp
-                                                                                        @endif
+
+                                                                                    @if (!empty($baselineLastYear))
                                                                                         <td>
-                                                                                            <input type="hidden"
-                                                                                                name="type{{$kpi->id}}"
-                                                                                                value="yes-{{$kpi->id}}">
-                                                                                            <input
-                                                                                                name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
-                                                                                                value="{{ $plan->plan_value }}"
-                                                                                                class="form-control {{ $inputname }}"
-                                                                                                type="number" required
-                                                                                                {{ $disabled }}>
-
-
+                                                                                            {{ $baselineLastYear }}
                                                                                         </td>
                                                                                     @else
-                                                                                        <td>
-                                                                                            <input id="selectProducts"
-                                                                                                name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
-                                                                                                @if ($period->slug == 1) id = "yearly"
+                                                                                        @if ($baseline)
+                                                                                            @if ($off_level === 1)
+                                                                                                @if ($off_level === $baseline->plan_status)
+                                                                                                    @php $disabled ="disabled"; @endphp
+                                                                                                @endif
+                                                                                            @elseif  ($off_level != $baseline->plan_status)
+                                                                                                @php $disabled ="disabled"; @endphp
+                                                                                            @endif
+                                                                                            <td>
+                                                                                                <!-- <input type="hidden"
+                                                                                            name="type{{ $kpi->id }}"
+                                                                                            value="yes"> -->
+                                                                                                <input
+                                                                                                    name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
+                                                                                                    value="{{ $baseline->baseline }}"
+                                                                                                    class="form-control"
+                                                                                                    type="number" required
+                                                                                                    {{ $disabled }}>
+
+
+                                                                                            </td>
+                                                                                        @else
+                                                                                            <td>
+                                                                                                <input
+                                                                                                    name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
+                                                                                                    class="form-control"
+                                                                                                    type="number" required>
+
+                                                                                            </td>
+                                                                                        @endif
+                                                                                    @endif
+                                                                                @endforeach
+
+                                                                                @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
+                                                                                    @foreach ($kpi->kpiChildThrees as $kpiThree)
+                                                                                        @php
+                                                                                            $inputname =
+                                                                                                $kpi->id . $period->id;
+                                                                                            //echo ($inputname)."<br/>";
+                                                                                            $plan = getSavedPlanIndividualOneTwoThree(
+                                                                                                $planning_year->id ??
+                                                                                                    null,
+                                                                                                $kpi->id,
+                                                                                                $period->id,
+                                                                                                $one->id,
+                                                                                                $two->id,
+                                                                                                $kpiThree->id,
+                                                                                                auth()->user()
+                                                                                                    ->offices[0]->id,
+                                                                                            );
+                                                                                            $off_level = auth()->user()
+                                                                                                ->offices[0]->level;
+                                                                                            $disabled = '';
+                                                                                        @endphp
+                                                                                        @if ($plan)
+                                                                                            @if ($off_level === 1)
+                                                                                                @if ($off_level === $plan->plan_status)
+                                                                                                    @php $disabled ="disabled"; @endphp
+                                                                                                @endif
+                                                                                                @elseif   ($off_level != $plan->plan_status)
+                                                                                                @php $disabled ="disabled"; @endphp
+                                                                                            @endif
+                                                                                            <td>
+                                                                                                <input type="hidden"
+                                                                                                    name="type{{ $kpi->id }}"
+                                                                                                    value="yes-{{ $kpi->id }}">
+                                                                                                <input
+                                                                                                    name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
+                                                                                                    value="{{ $plan->plan_value }}"
+                                                                                                    class="form-control {{ $inputname }}"
+                                                                                                    type="number" required
+                                                                                                    {{ $disabled }}>
+
+
+                                                                                            </td>
+                                                                                        @else
+                                                                                            <td>
+                                                                                                <input id="selectProducts"
+                                                                                                    name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
+                                                                                                    @if ($period->slug == 1) id = "yearly"
                                                                                                 @else
                                                                                                  id = "period" @endif
-                                                                                                class="form-control {{ $inputname }}"
-                                                                                                type="number" required>
+                                                                                                    class="form-control {{ $inputname }}"
+                                                                                                    type="number"
+                                                                                                    required>
 
-                                                                                        </td>
-                                                                                    @endif
-                                                                                    <script>
-                                                                                        $(".{{ $inputname }}").keyup(function() {
-                                                                                            var tot = 0;
-                                                                                            var periodtot = 0;
-                                                                                            $(".{{ $inputname }}").each(function() {
-                                                                                                tot += Number($(this).val());
+                                                                                            </td>
+                                                                                        @endif
+                                                                                        <script>
+                                                                                            $(".{{ $inputname }}").keyup(function() {
+                                                                                                var tot = 0;
+                                                                                                var periodtot = 0;
+                                                                                                $(".{{ $inputname }}").each(function() {
+                                                                                                    tot += Number($(this).val());
+                                                                                                });
+                                                                                                $('#{{ $kpi_id }}{{ $period->id }}').text(tot);
+
                                                                                             });
-                                                                                            $('#{{ $kpi_id }}{{ $period->id }}').text(tot);
-
-                                                                                        });
-                                                                                    </script>
-                                                                                @endforeach
+                                                                                        </script>
+                                                                                    @endforeach
                                                                                 @empty
                                                                                 @endforelse
-                                                                    </tr>
-                                                                @endforeach
+                                                                        </tr>
+                                                                    @endforeach
 
                                                                     {{-- </tr> --}}
                                                                 @endforeach
@@ -458,7 +502,7 @@
                                                                                         $disabled = '';
                                                                                     @endphp
                                                                                     @if ($plan)
-                                                                                        @if($off_level ===1)
+                                                                                        @if ($off_level === 1)
                                                                                             @if ($off_level === $plan->plan_status)
                                                                                                 @php $disabled ="disabled"; @endphp
                                                                                             @endif
@@ -508,24 +552,23 @@
                                                             @empty
                                                             @endforelse --}}
 
-                                                            {{-- KPI has  child one and child two --}}
-                                                        @else
-
-                                                            <tr>
-                                                                <th colspan="2">#</th>
-                                                                <th>
-                                                                    Baseline
-                                                                </th>
-
-                                                                @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
+                                                                {{-- KPI has  child one and child two --}}
+                                                            @else
+                                                                <tr>
+                                                                    <th colspan="2">#</th>
                                                                     <th>
-                                                                        {{ $period->reportingPeriodTs[0]->name }}
+                                                                        Baseline
                                                                     </th>
-                                                                @empty
-                                                                @endforelse
-                                                            </tr>
 
-                                                            {{-- <tr> --}}
+                                                                    @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
+                                                                        <th>
+                                                                            {{ $period->reportingPeriodTs[0]->name }}
+                                                                        </th>
+                                                                    @empty
+                                                                    @endforelse
+                                                                </tr>
+
+                                                                {{-- <tr> --}}
                                                                 {{-- <th colspan="2">#</th> --}}
                                                                 @foreach ($kpi->kpiChildOnes as $one)
                                                                     <tr>
@@ -539,8 +582,21 @@
                                                                             </th>
 
                                                                             @php
-                                                                                $baseline = getBaselineIndividualOneTwo($planning_year->id ?? NULL, $kpi->id, $one->id, $two->id, auth()->user()->offices[0]->id);
-                                                                                $baselineLastYear = getBaselineLastYear($kpi->id, $planning_year->id ?? NULL, 1, auth()->user()->offices[0]->id, $one->id, $two->id);
+                                                                                $baseline = getBaselineIndividualOneTwo(
+                                                                                    $planning_year->id ?? null,
+                                                                                    $kpi->id,
+                                                                                    $one->id,
+                                                                                    $two->id,
+                                                                                    auth()->user()->offices[0]->id,
+                                                                                );
+                                                                                $baselineLastYear = getBaselineLastYear(
+                                                                                    $kpi->id,
+                                                                                    $planning_year->id ?? null,
+                                                                                    1,
+                                                                                    auth()->user()->offices[0]->id,
+                                                                                    $one->id,
+                                                                                    $two->id,
+                                                                                );
                                                                             @endphp
                                                                             <!-- base line display -->
                                                                             @if (!empty($baselineLastYear))
@@ -549,42 +605,50 @@
                                                                                 </td>
                                                                             @else
                                                                                 @if ($baseline)
-                                                                                @php
-                                                                                    $inputname = $kpi->id;
-                                                                                    $off_level = auth()->user()->offices[0]->level;
-                                                                                    $disabled = '';
-                                                                                @endphp
+                                                                                    @php
+                                                                                        $inputname = $kpi->id;
+                                                                                        $off_level = auth()->user()
+                                                                                            ->offices[0]->level;
+                                                                                        $disabled = '';
+                                                                                    @endphp
 
-                                                                               @if($off_level ===1)
-                                                                                    @if ($off_level === $baseline->plan_status)
+                                                                                    @if ($off_level === 1)
+                                                                                        @if ($off_level === $baseline->plan_status)
+                                                                                            @php $disabled ="disabled"; @endphp
+                                                                                        @endif
+                                                                                        @elseif ($off_level != $baseline->plan_status)
                                                                                         @php $disabled ="disabled"; @endphp
                                                                                     @endif
-                                                                                @elseif ($off_level != $baseline->plan_status)
-                                                                                    @php $disabled ="disabled"; @endphp
+                                                                                    <td>
+                                                                                        <!-- <input type="hidden" name="type{{ $kpi->id }}"
+                                                                                                value="yes"> -->
+                                                                                        <input
+                                                                                            name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}"
+                                                                                            class="form-control"
+                                                                                            value="{{ $baseline->baseline }}"
+                                                                                            type="number" required
+                                                                                            {{ $disabled }}>
+                                                                                    </td>
+                                                                                @else
+                                                                                    <td>
+                                                                                        <input
+                                                                                            name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}"
+                                                                                            class="form-control"
+                                                                                            type="number" required>
+                                                                                    </td>
                                                                                 @endif
-                                                                                <td>
-                                                                                    <!-- <input type="hidden" name="type{{$kpi->id}}"
-                                                                                        value="yes"> -->
-                                                                                    <input
-                                                                                        name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}"
-                                                                                        class="form-control"
-                                                                                        value="{{ $baseline->baseline }}"
-                                                                                        type="number" required
-                                                                                        {{ $disabled }}>
-                                                                                </td>
-                                                                            @else
-                                                                                <td>
-                                                                                    <input
-                                                                                        name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}"
-                                                                                        class="form-control" type="number"
-                                                                                        required>
-                                                                                </td>
-                                                                            @endif 
                                                                             @endif
 
                                                                             @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
                                                                                 @php
-                                                                                    $plan12 = getSavedPlanIndividualOneTwo($planning_year->id ?? NULL, $kpi->id, $period->id, $one->id, $two->id, auth()->user()->offices[0]->id);
+                                                                                    $plan12 = getSavedPlanIndividualOneTwo(
+                                                                                        $planning_year->id ?? null,
+                                                                                        $kpi->id,
+                                                                                        $period->id,
+                                                                                        $one->id,
+                                                                                        $two->id,
+                                                                                        auth()->user()->offices[0]->id,
+                                                                                    );
                                                                                 @endphp
                                                                                 @if ($plan12)
                                                                                     @php
@@ -592,19 +656,21 @@
                                                                                         $period->id;
                                                                                         $one->id;
                                                                                         $two->id;
-                                                                                        $off_level = auth()->user()->offices[0]->level;
+                                                                                        $off_level = auth()->user()
+                                                                                            ->offices[0]->level;
                                                                                         $disabled = '';
                                                                                     @endphp
 
-                                                                                @if($off_level ===1)
+                                                                                    @if ($off_level === 1)
                                                                                         @if ($off_level === $plan12->plan_status)
                                                                                             @php $disabled ="disabled"; @endphp
                                                                                         @endif
-                                                                                    @elseif ($off_level != $plan12->plan_status)
+                                                                                        @elseif   ($off_level != $plan12->plan_status)
                                                                                         @php $disabled ="disabled"; @endphp
                                                                                     @endif
                                                                                     <td>
-                                                                                        <input type="hidden" name="type{{$kpi->id}}"
+                                                                                        <input type="hidden"
+                                                                                            name="type{{ $kpi->id }}"
                                                                                             value="yes">
                                                                                         <input
                                                                                             name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}"
@@ -618,17 +684,18 @@
                                                                                         <input
                                                                                             name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}"
                                                                                             id="koneT{{ $one->id }}{{ $two->id }}{{ $period->slug }}"
-                                                                                            class="form-control" type="number"
-                                                                                            required>
-                                                                                        <span class="text-danger" id="spankOneT{{ $one->id }}{{ $period->slug }}"></span>
+                                                                                            class="form-control"
+                                                                                            type="number" required>
+                                                                                        <span class="text-danger"
+                                                                                            id="spankOneT{{ $one->id }}{{ $period->slug }}"></span>
                                                                                     </td>
                                                                                 @endif
                                                                             @empty
                                                                             @endforelse
-                                                                </tr>
-                                                            @endforeach
                                                                     </tr>
                                                                 @endforeach
+                                                                </tr>
+                                                            @endforeach
                                                             {{-- </tr> --}}
 
 
@@ -652,7 +719,7 @@
                                                                                     $disabled = '';
                                                                                 @endphp
 
-                                                                               @if($off_level ===1)
+                                                                               @if ($off_level === 1)
                                                                                     @if ($off_level === $baseline->plan_status)
                                                                                         @php $disabled ="disabled"; @endphp
                                                                                     @endif
@@ -706,7 +773,7 @@
                                                                                     $disabled = '';
                                                                                 @endphp
 
-                                                                               @if($off_level ===1)
+                                                                               @if ($off_level === 1)
                                                                                     @if ($off_level === $plan12->plan_status)
                                                                                         @php $disabled ="disabled"; @endphp
                                                                                     @endif
@@ -738,232 +805,280 @@
                                                             @endforeach
                                                         @empty
                                                         @endforelse --}}
-                                                        <script>
-                                                            $(function() {
-                                                                $('input[id=koneT{{ $one->id }}{{ $two->id }}5]').on('change', function() {
-                                                                    //document.write('{{ $one->id }}{{ $two->id }}');
-                                                                    var KOTvalues1 = document.getElementById('koneT{{ $one->id }}{{ $two->id }}1')
-                                                                        .value;
-                                                                    var KOTvalues2 = document.getElementById('koneT{{ $one->id }}{{ $two->id }}2')
-                                                                        .value;
-                                                                    var KOTvalues3 = document.getElementById('koneT{{ $one->id }}{{ $two->id }}3')
-                                                                        .value;
-                                                                    var KOTvalues4 = document.getElementById('koneT{{ $one->id }}{{ $two->id }}4')
-                                                                        .value;
-                                                                    var KOTvalues5 = document.getElementById('koneT{{ $one->id }}{{ $two->id }}5')
-                                                                        .value;
-                                                                    sumOT = parseFloat(KOTvalues2) + parseFloat(KOTvalues3) + parseFloat(KOTvalues4) +
-                                                                        parseFloat(KOTvalues5);
-                                                                    if (KOTvalues1 != sumOT) {
-                                                                        document.getElementById("spankOneT{{ $one->id }}{{ $two->id }}1")
-                                                                            .innerHTML = "Period plan not matched with yearly";
-                                                                        $('#koneT{{ $one->id }}{{ $two->id }}1').val("");
-                                                                    }else{
-                                                                        document.getElementById("spankOneT{{ $one->id }}{{ $two->id }}1")
-                                                                            .innerHTML = "";
-                                                                    }
+                                                            <script>
+                                                                $(function() {
+                                                                    $('input[id=koneT{{ $one->id }}{{ $two->id }}5]').on('change', function() {
+                                                                        //document.write('{{ $one->id }}{{ $two->id }}');
+                                                                        var KOTvalues1 = document.getElementById('koneT{{ $one->id }}{{ $two->id }}1')
+                                                                            .value;
+                                                                        var KOTvalues2 = document.getElementById('koneT{{ $one->id }}{{ $two->id }}2')
+                                                                            .value;
+                                                                        var KOTvalues3 = document.getElementById('koneT{{ $one->id }}{{ $two->id }}3')
+                                                                            .value;
+                                                                        var KOTvalues4 = document.getElementById('koneT{{ $one->id }}{{ $two->id }}4')
+                                                                            .value;
+                                                                        var KOTvalues5 = document.getElementById('koneT{{ $one->id }}{{ $two->id }}5')
+                                                                            .value;
+                                                                        sumOT = parseFloat(KOTvalues2) + parseFloat(KOTvalues3) + parseFloat(KOTvalues4) +
+                                                                            parseFloat(KOTvalues5);
+                                                                        if (KOTvalues1 != sumOT) {
+                                                                            document.getElementById("spankOneT{{ $one->id }}{{ $two->id }}1")
+                                                                                .innerHTML = "Period plan not matched with yearly";
+                                                                            $('#koneT{{ $one->id }}{{ $two->id }}1').val("");
+                                                                        } else {
+                                                                            document.getElementById("spankOneT{{ $one->id }}{{ $two->id }}1")
+                                                                                .innerHTML = "";
+                                                                        }
 
 
+                                                                    });
                                                                 });
-                                                            });
-                                                        </script>
-                                                    @endif
-                                                    {{-- KPI has  child one only --}}
-                                                @else
-                                                    <tr>
-                                                        <th>#</th>
-                                                        <th>Baseline</th>
-                                                        @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
-                                                            <th>
-                                                                {{ $period->reportingPeriodTs[0]->name }}
-                                                            </th>
-                                                        @empty
-                                                        @endforelse
-                                                        @foreach ($kpi->kpiChildOnes as $one)
-                                                    <tr>
-                                                        <th>
-                                                            {{ $one->kpiChildOneTranslations[0]->name }}<br />
-                                                        </th>
-
-                                                        @php
-                                                            $baseline = getBaselineIndividualOne($planning_year->id ?? NULL, $kpi->id, $one->id, auth()->user()->offices[0]->id);
-                                                            $off_level = auth()->user()->offices[0]->level;
-                                                            $disabled = '';
-                                                            $baselineLastYear = getBaselineLastYear($kpi->id, $planning_year->id ?? NULL, 1, auth()->user()->offices[0]->id, $one->id);
-                                                        @endphp
-                                                        @if (!empty($baselineLastYear))
-                                                            <td>
-                                                                {{ $baselineLastYear }}
-                                                            </td>
-                                                        @else
-                                                            @if ($baseline)
-                                                            @if($off_level === 1)
-                                                                @if ($off_level === $baseline->plan_status)
-                                                                    @php $disabled ="disabled"; @endphp
-                                                                @endif
-                                                            @elseif ($off_level != $baseline->plan_status)
-                                                                @php $disabled ="disabled"; @endphp
-                                                            @endif
-                                                            <td>
-                                                                <input
-                                                                    name="baseline-{{ $kpi->id }}-{{ $one->id }}"
-                                                                    class="form-control"
-                                                                    value="{{ $baseline->baseline }}" type="number"
-                                                                    required {{ $disabled }}>
-                                                            </td>
-                                                        @else
-                                                            <td>
-                                                                <input
-                                                                    name="baseline-{{ $kpi->id }}-{{ $one->id }}"
-                                                                    class="form-control"
-                                                                    value="" type="number"
-                                                                    required>
-                                                            </td>
-                                                        @endif 
+                                                            </script>
                                                         @endif
+                                                        {{-- KPI has  child one only --}}
+                                                    @else
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th>Baseline</th>
+                                                            @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
+                                                                <th>
+                                                                    {{ $period->reportingPeriodTs[0]->name }}
+                                                                </th>
+                                                            @empty
+                                                            @endforelse
+                                                            @foreach ($kpi->kpiChildOnes as $one)
+                                                        <tr>
+                                                            <th>
+                                                                {{ $one->kpiChildOneTranslations[0]->name }}<br />
+                                                            </th>
 
-                                                        @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
-                                                        @php
-                                                            $last_period = count(getQuarter($kpi->reportingPeriodType->id));
-                                                            $inputid_one = $kpi->id . $last_period;
-                                                            $off_level = auth()->user()->offices[0]->level;
-                                                        @endphp
                                                             @php
-                                                                $inputname = '{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}';
-                                                                $plan1 = getSavedPlanIndividualOne($planning_year->id ?? NULL, $kpi->id, $period->id, $one->id, auth()->user()->offices[0]->id);
+                                                                $baseline = getBaselineIndividualOne(
+                                                                    $planning_year->id ?? null,
+                                                                    $kpi->id,
+                                                                    $one->id,
+                                                                    auth()->user()->offices[0]->id,
+                                                                );
                                                                 $off_level = auth()->user()->offices[0]->level;
                                                                 $disabled = '';
+                                                                $baselineLastYear = getBaselineLastYear(
+                                                                    $kpi->id,
+                                                                    $planning_year->id ?? null,
+                                                                    1,
+                                                                    auth()->user()->offices[0]->id,
+                                                                    $one->id,
+                                                                );
                                                             @endphp
-                                                            @if ($plan1)
-                                                                @if($off_level ===1)
-                                                                    @if ($off_level === $plan1->plan_status)
-                                                                        @php $disabled ="disabled"; @endphp
-                                                                    @endif
-                                                                @elseif ($off_level != $plan1->plan_status)
-                                                                    @php $disabled ="disabled"; @endphp
-                                                                @endif
+                                                            @if (!empty($baselineLastYear))
                                                                 <td>
-                                                                    <input type="hidden" name="type{{$kpi->id}}" value="yes">
-                                                                    <input
-                                                                        name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}";
-                                                                        class="form-control"
-                                                                        value="{{ $plan1->plan_value }}" type="number"
-                                                                        required {{ $disabled }}>
+                                                                    {{ $baselineLastYear }}
                                                                 </td>
                                                             @else
-                                                                <td>
-                                                                     <input type="hidden" name="type{{$kpi->id}}" value="no">
-                                                                    <input
-                                                                        name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}"
-                                                                        id="kone{{ $kpi->id }}{{ $one->id }}{{ $period->slug }}"
-                                                                        class="form-control" type="number" required>
-                                                                    <span class="text-danger" id="spankOne{{ $kpi->id }}{{ $one->id }}{{ $period->slug }}"></span>
-                                                                </td>
+                                                                @if ($baseline)
+                                                                    @if ($off_level === 1)
+                                                                        @if ($off_level === $baseline->plan_status)
+                                                                            @php $disabled ="disabled"; @endphp
+                                                                        @endif
+                                                                    @elseif ($off_level != $baseline->plan_status)
+                                                                        @php $disabled ="disabled"; @endphp
+                                                                    @endif
+                                                                    <td>
+                                                                        <input
+                                                                            name="baseline-{{ $kpi->id }}-{{ $one->id }}"
+                                                                            class="form-control"
+                                                                            value="{{ $baseline->baseline }}"
+                                                                            type="number" required {{ $disabled }}>
+                                                                    </td>
+                                                                @else
+                                                                    <td>
+                                                                        <input
+                                                                            name="baseline-{{ $kpi->id }}-{{ $one->id }}"
+                                                                            class="form-control" value=""
+                                                                            type="number" required>
+                                                                    </td>
+                                                                @endif
                                                             @endif
-                                                        @empty
-                                                        @endforelse
-                                                        <script>
-                                                            $(function() {
-                                                                var loop = {{ $last_period }};
-                                                                $('input[id=kone{{ $kpi->id }}{{ $one->id }}{{ $last_period }}]').on('change', function() {
-                                                                var sum = 0;
-                                                                var last_p= String('kone')+String({{ $kpi->id }}) + String({{ $one->id }}) + String(loop); 
-                                                                var last_period_value = document.getElementById(last_p).value;
-                                                                if(loop==1){ loop =2;} 
-                                                               
-                                                                var behavior = String({{ $behavior }});
-                                                                var yearly_plan = String('kone')+String({{ $kpi->id }}) +String({{ $one->id }}) + String(1);
-                                                                var yearly = document.getElementById(yearly_plan).value; 
-                                                                 // addtive
-                                                                if (behavior == 1) {
-                                                                    for (var i = loop; i > 1; i--) { 
-                                                                        var idd = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i);
-                                                                        var values = document.getElementById(idd).value;
-                                                                        sum = parseFloat(sum) + parseFloat(values);
-                                                                       
-                                                                    }
-                                                                    if (yearly != sum) { 
-                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1").innerHTML =
-                                                                            "Period plan not matched with yearly with additive behavior.";
-                                                                        for (var i = loop; i > 1; i--) {
-                                                                            var idd = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i);
-                                                                            $('#' + idd).val("");
-                                                                         }
-                                                                        $('#' + yearly_plan).val("");
-                                                                    }else{
-                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1").innerHTML =
-                                                                            "";
-                                                                    }
-                                                                }
-                                                                // constant kpi with child one
-                                                                else if (behavior == 2) {
-                                                                    for (var i = loop; i > 1; i--) { 
-                                                                        var idd = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i);
-                                                                        var idd2 = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i-1);
-                                                                        var values = document.getElementById(idd).value;
-                                                                        var values2 = document.getElementById(idd2).value;
-                                                                        sum = parseFloat(sum) + parseFloat(values);
-                                                                    if (values != values2) { 
-                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1").innerHTML =
-                                                                            "Each Period plan not matched with yearly plan in constant behavior.";
-                                                                        for (var i = loop; i > 1; i--) {
-                                                                            var idd = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i);
-                                                                            $('#' + idd).val("");
-                                                                         }
-                                                                        $('#' + yearly_plan).val("");
-                                                                    }else{
-                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1").innerHTML =
-                                                                            "";
-                                                                    }
-                                                                }
-                                                                }
-                                                                 // incremental kpi with child one
-                                                                else if (behavior == 3) {
-                                                                    for (var i = loop; i > 2; i--) { 
-                                                                        var idd = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i);
-                                                                        var idd2 = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i-1);
-                                                                        var values = document.getElementById(idd).value;
-                                                                        var values2 = document.getElementById(idd2).value;
-                                                                     if (yearly!= last_period_value || values < values2){
-                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1").innerHTML =
-                                                                            "Each Period plan not matched with yearly plan in incremental behavior.";
-                                                                        for (var i = loop; i > 1; i--) {
-                                                                            var idd = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i);
-                                                                            $('#' + idd).val("");
-                                                                         }
-                                                                        $('#' + yearly_plan).val("");
-                                                                    }else{
-                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1").innerHTML =
-                                                                            "";
-                                                                    }
-                                                                }
-                                                                }
-                                                                 // Decremental kpi with child one
-                                                                else if (behavior == 4) {
-                                                                    for (var i = loop; i > 2; i--) { 
-                                                                        var idd = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i);
-                                                                        var idd2 = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i-1);
-                                                                        var values = document.getElementById(idd).value;
-                                                                        var values2 = document.getElementById(idd2).value;
-                                                                     if (yearly!= last_period_value || values > values2){
-                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1").innerHTML =
-                                                                            "Each Period plan not matched with yearly plan in Decremetal behavior.";
-                                                                        for (var i = loop; i > 1; i--) {
-                                                                            var idd = String('kone')+String({{ $kpi->id }}) + String({{ $one->id }})+String(i);
-                                                                            $('#' + idd).val("");
-                                                                         }
-                                                                        $('#' + yearly_plan).val("");
-                                                                    }else{
-                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1").innerHTML =
-                                                                            "";
-                                                                    }
-                                                                }
-                                                                }
 
+                                                            @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
+                                                                @php
+                                                                    $last_period = count(
+                                                                        getQuarter($kpi->reportingPeriodType->id),
+                                                                    );
+                                                                    $inputid_one = $kpi->id . $last_period;
+                                                                    $off_level = auth()->user()->offices[0]->level;
+                                                                @endphp
+                                                                @php
+                                                                    $inputname =
+                                                                        '{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}';
+                                                                    $plan1 = getSavedPlanIndividualOne(
+                                                                        $planning_year->id ?? null,
+                                                                        $kpi->id,
+                                                                        $period->id,
+                                                                        $one->id,
+                                                                        auth()->user()->offices[0]->id,
+                                                                    );
+                                                                    $off_level = auth()->user()->offices[0]->level;
+                                                                    $disabled = '';
+                                                                @endphp
+                                                                @if ($plan1)
+                                                                    @if ($off_level === 1)
+                                                                        @if ($off_level === $plan1->plan_status)
+                                                                            @php $disabled ="disabled"; @endphp
+                                                                        @endif
+                                                                    @elseif ($off_level != $plan1->plan_status)
+                                                                        @php $disabled ="disabled"; @endphp
+                                                                    @endif
+                                                                    <td>
+                                                                        <input type="hidden"
+                                                                            name="type{{ $kpi->id }}"
+                                                                            value="yes">
+                                                                        <input
+                                                                            name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}";
+                                                                            class="form-control"
+                                                                            value="{{ $plan1->plan_value }}"
+                                                                            type="number" required {{ $disabled }}>
+                                                                    </td>
+                                                                @else
+                                                                    <td>
+                                                                        <input type="hidden"
+                                                                            name="type{{ $kpi->id }}"
+                                                                            value="no">
+                                                                        <input
+                                                                            name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}"
+                                                                            id="kone{{ $kpi->id }}{{ $one->id }}{{ $period->slug }}"
+                                                                            class="form-control" type="number" required>
+                                                                        <span class="text-danger"
+                                                                            id="spankOne{{ $kpi->id }}{{ $one->id }}{{ $period->slug }}"></span>
+                                                                    </td>
+                                                                @endif
+                                                            @empty
+                                                            @endforelse
+                                                            <script>
+                                                                $(function() {
+                                                                    var loop = {{ $last_period }};
+                                                                    $('input[id=kone{{ $kpi->id }}{{ $one->id }}{{ $last_period }}]').on('change',
+                                                                        function() {
+                                                                            var sum = 0;
+                                                                            var last_p = String('kone') + String({{ $kpi->id }}) + String(
+                                                                                {{ $one->id }}) + String(loop);
+                                                                            var last_period_value = document.getElementById(last_p).value;
+                                                                            if (loop == 1) {
+                                                                                loop = 2;
+                                                                            }
+
+                                                                            var behavior = String({{ $behavior }});
+                                                                            var yearly_plan = String('kone') + String({{ $kpi->id }}) + String(
+                                                                                {{ $one->id }}) + String(1);
+                                                                            var yearly = document.getElementById(yearly_plan).value;
+                                                                            // addtive
+                                                                            if (behavior == 1) {
+                                                                                for (var i = loop; i > 1; i--) {
+                                                                                    var idd = String('kone') + String({{ $kpi->id }}) + String(
+                                                                                        {{ $one->id }}) + String(i);
+                                                                                    var values = document.getElementById(idd).value;
+                                                                                    sum = parseFloat(sum) + parseFloat(values);
+
+                                                                                }
+                                                                                if (yearly != sum) {
+                                                                                    document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1")
+                                                                                        .innerHTML =
+                                                                                        "Period plan not matched with yearly with additive behavior.";
+                                                                                    for (var i = loop; i > 1; i--) {
+                                                                                        var idd = String('kone') + String({{ $kpi->id }}) + String(
+                                                                                            {{ $one->id }}) + String(i);
+                                                                                        $('#' + idd).val("");
+                                                                                    }
+                                                                                    $('#' + yearly_plan).val("");
+                                                                                } else {
+                                                                                    document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1")
+                                                                                        .innerHTML =
+                                                                                        "";
+                                                                                }
+                                                                            }
+                                                                            // constant kpi with child one
+                                                                            else if (behavior == 2) {
+                                                                                for (var i = loop; i > 1; i--) {
+                                                                                    var idd = String('kone') + String({{ $kpi->id }}) + String(
+                                                                                        {{ $one->id }}) + String(i);
+                                                                                    var idd2 = String('kone') + String({{ $kpi->id }}) + String(
+                                                                                        {{ $one->id }}) + String(i - 1);
+                                                                                    var values = document.getElementById(idd).value;
+                                                                                    var values2 = document.getElementById(idd2).value;
+                                                                                    sum = parseFloat(sum) + parseFloat(values);
+                                                                                    if (values != values2) {
+                                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1")
+                                                                                            .innerHTML =
+                                                                                            "Each Period plan not matched with yearly plan in constant behavior.";
+                                                                                        for (var i = loop; i > 1; i--) {
+                                                                                            var idd = String('kone') + String({{ $kpi->id }}) + String(
+                                                                                                {{ $one->id }}) + String(i);
+                                                                                            $('#' + idd).val("");
+                                                                                        }
+                                                                                        $('#' + yearly_plan).val("");
+                                                                                    } else {
+                                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1")
+                                                                                            .innerHTML =
+                                                                                            "";
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                            // incremental kpi with child one
+                                                                            else if (behavior == 3) {
+                                                                                for (var i = loop; i > 2; i--) {
+                                                                                    var idd = String('kone') + String({{ $kpi->id }}) + String(
+                                                                                        {{ $one->id }}) + String(i);
+                                                                                    var idd2 = String('kone') + String({{ $kpi->id }}) + String(
+                                                                                        {{ $one->id }}) + String(i - 1);
+                                                                                    var values = document.getElementById(idd).value;
+                                                                                    var values2 = document.getElementById(idd2).value;
+                                                                                    if (yearly != last_period_value || values < values2) {
+                                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1")
+                                                                                            .innerHTML =
+                                                                                            "Each Period plan not matched with yearly plan in incremental behavior.";
+                                                                                        for (var i = loop; i > 1; i--) {
+                                                                                            var idd = String('kone') + String({{ $kpi->id }}) + String(
+                                                                                                {{ $one->id }}) + String(i);
+                                                                                            $('#' + idd).val("");
+                                                                                        }
+                                                                                        $('#' + yearly_plan).val("");
+                                                                                    } else {
+                                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1")
+                                                                                            .innerHTML =
+                                                                                            "";
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                            // Decremental kpi with child one
+                                                                            else if (behavior == 4) {
+                                                                                for (var i = loop; i > 2; i--) {
+                                                                                    var idd = String('kone') + String({{ $kpi->id }}) + String(
+                                                                                        {{ $one->id }}) + String(i);
+                                                                                    var idd2 = String('kone') + String({{ $kpi->id }}) + String(
+                                                                                        {{ $one->id }}) + String(i - 1);
+                                                                                    var values = document.getElementById(idd).value;
+                                                                                    var values2 = document.getElementById(idd2).value;
+                                                                                    if (yearly != last_period_value || values > values2) {
+                                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1")
+                                                                                            .innerHTML =
+                                                                                            "Each Period plan not matched with yearly plan in Decremetal behavior.";
+                                                                                        for (var i = loop; i > 1; i--) {
+                                                                                            var idd = String('kone') + String({{ $kpi->id }}) + String(
+                                                                                                {{ $one->id }}) + String(i);
+                                                                                            $('#' + idd).val("");
+                                                                                        }
+                                                                                        $('#' + yearly_plan).val("");
+                                                                                    } else {
+                                                                                        document.getElementById("spankOne{{ $kpi->id }}{{ $one->id }}1")
+                                                                                            .innerHTML =
+                                                                                            "";
+                                                                                    }
+                                                                                }
+                                                                            }
+
+                                                                        });
                                                                 });
-                                                            });
-                                                        </script>
-                                                    </tr>
+                                                            </script>
+                                                        </tr>
                                     @endforeach
                             @endif
                             </thead>
@@ -982,10 +1097,19 @@
                                 </tr>
 
                                 @php
-                                    $baseline = getBaselineIndividual($planning_year->id ?? NULL, $kpi->id, auth()->user()->offices[0]->id);
+                                    $baseline = getBaselineIndividual(
+                                        $planning_year->id ?? null,
+                                        $kpi->id,
+                                        auth()->user()->offices[0]->id,
+                                    );
                                     $off_level = auth()->user()->offices[0]->level;
                                     $disabled = '';
-                                    $baselineLastYear = getBaselineLastYear($kpi->id, $planning_year->id ?? NULL, 1, auth()->user()->offices[0]->id);
+                                    $baselineLastYear = getBaselineLastYear(
+                                        $kpi->id,
+                                        $planning_year->id ?? null,
+                                        1,
+                                        auth()->user()->offices[0]->id,
+                                    );
                                 @endphp
                                 @if (!empty($baselineLastYear))
                                     <td>
@@ -994,26 +1118,21 @@
                                 @else
                                     <td>
                                         {{-- base line input for no baseline because of new mis version --}}
-                                  @if ($baseline)
-                                    @if($off_level === 1)
-                                        @if ($off_level === $baseline->plan_status)
-                                            @php $disabled ="disabled"; @endphp
+                                        @if ($baseline)
+                                            @if ($off_level === 1)
+                                                @if ($off_level === $baseline->plan_status)
+                                                    @php $disabled ="disabled"; @endphp
+                                                @endif
+                                            @elseif ($off_level != $baseline->plan_status)
+                                                @php $disabled ="disabled"; @endphp
+                                            @endif
+                                            <input name="baseline-{{ $kpi->id }}" class="form-control"
+                                                value="{{ $baseline->baseline }}" type="number" required
+                                                {{ $disabled }}>
+                                        @else
+                                            <input name="baseline-{{ $kpi->id }}" class="form-control"
+                                                value="" type="number" required placeholder="Enter baseline">
                                         @endif
-                                    @elseif ($off_level != $baseline->plan_status)
-                                        @php $disabled ="disabled"; @endphp
-                                    @endif
-                                         <input
-                                            name="baseline-{{ $kpi->id }}"
-                                            class="form-control"
-                                            value="{{ $baseline->baseline }}" type="number"
-                                            required {{ $disabled }}>
-                                 @else
-                                         <input
-                                            name="baseline-{{ $kpi->id }}"
-                                            class="form-control"
-                                            value="" type="number"
-                                            required placeholder="Enter baseline">
-                                 @endif
                                     </td>
                                 @endif
                                 @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
@@ -1022,58 +1141,65 @@
                                             $last_period = count(getQuarter($kpi->reportingPeriodType->id));
 
                                             $inputid = $kpi->id . $last_period;
-                                            $plan = getSavedPlanIndividual($planning_year->id ?? NULL, $kpi->id, $period->id, auth()->user()->offices[0]->id);
+                                            $plan = getSavedPlanIndividual(
+                                                $planning_year->id ?? null,
+                                                $kpi->id,
+                                                $period->id,
+                                                auth()->user()->offices[0]->id,
+                                            );
                                             $off_level = auth()->user()->offices[0]->level;
                                             $disabled = '';
                                         @endphp
                                         @if ($plan)
-                                             @if($off_level ===1)
+                                            @if ($off_level === 1)
                                                 @if ($off_level === $plan->plan_status)
                                                     @php $disabled ="disabled"; @endphp
                                                 @endif
                                             @elseif ($off_level != $plan->plan_status)
                                                 @php $disabled ="disabled"; @endphp
-                                             @endif
+                                            @endif
                                             <td>
-                                                <input type="hidden" name="type{{$kpi->id}}" value="yes">
+                                                <input type="hidden" name="type{{ $kpi->id }}" value="yes">
                                                 <input name="{{ $kpi->id }}-{{ $period->id }}"
                                                     class="form-control" value="{{ $plan->plan_value }}"
                                                     id="{{ $kpi->id }}{{ $period->slug }}" type="number"
                                                     required {{ $disabled }}>
-                                                 <span id="s{{ $kpi->id }}{{ $period->slug }}"></span>
+                                                <span id="s{{ $kpi->id }}{{ $period->slug }}"></span>
                                             </td>
+                                        @else
+                                            <td>
+                                                <input type="hidden" name="type{{ $kpi->id }}" value="no">
+                                                <input class="form-control" type="number" placeholder="Enter KPI value"
+                                                    id="{{ $kpi->id }}{{ $period->slug }}"
+                                                    name="{{ $kpi->id }}-{{ $period->id }}" required>
+                                                <span class="text-danger"
+                                                    id="s{{ $kpi->id }}{{ $period->slug }}"></span>
+                                                {{-- {{ $kpi->id }}{{ $period->slug }} --}}
+                                            </td>
+                                        @endif
 
-                                    @else
-                                        <td>
-                                            <input type="hidden" name="type{{$kpi->id}}" value="no">
-                                            <input class="form-control" type="number" placeholder="Enter KPI value"
-                                                id="{{ $kpi->id }}{{ $period->slug }}"
-                                                name="{{ $kpi->id }}-{{ $period->id }}" required>
-                                            <span class="text-danger" id="s{{ $kpi->id }}{{ $period->slug }}"></span>
-                                           {{--{{ $kpi->id }}{{ $period->slug }}--}} 
-                                        </td>
-                                    @endif
-
-                                @empty
+                                    @empty
                                 @endforelse
                                 </tr>
                             </table>
 
-                             <script>
+                            <script>
                                 $(function() {
-                                    $('input[id={{ $inputid }}]').on( 'change', function() {
+                                    $('input[id={{ $inputid }}]').on('change', function() {
                                         var sum = 0;
                                         var loop = {{ $last_period }};
-                                        if(loop==1){ loop =2;}
+                                        if (loop == 1) {
+                                            loop = 2;
+                                        }
                                         var behavior = String({{ $behavior }});
                                         var idd_y = String({{ $kpi->id }}) + String(1);
                                         var yearly = document.getElementById(idd_y).value;
-                                            var last_p= String({{ $kpi->id }}) + String(loop);
-                                            var LastPeriod = document.getElementById(last_p).value;
+                                        var last_p = String({{ $kpi->id }}) + String(loop);
+                                        var LastPeriod = document.getElementById(last_p).value;
 
                                         // addtive
                                         if (behavior == 1) {
-                                            for (var i = loop; i > 1; i--) { 
+                                            for (var i = loop; i > 1; i--) {
                                                 var idd = String({{ $kpi->id }}) + String(i);
                                                 var values = document.getElementById(idd).value;
                                                 sum = parseFloat(sum) + parseFloat(values);
@@ -1084,9 +1210,9 @@
                                                 for (var i = loop; i > 1; i--) {
                                                     var idd = String({{ $kpi->id }}) + String(i);
                                                     $('#' + idd).val("");
-                                                 }
+                                                }
                                                 $('#' + idd_y).val("");
-                                            }else{
+                                            } else {
                                                 document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
                                                     "";
                                             }
@@ -1099,71 +1225,75 @@
                                                 var values = document.getElementById(idd).value;
                                                 var values2 = document.getElementById(iddd).value;
                                                 if (values != values2) {
-                                                   // document.write(values);
+                                                    // document.write(values);
                                                     //document.write(values2);
-                                                    document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
+                                                    document.getElementById("s{{ $kpi->id }}{{ 1 }}")
+                                                        .innerHTML =
                                                         "Plan should be constant";
                                                     for (var i = loop; i > 1; i--) {
                                                         var idd = String({{ $kpi->id }}) + String(i);
                                                         $('#' + idd).val("");
                                                     }
                                                     $('#' + idd_y).val("");
-                                                     document.getElementById("idd_y").innerHTML =
+                                                    document.getElementById("idd_y").innerHTML =
                                                         "Plan should be constant";
-                                                }else{
-                                                    document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
+                                                } else {
+                                                    document.getElementById("s{{ $kpi->id }}{{ 1 }}")
+                                                        .innerHTML =
                                                         "";
                                                 }
                                             }
                                         }
                                         // incremental
                                         else if (behavior == 3) {
-                                             // compare each period
+                                            // compare each period
                                             for (var i = loop; i > 2; i--) {
                                                 var idd = String({{ $kpi->id }}) + String(i);
                                                 var iddd = String({{ $kpi->id }}) + String(i - 1);
                                                 var values = document.getElementById(idd).value;
                                                 var values2 = document.getElementById(iddd).value;
                                                 //document.write(idd,"-->",values,"<br>");
-                                                       // document.write(iddd,"-->",values2);
-                                                if (yearly!= LastPeriod || values < values2){
+                                                // document.write(iddd,"-->",values2);
+                                                if (yearly != LastPeriod || values < values2) {
                                                     document.getElementById("s{{ $kpi->id }}{{ 1 }}")
                                                         .innerHTML = "Plan should be incremental";
-                                                        
+
                                                     for (var i = loop; i > 1; i--) {
                                                         var idd = String({{ $kpi->id }}) + String(i);
                                                         $('#' + idd).val("");
                                                     }
                                                     $('#' + idd_y).val("");
-                                                }else{
-                                                document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
-                                                    "";
+                                                } else {
+                                                    document.getElementById("s{{ $kpi->id }}{{ 1 }}")
+                                                        .innerHTML =
+                                                        "";
                                                 }
                                             }
                                         }
                                         // decrimental
                                         else if (behavior == 4) {
-                                            for (var i = loop; i > 2; i--) { 
+                                            for (var i = loop; i > 2; i--) {
                                                 var idd = String({{ $kpi->id }}) + String(i);
-                                                var iddd = String({{ $kpi->id }}) + String(i-1);
+                                                var iddd = String({{ $kpi->id }}) + String(i - 1);
                                                 var values = document.getElementById(idd).value;
                                                 var values2 = document.getElementById(iddd).value;
-                                             if (yearly!= LastPeriod || values > values2 ) {
-                                                //document.write(idd,"-->",values,"<br>");
-                                                //document.write(iddd,"-->",values2);
-                                                document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
-                                                    "Plan should be decrimental and (yearly and last period plan should be equal).";
-                                                for (var i = loop; i > 1; i--) {
-                                                    var idd = String({{ $kpi->id }}) + String(i);
-                                                    $('#' + idd).val("");
+                                                if (yearly != LastPeriod || values > values2) {
+                                                    //document.write(idd,"-->",values,"<br>");
+                                                    //document.write(iddd,"-->",values2);
+                                                    document.getElementById("s{{ $kpi->id }}{{ 1 }}")
+                                                        .innerHTML =
+                                                        "Plan should be decrimental and (yearly and last period plan should be equal).";
+                                                    for (var i = loop; i > 1; i--) {
+                                                        var idd = String({{ $kpi->id }}) + String(i);
+                                                        $('#' + idd).val("");
+                                                    }
+                                                    $('#' + idd_y).val("");
+                                                } else {
+                                                    document.getElementById("s{{ $kpi->id }}{{ 1 }}")
+                                                        .innerHTML =
+                                                        "";
                                                 }
-                                                $('#' + idd_y).val("");
                                             }
-                                            else{
-                                                document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
-                                                    "";
-                                            }
-                                        }
                                         } else {
                                             document.getElementById("s{{ $kpi->id }}{{ 1 }}").innerHTML =
                                                 "problem";
@@ -1185,22 +1315,28 @@
                             </p>
                             @endif
                             @php
-                                $plan_naration = getSavedPlanNaration($planning_year->id ?? NULL, $kpi->id, auth()->user()->offices[0]->id);
-                              //  $plan_docment = getSavedPlanDocument($planning_year->id ?? NULL, $kpi->id, auth()->user()->offices[0]->id);
+                                $plan_naration = getSavedPlanNaration(
+                                    $planning_year->id ?? null,
+                                    $kpi->id,
+                                    auth()->user()->offices[0]->id,
+                                );
+                                //  $plan_docment = getSavedPlanDocument($planning_year->id ?? NULL, $kpi->id, auth()->user()->offices[0]->id);
                             @endphp
-                            @if ($plan_naration)  
+                            @if ($plan_naration)
                                 <label for="summernote">Major Activities</label>
-                                <input type="hidden" name="type{{$kpi->id}}" value="yes">
+                                <input type="hidden" name="type{{ $kpi->id }}" value="yes">
                                 <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;"
                                     class="form-control summernote" placeholder="Narration here" id="narration-field-{{ $kpi->id }}">{!! $plan_naration !!}</textarea>
-                                    <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>
+                                <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please
+                                    fill Major Activities field!</p>
                             @else
                                 <label for="summernote">Major Activities</label>
-                                <input type="hidden" name="type{{$kpi->id}}" value="no">
+                                <input type="hidden" name="type{{ $kpi->id }}" value="no">
                                 <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;"
                                     class="form-control summernote" placeholder="Narration here" id="narration-field-{{ $kpi->id }}"></textarea>
-                                    <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>
-                            @endif 
+                                <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please
+                                    fill Major Activities field!</p>
+                            @endif
                             {{-- @if ($plan_docment)
                              <label class="form-label" for="inputImage">Supporting document(in pdf):</label><br/>
                                 <a  href="{{ route('view-file', $plan_docment) }}" title="MyPdf">view file
@@ -1210,15 +1346,15 @@
                             <input  type="file"  name="myfile"   id="inputImage" class="form-control"> 
                             @endif --}}
                         </div>
-                         </div>
+                    </div>
 
-                    @empty
-                        <h4>No KPI registered for this Goal and Objective!</h4>
-                        @endforelse
-                        <button type="submit" class="btn btn-primary" id="submit-for-{{ $objective->id }}">Submit</button>
-                        </div>
-                        </form>
-                    {{-- </div>
+                @empty
+                    <h4>No KPI registered for this Goal and Objective!</h4>
+                    @endforelse
+                    <button type="submit" class="btn btn-primary" id="submit-for-{{ $objective->id }}">Submit</button>
+                </div>
+                </form>
+                {{-- </div>
                 </div> --}}
 
             @empty
@@ -1247,12 +1383,15 @@
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <form action="{{ route('reply-comment.store') }}" method="POST" id="comment-form" enctype="multipart/form-data" >
+                <form action="{{ route('reply-comment.store') }}" method="POST" id="comment-form"
+                    enctype="multipart/form-data">
                     @csrf
-                    <input type="hidden" id="hidden-input-view-comment" class="hidden-input-view-comment" value=""
-                        name="view-commented-office-info">
+                    <input type="hidden" id="hidden-input-view-comment" class="hidden-input-view-comment"
+                        value="" name="view-commented-office-info">
                     <div class="modal-body">
-                        <h5 class="view-commented-by bg-light border p-3 overflow-auto"><u>Comment: </u><p class="mw-75"></p></h5>
+                        <h5 class="view-commented-by bg-light border p-3 overflow-auto"><u>Comment: </u>
+                            <p class="mw-75"></p>
+                        </h5>
                         <br>
                         {{-- content to be filled after ajax request here --}}
                         <textarea class="form-control summernote" name="reply_comment" id="" cols="30" rows="10"
@@ -1283,32 +1422,31 @@
     </script>
 
     <script>
-
-        function validateForm(){
+        function validateForm() {
             // $('.tab-pane.active #planning-form').on('submit', function(e) {
 
-                let kpiList = {{ json_encode($kpiList) }};
-                // console.log(kpiList.length);
+            let kpiList = {{ json_encode($kpiList) }};
+            // console.log(kpiList.length);
 
-                for (let i = 0; i < kpiList.length; i++) {
-                    $(`.tab-pane.active .narration-field-${kpiList[i]}`).css("display", "none");
-                    let summernoteSelector = `.tab-pane.active #narration-field-${kpiList[i]}`;
+            for (let i = 0; i < kpiList.length; i++) {
+                $(`.tab-pane.active .narration-field-${kpiList[i]}`).css("display", "none");
+                let summernoteSelector = `.tab-pane.active #narration-field-${kpiList[i]}`;
 
 
-                    if ($(summernoteSelector).length > 0 && $(summernoteSelector).summernote('isEmpty')) {
+                if ($(summernoteSelector).length > 0 && $(summernoteSelector).summernote('isEmpty')) {
 
-                        // focus on the empty field
-                        $(`.tab-pane.active #narration-field-${kpiList[i]}`).focus();
-                        $(`.tab-pane.active #narration-field-${kpiList[i]}`).summernote('focus');
+                    // focus on the empty field
+                    $(`.tab-pane.active #narration-field-${kpiList[i]}`).focus();
+                    $(`.tab-pane.active #narration-field-${kpiList[i]}`).summernote('focus');
 
-                        $(`.tab-pane.active .narration-field-${kpiList[i]}`).css("display", "block");
+                    $(`.tab-pane.active .narration-field-${kpiList[i]}`).css("display", "block");
 
-                        // cancel submit
-                        return false;
-                        preventDefault();
-                    }
-
+                    // cancel submit
+                    return false;
+                    preventDefault();
                 }
+
+            }
             // })
         }
     </script>
