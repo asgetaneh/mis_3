@@ -215,7 +215,7 @@ class PlanAccomplishmentController extends Controller
         if(!$getoffice->keyPeformanceIndicators->isEmpty()){
             foreach ($getoffice->keyPeformanceIndicators as $key => $kpi) {
                 $fun_kpi[$key] = $kpi;
-                $fun_goal[$key] = $kpi->objective->goal;
+                $fun_goal[$key] = $kpi->objective->goal->orderBy($kpi->objective->goal->id);
             }
             $fun_kpi= array_unique($fun_kpi);
             $fun_goal= array_unique($fun_goal);

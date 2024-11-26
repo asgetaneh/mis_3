@@ -58,9 +58,8 @@ use Illuminate\Support\Collection;
             // Include the child's plan (as it's already averaged if it has children)
             if(!$is_report){
                 if ($childCount > 0 && $office->plan_status  <= $office_level) {
-                    $totalPlan += $childPlanTotal ;
-                    $totalPlan = $totalPlan/ $childCount;
-                    $validPlansCount++;
+                    $totalPlan += $childPlanTotal/ $childCount;
+                     $validPlansCount++;
                     //echo $totalPlan."->".$validPlansCount."<br/>";
                 }
             }
