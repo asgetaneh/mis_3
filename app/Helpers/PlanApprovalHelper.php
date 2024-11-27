@@ -1051,6 +1051,9 @@ function OnlyKpiOttBaseline($kpi_id,$office, $planning_year_id, $period, $one, $
     //->where('office_id', $off_list)
     ->where('kpi_id', $kpi_id)
     ->where('planning_year_id', '=', $planning_year_id)
+    ->where('kpi_one_id',  '=', $one)
+    ->where('kpi_two_id',  '=', $two)
+    ->where('kpi_three_id',  '=', $three)
     ->get();
     if($planBaseline->isEmpty()){ 
         $planning_year = PlaningYear::where('is_active',true)->first();
@@ -1060,10 +1063,13 @@ function OnlyKpiOttBaseline($kpi_id,$office, $planning_year_id, $period, $one, $
             ->where('office_id','=', $office->id)
              ->where('kpi_id', $kpi_id)
             ->where('planning_year_id', '=', $previous_year->id)
-            ->get();
+            ->where('kpi_one_id',  '=', $one)
+            ->where('kpi_two_id',  '=', $two)
+            ->where('kpi_three_id',  '=', $three)
+            ->first();
         } //dump($kpi_id);
         
-    }  
+    } 
     foreach ($planBaseline as $key => $value) {
         $office_baseline = $office_baseline+$value->baseline;
     }

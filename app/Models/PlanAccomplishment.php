@@ -43,7 +43,10 @@ class PlanAccomplishment extends Model
     }
     public function getOfficeFromKpiAndOfficeList($only_child_array,$level) {
         $offices = Office::select('offices.*')
-                ->where('level','=', $level)->whereIn('id', $only_child_array) -> orderBy('offices.level')->get();
+                ->where('level','=', $level)
+                ->whereIn('id', $only_child_array)
+                -> orderBy('offices.level')
+                ->get();
              return $offices;
 
 
