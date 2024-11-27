@@ -1070,8 +1070,8 @@ function OnlyKpiOttBaseline($kpi_id,$office, $planning_year_id, $period, $one, $
         } //dump($kpi_id);
         
     } 
-    foreach ($planBaseline as $key => $value) {
-        $office_baseline = $office_baseline+$value->baseline;
+    foreach ($planBaseline as $key => $value2) {
+        $office_baseline = $office_baseline+$value2->baseline;
     }
    return $office_baseline;
 }
