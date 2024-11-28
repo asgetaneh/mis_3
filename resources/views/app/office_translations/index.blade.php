@@ -44,24 +44,24 @@
                     </a>
                 </div>
 
-                <div class="table-responsive">
+                <div class="table-responsive" style="background:#F0F8FF;">
                     <table class="table table-bordered table-hover mt-3">
                         <thead>
                             <tr>
-                                <th>Sub-office</th>
-                                <th class="text-left">
+                                <th width="5%">Sub-office</th>
+                                <th class="text-left" width="5%">
                                     #
                                 </th>
-                                <th class="text-left">
+                                <th class="text-left" width="20%">
                                     @lang('crud.office_translations.inputs.name')
                                 </th>
-                                <th class="text-left">
+                                <th class="text-left" width="20%">
                                     @lang('crud.office_translations.inputs.description')
                                 </th>
-                                <th class="text-left">
+                                <th class="text-left" width="20%">
                                     @lang('crud.office_translations.inputs.translation_id')
                                 </th>
-                                <th>
+                                <th width="20%">
                                     Manager
                                 </th>
                                 <th class="text-center">
@@ -165,29 +165,29 @@
                         @if (app()->getLocale() == $officeTranslation->locale)
                             @php $office = $officeTranslation->office; @endphp
                             {{-- level two (directores and same level) --}}
-                            <div class="collapse" id="off{{ $office->id }}">
-                                <div class="card card-body" style="background:#8cffad23;">
+                            <div class="collapse mx-auto" id="off{{ $office->id }}">
+                                <div class="card card-body" style="background:#8cffad23; padding: 70px; border: 1px solid;">
                                     @php
                                         $offices_twos = $office->offices;
                                     @endphp
                                     @forelse ($offices_twos as $office)
                                         @include('app.office_translations.sub')
                                         <div class="collapse" id="off{{ $office->id }}">
-                                            <div class="card card-body">
+                                            <div class="card card-body" style="padding: 70px; border: 1px solid;">
                                                 @php
                                                     $offices_threes = $office->offices;
                                                 @endphp
                                                 @forelse ($offices_threes as $office)
                                                     @include('app.office_translations.sub')
                                                     <div class="collapse" id="off{{ $office->id }}">
-                                                        <div class="card card-body">
+                                                        <div class="card card-body" style="background:#8cffad23; padding: 70px; border: 1px solid;">
                                                             @php
                                                                 $offices_fours = $office->offices;
                                                             @endphp
                                                             @forelse ($offices_fours as $office)
                                                                 @include('app.office_translations.sub')
                                                                 <div class="collapse" id="off{{ $office->id }}">
-                                                                    <div class="card card-body">
+                                                                    <div class="card card-body" style="background:#D3D3D3; padding: 70px; border: 1px solid;">
                                                                         @php
                                                                             $offices_fives = $office->offices;
                                                                         @endphp
@@ -195,7 +195,7 @@
                                                                             @include('app.office_translations.sub')
                                                                             <div class="collapse"
                                                                                 id="off{{ $office->id }}">
-                                                                                <div class="card card-body">
+                                                                                <div class="card card-body" style=" padding: 70px; border: 1px solid;">
                                                                                     @php
                                                                                         $offices_sixs = $office->offices;
                                                                                     @endphp
@@ -239,9 +239,9 @@
 
 
 
-                    <div class="float-right">
+                    {{-- <div class="float-right">
                         {!! $officeTranslations->render() !!}
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>

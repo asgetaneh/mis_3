@@ -77,9 +77,25 @@
                         <tbody>
                             @php
                                 $count = 1;
+                                $office_kpi = [];
                             @endphp
+                            @forelse(auth()->user()->offices[0]-> keyPeformanceIndicators as $key => $offkpi)
+                                @php
+                                    $office_kpi = array_merge( $office_kpi,array($offkpi->id));        
+                                @endphp              
+                            @empty
+                            @endforelse
                             @forelse($objective->keyPeformanceIndicators as $keyPeformanceIndicator)
-                                @if (app()->getLocale() == $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->locale)
+                                @php
+                                     $kpi_should_visible =false;
+                                @endphp
+                                @if(in_array($keyPeformanceIndicator->id, $office_kpi) || auth()->user()->is_admin || auth()->user()->hasRole('super-admin'))
+                                @php
+                                     $kpi_should_visible =true;
+                                @endphp
+                               @endif
+                                @if($kpi_should_visible)
+                                 @if (app()->getLocale() == $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->locale)
                                     <tr>
                                         <td>{{ $count++ }}</td>
                                         {{-- <td>{{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->id }}</td> --}}
@@ -101,15 +117,15 @@
                                             {{ $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->description ?? '-' }}
                                         </td>
                                         {{-- <td>
-                                {{
-                                $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->out_put
-                                ?? '-' }}
-                            </td>
-                            <td>
-                                {{
-                                $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->out_come
-                                ?? '-' }}
-                            </td> --}}
+                                            {{
+                                            $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->out_put
+                                            ?? '-' }}
+                                        </td>
+                                        <td>
+                                            {{
+                                            $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->out_come
+                                            ?? '-' }}
+                                        </td> --}}
 
                                         @php
                                             $strategy = '';
@@ -130,10 +146,10 @@
                                         @endphp
 
                                         {{-- <td>
-                                {{
-                                $strategy
-                                ?? '-' }}
-                            </td> --}}
+                                            {{
+                                            $strategy
+                                            ?? '-' }}
+                                        </td> --}}
                                         <td>
                                             {{ $reportingPeriodType ?? '-' }}
                                         </td>
@@ -213,6 +229,7 @@
                                             </div>
                                         </td>
                                     </tr>
+                                @endif
                                 @endif
                             @empty
                                 <tr>

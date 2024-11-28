@@ -1,6 +1,6 @@
 <div class="table-responsive">
     <table class="table table-bordered table-hover mt-3">
-        <thead>
+        {{-- <thead>
             <tr>
                 <th class="text-left">
                    Sub-office
@@ -24,7 +24,7 @@
                     @lang('crud.common.actions')
                 </th>
             </tr>
-        </thead>
+        </thead> --}}
         <tbody>
             @php $count =0;@endphp
             @forelse($office->officeTranslations as $officeTranslation)
@@ -32,26 +32,26 @@
                     @php $office = $officeTranslation->office; @endphp
                     @php $count = $count+1;@endphp
                     <tr>
-                        <td>
+                        <td width="5%">
                             <p>
                                 <a class="btn btn-info btn-flat" data-toggle="collapse" href="#off{{ $officeTranslation->translation_id }}"
                                     role="button" aria-expanded="false" aria-controls="collapseExample0">
                                     >>
                                 </a>
                             </p>
-                        <td>
+                        <td width="5%">
 
                             {{ $count }}
-                        </td>
-                        <td>{{ $officeTranslation->name ?? '-' }}</td>
-                        <td>
+                        </td >
+                        <td width="20%">{{ $officeTranslation->name ?? '-' }}</td>
+                        <td width="20%">
                             {{ $officeTranslation->description ?? '-' }}
                         </td>
-                        <td>
+                        <td width="20%">
                             {{ $officeTranslation->office->office->officeTranslations[0]->name ?? '-' }}
                         </td>
 
-                        <td>
+                        <td width="20%">
                             {!! $officeTranslation->office->users[0]->name ?? '<span class="badge badge-secondary">Not assigned</span>' !!}
                             @if ($officeTranslation->office->users->count() > 0)
                                 <form
