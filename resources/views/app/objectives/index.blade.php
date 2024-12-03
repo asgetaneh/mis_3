@@ -29,7 +29,7 @@
         </div>
 
         <div class="card">
-            <div class="card-body">
+            <div class="card-body" >
                 <div style="display: flex; justify-content: space-between;">
                     <h4 class="card-title">@lang('crud.objectives.index_title')</h4>
                 </div>
@@ -40,9 +40,10 @@
                             @if (!($objective_ts->total() < $objAllCount))
                                 @forelse($goals as $goal)
                                     <tr style="background:#96fffd45;">
-                                        <th colspan="7">{{ $goal->goalTranslations[0]->name }}</th>
+                                        <th colspan="8">{{ $goal->goalTranslations[0]->name }}</th>
                                     </tr>
                                     <tr>
+                                        <th style="background:#96fffd45;"></th>
                                         <th>#</th>
                                         <th class="text-left">
                                             Name
@@ -72,6 +73,7 @@
                             @forelse($goal->objectives as $objective)
                                 @if (app()->getLocale() == $objective->objectiveTranslations[0]->locale)
                                     <tr>
+                                         <td style="background:#96fffd45;"> </td>
                                         <td>{{ $count++ }}</td>
                                         <td>
                                             {{ $objective->objectiveTranslations[0]->name ?? '-' }}

@@ -26,11 +26,11 @@
             </tr>
         </thead> --}}
         <tbody>
-            @php $count =0;@endphp
+            {{-- @php $count =0;@endphp --}}
             @forelse($office->officeTranslations as $officeTranslation)
                 @if (app()->getLocale() == $officeTranslation->locale)
                     @php $office = $officeTranslation->office; @endphp
-                    @php $count = $count+1;@endphp
+                    {{-- @php $count = $count+1;@endphp --}}
                     <tr>
                         <td width="5%">
                             <p>

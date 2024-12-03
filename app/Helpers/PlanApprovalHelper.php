@@ -34,7 +34,7 @@ function isOfficeBelongToKpi($office, $kpi)
     $allOffices = office_all_childs_ids($office);
     $allOffices = array_merge($allOffices, array($office->id));
 
-    $data = KeyPeformanceIndicator::select('key_peformance_indicators.*')
+    $data = KeyPeformanceIndicator::select('key_peformance_indicators.id')
         ->join('kpi_office', 'key_peformance_indicators.id', '=', 'kpi_office.kpi_id')
         ->join('offices', 'offices.id', '=', 'kpi_office.office_id')
         ->where('kpi_office.kpi_id', '=', $kpi)
@@ -1094,28 +1094,41 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period,$one,$two,$thr
             }else{ $office_baseline =0; }  
         }else{
             foreach ($all_office_list as $key => $off_list) {
-                $planBaseline = Baseline::select()
-                //->whereIn('office_id', $all_office_list)
-                ->where('office_id', $off_list)
-                ->where('kpi_id', $kpi_id)
-                ->where('planning_year_id', '=', $planning_year_id)
-                ->where('kpi_one_id', '=', $one)
-                ->where('kpi_two_id', '=', $two)
-                ->where('kpi_three_id', '=', $three)
-                ->get(); 
-                if($planBaseline->isEmpty()){
+                // $planBaseline = Baseline::select()
+                // //->whereIn('office_id', $all_office_list)
+                // ->where('office_id', $off_list)
+                // ->where('kpi_id', $kpi_id)
+                // ->where('planning_year_id', '=', $planning_year_id)
+                // ->where('kpi_one_id', '=', $one)
+                // ->where('kpi_two_id', '=', $two)
+                // ->where('kpi_three_id', '=', $three)
+                // ->get(); 
+                $planBaseline = DB::select("
+                    SELECT baseline  FROM baselines
+                    WHERE office_id = ?
+                    AND kpi_id = ?
+                    AND planning_year_id = ?
+                    AND kpi_one_id = ?
+                    AND kpi_two_id = ?
+                    AND kpi_three_id = ?
+                ", [
+                    $off_list,$kpi_id,$planning_year_id,$one,$two,$three
+                ]);
+                if(!$planBaseline){
                     $planning_year = PlaningYear::where('is_active',true)->first();
                     $previous_year = PlaningYear::where('id', '<', $planning_year_id)->orderby('id', 'desc')->first();
                     if($previous_year){
-                        $planBaseline = Baseline::select()
-                        ->where('office_id', $off_list)
-                        //->whereIn('office_id', $all_office_list)
-                         ->where('kpi_id', $kpi_id)
-                        ->where('planning_year_id', '=', $previous_year->id)
-                        ->where('kpi_one_id', '=', $one)
-                        ->where('kpi_two_id', '=', $two)
-                        ->where('kpi_three_id', '=', $three)
-                        ->get();
+                        $planBaseline = DB::select("
+                        SELECT * FROM baseline
+                        WHERE office_id = ?
+                        AND kpi_id = ?
+                        AND planning_year_id = ?
+                        AND kpi_one_id = ?
+                        AND kpi_two_id = ?
+                        AND kpi_three_id = ?
+                    ", [
+                        $off_list,$kpi_id,$previous_year,$one,$two,$three
+                    ]);
                     } //dump($kpi_id);
                     
                 } 
@@ -1126,31 +1139,7 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period,$one,$two,$thr
            
         }
     }else{
-        $planBaseline = Baseline::select()
-            // ->where('office_id', $office->id)
-            ->whereIn('office_id', $all_office_list)
-            ->where('kpi_id', $kpi_id)
-            ->where('planning_year_id', '=', $planning_year_id)
-           // ->where('reporting_period_id', '=', $period)
-            // ->where(function ($q) {
-            //     $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
-            // })
-            ->get();
-            if(!$planBaseline){
-                $planning_year = PlaningYear::where('is_active',true)->first();
-                $previous_year = PlaningYear::where('id', '<', $planning_year_id)->orderby('id', 'desc')->first();
-                if($previous_year){
-                    $planBaseline = Baseline::select()
-                    ->whereIn('office_id', $all_office_list)
-                     ->where('kpi_id', $kpi_id)
-                    ->where('planning_year_id', '=', $previous_year->id)
-                    ->first();
-                }
-                
-            }
-            foreach ($planBaseline as $key => $value) {
-                $office_baseline = $office_baseline+$value->baseline;
-            }
+        echo "kpi should has measurement";
     }
         
         
@@ -1158,29 +1147,59 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period,$one,$two,$thr
 }
 
 function planBaselineSelf($kpi_id, $office, $planning_year_id, $one, $two, $three){
-    $planBaseline = Baseline::select()
-        ->where('office_id', $office->id)
-        ->where('kpi_id', $kpi_id)
-        ->where('planning_year_id', '=', $planning_year_id)
-        ->where('kpi_one_id', '=', $one)
-        ->where('kpi_two_id', '=', $two)
-        ->where('kpi_three_id', '=', $three)
-        ->first(); 
-    if(!$planBaseline){
-        $planning_year = PlaningYear::where('is_active',true)->first();
-        $previous_year = PlaningYear::where('id', '<', $planning_year_id)->orderby('id', 'desc')->first();
-        if($previous_year){
-            $planBaseline = Baseline::select()
-            ->where('office_id', $office->id)
-        ->where('kpi_id', $kpi_id)
-            ->where('planning_year_id', '=', $previous_year->id)
-            ->where('kpi_one_id', '=', $one)
-            ->where('kpi_two_id', '=', $two)
-            ->where('kpi_three_id', '=', $three)
-            ->first();
-        } //
-        
-    }//dump($planBaseline);
+    // 1. Query for current year's baseline
+        $planBaseline = DB::selectOne("
+        SELECT *  FROM baselines
+        WHERE office_id = ?
+        AND kpi_id = ?
+        AND planning_year_id = ?
+        AND kpi_one_id = ?
+        AND kpi_two_id = ?
+        AND kpi_three_id = ?
+        LIMIT 1
+        ", [
+        $office->id,  $kpi_id, $planning_year_id,  $one, $two,  $three
+        ]);
+
+        if (!$planBaseline) {
+        // 2. Query for active planning year
+        $planning_year = DB::selectOne("
+            SELECT *   FROM planning_years  WHERE is_active = true  LIMIT 1
+        ");
+
+        // 3. Query for the previous planning year
+        $previous_year = DB::selectOne("
+            SELECT * 
+            FROM planning_years
+            WHERE id < ?
+            ORDER BY id DESC
+            LIMIT 1
+        ", [
+            $planning_year_id
+        ]);
+
+        if ($previous_year) {
+            // 4. Query for previous year's baseline
+            $planBaseline = DB::selectOne("
+                SELECT * 
+                FROM baselines
+                WHERE office_id = ?
+                AND kpi_id = ?
+                AND planning_year_id = ?
+                AND kpi_one_id = ?
+                AND kpi_two_id = ?
+                AND kpi_three_id = ?
+                LIMIT 1
+            ", [
+                $office->id,
+                $kpi_id,
+                $previous_year->id,
+                $one,
+                $two,
+                $three
+            ]);
+        }
+        }
     return $planBaseline->baseline;
 }
 

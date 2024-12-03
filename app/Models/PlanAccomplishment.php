@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Scopes\Searchable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 
 class PlanAccomplishment extends Model
 {
@@ -42,7 +43,7 @@ class PlanAccomplishment extends Model
         return $this->belongsTo(PlaningYear::class);
     }
     public function getOfficeFromKpiAndOfficeList($only_child_array,$level) {
-        $offices = Office::select('offices.*')
+        $offices = Office::select('offices.id')
                 ->where('level','=', $level)
                 ->whereIn('id', $only_child_array)
                 -> orderBy('offices.level')
@@ -73,29 +74,51 @@ class PlanAccomplishment extends Model
        
         $office_level = $office->level;
         if($office_level == 0) $office_level=1;
-        $planAccomplishments = PlanAccomplishment::select('*')
-             ->where('office_id', $office->id)
-            ->where('kpi_id' , '=', $kkp)
-            ->where('planning_year_id','=', $planning_year)
-            ->where('kpi_child_one_id' , '=', $one)
-            ->where('kpi_child_two_id' , '=', $two)
-            ->where('kpi_child_three_id' , '=', $three)
-            ->where('reporting_period_id' , '=', $period)
-            ->where('plan_status' , '<=', $office_level)
-        ->get();
+        $planAccomplishments = DB::select("
+                    SELECT plan_value 
+                    FROM plan_accomplishments
+                    WHERE office_id IN (?)
+                    AND kpi_id = ?
+                    AND planning_year_id = ?
+                    AND kpi_child_one_id = ?
+                    AND kpi_child_two_id = ?
+                    AND kpi_child_three_id = ?
+                    AND reporting_period_id = ?
+                    AND plan_status <= ?
+                ", [
+                    implode(',', $childAndHimOffKpi_array), 
+                    $kkp, 
+                    $planning_year, 
+                    $one, 
+                    $two, 
+                    $three, 
+                    $period, 
+                    $office_level
+                ]);
         $my_status = $status?->plan_status;
         //dump($planning_year);
         if($is_report){
-             $planAccomplishments = PlanAccomplishment::select('*')
-             ->where('office_id', $office->id)
-            ->where('kpi_id' , '=', $kkp)
-            ->where('planning_year_id','=', $planning_year)
-            ->where('kpi_child_one_id' , '=', $one)
-            ->where('kpi_child_two_id' , '=', $two)
-            ->where('kpi_child_three_id' , '=', $three)
-            ->where('reporting_period_id' , '=', $period)
-            ->where('accom_status' , '<=', $office_level)
-        ->get();
+            $planAccomplishments = DB::select("
+                    SELECT accom_value 
+                    FROM plan_accomplishments
+                    WHERE office_id IN (?)
+                    AND kpi_id = ?
+                    AND planning_year_id = ?
+                    AND kpi_child_one_id = ?
+                    AND kpi_child_two_id = ?
+                    AND kpi_child_three_id = ?
+                    AND reporting_period_id = ?
+                    AND plan_status <= ?
+                ", [
+                    implode(',', $childAndHimOffKpi_array), 
+                    $kkp, 
+                    $planning_year, 
+                    $one, 
+                    $two, 
+                    $three, 
+                    $period, 
+                    $office_level
+                ]);
         $my_status = $status?->accom_status;
         }
         //dump($planAccomplishments);
@@ -145,29 +168,61 @@ class PlanAccomplishment extends Model
                
                 $office_level = $office->level;
                 if($office_level == 0) $office_level=1;
-                $planAccomplishments = PlanAccomplishment::select('*')
-                    ->whereIn('office_id', $childAndHimOffKpi_array)
-                    ->where('kpi_id' , '=', $kkp)
-                    ->where('planning_year_id','=', $planning_year)
-                    ->where('kpi_child_one_id' , '=', $one)
-                    ->where('kpi_child_two_id' , '=', $two)
-                    ->where('kpi_child_three_id' , '=', $three)
-                    ->where('reporting_period_id' , '=', $period)
-                    ->where('plan_status' , '<=', $office_level)
-                ->get();
+                // $planAccomplishments = PlanAccomplishment::select('plan_value')
+                //     ->whereIn('office_id', $childAndHimOffKpi_array)
+                //     ->where('kpi_id' , '=', $kkp)
+                //     ->where('planning_year_id','=', $planning_year)
+                //     ->where('kpi_child_one_id' , '=', $one)
+                //     ->where('kpi_child_two_id' , '=', $two)
+                //     ->where('kpi_child_three_id' , '=', $three)
+                //     ->where('reporting_period_id' , '=', $period)
+                //     ->where('plan_status' , '<=', $office_level)
+                // ->get();
+                $planAccomplishments = DB::select("
+                    SELECT plan_value 
+                    FROM plan_accomplishments
+                    WHERE office_id IN (?)
+                    AND kpi_id = ?
+                    AND planning_year_id = ?
+                    AND kpi_child_one_id = ?
+                    AND kpi_child_two_id = ?
+                    AND kpi_child_three_id = ?
+                    AND reporting_period_id = ?
+                    AND plan_status <= ?
+                ", [
+                    implode(',', $childAndHimOffKpi_array), 
+                    $kkp, 
+                    $planning_year, 
+                    $one, 
+                    $two, 
+                    $three, 
+                    $period, 
+                    $office_level
+                ]);
                 $my_status = $status?->plan_status;
                 //dump($planning_year);
                 if($is_report){
-                     $planAccomplishments = PlanAccomplishment::select('*')
-                     ->whereIn('office_id', $childAndHimOffKpi_array)
-                    ->where('kpi_id' , '=', $kkp)
-                    ->where('planning_year_id','=', $planning_year)
-                    ->where('kpi_child_one_id' , '=', $one)
-                    ->where('kpi_child_two_id' , '=', $two)
-                    ->where('kpi_child_three_id' , '=', $three)
-                    ->where('reporting_period_id' , '=', $period)
-                    ->where('accom_status' , '<=', $office_level)
-                ->get();
+                    $planAccomplishments = DB::select("
+                    SELECT accom_value 
+                    FROM plan_accomplishments
+                    WHERE office_id IN (?)
+                    AND kpi_id = ?
+                    AND planning_year_id = ?
+                    AND kpi_child_one_id = ?
+                    AND kpi_child_two_id = ?
+                    AND kpi_child_three_id = ?
+                    AND reporting_period_id = ?
+                    AND accom_status <= ?
+                ", [
+                    implode(',', $childAndHimOffKpi_array), 
+                    $kkp, 
+                    $planning_year, 
+                    $one, 
+                    $two, 
+                    $three, 
+                    $period, 
+                    $office_level
+                ]);
                 $my_status = $status?->accom_status;
                 }
                 //dump($planAccomplishments);
@@ -192,29 +247,35 @@ class PlanAccomplishment extends Model
                
                 $office_level = $office->level;
                 if($office_level == 0) $office_level=1;
-                $planAccomplishments = PlanAccomplishment::select('*')
-                    ->whereIn('office_id', $childAndHimOffKpi_array)
-                    ->where('kpi_id' , '=', $kkp)
-                    ->where('planning_year_id','=', $planning_year)
-                    ->where('kpi_child_one_id' , '=', $one)
-                    ->where('kpi_child_two_id' , '=', $two)
-                    ->where('kpi_child_three_id' , '=', $three)
-                    ->where('reporting_period_id' , '=', $period)
-                    ->where('plan_status' , '<=', $office_level)
-                ->get();
+                $planAccomplishments = DB::select("
+                        SELECT plan_value  FROM plan_accomplishments
+                        WHERE office_id IN (" . implode(',', $childAndHimOffKpi_array) . ")
+                      AND kpi_id = ?
+                      AND planning_year_id = ?
+                      AND kpi_child_one_id = ?
+                      AND kpi_child_two_id = ?
+                      AND kpi_child_three_id = ?
+                      AND reporting_period_id = ?
+                      AND plan_status <= ?
+                ", [
+                    $kkp,  $planning_year,  $one,   $two, $three, $period,  $office_level
+                ]);
                 $my_status = $status?->plan_status;
                 //dump($planning_year);
                 if($is_report){
-                     $planAccomplishments = PlanAccomplishment::select('*')
-                     ->whereIn('office_id', $childAndHimOffKpi_array)
-                    ->where('kpi_id' , '=', $kkp)
-                    ->where('planning_year_id','=', $planning_year)
-                    ->where('kpi_child_one_id' , '=', $one)
-                    ->where('kpi_child_two_id' , '=', $two)
-                    ->where('kpi_child_three_id' , '=', $three)
-                    ->where('reporting_period_id' , '=', $period)
-                    ->where('accom_status' , '<=', $office_level)
-                ->get();
+                    $planAccomplishments = DB::select("
+                        SELECT accom_value  FROM plan_accomplishments
+                        WHERE office_id IN (" . implode(',', $childAndHimOffKpi_array) . ")
+                      AND kpi_id = ?
+                      AND planning_year_id = ?
+                      AND kpi_child_one_id = ?
+                      AND kpi_child_two_id = ?
+                      AND kpi_child_three_id = ?
+                      AND reporting_period_id = ?
+                      AND accom_status <= ?
+                ", [
+                    $kkp,  $planning_year,  $one,   $two, $three, $period,  $office_level
+                ]);
                 $my_status = $status?->accom_status;
                 }
                 //dump($planAccomplishments);
@@ -264,25 +325,35 @@ class PlanAccomplishment extends Model
                 $sum_of_sub_office_report = 0;
                  $office_level = $office->level;
                 if($office_level == 0) $office_level=1;
-                $planAccomplishments = PlanAccomplishment::select('*')
-                    ->whereIn('office_id', $childAndHimOffKpi_array)
-                    ->where('kpi_id' , '=', $kkp)
-                    ->where('planning_year_id','=', $planning_year)
-                    ->where('reporting_period_id' , '=', $period)
-                    ->where('kpi_child_one_id' , '=', $one)
-                    ->where('kpi_child_two_id' , '=', $two)
-                    ->where('kpi_child_three_id' , '=', $three)
-                    ->where('plan_status' , '<=', $office_level)
-                ->get(); 
+                $planAccomplishments = DB::select("
+                        SELECT plan_value  FROM plan_accomplishments
+                        WHERE office_id IN (" . implode(',', $childAndHimOffKpi_array) . ")
+                      AND kpi_id = ?
+                      AND planning_year_id = ?
+                      AND kpi_child_one_id = ?
+                      AND kpi_child_two_id = ?
+                      AND kpi_child_three_id = ?
+                      AND reporting_period_id = ?
+                      AND plan_status <= ?
+                ", [
+                    $kkp,  $planning_year,  $one,   $two, $three, $period,  $office_level
+                ]);
                 //dump($planAccomplishments);
                 $my_status = $status?->plan_status;
                 if($is_report){
-                     $planAccomplishments = PlanAccomplishment::select('*')
-                     ->whereIn('office_id', $childAndHimOffKpi_array)
-                    ->where('kpi_id' , '=', $kkp)
-                    ->where('reporting_period_id' , '=', $period)
-                    ->where('accom_status' , '<=', $office_level)
-                ->get();
+                    $planAccomplishments = DB::select("
+                    SELECT accom_value  FROM plan_accomplishments
+                    WHERE office_id IN (" . implode(',', $childAndHimOffKpi_array) . ")
+                  AND kpi_id = ?
+                  AND planning_year_id = ?
+                  AND kpi_child_one_id = ?
+                  AND kpi_child_two_id = ?
+                  AND kpi_child_three_id = ?
+                  AND reporting_period_id = ?
+                  AND accom_status <= ?
+            ", [
+                $kkp,  $planning_year,  $one,   $two, $three, $period,  $office_level
+            ]);
                  $my_status = $status?->accom_status;
                 }
 
@@ -307,30 +378,37 @@ class PlanAccomplishment extends Model
                 $sum_of_sub_office_report = 0;
                  $office_level = $office->level;
                 if($office_level == 0) $office_level=1;
-                $planAccomplishments = PlanAccomplishment::select('*')
-                    ->whereIn('office_id', $childAndHimOffKpi_array)
-                    ->where('kpi_id' , '=', $kkp)
-                    ->where('planning_year_id','=', $planning_year)
-                    ->where('reporting_period_id' , '=', $period)
-                    ->where('kpi_child_one_id' , '=', $one)
-                    ->where('kpi_child_two_id' , '=', $two)
-                    ->where('kpi_child_three_id' , '=', $three)
-                    ->where('plan_status' , '<=', $office_level)
-                ->get(); 
+                $planAccomplishments = DB::select("
+                        SELECT plan_value  FROM plan_accomplishments
+                        WHERE office_id IN (" . implode(',', $childAndHimOffKpi_array) . ")
+                      AND kpi_id = ?
+                      AND planning_year_id = ?
+                      AND kpi_child_one_id = ?
+                      AND kpi_child_two_id = ?
+                      AND kpi_child_three_id = ?
+                      AND reporting_period_id = ?
+                      AND plan_status <= ?
+                ", [
+                    $kkp,  $planning_year,  $one,   $two, $three, $period,  $office_level
+                ]);
                 $my_status = $status?->plan_status;
                 //dump($planAccomplishments);
                 //d/ump($office_level);
                 //dump($planning_year);
                 if($is_report){
-                     $planAccomplishments = PlanAccomplishment::select('*')
-                     ->whereIn('office_id', $childAndHimOffKpi_array)
-                    ->where('kpi_id' , '=', $kkp)
-                    ->where('reporting_period_id' , '=', $period)
-                    ->where('kpi_child_one_id' , '=', $one)
-                    ->where('kpi_child_two_id' , '=', $two)
-                    ->where('kpi_child_three_id' , '=', $three)
-                    ->where('accom_status' , '<=', $office_level)
-                ->get();
+                    $planAccomplishments = DB::select("
+                    SELECT accom_value  FROM plan_accomplishments
+                    WHERE office_id IN (" . implode(',', $childAndHimOffKpi_array) . ")
+                  AND kpi_id = ?
+                  AND planning_year_id = ?
+                  AND kpi_child_one_id = ?
+                  AND kpi_child_two_id = ?
+                  AND kpi_child_three_id = ?
+                  AND reporting_period_id = ?
+                  AND accom_status <= ?
+            ", [
+                $kkp,  $planning_year,  $one,   $two, $three, $period,  $office_level
+            ]);
                  $my_status = $status?->accom_status;
                 }
 
@@ -524,7 +602,7 @@ class PlanAccomplishment extends Model
         $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
          $office_level = $office->level;
         if($office_level == 0) $office_level=1;
-        $plannarations = ReportNarration::select('*')
+        $plannarations = ReportNarration::select('plan_naration')
         // ->join('offices', 'offices.id', '=', 'report_narrations.office_id')
         // ->join('plan_accomplishments', 'plan_accomplishments.office_id', '=', 'offices.id')
         ->where('key_peformance_indicator_id' , '=', $kkp)

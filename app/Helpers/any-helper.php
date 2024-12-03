@@ -149,7 +149,7 @@ if (! function_exists('getOfficePlan')) {
         $office_level = $office->level;
         if($office_level == 0) $office_level=1; 
         if(!$is_report){
-            $planAccomplishments = PlanAccomplishment::select('*')
+            $planAccomplishments = PlanAccomplishment::select('plan_value')
                 ->where('office_id', $office->id)
                 ->where('kpi_id' , '=', $kkp)
                 ->where('planning_year_id','=', $planning_year)
@@ -164,7 +164,7 @@ if (! function_exists('getOfficePlan')) {
          if($is_report){ 
             $kpi_ob = KeyPeformanceIndicator::find($kkp);
             $active_period = getReportingQuarter($kpi_ob->reportingPeriodType->id); 
-             $planAccomplishments = PlanAccomplishment::select('*')
+             $planAccomplishments = PlanAccomplishment::select('accom_value')
                  ->where('office_id', $office->id)
                 ->where('kpi_id' , '=', $kkp)
                 ->where('planning_year_id','=', $planning_year)
@@ -183,34 +183,38 @@ if (! function_exists('getOfficeBaseline')) {
        { 
            $office_level = $office->level;
            if($office_level == 0) $office_level=1;
-           $planBaseline = Baseline::select()
-            ->where('office_id','=', $office->id)
-           ->where('kpi_id', '=', $kkp)
-           ->where('planning_year_id', '=', $planning_year)
-           ->where('kpi_one_id', '=', $one)
-           ->where('kpi_two_id', '=', $two)
-           ->where('kpi_three_id', '=', $three)
-          // ->where('reporting_period_id', '=', $period)
-           // ->where(function ($q) {
-           //     $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
-           // })
-           ->first();
-            if($planBaseline == null){
-               $planning_year = PlaningYear::where('is_active',true)->first();
-               $previous_year = PlaningYear::where('id', '<', $planning_year->id)->orderby('id', 'desc')->first();
-               //dump($planning_year->id);
+           $planBaseline = DB::select("
+           SELECT baseline  FROM baselines
+           WHERE office_id = ?
+           AND kpi_id = ?
+           AND planning_year_id = ?
+           AND kpi_one_id = ?
+           AND kpi_two_id = ?
+           AND kpi_three_id = ?
+            ", [
+                $office,$kkp,$planning_year,$one,$two,$three
+            ]);
+            if(!$planBaseline){
+                $planning_year = PlaningYear::where('is_active',true)->first();
+                $previous_year = PlaningYear::where('id', '<', $planning_year->id)->orderby('id', 'desc')->first();
                 if($previous_year){
-                   $planBaseline = Baseline::select()
-                   ->where('kpi_id', operator: $kkp)
-                   ->where('office_id', $office->id)
-                   ->where('planning_year_id', '=', $previous_year->id)
-                   ->where('kpi_one_id', '=', $one)
-                    ->where('kpi_two_id', '=', $two)
-                    ->where('kpi_three_id', '=', $three)
-                   ->first();
-               }
-               
-           } 
+                    $planBaseline = DB::select("
+                    SELECT * FROM baseline
+                    WHERE office_id = ?
+                    AND kpi_id = ?
+                    AND planning_year_id = ?
+                    AND kpi_one_id = ?
+                    AND kpi_two_id = ?
+                    AND kpi_three_id = ?
+                ", [
+                    $office,$kkp,$previous_year,$one,$two,$three
+                ]);
+                } //dump($kpi_id);
+                
+            } 
+            foreach ($planBaseline as $key => $value) {
+                $office_baseline = $office_baseline+$value->baseline;
+                }
            return $planBaseline;
        }
    }
@@ -220,7 +224,7 @@ if (! function_exists('getStatus')) {
        $childAndHimOffKpi_array =[];
                 $childAndHimOffKpi = office_all_childs_ids($office);
                 $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
-        $planAccomplishments = PlanAccomplishment::select('*')
+        $planAccomplishments = PlanAccomplishment::select('plan_status', 'accom_status')
             //->whereIn('office_id', $childAndHimOffKpi_array)
             ->where('office_id' , '=', $office->id)
             ->where('kpi_id' , '=', $kkp)

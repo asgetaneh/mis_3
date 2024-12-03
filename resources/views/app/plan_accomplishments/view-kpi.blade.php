@@ -1,7 +1,7 @@
 <table class="table table-bordered" style ="background:#F0F8FF">
     @if ($first == '1')
         <tr>
-            <th>
+            <th style="width:30%">
                 Offices
             </th>
             <th  rowspan="">{{"Baseline"}}</th>
@@ -27,7 +27,7 @@
         </tr>
     @endif
     <tr>
-        <td rowspan="2">{{ $office->officeTranslations[0]->name }}</td>
+        <td rowspan="2" style="width:30%">{{ $office->officeTranslations[0]->name }}</td>
         @php 
             $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id,$office, $planning_year->id, $period->id,null,null,null);
          @endphp
@@ -68,7 +68,7 @@
 </table>
 {{-- level two (directores and same level) --}}
 <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
-    <div class="card card-body" style="background:#12cd4322;" >
+    <div class="card card-body" style="background:#12cd4322; padding: 70px; border: 1px solid;">
        
         @php
             $offices_twos = $office->offices;
@@ -77,7 +77,7 @@
         @forelse ($offices_twos as $office)
             @include('app.plan_accomplishments.view-kpi-duplicate')
             <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
-                <div class="card card-body">
+                <div class="card card-body" style="background:#D3D3D3; padding: 70px; border: 1px solid;">
                     @php
                         $offices_threes = $office->offices;
                         $office_two_self = $office;
@@ -85,7 +85,7 @@
                     @forelse ($offices_threes as $office)
                         @include('app.plan_accomplishments.view-kpi-duplicate')
                         <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
-                            <div class="card card-body">
+                            <div class="card card-body" style="background:# ; padding: 70px; border: 1px solid;">
                                 @php
                                     $offices_fours = $office->offices;
                                     $office_three_self = $office;
@@ -93,21 +93,21 @@
                                 @forelse ($offices_fours as $office)
                                     @include('app.plan_accomplishments.view-kpi-duplicate')
                                     <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
-                                        <div class="card card-body">
+                                        <div class="card card-body" style="background:#D3D3D3; padding: 70px; border: 1px solid;">
                                             @php
                                                 $offices_fives = $office->offices;
                                             @endphp
                                             @forelse ($offices_fives as $office)
                                                 @include('app.plan_accomplishments.view-kpi-duplicate')
                                                 <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
-                                                    <div class="card card-body">
+                                                    <div class="card card-body" style="background:# ; padding: 70px; border: 1px solid;">
                                                         @php
                                                             $offices_sixs = $office->offices;
                                                         @endphp
                                                         @forelse ($offices_sixs as $office)
                                                             @include('app.plan_accomplishments.view-kpi-duplicate')
                                                             <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
-                                                                <div class="card card-body">
+                                                                <div class="card card-body" style="background:#D3D3D3; padding: 70px; border: 1px solid;">
 
                                                                 </div>
                                                             </div>

@@ -170,28 +170,48 @@
                                     @php
                                         $offices_twos = $office->offices;
                                     @endphp
+                                     @php $count1 =0;@endphp
                                     @forelse ($offices_twos as $office)
+                                        @php 
+                                            $count1 = $count1+1;
+                                            $count =  $count1;
+                                        @endphp
                                         @include('app.office_translations.sub')
                                         <div class="collapse" id="off{{ $office->id }}">
                                             <div class="card card-body" style="padding: 70px; border: 1px solid;">
                                                 @php
                                                     $offices_threes = $office->offices;
+                                                    $count2 =0;
                                                 @endphp
                                                 @forelse ($offices_threes as $office)
+                                                    @php 
+                                                        $count2 = $count2+1;
+                                                        $count =  $count2;
+                                                    @endphp
                                                     @include('app.office_translations.sub')
                                                     <div class="collapse" id="off{{ $office->id }}">
                                                         <div class="card card-body" style="background:#8cffad23; padding: 70px; border: 1px solid;">
                                                             @php
                                                                 $offices_fours = $office->offices;
+                                                                $count3 =0;
                                                             @endphp
                                                             @forelse ($offices_fours as $office)
+                                                                 @php 
+                                                                    $count3 = $count3+1;
+                                                                    $count =  $count3;
+                                                                @endphp
                                                                 @include('app.office_translations.sub')
                                                                 <div class="collapse" id="off{{ $office->id }}">
                                                                     <div class="card card-body" style="background:#D3D3D3; padding: 70px; border: 1px solid;">
                                                                         @php
                                                                             $offices_fives = $office->offices;
+                                                                             $count4 =0;
                                                                         @endphp
                                                                         @forelse ($offices_fives as $office)
+                                                                            @php 
+                                                                                $count4 = $count4+1;
+                                                                                $count =  $count4;
+                                                                            @endphp
                                                                             @include('app.office_translations.sub')
                                                                             <div class="collapse"
                                                                                 id="off{{ $office->id }}">

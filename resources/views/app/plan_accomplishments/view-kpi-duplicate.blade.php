@@ -1,6 +1,6 @@
 <table class="table table-bordered">
     <tr>
-        <th>
+        <th style="width:20%">
             Offices
         </th>
         <th  rowspan="">{{"Baseline"}}</th>
@@ -22,7 +22,7 @@
         </td>
     </tr>
     <tr>
-        <td rowspan="2">{{ $office->officeTranslations[0]->name }}</td>
+        <td rowspan="2" style="width:20%">{{ $office->officeTranslations[0]->name }}</td>
         @php 
             $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id, $office, $planning_year->id, $period->id,null,null,null);
         @endphp

@@ -1,9 +1,9 @@
 {{-- level one (directores and same level) --}}
 <table class="table table-bordered" style="background:#12cd4322;">
     <tr>
-        <th colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 2 }} ">
+        <th colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 2 }} " style="width:90%">
             Offices: {{ $office->officeTranslations[0]->name }}
-        </td>
+        </th>
          <td rowspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 3 }}">
             @if (!$office->offices->isEmpty())
                 <p>
@@ -75,7 +75,7 @@
 </table>
 {{-- level two (directores and same level) --}}
 <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
-    <div class="card card-body">
+    <div class="card card-body" style="background:#12cd4322; padding: 70px; border: 1px solid;">
         @php
             $office_one_self = $office;
             $offices_twos = $office->offices;
@@ -84,7 +84,7 @@
 
             @include('app.plan_accomplishments.view-kpi11')
             <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
-                <div class="card card-body">
+                <div class="card card-body" style="background:#D3D3D3; padding: 70px; border: 1px solid;">
                     @php
                         $office_two_self = $office;
                         $offices_threes = $office->offices;
@@ -92,7 +92,7 @@
                     @forelse ($offices_threes as $office)
                         @include('app.plan_accomplishments.view-kpi11')
                         <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
-                            <div class="card card-body">
+                            <div class="card card-body" style="background:# ; padding: 70px; border: 1px solid;">
                                 @php
                                     $office_three_self = $office;
                                     $offices_fours = $office->offices;
@@ -100,7 +100,7 @@
                                 @forelse ($offices_fours as $office)
                                     @include('app.plan_accomplishments.view-kpi11')
                                     <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
-                                        <div class="card card-body">
+                                        <div class="card card-body" style="background:#D3D3D3; padding: 70px; border: 1px solid;">
                                             @php
                                                 $office_four_self = $office;
                                                 $offices_fives = $office->offices;
@@ -108,14 +108,14 @@
                                             @forelse ($offices_fives as $office)
                                                 @include('app.plan_accomplishments.view-kpi11')
                                                 <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
-                                                    <div class="card card-body">
+                                                    <div class="card card-body" style="background:# ; padding: 70px; border: 1px solid;">
                                                         @php
                                                             $offices_sixs = $office->offices;
                                                         @endphp
                                                         @forelse ($offices_sixs as $office)
                                                             @include('app.plan_accomplishments.view-kpi11')
                                                             <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
-                                                                <div class="card card-body">
+                                                                <div class="card card-body" style="background:#D3D3D3; padding: 70px; border: 1px solid;">
 
                                                                 </div>
                                                             </div>
@@ -138,7 +138,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <th>#</th>
+                                                    <th style="width:20%">#</th>
                                                     <th  rowspan="">{{"Baseline"}}</th>
                                                     @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                                                         <th>
@@ -149,7 +149,7 @@
 
                                                     @foreach ($planAcc->Kpi->kpiChildOnes as $one)
                                                 <tr>
-                                                    <td>
+                                                    <td style="width:20%">
                                                         {{ $one->kpiChildOneTranslations[0]->name }}
                                                     </td>
                                                     @php

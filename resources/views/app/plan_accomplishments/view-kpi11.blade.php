@@ -1,7 +1,7 @@
 <table class="table table-bordered" >
 {{-- style="background:#34214322;" --}}
     <tr>
-        <th colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 2 }} ">
+        <th colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 2 }} " style="width:90%">
             Offices: {{ $office->officeTranslations[0]->name }}
             </td>
         <td rowspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 3 }}">
@@ -18,7 +18,7 @@
         </td>
     </tr>
     <tr>
-        <th>#</th>
+        <th style="width:20%">#</th>
         <th  rowspan="">{{"Baseline"}}</th>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             <th>
@@ -38,7 +38,7 @@
 
         @foreach ($planAcc->Kpi->kpiChildOnes as $one)
     <tr>
-        <td>
+        <td style="width:20%">
             {{ $one->kpiChildOneTranslations[0]->name }}
         </td>
         @php
