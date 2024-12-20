@@ -43,7 +43,7 @@
 
                             {{ $count }}
                         </td >
-                        <td width="20%">{{ $officeTranslation->name ?? '-' }}</td>
+                        <td width="20%">{{ $officeTranslation->name ?? '-' }} {{ "(" }} <span style="color:blue" title="Number of Sub offices">{{$officeTranslation->office->offices->count()}} </span>{{ ")" }}</td>
                         <td width="20%">
                             {{ $officeTranslation->description ?? '-' }}
                         </td>

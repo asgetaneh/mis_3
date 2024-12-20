@@ -47,8 +47,9 @@
                     $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
                     $office_level = $office->level;
                     if($office_level == 0) $office_level=1;
+                    //dd($planOne[2]?->plan_status);
                 @endphp
-                @if($planOne[2] <= $office_level)
+                @if($planOne[2]?->plan_status <= $office_level)
                      {{ $planOne[0] }} 
                 @else
                     {{0}}
@@ -74,7 +75,7 @@
     </tr>
 </table>
 {{-- level two (directores and same level) --}}
-<div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
+{{-- <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
     <div class="card card-body" style="background:#12cd4322; padding: 70px; border: 1px solid;">
         @php
             $office_one_self = $office;
@@ -346,7 +347,7 @@
 
         <!-- table to display leader(director) office plan in the level--> 
         <table class="table table-bordered" >
-        {{-- style="background:#34214322;" --}}
+        {{-- style="background:#34214322;" --}
             <tr>
                 <th colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 2 }} ">
                     Offices: {{ $office_one_self->officeTranslations[0]->name }}
@@ -413,4 +414,4 @@
         </table>
 
     </div>
-</div>
+</div> --}}

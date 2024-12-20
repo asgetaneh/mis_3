@@ -1,4 +1,4 @@
-<table class="table table-bordered" style ="background:#F0F8FF">
+<table class="table table-bordered" style ="background:#CDCDCD">
     @if ($first == '1')
         <tr>
             <th style="width:30%">
@@ -17,7 +17,7 @@
                 <a class="btn btn-info" data-toggle="collapse"
                     href="#off{{ $office->id }}{{$planAcc->Kpi->id}}" role="button"
                     aria-expanded="false" aria-controls="collapseExample0">
-                     Details
+                   ss  Details
                 </a>
             </p>
              @else
@@ -66,8 +66,9 @@
         </td>
     </tr>
 </table>
+
 {{-- level two (directores and same level) --}}
-<div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
+{{-- <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
     <div class="card card-body" style="background:#12cd4322; padding: 70px; border: 1px solid;">
        
         @php
@@ -288,4 +289,4 @@
           
     </div>
 </div>
- 
+  --}}

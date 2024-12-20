@@ -201,7 +201,7 @@ Route::prefix('/')
 
                 Route::resource('objectives', ObjectiveController::class);
                 Route::resource('office_translations', OfficeTranslationController::class);
-
+                Route::get('/offices/{office}{planAccom}/details', [OfficeController::class, 'getDetails'])->name('offices.details');
                 Route::get('/office-hierarchy',
                     function () {
                         $officesList = Office::where('parent_office_id')->latest()->get();
@@ -253,6 +253,7 @@ Route::prefix('/')
 
             Route::prefix('/plan')->group(function () {
                 Route::match(array('GET', 'POST'),'plan-accomplishment/{office}', [PlanAccomplishmentController::class, 'officeKpiObjectiveGoal'])->name('plan-accomplishment');
+                Route::get('/plan-accomplishment/{office}/details/{kpi}/kpi/{p_year}', [PlanAccomplishmentController::class, 'getDetails'])->name('plan-accomplishment-details');
                 Route::match(array('GET', 'POST'),'plan-accomplishment-goalclick/{office}/{goal}/{offwithkpi}', [PlanAccomplishmentController::class, 'planaccomplishmentGoalClick'])->name('plan-accomplishment-goalclick');
 
                 Route::match(array('GET', 'POST'),'approve-plan', [PlanAccomplishmentController::class, 'approvePlanAccomplishment'])->name('approve-plan');

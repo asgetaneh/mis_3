@@ -126,8 +126,9 @@
         </td>
     </tr>
     </table>
+
 {{-- level two (directores and same level) --}}
-<div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
+{{-- <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
     <div class="card card-body">
         @php
             $offices_twos = $office->offices;
@@ -193,4 +194,4 @@
         @endforelse
     </div>
 </div>
-
+ --}}

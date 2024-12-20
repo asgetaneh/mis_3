@@ -169,7 +169,8 @@
                                                                         $period->id,
                                                                         $value1->id,
                                                                         $value2->id,
-                                                                        $value3->id);
+                                                                        $value3->id,
+                                                                    );
                                                                     //$baseline_avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $period->id, false, $planning_year->id, $value1->id,$value2->id,$value3->id);
                                                                     $baseline_avarage_total =
                                                                         $baseline_avarage_total + $baseline_avarage;
@@ -190,7 +191,8 @@
                                                                     $period->id,
                                                                     $value1->id,
                                                                     $value2->id,
-                                                                    null);
+                                                                    null,
+                                                                );
                                                                 $baseline_avarage_total =
                                                                     $baseline_avarage_total + $baseline_avarage;
                                                             }
@@ -207,13 +209,22 @@
                                                                 $period->id,
                                                                 $value1->id,
                                                                 null,
-                                                                null);
+                                                                null,
+                                                            );
                                                             $baseline_avarage_total =
                                                                 $baseline_avarage_total + $baseline_avarage;
                                                         }
                                                         $denominator = $planAcc->Kpi->kpiChildOnes->count();
                                                     } else {
-                                                        $baseline_avarage = planBaseline($planAcc->Kpi->id, $imagen_off, $planning_year->id,$period->id, null,null, null);
+                                                        $baseline_avarage = planBaseline(
+                                                            $planAcc->Kpi->id,
+                                                            $imagen_off,
+                                                            $planning_year->id,
+                                                            $period->id,
+                                                            null,
+                                                            null,
+                                                            null,
+                                                        );
                                                         $baseline_avarage_total =
                                                             $baseline_avarage_total + $baseline_avarage;
                                                         $denominator = 1;
@@ -375,7 +386,7 @@
                                     </div>
                                     <div class="card-body" style="display: none;">
                                         {{-- If KPI has Child ones (UG, PG) --}}
-                                        <x-form method="POST" action="{{ route('approve-plan') }}" class="mt-4">
+                                        {{-- <x-form method="POST" action="{{ route('approve-plan') }}" class="mt-4"> --}}
 
                                             @forelse($offices  as $office)
                                                 @php
@@ -399,14 +410,17 @@
                                                             @endif
                                                             {{-- KPI has  child one only --}}
                                                         @else
-                                                            @include('app.plan_accomplishments.view-kpi1')
+                                                            {{-- @include('app.plan_accomplishments.view-kpi1') --}}
+                                                            <a  href='{{ route('plan-accomplishment-details', [$office->id,$planAcc->Kpi->id, $planning_year->id]) }}'> {{"."}}</a>
+                                                            @include('app.plan_accomplishments.office-row1', ['office' => $office,'planAcc' => $planAcc, 'level' => 0])
                                                         @endif
 
                                                         {{-- </thead>
                                                         </table> --}}
                                                         {{-- KPI has no child one, which means just only plain input --}}
                                                     @else
-                                                        @include('app.plan_accomplishments.view-kpi')
+                                                     <a href='{{ route('plan-accomplishment-details', [$office->id,$planAcc->Kpi->id, $planning_year->id]) }}'>  {{"."}} </a>
+                                                        @include('app.plan_accomplishments.office-row', ['office' => $office,'planAcc' => $planAcc, 'level' => 0])
                                                     @endif
                                                 @endif
                                             @empty
@@ -417,7 +431,7 @@
                                             <button type="submit" class="btn-primary float-right">Appove</button>
                                         </td> --}}
                                             </tr>
-                                        </x-form>
+                                        {{-- </x-form> --}}
                                     </div>
                                 </div>
 
@@ -434,7 +448,95 @@
                 </div>
             </div>
         </div>
+        @php
+            $user_offices = auth()->user()->offices[0]->offices;
+        @endphp 
+    
+<script>
+   {{-- function attachExpandListeners() {
+    document.querySelectorAll('.btn-expand').forEach(button => {
+        button.addEventListener('click', function () {
+            const officeId = this.getAttribute('data-id');
+            let url = this.getAttribute('data-url');
 
+            if (!url) {
+                // Dynamically construct URL if `data-url` is missing
+                url = `/smis/setting/offices/${officeId}/details`;
+            }
+
+            console.log('Office ID:', officeId);
+            console.log('Fetch URL:', url);
+
+            const detailsRow = document.getElementById(`details-${officeId}`);
+
+            if (detailsRow.style.display === 'none') { 
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Fetched data:', data);
+
+                        const detailsTable = document.getElementById(`details-data-${officeId}`);
+                        detailsTable.innerHTML = '';
+
+                        data.forEach(child => {
+                            detailsTable.innerHTML += `
+                                <table> 
+                                <thead>
+                                    <tr>
+                                        <th>Office Name</th>
+                                        <th>KPI Value</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                     <td>${child.id}</td>
+                                    <td>${child.name}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-expand" 
+                                                data-id="${child.id}" 
+                                                data-url="/smis/setting/offices/${child.id}/details">
+                                            Expand
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="details-row" id="details-${child.id}" style="display: none;">
+                                    <td colspan="3">
+                                        <table class="table">
+                                            <tbody id="details-data-${child.id}">
+                                                <!-- Further Nested Data -->
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                </tbody>
+                                </table> 
+                            `;
+                        });
+
+                        // Reattach event listeners to newly added buttons
+                        attachExpandListeners();
+
+                        detailsRow.style.display = '';
+                    })
+                    .catch(error => console.error('Fetch error:', error));
+            } else {
+                detailsRow.style.display = 'none';
+            }
+        });
+    });
+}
+
+// Initial call to attach listeners to existing buttons
+attachExpandListeners(); --}}
+
+
+ </script>
     </div>
 
     <script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>

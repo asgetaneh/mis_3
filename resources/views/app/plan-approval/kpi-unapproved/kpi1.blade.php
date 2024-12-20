@@ -57,6 +57,7 @@
 </tr>
 <tr>
     <th>#</th>
+    <th>Baseline</th>
     @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
         <th>
             {{ $period->reportingPeriodTs[0]->name }}
