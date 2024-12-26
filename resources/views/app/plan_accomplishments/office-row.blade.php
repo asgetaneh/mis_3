@@ -110,7 +110,7 @@
     const planAccId = {{ $planAcc->id }};
 </script>
 <table class="table table-bordered details-row"
-      id="details-{{ $office->id }}" style="padding: 30px; width:100%; border: 1px solid; display: none;">
+      id="details-{{ $office->id }}" style="padding: 30px; width:100%; border: 1px solid;">
     <tbody id="details-data-{{ $office->id }}"  style="padding: 30px; width:100%; border: 1px solid;"> </tbody>
 </table>
 
@@ -151,6 +151,7 @@
 
 
                             // Loop through office_trans_array to populate rows
+                            if (data.office_trans_array && Array.isArray(data.office_trans_array)) {
                             data.office_trans_array.forEach(office => {
                                 let levelClass =
                                 `level-${office.office_level || 1}`; // Fallback to level 1 if not defined    
@@ -161,9 +162,11 @@
                                 <th>Baseline</th>`;
 
                                 // Add period headers dynamically
+                                if (data.period_array && Array.isArray(data.period_array)) {
                                 data.period_array.forEach(period => {
                                     tableHTML += `<th>${period}</th>`;
                                 });
+                                }
                            
                                 tableHTML += `<th>Actions</th></tr>
                                 <tr>
@@ -171,6 +174,7 @@
                                      <td>${office.baseline}</td>`;
 
                                 // Loop through plans for each office and populate plan values
+                                if (office.plans && Array.isArray(office.plans)) {
                                 office.plans.forEach(plan => {
                                     if (plan.plan_status <= data.office_level) { // check for approval of plan
                                         tableHTML += `<td>${plan.plan_value}</td>`;
@@ -178,6 +182,7 @@
                                         tableHTML += `<td>0</td>`; // Optional: Add an empty cell if the condition is not met
                                     }
                                  });
+                                }
 
                                 // Add expand button for offices with children
                                 //alert(office.pp_year);
@@ -198,10 +203,12 @@
                                     <td colspan="6">`;
 
                                 // Loop through the narrations and append each one to the table
+                                if (office.narration && Array.isArray(office.narration)) {
                                 office.narration.forEach(narrationn => {
                                     tableHTML +=
                                     `${narrationn.plan_naration}`; // Append each narration to the table HTML
                                 });
+                                }
 
                                 tableHTML += `
                                     </td>
@@ -217,40 +224,49 @@
                                 </tr>`;
 
                             });
+                            }
                             tableHTML += `
                             <tr>
                                  <th style="width:30%"> Offices</th>
                                 <th  rowspan="">{{ 'Baseline' }}</th>`;
+                                if (data.period_array && Array.isArray(data.period_array)) {
                                 data.period_array.forEach(period => {
                                     tableHTML += `<th>${period}</th>`;
                                 });
+                                }
                                 tableHTML += `<th>Actions</th>
                             </tr>
                             <tr>  `;
+                            if (data.parent_office_data && Array.isArray( data.parent_office_data)) {
                             data.parent_office_data.forEach(parent_office_data_a => {
                                 tableHTML += `
                                 <td>${parent_office_data_a.parent_office_name}</td>
                                 <td>${parent_office_data_a.baseline_self}</td>`;
+                                if (parent_office_data_a.planOfOfficePlan_self && Array.isArray(parent_office_data_a.planOfOfficePlan_self)) {
                                 parent_office_data_a.planOfOfficePlan_self.forEach(
                                     plans => {
                                     tableHTML += `
                                         <td>${plans[0]}</td>
                                         `;
                                 });
+                                }
                                 tableHTML += `<td rowspan="2">self plan</td></tr>`;
                             });
+                            }
                             tableHTML += `
                                 <tr>
                                     <td rowspan=""> Major Activities </td>
                                     <td colspan="6">`;
 
                                 // Loop through the narrations and append each one to the table
+                                if ( data.narrations_self && Array.isArray(data.narrations_self)) {
                                     data.narrations_self.forEach(narrationnm => {
                                         tableHTML += ` 
                                         {{-- <td rowspan=""> ${Object.keys(narrationnm[0])} </td> --}}
                                         ${narrationnm[0]?.plan_naration ?? ''}
                                         `; // Append each narration to the table HTML
                                     });
+                                }
 
                                 tableHTML += `
                                     </td>
@@ -260,7 +276,7 @@
                             detailsTable.innerHTML = tableHTML;
 
                             // Make the details row visible
-                            detailsRow.style.display = '';
+                            detailsRow.style.display = 'block';
 
                             // Reattach listeners to new expand buttons (for sub-child offices)
                             attachExpandListeners();  

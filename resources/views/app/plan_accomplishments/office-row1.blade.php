@@ -173,25 +173,28 @@
                                             });
                                              tableHTML += `</tr>`;
                                             // Populate rows for KPI children
-                                            office.plans.forEach(plan => {
-                                            tableHTML += `
-                                                <tr>
-                                                    <td>${plan.kpi_child_name}</td> 
-                                                     {{--   
-                                                      <td rowspan=""> ${Object.keys(plan.kpi_child_baseline)} </td> --}}
-                                                     <td>${plan.kpi_child_baseline || 0}</td>
-                                                    `; 
-                                                                  
-                                                     plan.plans.forEach(plan2 => {
-                                                        if (plan2.plan_status <= data.office_level) { // check for approval of plan
-                                                            tableHTML += `<td>${plan2.plan_value}</td>`;
-                                                        } else {
-                                                            tableHTML += `<td>0</td>`; // Optional: Add an empty cell if the condition is not met
+                                            if (office.plans && Array.isArray(office.plans)) {
+                                                office.plans.forEach(plan => {
+                                                tableHTML += `
+                                                    <tr>
+                                                        <td>${plan.kpi_child_name}</td> 
+                                                        {{--   
+                                                        <td rowspan=""> ${Object.keys(plan.kpi_child_baseline)} </td> --}}
+                                                        <td>${plan.kpi_child_baseline || 0}</td>
+                                                        `; 
+                                                        if (plan.plans && Array.isArray(plan.plans)) {    
+                                                            plan.plans.forEach(plan2 => {
+                                                                if (plan2.plan_status <= data.office_level) { // check for approval of plan
+                                                                    tableHTML += `<td>${plan2.plan_value}</td>`;
+                                                                } else {
+                                                                    tableHTML += `<td>0</td>`; // Optional: Add an empty cell if the condition is not met
+                                                                }
+                                                            });
                                                         }
-                                                    });
 
-                                                tableHTML += `</tr>`;
-                                            });
+                                                    tableHTML += `</tr>`;
+                                                });
+                                            }
                                        
                                     // Add Major Activities row
                                     tableHTML += `
@@ -200,10 +203,11 @@
                                             <td colspan="${data.period_array.length + 1}">`;
                                             
                                     // Loop through the `narration` array and append each `plan_naration` value
-                                    office.narration.forEach(narrationn => {
-                                        tableHTML += `${narrationn.plan_naration}<br>`; // Add each narration, separated by a line break
-                                    });
-
+                                    if (office.narration && Array.isArray(office.narration)) { 
+                                        office.narration.forEach(narrationn => {
+                                            tableHTML += `${narrationn.plan_naration}<br>`; // Add each narration, separated by a line break
+                                        });
+                                    }
                                     tableHTML += `
                                             </td>
                                         </tr>
@@ -245,11 +249,13 @@
                                                 <tr>
                                                      <td rowspan=""> ${kpi_child.kpi_child_name} </td>
                                                      <td rowspan=""> ${kpi_child.kpi_child_baseline} </td> `;
-                                                     kpi_child.plans.forEach(plan => {
+                                                    if (kpi_child.plans && Array.isArray(kpi_child.plans)) { 
+                                                        kpi_child.plans.forEach(plan => {
                                                           tableHTML += `<td>${plan.plan_value}</td> 
                                                            {{-- <td rowspan=""> ${Object.keys(plan)} </td> --}}
                                                            `; 
-                                                          });
+                                                        });
+                                                    }
                                                     tableHTML += `
                                                    
                                                 </tr>
