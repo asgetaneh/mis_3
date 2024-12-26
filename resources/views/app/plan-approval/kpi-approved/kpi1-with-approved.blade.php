@@ -48,10 +48,11 @@
 @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
     <td>
         @php
-            $planOne = planOne($planAcc->Kpi->id, $one->id, $office, $period->id, 3,$planning_year);
+           // $planOne = planOne($planAcc->Kpi->id, $one->id, $office, $period->id, 3,$planning_year);
+            $planOne = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year->id ?? NULL ,$one->id,null,null);
             $narration = getNarrationApproved($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
         @endphp
-        {{ $planOne }}
+        {{ $planOne[0] }}
     </td>
 @empty
 @endforelse

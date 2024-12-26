@@ -109,10 +109,10 @@
     const planning_year = {{ $planAcc->id }};
     const planAccId = {{ $planAcc->id }};
 </script>
-<div class="table table-bordered details-row"
+<table class="table table-bordered details-row"
       id="details-{{ $office->id }}" style="padding: 30px; width:100%; border: 1px solid; display: none;">
-    <table id="details-data-{{ $office->id }}"  style="padding: 30px; width:100%; border: 1px solid;"> </table>
-</div>
+    <tbody id="details-data-{{ $office->id }}"  style="padding: 30px; width:100%; border: 1px solid;"> </tbody>
+</table>
 
 <script>
     function attachExpandListeners() {
@@ -135,7 +135,7 @@
                     console.error(`Error: Details row not found for Office ID: ${officeId}`);
                     return;
                 }
-
+                
                 // If the details row is hidden, fetch the data
                 if (detailsRow.style.display === 'none') {
                     fetch(url)
@@ -164,7 +164,7 @@
                                 data.period_array.forEach(period => {
                                     tableHTML += `<th>${period}</th>`;
                                 });
-
+                           
                                 tableHTML += `<th>Actions</th></tr>
                                 <tr>
                                     <td rowspan="">${office.office_name}</td>
@@ -180,6 +180,7 @@
                                  });
 
                                 // Add expand button for offices with children
+                                //alert(office.pp_year);
                                 tableHTML += `
                                     <td rowspan="2">
                                           ${office.has_child ? `
@@ -262,7 +263,8 @@
                             detailsRow.style.display = '';
 
                             // Reattach listeners to new expand buttons (for sub-child offices)
-                            attachExpandListeners();
+                            attachExpandListeners();  
+                           // alert(data);
                         })
                         .catch(error => console.error('Fetch error:', error));
                 } else {

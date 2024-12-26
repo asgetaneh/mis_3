@@ -634,15 +634,17 @@ function planOne($kkp, $one, $office, $period, $suffix, $planning_year)
     $getKpi = KeyPeformanceIndicator::find($kkp);
     $sum1 = 0;
     if ($suffix == 1) {
-        // if($getKpi->measurement){
-        //     if($getKpi->measurement->slug =="percent"){
-        //         $planAccomplishments = calculateAveragePlan($kkp,$office,$period,false,$planning_year ,$one,null,null);
-        //         if($planAccomplishments[1]!=0){
-        //             $sum1 = $planAccomplishments[0]/$planAccomplishments[1];
-        //         }
-        //         //dump($planAccomplishments);
-        //     }
-        //     else{
+        if($getKpi->measurement){
+            if($getKpi->measurement->slug =="percent"){
+                $planAccomplishments = calculateAveragePlan($kkp,$office,$period,false,$planning_year ,$one,null,null);
+               // dump($planAccomplishments);
+                //dump($office->officeTranslations[0]->name);
+                if($planAccomplishments[1]!=0){
+                    $sum1 = $planAccomplishments[0]/$planAccomplishments[1];
+                }
+                
+            }
+            else{
                 // All current office children if exist with the logged in user office level
                     $planAccomplishmentsChildParent = PlanAccomplishment::select()
                     // ->where('office_id', $office->id)
@@ -685,10 +687,10 @@ function planOne($kkp, $one, $office, $period, $suffix, $planning_year)
                 }
                 // dd($sum1);
                 return $sum1;
-         //   }
-        // }else{
-        //     echo "please set KPI measurement Type?";
-        // }
+           }
+        }else{
+            echo "please set KPI measurement Type?";
+        }
 
         
     } elseif ($suffix == 3) {

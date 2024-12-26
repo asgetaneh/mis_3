@@ -2382,7 +2382,6 @@ class PlanAccomplishmentController extends Controller
 
     public function getDetails($id, $kpi_id, $year_id, Request $request)
     {
-        
         $planAccom = $request->route()->parameters(); 
         $kpi = KeyPeformanceIndicator::find($kpi_id);
         $kpi_children_name =[];
@@ -2392,7 +2391,7 @@ class PlanAccomplishmentController extends Controller
         $planning_year = PlaningYear::find($year_id);
         $planAccomplishment = PlanAccomplishment::where('kpi_id',$kpi->id)
         ->where('planning_year_id',$planning_year->id)
-        ->first();
+        ->first();//dump($planAccomplishment);
         $get_office = Office::find($id); // Use office ID from request
         $parent_office_name = $get_office->officeTranslations[0]->name;
         $reportin_periods = getQuarter($planAccomplishment->Kpi->reportingPeriodType->id);
@@ -2403,9 +2402,7 @@ class PlanAccomplishmentController extends Controller
         $userOffice = auth()->user()->offices[0];
         $child_offices = $get_office->offices; 
         $kpi_children_data = []; // Array to hold KPI child data
-        $baseline_self =null;
-        //$planning_year = PlaningYear::where('is_active', true)->first(); 
-        //dump($planAccomplishment);
+        $baseline_self =null; 
         // KPI has child three, two, one
         if($planAccomplishment->kpi_child_three_id!=null){
              
@@ -2519,27 +2516,18 @@ class PlanAccomplishmentController extends Controller
                         'plans' => $kpi_child_plans
                      ];
                 }
-                // Process each KPI child
-                foreach ($planAccomplishment->Kpi->kpiChildOnes as $one) {                     
-                    foreach ($reportin_periods as $period) {
-                      
-                    }
-                }
                 // Add the completed office data to the array
-                $office_trans_array[] = $office_data;
-                
+                $office_trans_array[] = $office_data;                
             } 
             $parent_office_trans_array[] = $parent_office_data_chOne;
-            //dump($parent_office_trans_array );
-
-            
+            //dump($parent_office_trans_array );            
         }
         // KPI has no child 
-        else{
+        else{ //dump($child_offices);
             foreach ($child_offices as $office) {   
                 $hasChild = !$office->offices->isEmpty();
                 $office_level = $office->level ?: 1;
-                //dump($planAccomplishment->kpi_child_one_id);
+                //dump($planAccomplishment->);
                 $office_data = [
                     'id' => $office->id,
                     'office_name' => $office->officeTranslations[0]->name,

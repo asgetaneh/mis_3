@@ -26,7 +26,7 @@ use Illuminate\Support\Collection;
 function calculateAveragePlan($kkp, $office, $period, $is_report, $planning_year, $one, $two, $three)
 {
     // Fetch the current office with its children
-    $office = Office::with('offices')->find($office->id);
+    $office = Office::with('offices')->find($office->id);//dump($office);
     $parentOfficeLevel = $office->level ?? 1; // Default office_level to 1 if null
 
     $totalPlan = 0;        // Sum of valid plans
@@ -34,7 +34,11 @@ function calculateAveragePlan($kkp, $office, $period, $is_report, $planning_year
 
     // Step 1: Include the current office's plan if valid
     $officePlan = getOfficePlan($kkp, $office, $period, $is_report, $planning_year, $one, $two, $three);
-
+    // if($officePlan){
+    //     dump($officePlan->plan_value);
+    //     dump($office->officeTranslations[0]->name);
+    // }
+   
     if ($officePlan) {
         $planValue = !$is_report ? $officePlan->plan_value : $officePlan->accom_value;
         $planStatus = !$is_report ? $officePlan->plan_status : $officePlan->accom_status;
@@ -67,7 +71,10 @@ function calculateAveragePlan($kkp, $office, $period, $is_report, $planning_year
         }
     }
 
-    // Return the aggregated total plan and count of valid plans
+    // // Return the aggregated total plan and count of valid plans
+    // if($totalPlan!=0){
+    //     echo $totalPlan."-->". $validPlansCount."<br/>";
+    // }
     return [$totalPlan, $validPlansCount];
 }
 

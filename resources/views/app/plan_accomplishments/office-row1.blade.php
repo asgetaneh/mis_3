@@ -227,7 +227,7 @@
                                         <th colspan="${data.period_array.length + 2 }" style="width:90%;">Offices: ${parent_office_data_a.office_name}</th>`;
                                        
                                         tableHTML += `
-                                        <td rowspan="${4 + 3}">
+                                        <td rowspan="${4 + 4}">
                                             Self plan
                                         </td>
                                         </tr>
@@ -255,6 +255,12 @@
                                                 </tr>
                                                     `; 
                                             });
+                                            tableHTML += ` 
+                                                <tr>
+                                                <th>Major Activities</th>
+                                                <td rowspan=""> ${parent_office_data_a.narration[0].plan_naration} </td>
+                                                 </tr>
+                                                `;  
                                              });
                             
                        `</table>`;
