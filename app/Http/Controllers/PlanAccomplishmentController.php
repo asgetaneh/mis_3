@@ -2384,6 +2384,9 @@ class PlanAccomplishmentController extends Controller
     {
         $planAccom = $request->route()->parameters(); 
         $kpi = KeyPeformanceIndicator::find($kpi_id);
+        // if (!count($kpi->kpiChildOnes) == 0) {
+        //     dump($kpi->kpiChildOnes);
+        // }
         $kpi_children_name =[];
         foreach ($kpi->kpiChildOnes as $key => $value) {
             $kpi_children_name[] = $value->kpiChildOneTranslations[0]->name;
@@ -2391,7 +2394,7 @@ class PlanAccomplishmentController extends Controller
         $planning_year = PlaningYear::find($year_id);
         $planAccomplishment = PlanAccomplishment::where('kpi_id',$kpi->id)
         ->where('planning_year_id',$planning_year->id)
-        ->first();//dump($planAccomplishment);
+        ->first();
         $get_office = Office::find($id); // Use office ID from request
         $parent_office_name = $get_office->officeTranslations[0]->name;
         $reportin_periods = getQuarter($planAccomplishment->Kpi->reportingPeriodType->id);
@@ -2412,7 +2415,7 @@ class PlanAccomplishmentController extends Controller
 
         }
          // KPI has child  one
-        else if($planAccomplishment->kpi_child_one_id!=null){
+        else if(!count($kpi->kpiChildOnes) == 0){
             $parent_office_data_chOne = [
                 'id' => $get_office->id,
                 'office_name' => $get_office->officeTranslations[0]->name,
