@@ -258,7 +258,7 @@
                                             tableHTML += ` 
                                                 <tr>
                                                 <th>Major Activities</th>
-                                                <td rowspan=""> ${parent_office_data_a.narration[0].plan_naration} </td>
+                                                {{-- <td rowspan=""> ${parent_office_data_a.narration[0].plan_naration} </td> --}}
                                                  </tr>
                                                 `;  
                                              });
