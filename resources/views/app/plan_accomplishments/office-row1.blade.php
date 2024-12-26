@@ -178,8 +178,7 @@
                                                 tableHTML += `
                                                     <tr>
                                                         <td>${plan.kpi_child_name}</td> 
-                                                        <td rowspan=""> ${Object.keys(plan)} </td>
-                                                        {{--   
+                                                         {{--   
                                                         <td rowspan=""> ${Object.keys(plan.kpi_child_baseline)} </td> --}}
                                                         <td>${plan.kpi_child_baseline || 0}</td>
                                                         `; 
