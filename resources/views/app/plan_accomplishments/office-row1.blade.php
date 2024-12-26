@@ -258,7 +258,12 @@
                                             tableHTML += ` 
                                                 <tr>
                                                 <th>Major Activities</th>
-                                                {{-- <td rowspan=""> ${parent_office_data_a.narration[0].plan_naration} </td> --}}
+                                                {{-- <td rowspan=""> ${Object.keys(parent_office_data_a.narration )} </td> --}}
+                                                ${
+                                                    parent_office_data_a.narration && parent_office_data_a.narration.length > 0
+                                                        ? `<td colspan="${data.period_array.length + 1 }">${parent_office_data_a.narration[0].plan_naration}</td>` // If narration exists
+                                                        : `<td colspan="${data.period_array.length + 1 }">No narration available</td>` // Else
+                                                }
                                                  </tr>
                                                 `;  
                                              });
