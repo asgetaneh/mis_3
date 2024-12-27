@@ -151,8 +151,8 @@
                                             <th colspan="${data.period_array.length + 2 }" style="width:90%;">
                                                 Offices: ${office.office_name}
                                             </th>
-                                            <td rowspan="${office.plans.length + 3}">
-                                                ${
+                                            <td rowspan="${office.plans.length + 3}"> 
+                                                 ${
                                                     office.has_child
                                                         ? `<button class="btn btn-primary btn-expand-new" 
                                                                 data-id="${office.id}-${office.kpi_id}" 
@@ -161,6 +161,11 @@
                                                             </button>`
                                                         : 'No child'
                                                 }
+                                                <a href="/smis/plan/plan-accomplishment/${office.id}/details/${office.kpi_id}/kpi/${office.pp_year}" 
+                                                    target="_blank" 
+                                                    class="btn btn-link">
+                                                   .
+                                                </a>
                                             </td>
                                             </tr>
                                             <tr>
