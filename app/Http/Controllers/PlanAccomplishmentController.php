@@ -2493,8 +2493,8 @@ class PlanAccomplishmentController extends Controller
                             null,
                             null
                         );
-                        dump($office->id);
-                         dump($planOfOfficePlan[0]);
+                        //dump($office->id);
+                         //dump($planOfOfficePlan[0]);
                         $kpi_child_plans[] = [
                             'reporting_period' => $period->reportingPeriodTs[0]->name,
                             'plan_value' => $planOfOfficePlan[0] ?? 0,
