@@ -109,10 +109,10 @@
     const planning_year = {{ $planAcc->id }};
     const planAccId = {{ $planAcc->id }};
 </script>
-<table class="table table-bordered details-row"
-      id="details-{{ $office->id }}" style="padding: 30px; width:100%; border: 1px solid;">
-    <tbody id="details-data-{{ $office->id }}"  style="padding: 30px; width:100%; border: 1px solid;"> </tbody>
-</table>
+<div class="table table-bordered details-row"
+      id="details-{{ $office->id }}" style="padding: 10px; width:100%; border: 1px solid;">
+    <table id="details-data-{{ $office->id }}"  style="padding: 10px; width:100%; border: 1px solid;"> </table>
+</div>
 
 <script>
     function attachExpandListeners() {
@@ -276,7 +276,7 @@
                             detailsTable.innerHTML = tableHTML;
 
                             // Make the details row visible
-                            detailsRow.style.display = 'block';
+                            detailsRow.style.display = '';
 
                             // Reattach listeners to new expand buttons (for sub-child offices)
                             attachExpandListeners();  
