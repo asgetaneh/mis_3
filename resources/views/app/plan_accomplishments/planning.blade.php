@@ -447,6 +447,9 @@
                                                                                             </td>
                                                                                         @else
                                                                                             <td>
+                                                                                                <input type="hidden"
+                                                                                                    name="type{{ $kpi->id }}"
+                                                                                                    value="no-{{ $kpi->id }}">
                                                                                                 <input id="selectProducts"
                                                                                                     name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
                                                                                                     @if ($period->slug == 1) id = "yearly"
@@ -681,6 +684,9 @@
                                                                                     </td>
                                                                                 @else
                                                                                     <td>
+                                                                                        <input type="hidden"
+                                                                                            name="type{{ $kpi->id }}"
+                                                                                            value="no">
                                                                                         <input
                                                                                             name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}"
                                                                                             id="koneT{{ $one->id }}{{ $two->id }}{{ $period->slug }}"

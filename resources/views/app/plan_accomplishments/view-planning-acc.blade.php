@@ -406,7 +406,9 @@
                                                                 @include('app.plan_accomplishments.view-kpi123')
                                                                 {{-- KPI has  child one and child two --}}
                                                             @else
-                                                                @include('app.plan_accomplishments.view-kpi12')
+                                                                {{-- @include('app.plan_accomplishments.view-kpi12') --}}
+                                                                 <a  href='{{ route('plan-accomplishment-details', [$office->id,$planAcc->Kpi->id, $planning_year->id]) }}'> {{"."}}</a>
+                                                                 @include('app.plan_accomplishments.office-row12', ['office' => $office,'planAcc' => $planAcc, 'level' => 0])
                                                             @endif
                                                             {{-- KPI has  child one only --}}
                                                         @else

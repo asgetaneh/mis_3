@@ -1,6 +1,6 @@
 <style>
     .level-1 {
-        background-color: #f0f8ff;
+        background-color: #12cd4322;
         /* Light blue for parent */
     }
 
