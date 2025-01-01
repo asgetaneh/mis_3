@@ -110,7 +110,7 @@
     const planAccId = {{ $planAcc->id }};
 </script>
 <div class="table table-bordered details-row"
-      id="details-{{ $office->id }}" style="padding: 10px; width:100%; border: 1px solid;">
+      id="details-{{ $office->id }}" style="padding: 10px; border: 1px solid; display: none;">
     <table id="details-data-{{ $office->id }}"  style="padding: 10px; width:100%; border: 1px solid;"> </table>
 </div>
 
@@ -285,7 +285,7 @@
                         .catch(error => console.error('Fetch error:', error));
                 } else {
                     // Hide the details row if it was already visible
-                    detailsRow.style.display = 'none';
+                    detailsRow.style.display = '';
                 }
             });
         });

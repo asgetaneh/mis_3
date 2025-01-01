@@ -26,13 +26,14 @@
     <th colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 3 }} ">
         Offices: {{ $office->officeTranslations[0]->name }}
     </th>
-    <td rowspan="{{ $planAcc->Kpi->kpiChildOnes->count()  * $planAcc->Kpi->kpiChildTwos->count()}} +4 ">
+    <td rowspan="{{ $planAcc->Kpi->kpiChildOnes->count()  * $planAcc->Kpi->kpiChildTwos->count()+3}} ">
          @if (!$office->offices->isEmpty())
                 <p>
-                    <button class="btn btn-primary btn-expand-new" 
-                        data-id="{{ $office->id }}-{{ $planAcc->Kpi->id }}" 
-                        data-url="{{ url('/smis/plan/plan-accomplishment/' . $office->id . '/details/' . $planAcc->kpi->id . '/kpi/' . $planAcc->planning_year_id) }}">
+                    <button class="btn btn-primary btn-expand-new-two" 
+                        data-id="{{ $office->id }}-two-{{ $planAcc->Kpi->id }}" 
+                        data-url="{{ url('/smis/plan/plan-accomplishment/office/' . $office->id . '/kpi/' . $planAcc->kpi->id . '/year/' . $planAcc->planning_year_id) }}">
                         Details
+                         {{-- {{$office->id . '-' . $planAcc->kpi->id }} --}}
                     </button>
                 </p>
             @else
@@ -112,37 +113,37 @@
     </table>
 
 <script>
-    const kpi_id = {{ $planAcc->kpi->id }};
+    {{-- const kpi_id = {{ $planAcc->kpi->id }};
     const planning_year = {{ $planAcc->planning_year_id }};
-    const planAccId = {{ $planAcc->id }};
+    const planAccId = {{ $planAcc->id }}; --}}
 </script>
-<div id="details-{{ $office->id }}-{{ $planAcc->Kpi->id }}" class="table table-bordered details-row-one" style="padding: 10px; border: 1px solid; display: none;">
-    <table id="details-data-{{ $office->id }}-{{ $planAcc->Kpi->id }}" style="padding: 30px; width:100%; border: 1px solid;"></table>
+<div id="details-{{ $office->id }}-two-{{ $planAcc->Kpi->id }}" class="table table-bordered details-row-one" style="padding: 10px; border: 1px solid; display: none;">
+    <table id="details-data-{{ $office->id }}-two-{{ $planAcc->Kpi->id }}" style="padding: 20px; width:100%; border: 1px solid;"></table>
 </div>
 <script>
    function attachNewExpandListeners() {
     // Remove existing listeners to prevent duplicate event handling
-    document.querySelectorAll('.btn-expand-new').forEach(button => {
+    document.querySelectorAll('.btn-expand-new-two').forEach(button => {
         const clone = button.cloneNode(true);
         button.parentNode.replaceChild(clone, button);
     });
 
     // Add new event listeners to the refreshed buttons
-    document.querySelectorAll('.btn-expand-new').forEach(button => {
+    document.querySelectorAll('.btn-expand-new-two').forEach(button => {
         button.addEventListener('click', function () {
-            const officeId = this.getAttribute('data-id'); // Unique identifier for office
+            const officeIdTwo = this.getAttribute('data-id'); // Unique identifier for office
             const url = this.getAttribute('data-url'); // URL to fetch data
  
             if (!url) {
-                console.error(`Error: URL is null or undefined for Office ID: ${officeId}`);
+                console.error(`Error: URL is null or undefined for Office ID: ${officeIdTwo}`);
                 return;
             }
 
-            const detailsRow = document.getElementById(`details-${officeId}`);
-            const detailsTable = document.getElementById(`details-data-${officeId}`);
+            const detailsRow = document.getElementById(`details-${officeIdTwo}`);
+            const detailsTable = document.getElementById(`details-data-${officeIdTwo}`);
 
             if (!detailsRow || !detailsTable) {
-                console.error(`Error: Details row or table not found for Office ID: ${officeId}`);
+                console.error(`Error: Details row or table not found for Office ID: ${officeIdTwo}`);
                 return;
             }
 
@@ -162,20 +163,22 @@
                                     let levelClass =  `level-${office.office_level || 1}`; // Fallback to level 1 if not defined 
                                          tableHTML += `
                                         <tr style="background:#CDCDCD;">
+                                            {{-- <td rowspan=""> ${Object.keys(data.office_trans_array)} </td> --}}
                                             <th colspan="${data.period_array.length + 3 }" style="width:90%;">
                                                 Offices: ${office.office_name}
                                             </th>
                                             <td rowspan="${ data.parent_office_trans_array[0].kpi_child_one_count*data.parent_office_trans_array[0].kpi_child_two_count+ 3}">
                                                  ${
                                                     office.has_child
-                                                        ? `<button class="btn btn-primary btn-expand-new" 
-                                                                data-id="${office.id}-${office.kpi_id}" 
-                                                                data-url="/smis/plan/plan-accomplishment/${office.id}/details/${office.kpi_id}/kpi/${office.pp_year}">
+                                                        ? `<button class="btn btn-primary btn-expand-new-two" 
+                                                                data-id="${office.id}-two-${office.kpi_id}" 
+                                                                data-url="/smis/plan/plan-accomplishment/office/${office.id}/kpi/${office.kpi_id}/year/${office.pp_year}">
                                                                  Details 
+                                                                 {{-- ${office.id}-${office.kpi_id} --}}
                                                             </button>`
                                                         : 'No child'
                                                 }
-                                                <a href="/smis/plan/plan-accomplishment/${office.id}/details/${office.kpi_id}/kpi/${office.pp_year}" 
+                                                <a href="/smis/plan/plan-accomplishment/office/${office.id}/kpi/${office.kpi_id}/year/${office.pp_year}" 
                                                     target="_blank" 
                                                     class="btn btn-link">
                                                    .
@@ -192,6 +195,7 @@
                                             });
                                              tableHTML += `</tr>`;
                                             // Populate rows for KPI children
+
                                             if (office.plans && Array.isArray(office.plans)) {
                                                 office.plans.forEach(plan => {
                                                 tableHTML += `
@@ -204,9 +208,7 @@
 
                                                         tableHTML += `
                                                         <td>${plan.kpi_child_two_name}</td> 
-                                                          {{-- <td rowspan=""> ${Object.keys(plan)} </td>  --}}
-                                                        <td>${plan.kpi_child_baseline || 0}</td>
-                                                        `; 
+                                                         <td>${plan.kpi_child_baseline || 0}</td> `; 
                                                         if (plan.plans && Array.isArray(plan.plans)) {    
                                                             plan.plans.forEach(plan2 => {
                                                                 if (plan2.plan_status <= data.office_level) { // check for approval of plan
@@ -236,10 +238,10 @@
                                     tableHTML += `
                                             </td>
                                         </tr>
-                                        <tr class="details-row" id="details-${office.id}-${office.kpi_id}" style="display: none;">
-                                            <td colspan="${data.period_array.length + 3}">
+                                        <tr class="details-row" id="details-${office.id}-two-${office.kpi_id}" style="display: none;">
+                                            <td colspan="${data.period_array.length + 4}">
                                                 <table class="table table-bordered ${levelClass}">
-                                                    <tbody id="details-data-${office.id}-${office.kpi_id}">
+                                                    <tbody id="details-data-${office.id}-two-${office.kpi_id}">
                                                         <!-- Sub-child details will be loaded here -->
                                                     </tbody>
                                                 </table>

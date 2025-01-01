@@ -2744,4 +2744,181 @@ class PlanAccomplishmentController extends Controller
     
        
     } 
+    public function getDetailsTwo($id, $kpi_id, $year_id, Request $request)
+    {
+        $kpi = KeyPeformanceIndicator::find($kpi_id);
+        // if (!count($kpi->kpiChildOnes) == 0) {
+        //     dump($kpi->kpiChildOnes);
+        // }
+        
+        $planning_year = PlaningYear::find($year_id);
+        $planAccomplishment = PlanAccomplishment::where('kpi_id',$kpi_id)
+        ->where('planning_year_id',$planning_year->id)
+        ->first();
+        $get_office = Office::find($id); // Use office ID from request
+        $parent_office_name = $get_office->officeTranslations[0]->name;
+        $reportin_periods = getQuarter($kpi->reportingPeriodType->id);
+        $period_array = [];
+        $office_trans_array = []; // Initialize the array to store structured data
+        $parent_office_trans_array = []; // Initialize the array to store structured data
+        $narrations = [];
+        $userOffice = auth()->user()->offices[0];
+        $child_offices = $get_office->offices; 
+        $kpi_children_data = []; // Array to hold KPI child data
+        $baseline_self =null; 
+            $parent_office_data_chOne = [
+                'id' => $get_office->id,
+                'office_name' => $get_office->officeTranslations[0]->name,
+                 'kpi_id' => $kpi->id,
+                'pp_year' => $planning_year->id,
+                'kpi_child_one_count' => count($kpi->kpiChildOnes),
+                'kpi_child_two_count' => count($kpi->kpiChildTwos),
+                "narration" => $planAccomplishment->getNarration(
+                    $kpi->id,
+                    $planning_year->id ?? null,
+                    $get_office 
+                ),
+                'planAndBaseline' => [],
+              ];
+             foreach ($kpi->kpiChildOnes as $one) {
+                foreach ($kpi->kpiChildTwos as $two) {
+                    $kpi_officeSelf_plans = [];
+                    foreach ($reportin_periods as $period) {
+                        $planOfOfficePlanSelf = $planAccomplishment->OnlyKpiOTT(
+                            $kpi->id, $get_office, $period->id,  false,
+                            $planning_year->id ?? null,$one->id, $two->id,null
+                        );                   
+                        $kpi_officeSelf_plans[] = [
+                            'reporting_period' => $period->reportingPeriodTs[0]->name,
+                            'plan_value' => $planOfOfficePlanSelf[0] ?? 0,
+                            'plan_status' => $planOfOfficePlan[2] ?? 0
+                        ];
+                        // Add the reporting period name to the unique period array
+                        $period_array[] = $period->reportingPeriodTs[0]->name;
+                        $period_array = array_unique($period_array);
+                    }
+                    $parent_office_data_chOne['planAndBaseline'][] = [
+                        'kpi_child_one_name' => $one->kpiChildOneTranslations[0]->name,
+                        'kpi_child_two_name' => $two->kpiChildTwoTranslations[0]->name,
+                      
+                        'kpi_child_baseline' => OnlyKpiOttBaseline(
+                            $kpi->id,
+                            $get_office,
+                            $planning_year->id,
+                            null,
+                            $one->id,
+                            $two->id,
+                            null
+                        ),
+                        'plans' => $kpi_officeSelf_plans
+                    ];
+                }
+            }
+            foreach ($child_offices as $office) {   
+                $hasChild = !$office->offices->isEmpty();
+                $office_level = $office->level ?: 1;
+
+                // Initialize the office data
+                $office_data = [
+                    'id' => $office->id,
+                    'office_name' => $office->officeTranslations[0]->name,
+                    'has_child' => $hasChild,
+                    'office_level' => $office_level,
+                    'kpi_id' => $kpi->id,
+                    'pp_year' => $planning_year->id,
+                    "narration" => $planAccomplishment->getNarration(
+                        $kpi->id,
+                        $planning_year->id ?? null,
+                        $office 
+                    ),
+                    'plans' => [] // Initialize to store plans for all KPI children
+                ];
+                // Process each KPI child
+                foreach ($kpi->kpiChildOnes as $one) {  
+                    foreach ($kpi->kpiChildTwos as $two) {
+                        // Add plan data for each reporting period
+                        $kpi_child_plans = [];
+                        foreach ($reportin_periods as $period) {
+                            $planOfOfficePlan = $planAccomplishment->KpiOTT(
+                                $kpi->id,
+                                $office,
+                                $period->id,
+                                false,
+                                $planning_year->id ?? null,
+                                $one->id,
+                                $two->id,
+                                null
+                            );
+                            //dump($office->id);
+                            //dump($planOfOfficePlan[0]);
+                            $kpi_child_plans[] = [
+                                'reporting_period' => $period->reportingPeriodTs[0]->name,
+                                'plan_value' => $planOfOfficePlan[0] ?? 0,
+                                'plan_status' => $planOfOfficePlan[2] ?? 0
+                            ];
+                            
+                        }
+
+                        // Add the plans for the current KPI child
+                        $office_data['plans'][] = [
+                            'kpi_child_one_name' => $one->kpiChildOneTranslations[0]->name,
+                            'kpi_child_two_name' => $two->kpiChildTwoTranslations[0]->name,
+                            'kpi_child_baseline' => planBaseline(
+                                $kpi->id,
+                                $office,
+                                $planning_year->id,
+                                null,
+                                $one->id,
+                                $two->id,
+                                null
+                            ),
+                            'plans' => $kpi_child_plans
+                        ];
+                    }
+                }
+                // Add the completed office data to the array
+                $office_trans_array[] = $office_data;                
+            } 
+            $parent_office_trans_array[] = $parent_office_data_chOne;
+            //dump($parent_office_trans_array ); 
+
+        //dump($planning_year); 
+        //dump($kpi); 
+        //dump($get_office); 
+         
+        
+        foreach ($reportin_periods as $period) {
+             $planOfOfficePlan_self[] = $planAccomplishment->OnlyKpiOTT( $planAccomplishment->Kpi->id,$get_office, $period->id, false, $planning_year->id ?? null,$planAccomplishment->kpi_child_one_id, $planAccomplishment->kpi_child_two_id,$planAccomplishment->kpi_child_three_id);
+        }
+        $narrations_self[] = $planAccomplishment->getNarrationSelf(
+            $planAccomplishment->Kpi->id,
+            $planning_year->id ?? null,
+            $get_office 
+        ); //dump($office_trans_array);
+      
+        $parent_office_data[] = [
+            'parent_office_name' => $parent_office_name,
+            'baseline_self' => $baseline_self,
+            'planOfOfficePlan_self' => $planOfOfficePlan_self
+        ];
+        try {
+            // Your logic to fetch and return data
+            return response()->json([
+                'office' => $get_office,
+                'office_trans_array' => $office_trans_array,
+                'parent_office_trans_array' => $parent_office_trans_array,
+                 'period_array' => $period_array,
+                'narrations_self' => $narrations_self,
+                'planAccId' => $planAccomplishment->id,
+                'office_level' => $office_level,
+                'parent_office_data' => $parent_office_data,
+                'kpi_children_data' => $kpi_children_data,
+                 
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to fetch data', 'message' => $e->getMessage()], 500);
+        }
+    
+       
+    } 
 }

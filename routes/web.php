@@ -254,6 +254,7 @@ Route::prefix('/')
             Route::prefix('/plan')->group(function () {
                 Route::match(array('GET', 'POST'),'plan-accomplishment/{office}', [PlanAccomplishmentController::class, 'officeKpiObjectiveGoal'])->name('plan-accomplishment');
                 Route::get('/plan-accomplishment/{office}/details/{kpi}/kpi/{p_year}', [PlanAccomplishmentController::class, 'getDetails'])->name('plan-accomplishment-details');
+                Route::get('/plan-accomplishment/office/{office}/kpi/{kpi}/year/{p_year}', [PlanAccomplishmentController::class, 'getDetailsTwo'])->name('plan-accomplishment-details-two');
                 Route::match(array('GET', 'POST'),'plan-accomplishment-goalclick/{office}/{goal}/{offwithkpi}', [PlanAccomplishmentController::class, 'planaccomplishmentGoalClick'])->name('plan-accomplishment-goalclick');
 
                 Route::match(array('GET', 'POST'),'approve-plan', [PlanAccomplishmentController::class, 'approvePlanAccomplishment'])->name('approve-plan');

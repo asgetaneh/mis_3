@@ -107,7 +107,7 @@
     <table id="details-data-{{ $office->id }}-{{ $planAcc->Kpi->id }}" style="padding: 30px; width:100%; border: 1px solid;"></table>
 </div>
 <script>
-   function attachNewExpandListeners() {
+   function attachOneExpandListeners() {
     // Remove existing listeners to prevent duplicate event handling
     document.querySelectorAll('.btn-expand-new').forEach(button => {
         const clone = button.cloneNode(true);
@@ -288,11 +288,11 @@
                         detailsRow.style.display = '';
 
                         // Reattach listeners for nested expand buttons
-                        attachNewExpandListeners();
+                        attachOneExpandListeners();
                     })
                     .catch(error => console.error('Fetch error:', error));
             } else {
-                detailsRow.style.display = 'none'; // Hide the row if it's already displayed
+                detailsRow.style.display = ''; // Hide the row if it's already displayed
             }
         });
     });
@@ -302,7 +302,7 @@
 
 // Reattach listeners when the DOM content is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
-    attachNewExpandListeners();
+    attachOneExpandListeners();
 });
 
 

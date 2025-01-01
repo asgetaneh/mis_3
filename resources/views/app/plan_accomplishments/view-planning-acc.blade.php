@@ -407,14 +407,14 @@
                                                                 {{-- KPI has  child one and child two --}}
                                                             @else
                                                                 {{-- @include('app.plan_accomplishments.view-kpi12') --}}
-                                                                 <a  href='{{ route('plan-accomplishment-details', [$office->id,$planAcc->Kpi->id, $planning_year->id]) }}'> {{"."}}</a>
-                                                                 @include('app.plan_accomplishments.office-row12', ['office' => $office,'planAcc' => $planAcc, 'level' => 0])
+                                                                 <a  href='{{ route('plan-accomplishment-details-two', [$office->id,$planAcc->Kpi->id, $planning_year->id]) }}'> {{"."}}</a>
+                                                                 @include('app.plan_accomplishments.office-row12', ['office' => $office,'kpi' => $planAcc->Kpi->id, $planning_year->id,'level' => 0])
                                                             @endif
                                                             {{-- KPI has  child one only --}}
                                                         @else
                                                             {{-- @include('app.plan_accomplishments.view-kpi1') --}}
                                                             <a  href='{{ route('plan-accomplishment-details', [$office->id,$planAcc->Kpi->id, $planning_year->id]) }}'> {{"."}}</a>
-                                                            @include('app.plan_accomplishments.office-row1', ['office' => $office,'planAcc' => $planAcc, 'level' => 0])
+                                                            @include('app.plan_accomplishments.office-row1', ['office' => $office, 'level' => 0])
                                                         @endif
 
                                                         {{-- </thead>
