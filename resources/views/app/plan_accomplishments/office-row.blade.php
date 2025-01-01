@@ -33,7 +33,7 @@
         @endforelse
         <td rowspan="3">
             @if (!$office->offices->isEmpty())
-                <button class="btn btn-primary btn-expand" data-id="{{ $office->id }}"
+                <button class="btn btn-primary btn-expand" data-id="{{ $office->id }}-plain-{{ $planAcc->Kpi->id }}"
                     data-url="{{ url('/smis/plan/plan-accomplishment/' . $office->id . '/details/' . $planAcc->kpi->id. '/kpi/' . $planAcc->planning_year_id) }}">
                     Details
                 </button>
@@ -110,8 +110,8 @@
     const planAccId = {{ $planAcc->id }};
 </script>
 <div class="table table-bordered details-row"
-      id="details-{{ $office->id }}" style="padding: 10px; border: 1px solid; display: none;">
-    <table id="details-data-{{ $office->id }}"  style="padding: 10px; width:100%; border: 1px solid;"> </table>
+      id="details-{{ $office->id }}-plain-{{ $planAcc->Kpi->id }}" style="padding: 10px; border: 1px solid; display: none;">
+    <table id="details-data-{{ $office->id }}-plain-{{ $planAcc->Kpi->id }}"  style="padding: 10px; width:100%; border: 1px solid;"> </table>
 </div>
 
 <script>
@@ -190,7 +190,7 @@
                                     <td rowspan="2">
                                           ${office.has_child ? `
                                             <button class="btn btn-primary btn-expand"
-                                                    data-id="${office.id}"
+                                                    data-id="${office.id}-plain-${office.kpi_id}"
                                                     data-url="/smis/plan/plan-accomplishment/${office.id}/details/${office.kpi_id}/kpi/${office.pp_year}">
                                                 Details
                                             </button>` 
@@ -213,10 +213,10 @@
                                 tableHTML += `
                                     </td>
                                 </tr>
-                                <tr class="details-row" id="details-${office.id}" style="display: none;">
+                                <tr class="details-row" id="details-${office.id}-plain-${office.kpi_id}" style="display: none;">
                                     <td colspan="${data.period_array.length + 3}">
                                         <table class="table table-bordered ${levelClass}">
-                                            <tbody id="details-data-${office.id}">
+                                            <tbody id="details-data-${office.id}-plain-${office.kpi_id}">
                                                 <!-- Sub-child details will be loaded here -->
                                             </tbody>
                                         </table>
