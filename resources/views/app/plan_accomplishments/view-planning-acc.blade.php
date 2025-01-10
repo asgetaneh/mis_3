@@ -15,9 +15,9 @@
             border-collapse: collapse;
             border: 1px solid #289CD8;
         }
+        
     </style>
-@endsection
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 @section('content')
     @php     $first=1; @endphp
     <div class="justify-content-center">
@@ -85,6 +85,9 @@
                                 <button class="btn btn-info" value="pdf" name="pdf" type="submit">PDF</button>
                                 {{-- <button class="btn btn-success" value="excel" name="excel" type="submit">Excel</button> --}}
                                 {{-- <button class="btn btn-primary" value="word" name="word" type="submit">Word</button> --}}
+                                <button onclick="exportTableToExcel()">Export to Excel</button>
+                                 {{-- <a href="{{ url('/export-excel') }}" class="btn btn-success">Export to Excel</a> --}}
+                                <button onclick="window.print()">Print2</button>
                             </div>
                         </div>
                     </div>
@@ -100,7 +103,7 @@
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="card card-primary card-outline card-outline-tabs fillable-objective">
-                <div class="card-body">
+                <div class="card-body" >
                     <div class="tab-content" id="custom-tabs-four-tabContent">
                         @php
                             $kpi_repeat[0] = null;
@@ -114,9 +117,9 @@
                             @endphp
 
                             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
-                                <div class="card collapsed-card p-2">
-                                    <div class="card-header">
-                                        <table class="table">
+                                <div class="card collapsed-card p-2" >
+                                    <div class="card-header" >
+                                        <table class="table"  id="yourTableId">
                                             <tr style="background:#87cdc6;">
                                                 @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
                                                     @if (app()->getLocale() == $kpiT->locale)
@@ -374,8 +377,7 @@
                                                     <h6> <b> Major Activities </b> </h6>
                                                 </th>
                                                 <td colspan="8">
-                                                    <!-- @dump($narration); -->
-                                                    @foreach ($narration as $key => $plannaration)
+                                                     @foreach ($narration as $key => $plannaration)
                                                         <p>
                                                             {!! html_entity_decode($plannaration->plan_naration) !!}
                                                         </p>
@@ -395,8 +397,6 @@
                                                         $planAcc->Kpi->id,
                                                     );
                                                 @endphp
-                                                <!-- @dump($office); -->
-
                                                 @if ($isOfficeBelongToKpi->count() > 0)
                                                     @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
                                                         {{-- <table class="table table-bordered">
@@ -405,6 +405,8 @@
                                                             @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
                                                                 @include('app.plan_accomplishments.view-kpi123')
                                                                 {{-- KPI has  child one and child two --}}
+                                                                 {{-- <a  href='{{ route('plan-accomplishment-details-two', [$office->id,$planAcc->Kpi->id, $planning_year->id]) }}'> {{"."}}</a> --}}
+                                                                 {{-- @include('app.plan_accomplishments.office-row123', ['office' => $office,'kpi' => $planAcc->Kpi->id, $planning_year->id,'level' => 0]) --}}
                                                             @else
                                                                 {{-- @include('app.plan_accomplishments.view-kpi12') --}}
                                                                  <a  href='{{ route('plan-accomplishment-details-two', [$office->id,$planAcc->Kpi->id, $planning_year->id]) }}'> {{"."}}</a>
@@ -453,92 +455,7 @@
         @php
             $user_offices = auth()->user()->offices[0]->offices;
         @endphp 
-    
-<script>
-   {{-- function attachExpandListeners() {
-    document.querySelectorAll('.btn-expand').forEach(button => {
-        button.addEventListener('click', function () {
-            const officeId = this.getAttribute('data-id');
-            let url = this.getAttribute('data-url');
-
-            if (!url) {
-                // Dynamically construct URL if `data-url` is missing
-                url = `/smis/setting/offices/${officeId}/details`;
-            }
-
-            console.log('Office ID:', officeId);
-            console.log('Fetch URL:', url);
-
-            const detailsRow = document.getElementById(`details-${officeId}`);
-
-            if (detailsRow.style.display === 'none') { 
-                fetch(url)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('Fetched data:', data);
-
-                        const detailsTable = document.getElementById(`details-data-${officeId}`);
-                        detailsTable.innerHTML = '';
-
-                        data.forEach(child => {
-                            detailsTable.innerHTML += `
-                                <table> 
-                                <thead>
-                                    <tr>
-                                        <th>Office Name</th>
-                                        <th>KPI Value</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                     <td>${child.id}</td>
-                                    <td>${child.name}</td>
-                                    <td>
-                                        <button class="btn btn-primary btn-expand" 
-                                                data-id="${child.id}" 
-                                                data-url="/smis/setting/offices/${child.id}/details">
-                                            Expand
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr class="details-row" id="details-${child.id}" style="display: none;">
-                                    <td colspan="3">
-                                        <table class="table">
-                                            <tbody id="details-data-${child.id}">
-                                                <!-- Further Nested Data -->
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
-                                </tbody>
-                                </table> 
-                            `;
-                        });
-
-                        // Reattach event listeners to newly added buttons
-                        attachExpandListeners();
-
-                        detailsRow.style.display = '';
-                    })
-                    .catch(error => console.error('Fetch error:', error));
-            } else {
-                detailsRow.style.display = 'none';
-            }
-        });
-    });
-}
-
-// Initial call to attach listeners to existing buttons
-attachExpandListeners(); --}}
-
-
- </script>
+ 
     </div>
 
     <script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
@@ -549,37 +466,19 @@ attachExpandListeners(); --}}
 
         });
     </script>
+    <script>
+function exportTableToExcel() {
+    // Get the table element by its ID
+    const table = document.getElementById("yourTableId");
 
-    {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script> --}}
+    // Convert the HTML table to a workbook
+    const workbook = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
 
-    {{-- <script>
-        $(document).ready(function() {
-            $('#goal-card').on('click', '.goal-list', function() {
-                var goalId = $(this).attr('data-id');
+    // Export the workbook to a file
+    XLSX.writeFile(workbook, "table_data.xlsx");
+}
+</script>
 
-                var url = "{{ route('get-objectives', [':id']) }}";
-                url = url.replace(':id', goalId);
-
-                $('.fillable-objective').empty();
-
-                $.ajax({
-                    url: url,
-                    dataType: 'json',
-                    success: function(response) {
-
-                        // foreach(response as r){
-                        //     console.log(r)
-                        // }
-                        console.log(response);
-                        $('.fillable-objective').html(response);
-                    }
-                });
-
-            })
-
-        })
-    </script> --}}
 
     <script>
         function expandAll() {

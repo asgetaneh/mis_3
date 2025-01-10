@@ -54,6 +54,8 @@ use App\Http\Controllers\MeasurementController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskAssignController;
 use App\Http\Controllers\TaskMeasurementController;
+use App\Exports\TableExport;
+use Maatwebsite\Excel\Facades\Excel;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -329,6 +331,10 @@ Route::prefix('/')
 
             Route::resource('permissions', PermissionController::class);
             Route::resource('users', UserController::class);
+        });
+        
+        Route::get('/export-excel', function () {
+            return Excel::download(new TableExport, 'table.xlsx');
         });
 
 Route::prefix('/emis')->group(function(){
