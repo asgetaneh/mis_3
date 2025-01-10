@@ -100,7 +100,7 @@
 
 
 
-    <div class="row justify-content-center">
+    <div class="row justify-content-center"   id="yourTableId">
         <div class="col-12">
             <div class="card card-primary card-outline card-outline-tabs fillable-objective">
                 <div class="card-body" >
@@ -119,7 +119,7 @@
                             @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
                                 <div class="card collapsed-card p-2" >
                                     <div class="card-header" >
-                                        <table class="table"  id="yourTableId">
+                                        <table class="table">
                                             <tr style="background:#87cdc6;">
                                                 @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
                                                     @if (app()->getLocale() == $kpiT->locale)
