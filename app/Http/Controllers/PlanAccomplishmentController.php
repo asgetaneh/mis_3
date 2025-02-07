@@ -581,7 +581,7 @@ class PlanAccomplishmentController extends Controller
         $office =Office::find($office_id);
         $imagen_off = $office;
         $off_level = $office->level;
-        $planning_year = PlaningYear::where('is_active',true)->first();
+        $planning_year = PlaningYear::where('is_active', true)->select('id')->first();
         $all_office_list = $this->allChildAndChildChild($office);
         $only_child_array = array_merge($all_office_list,array($office_id)); 
 
@@ -1057,7 +1057,7 @@ class PlanAccomplishmentController extends Controller
         }
         else{
             $planAccomplishments = PlanAccomplishment::whereIn('office_id', $only_child_array)
-                ->select('*', DB::raw('SUM(plan_value) AS sum'))
+                //->select('*', DB::raw('SUM(plan_value) AS sum'))
                 -> where('planning_year_id','=', $planning_year->id ?? NULL)
                 ->groupBy('kpi_id')
                 ->get();
