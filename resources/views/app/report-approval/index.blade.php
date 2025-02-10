@@ -539,12 +539,19 @@
                                                                                 has
                                                                                 no report or not approved its offices yet!
                                                                             </p> --}}
-                                                                            <div class="alert alert-warning alert-dismissible">
-                                                                                {{-- <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> --}}
+                                                                            {{-- <div class="alert alert-warning alert-dismissible">
                                                                                 <h5><i class="icon fas fa-info-circle"></i> Office
                                                                                     <u>{{ $office->officeTranslations[0]->name }}</u>
                                                                                     has
                                                                                     no report or not approved its offices yet!</h5>
+                                                                            </div> --}}
+
+                                                                            <div class="callout callout-warning">
+                                                                                <i class="icon fas fa-info-circle mr-2"></i>
+                                                                                Office
+                                                                                <u>{{ $office->officeTranslations[0]->name }}</u>
+                                                                                has
+                                                                                no report or not approved its offices yet!
                                                                             </div>
                                                                         @else
                                                                             {{-- <p>Office
@@ -552,12 +559,19 @@
                                                                                 has
                                                                                 not reported for this KPI yet!
                                                                             </p> --}}
-                                                                            <div class="alert alert-warning alert-dismissible">
-                                                                                {{-- <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> --}}
+                                                                            {{-- <div class="alert alert-warning alert-dismissible">
                                                                                 <h5><i class="icon fas fa-info-circle"></i> Office
                                                                                     <u>{{ $office->officeTranslations[0]->name }}</u>
                                                                                     has
                                                                                     not reported for this KPI yet!</h5>
+                                                                            </div> --}}
+
+                                                                            <div class="callout callout-warning">
+                                                                                <i class="icon fas fa-info-circle mr-2"></i>
+                                                                                Office
+                                                                                <u>{{ $office->officeTranslations[0]->name }}</u>
+                                                                                has
+                                                                                not reported for this KPI yet!
                                                                             </div>
                                                                         @endif
                                                                     @else

@@ -904,7 +904,7 @@
                 @endif
             @endauth
 
-            @auth
+            {{-- @auth
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('logout') }}"
                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -916,7 +916,7 @@
                         @csrf
                     </form>
                 </li>
-            @endauth
+            @endauth --}}
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
