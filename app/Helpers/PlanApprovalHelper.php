@@ -1104,25 +1104,12 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period,$one,$two,$thr
             $planBaseline = calculateAverageBaseline($kpi_id,$office,$period,false,$planning_year_id ,$one,$two,$three);
             if($planBaseline[0]!=0){
                 $office_baseline = $planBaseline[0]/$planBaseline[1];
-            }else{ $office_baseline =0; }
+            }else{ $office_baseline =0; }  
 
         }else{
-            $planBaseline = Baseline::select()
-            //->whereIn('office_id', $all_office_list)
-            ->whereIn('office_id', $all_office_list)
-            ->where('kpi_id', $kpi_id)
-            ->where('planning_year_id', '=', $planning_year_id)
-            ->where('kpi_one_id', '=', $one)
-            ->where('kpi_two_id', '=', $two)
-            ->where('kpi_three_id', '=', $three)
-            ->where('plan_status' , '<=', $office_level)
-            ->get();
-
-            if(!$planBaseline){
-                $planning_year = PlaningYear::where('is_active',true)->first();
-                $previous_year = PlaningYear::where('id', '<', $planning_year_id)->orderby('id', 'desc')->first();
-                if($previous_year){
-                    $planBaseline = Baseline::select('baseline', 'office_id')
+            $previous_year = PlaningYear::where('id', '<', $planning_year_id)->orderby('id', 'desc')->first();
+                if($previous_year){ 
+                   $planBaseline = Baseline::select('baseline', 'office_id')
                     ->whereIn('office_id', $all_office_list)
                     ->where('kpi_id', $kpi_id)
                     ->where('planning_year_id', $previous_year->id)
@@ -1131,7 +1118,19 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period,$one,$two,$thr
                     ->where('kpi_three_id', $three)
                     ->where('plan_status' , '<=', $office_level)
                     ->get();
-                }
+                } 
+            if(!$planBaseline){
+                
+                $planBaseline = Baseline::select()
+                //->whereIn('office_id', $all_office_list)
+                ->whereIn('office_id', $all_office_list)
+                ->where('kpi_id', $kpi_id)
+                ->where('planning_year_id', '=', $planning_year_id)
+                ->where('kpi_one_id', '=', $one)
+                ->where('kpi_two_id', '=', $two)
+                ->where('kpi_three_id', '=', $three)
+                ->where('plan_status' , '<=', $office_level)
+                ->get();
             }
 
             $office_baseline = $planBaseline->sum('baseline');

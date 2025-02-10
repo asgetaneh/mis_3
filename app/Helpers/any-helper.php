@@ -205,7 +205,7 @@ if (! function_exists('getOfficeBaseline')) {
                     //->whereIn('office_id', $all_office_list)
                     ->where('office_id', $office->id)
                     ->where('kpi_id', $kkp)
-                    ->where('planning_year_id', '=', $previous_year)
+                    ->where('planning_year_id', '=', $previous_year->id)
                     ->where('kpi_one_id', '=', $one)
                     ->where('kpi_two_id', '=', $two)
                     ->where('kpi_three_id', '=', $three)
@@ -596,26 +596,41 @@ if (! function_exists('gettrans')) {
 
   function getBaselineLastYear($kpi, $planningYear, $period, $office, $one = null, $two = null, $three = null){
 
-    $previousYear = '';
+    // $previousYear = '';
 
-    $lessYear = Carbon::now();
-    $lessYear->year = $lessYear->year - 1;
+    // $lessYear = Carbon::now();
+    // $lessYear->year = $lessYear->year - 1;
 
-    $previousYear = PlaningYear::where('is_active', 0)
-        ->where('created_at', '<', $lessYear)
-        ->first();
+    // $previousYear = PlaningYear::where('is_active', 0)
+    //     ->where('created_at', '<', $lessYear)
+    //     ->first();
 
-    $baseline = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
-        ->where('kpi_id', $kpi)
-        ->where('office_id', $office)
-        ->where('planning_year_id', $previousYear->id ?? null)
-        ->where('kpi_child_one_id', $one)
-        ->where('kpi_child_two_id', $two)
-        ->where('kpi_child_three_id', $three)
-        ->where('reporting_periods.slug',"=", 1)
-        ->first();
+    // $baseline = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
+    //     ->where('kpi_id', $kpi)
+    //     ->where('office_id', $office)
+    //     ->where('planning_year_id', $previousYear->id ?? null)
+    //     ->where('kpi_child_one_id', $one)
+    //     ->where('kpi_child_two_id', $two)
+    //     ->where('kpi_child_three_id', $three)
+    //     ->where('reporting_periods.slug',"=", 1)
+    //     ->first();
+        
+                 $previous_year = PlaningYear::where('id', '<', $planningYear)->orderby('id', 'desc')->first();
+                if($previous_year){ $planBaseline = Baseline::select()
+                    //->whereIn('office_id', $all_office_list)
+                    ->where('office_id', $office)
+                    ->where('kpi_id', $kpi)
+                    ->where('planning_year_id', '=', $previous_year->id)
+                    ->where('kpi_one_id', '=', $one)
+                    ->where('kpi_two_id', '=', $two)
+                    ->where('kpi_three_id', '=', $three)
+                    ->first();
+                   // dump($planBaseline);
 
-    return $baseline->plan_value ?? '';
+       }
+    
+
+    return $planBaseline->baseline ?? '';
 }
  function getAcademicRecords($enrollments)
     {
