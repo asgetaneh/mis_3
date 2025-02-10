@@ -114,7 +114,6 @@
       id="details-{{ $office->id }}-plain-{{ $planAccKpi->id }}" style="padding: 10px; border: 1px solid; display: none;">
     <table id="details-data-{{ $office->id }}-plain-{{ $planAccKpi->id }}"  style="padding: 10px; width:100%; border: 1px solid;"> </table>
 </div>
-
 <script>
     function attachExpandListeners() {
         document.querySelectorAll('.btn-expand').forEach(button => {
