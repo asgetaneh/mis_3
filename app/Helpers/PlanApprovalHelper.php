@@ -809,9 +809,10 @@ function planOneTwo($kkp, $one, $two, $office, $period, $suffix)
     $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
     $sum12 = 0;
     // $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $childAndHimOffKpi_array)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_two_id' , '=', $two)->where('reporting_period_id' , '=', $period)->get();//dd($planAccomplishments);
-    $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('kpi_child_one_id', '=', $one)->where('kpi_child_two_id', '=', $two)->where('reporting_period_id', '=', $period)->get(); //dd($planAccomplishments);
+    $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('kpi_child_one_id', '=', $one)->where('kpi_child_two_id', '=', $two)->where('reporting_period_id', '=', $period)->get();
     foreach ($planAccomplishments as $key => $planAccomplishment) {
         $sum12 = $sum12 + $planAccomplishment->plan_value;
+        //dump($sum12);
     }
     return $sum12;
 }
@@ -1076,13 +1077,18 @@ function OnlyKpiOttBaseline($kpi_id,$office, $planning_year_id, $period, $one, $
             ->where('kpi_one_id',  '=', $one)
             ->where('kpi_two_id',  '=', $two)
             ->where('kpi_three_id',  '=', $three)
-            ->first();
-        } //dump($kpi_id);
+            ->get();
+        } //dd($kpi_id );
 
     }
-    foreach ($planBaseline as $key => $value2) {
+
+    if($planBaseline) { //dd($planBaseline);
+        foreach ($planBaseline as $key => $value2) {
         $office_baseline = $office_baseline+$value2->baseline;
     }
+
+    }
+
    return $office_baseline;
 }
 
@@ -1104,11 +1110,11 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period,$one,$two,$thr
             $planBaseline = calculateAverageBaseline($kpi_id,$office,$period,false,$planning_year_id ,$one,$two,$three);
             if($planBaseline[0]!=0){
                 $office_baseline = $planBaseline[0]/$planBaseline[1];
-            }else{ $office_baseline =0; }  
+            }else{ $office_baseline =0; }
 
         }else{
             $previous_year = PlaningYear::where('id', '<', $planning_year_id)->orderby('id', 'desc')->first();
-                if($previous_year){ 
+                if($previous_year){
                    $planBaseline = Baseline::select('baseline', 'office_id')
                     ->whereIn('office_id', $all_office_list)
                     ->where('kpi_id', $kpi_id)
@@ -1116,11 +1122,12 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period,$one,$two,$thr
                     ->where('kpi_one_id', $one)
                     ->where('kpi_two_id', $two)
                     ->where('kpi_three_id', $three)
-                    ->where('plan_status' , '<=', $office_level)
+                     ->where('plan_status' , '<=', $office_level)
                     ->get();
-                } 
-            if(!$planBaseline){
-                
+                }
+            if($planBaseline->count()==0){
+
+
                 $planBaseline = Baseline::select()
                 //->whereIn('office_id', $all_office_list)
                 ->whereIn('office_id', $all_office_list)
@@ -1129,8 +1136,8 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period,$one,$two,$thr
                 ->where('kpi_one_id', '=', $one)
                 ->where('kpi_two_id', '=', $two)
                 ->where('kpi_three_id', '=', $three)
-                ->where('plan_status' , '<=', $office_level)
-                ->get();
+                 ->where('plan_status' , '<=', $office_level)
+                ->get();//dd($planBaseline);
             }
 
             $office_baseline = $planBaseline->sum('baseline');
@@ -1184,6 +1191,7 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period,$one,$two,$thr
     }else{
         echo "kpi should has measurement";
     }
+
 
     return $office_baseline;
 }
