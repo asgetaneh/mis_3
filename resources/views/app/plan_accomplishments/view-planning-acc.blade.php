@@ -39,7 +39,7 @@
                                 <select class="form-control select2" name="office">
                                     <option disabled {{ old('office') == '' ? 'selected' : '' }} value="">Select
                                         Office</option>
-                                    <option value="">ALL OFFICES</option>
+                                    {{-- <option value="">ALL OFFICES</option> --}}
                                     @forelse($allOffices as $office)
                                         @if ($office->id == 1)
                                             @continue
@@ -56,7 +56,7 @@
                                 <select class="form-control select2" name="office">
                                     <option disabled {{ old('office') == '' ? 'selected' : '' }} value="">Select
                                         Office</option>
-                                    <option value="">ALL OFFICES</option>
+                                    {{-- <option value="">ALL OFFICES</option> --}}
                                     @forelse($allOffices as $office)
                                         @if ($office->parent_office_id == $userOffice->id || $office->id == $userOffice->id)
                                             <option {{ old('office') == $office->id ? 'selected' : '' }}
@@ -73,7 +73,7 @@
                             <label class=" " for="filters">KPI:</label>
                             <select class="form-control select2" name="kpi">
                                 <option disabled {{ old('kpi') == '' ? 'selected' : '' }} value="">Select KPI</option>
-                                <option value="">ALL KPI</option>
+                                {{-- <option value="">ALL KPI</option> --}}
                                 @forelse($allKpis as $kpi)
                                     <option {{ old('kpi') == $kpi->id ? 'selected' : '' }} value="{{ $kpi->id }}">
                                         {{ $kpi->keyPeformanceIndicatorTs[0]->name }}
