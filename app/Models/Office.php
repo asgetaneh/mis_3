@@ -58,10 +58,8 @@ class Office extends Model
     {
         return $this->hasMany(Performer::class, 'office_id');
     }
-    public function childs()
-    {
-        // recursively return all children
-        return $this->hasMany(Office::class, 'parent_office_id')->with('child');
+    public function childs(){
+        return $this->hasMany(Office::class, 'parent_office_id')->with('childs');
     }
 
     public function tasks()

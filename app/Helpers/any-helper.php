@@ -7,12 +7,14 @@
   use App\Models\ReportNarration;
  use App\Models\KeyPeformanceIndicator;
 use App\Models\ReportNarrationReport;
- 
+
 use Carbon\Carbon;
 use Andegna\DateTime as Et_date;
 use Andegna\DateTimeFactory;
 use App\Models\Baseline;
 use App\Models\PlaningYear;
+use Illuminate\Support\Facades\Cache;
+
 // use DateTime;
 // use Redirect;
 
@@ -38,7 +40,7 @@ function calculateAveragePlan($kkp, $office, $period, $is_report, $planning_year
     //     dump($officePlan->plan_value);
     //     dump($office->officeTranslations[0]->name);
     // }
-   
+
     if ($officePlan) {
         $planValue = !$is_report ? $officePlan->plan_value : $officePlan->accom_value;
         $planStatus = !$is_report ? $officePlan->plan_status : $officePlan->accom_status;
@@ -93,25 +95,25 @@ function calculateAveragePlan($kkp, $office, $period, $is_report, $planning_year
         // If this office's plan is non-zero, include it in the total and count
         $office_baseline = getOfficeBaseline($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three);
         //dd($office);
-        $var =$office_baseline; 
-        
-        $office_baseline =$office_baseline?->baseline ?? NULL;  
+        $var =$office_baseline;
+
+        $office_baseline =$office_baseline?->baseline ?? NULL;
                 //if($office_baseline!=0)dump($office_baseline);
         if($is_report){
-             $office_baseline =$office_baseline?->accom_value ?? NULL; //dump($office_plan); 
+             $office_baseline =$office_baseline?->accom_value ?? NULL; //dump($office_plan);
         }
-        
+
         if ($var !== NULL ) {  // && $var->plan_status  <= $office->level
             $totalPlan += $office_baseline;
             $validPlansCount++;
            // echo $kkp."-> ".$office->id."-> ".$office_baseline. "<br/> ";
         }
-  
+
 
         foreach ($office->offices as $child) {
             // Recursively calculate the average plan of the child
             list($childPlanTotal, $childCount) =  calculateAverageBaseline($kkp,$child,$period,$is_report,$planning_year ,$one,$two,$three);
-            
+
             // Include the child's plan (as it's already averaged if it has children)
             if ($childCount > 0 ) {
                 $totalPlan += $childPlanTotal / $childCount;
@@ -121,14 +123,14 @@ function calculateAveragePlan($kkp, $office, $period, $is_report, $planning_year
            // echo $childPlanTotal."-> ".$totalPlan. "-> ".$validPlansCount."<br/> ";
         }
         // echo $kkp."-> ".$office->id." ->".$planning_year."-> ".$is_report."-> ".$totalPlan. "-> ".$validPlansCount."<br/> ";
-        return [$totalPlan, $validPlansCount];   
+        return [$totalPlan, $validPlansCount];
 
 
         // If there are valid plans (non-zero plans), calculate the average
                 // if ($validPlansCount > 0) {
-                //     $averagePlan = $totalPlan / $validPlansCount; 
-                //    // echo $office->officeTranslations[0]->name.' num of child='.$validPlansCount.' plan='.$totalPlan."<br/>";  dump($averagePlan);  
-                // return [$totalPlan, $validPlansCount];         
+                //     $averagePlan = $totalPlan / $validPlansCount;
+                //    // echo $office->officeTranslations[0]->name.' num of child='.$validPlansCount.' plan='.$totalPlan."<br/>";  dump($averagePlan);
+                // return [$totalPlan, $validPlansCount];
                 // }
 
         // Return the total plan value and the count of valid plans (used by the parent in recursion)
@@ -136,9 +138,9 @@ function calculateAveragePlan($kkp, $office, $period, $is_report, $planning_year
     }
 if (! function_exists('getOfficePlan')) {
  function  getOfficePlan($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three)
-    { 
+    {
         $office_level = $office->level;
-        if($office_level == 0) $office_level=1; 
+        if($office_level == 0) $office_level=1;
         //dump($office->officeTranslations[0]->name);
         if(!$is_report){
                 // Query PlanAccomplishment table for a valid record
@@ -152,10 +154,10 @@ if (! function_exists('getOfficePlan')) {
                 ->where('reporting_period_id', '=', $period)
                 ->where('plan_status', '<=', $office->level) // Exclude invalid plan_status
                 ->first();
-        }       
-         if($is_report){ 
+        }
+         if($is_report){
             $kpi_ob = KeyPeformanceIndicator::find($kkp);
-            $active_period = getReportingQuarter($kpi_ob->reportingPeriodType->id); 
+            $active_period = getReportingQuarter($kpi_ob->reportingPeriodType->id);
              $planAccomplishments = PlanAccomplishment::select('accom_value')
                  ->where('office_id', $office->id)
                 ->where('kpi_id' , '=', $kkp)
@@ -172,7 +174,7 @@ if (! function_exists('getOfficePlan')) {
 }
 if (! function_exists('getOfficeBaseline')) {
     function  getOfficeBaseline($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three)
-       { 
+       {
            $office_level = $office->level;
            if($office_level == 0) $office_level=1;
            $planBaseline = Baseline::select()
@@ -183,7 +185,8 @@ if (! function_exists('getOfficeBaseline')) {
            ->where('kpi_one_id', '=', $one)
            ->where('kpi_two_id', '=', $two)
            ->where('kpi_three_id', '=', $three)
-           ->first();  
+           ->where('plan_status' , '<=', $office_level)
+           ->first();
         //    $planBaseline = DB::select("
         //    SELECT baseline  FROM baselines
         //    WHERE office_id = ?
@@ -206,17 +209,17 @@ if (! function_exists('getOfficeBaseline')) {
                     ->where('kpi_one_id', '=', $one)
                     ->where('kpi_two_id', '=', $two)
                     ->where('kpi_three_id', '=', $three)
-                    ->first();  
-                }  
-                
-            } 
+                    ->first();
+                }
+
+            }
             //dump($planBaseline);
            return $planBaseline;
        }
    }
 if (! function_exists('getStatus')) {
  function  getStatus($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three)
-    { 
+    {
        $childAndHimOffKpi_array =[];
                 $childAndHimOffKpi = office_all_childs_ids($office);
                 $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
@@ -228,7 +231,7 @@ if (! function_exists('getStatus')) {
             ->where('kpi_child_two_id' , '=', $two)
             ->where('kpi_child_three_id' , '=', $three)
             ->where('reporting_period_id' , '=', $period)
-        ->first(); 
+        ->first();
         //dump($kkp);
         return $planAccomplishments;
     }
@@ -236,13 +239,13 @@ if (! function_exists('getStatus')) {
 if (! function_exists('gettrans')) {
     function getAllOffices()
     {
-    	$off = Office::get();
+    	$off = Office::with('officeTranslations')->get();
 
         return $off;
     }
      function getAllKpi()
     {
-    	$kpi = KeyPeformanceIndicator::get();
+    	$kpi = KeyPeformanceIndicator::with('keyPeformanceIndicatorTs')->get(['id']);
 
         return $kpi;
     }
@@ -295,7 +298,7 @@ if (! function_exists('gettrans')) {
 
     function getAllReportingPeriod()
     {
-    	$ReportingPeriod = ReportingPeriod::get();
+    	$ReportingPeriod = ReportingPeriod::with('reportingPeriodTs')->get(['id']);
 
         return $ReportingPeriod;
     }
@@ -356,7 +359,7 @@ if (! function_exists('gettrans')) {
         return $reservations;
     }
     function getQuarterWithRTypeAndSlug($type,$slug)
-    {    
+    {
     	$period = ReportingPeriod::where('reporting_period_type_id', '=', $type->id)
             ->where('slug', '=', $slug) ->first();
 
@@ -467,17 +470,37 @@ if (! function_exists('gettrans')) {
              return $KeyPeformanceIndicators;
 
     }
-    function office_all_childs_ids(App\Models\Office $office)
-        {
-            $all_ids = [];
-            if ($office->offices->count() > 0) {
-                foreach ($office->offices as $child) {
-                    $all_ids[] = $child->id;
-                    $all_ids=array_merge($all_ids,is_array(office_all_childs_ids($child))?office_all_childs_ids($child):[] );
-                }
-            }
-            return $all_ids;
+
+    function office_all_childs_ids(App\Models\Office $office){
+        $all_ids = [];
+
+        foreach ($office->offices as $child) {
+            $all_ids[] = $child->id;
+            $all_ids = array_merge($all_ids, office_all_childs_ids($child));
         }
+
+        return $all_ids;
+    }
+
+    // function office_all_childs_ids(App\Models\Office $office): array {
+    //     $cacheKey = "office_child_ids_{$office->id}";
+
+    //     return Cache::remember($cacheKey, now()->addDay(), function () use ($office) {
+    //         return fetchOfficeHierarchy($office);
+    //     });
+    // }
+
+    // function fetchOfficeHierarchy($office) {
+    //     $all_ids = [];
+
+    //     foreach ($office->childs as $child) {
+    //         $all_ids[] = $child->id;
+    //         $all_ids = array_merge($all_ids, fetchOfficeHierarchy($child));
+    //     }
+
+    //     return $all_ids;
+    // }
+
     //function getTimeMatchedReportingPeriod(){
     function getReportingPeriod(){
         $acctive_period_list =[];
@@ -566,7 +589,7 @@ if (! function_exists('gettrans')) {
 
    function getBaselineIndividualOneTwoThree($year,$kpi, $one, $two,$three,$office){
     $planAccomplishments = Baseline::select()->where('planning_year_id' , '=', $year)->where('office_id' , '=', $office)->where('kpi_id' , '=', $kpi)->where('kpi_one_id' , '=', $one)->where('kpi_two_id' , '=', $two)->where('kpi_three_id' , '=', $three)->get();
-       foreach ($planAccomplishments as $key => $planAccomplishment) { 
+       foreach ($planAccomplishments as $key => $planAccomplishment) {
            return $planAccomplishment;
        }
   }
@@ -614,7 +637,7 @@ if (! function_exists('gettrans')) {
                 'ifo.id as preceding_record_id')
              ->where('id', $precedingRecordId)
              ->first();
-             
+
 
          if($precedingRecordInactive->record_status == 0){
             //dd($precedingRecordInactive[0]->record_status);
@@ -675,11 +698,11 @@ if (! function_exists('gettrans')) {
      }
     }
     }
-         return $stu_record; 
+         return $stu_record;
     }
 
-     function getAcademicRecordsOfStudentResult($forresults) 
-        {  
+     function getAcademicRecordsOfStudentResult($forresults)
+        {
         $stu_record_result = collect();
 
         foreach ($forresults as $key => $forresult) {
@@ -695,7 +718,7 @@ if (! function_exists('gettrans')) {
                     'ifo.id as preceding_record_id')
                 ->where('ifo.id', $precedingRecordId)
                 ->where('ifo.record_status', 0)
-                 ->first(); 
+                 ->first();
              // check previous record of active record is not active and also has prevous records
         if ($precedingRecordInactive) {
                      // 3. Fetch the Record with that Maximum ID
@@ -721,7 +744,7 @@ if (! function_exists('gettrans')) {
                 'ifo.total_ects AS total_accumulated_credits',
                 DB::raw('ROUND(ifo.semester_grade_points / ifo.semester_ects ,2) as gpa'),
                 DB::raw('ROUND(ifo.total_grade_points / ifo.total_ects, 2) as cgpa'),
-                DB::raw('(SELECT COUNT(*) FROM student_info si WHERE si.student_id = '.$forresult->stu_info_stu_id.' and id<'.$forresult->stu_info_id.' ) as total_academic_periods') 
+                DB::raw('(SELECT COUNT(*) FROM student_info si WHERE si.student_id = '.$forresult->stu_info_stu_id.' and id<'.$forresult->stu_info_id.' ) as total_academic_periods')
 
 
                 // I think this is all the semester count taken in that year, not sure yet
@@ -731,9 +754,9 @@ if (! function_exists('gettrans')) {
             ->orderBy('d.department_code', 'desc')
             ->first();
             //dd($stud_result_var);
-                $stu_record_result->push($stud_result_var); 
+                $stu_record_result->push($stud_result_var);
         }
         }//dd( $stu_record_result);
-             return $stu_record_result;      
+             return $stu_record_result;
         }
 }

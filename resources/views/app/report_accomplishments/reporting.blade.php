@@ -175,7 +175,7 @@
                                                 $kpi_id = $kpi->id;
                                                 $checkPlanedForKpi = checkPlanedForKpi($planning_year->id ?? NULL, $kpi->id, auth()->user()->offices[0]->id);
                                                 @endphp
- 
+
                                             </h3>
                                             <div class="card-tools">
                                                 <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
@@ -526,16 +526,16 @@
                                                 <label for="summernote">Major Activities</label>
                                                 <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote" id="narration-field-{{ $kpi->id }}" placeholder="Narration here"></textarea>
                                                 <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>
-                                            @endif  
+                                            @endif
                                             @if ($plan_docment)
                                                 <label class="form-label" for="inputImage"> Supporting document(in pdf):
                                                 </label><br/>
                                                 <a  href="{{ route('view-file', $plan_docment) }}" title="MyPdf"> view file
-                                                </a> 
+                                                </a>
                                             @else
                                                 <label class="form-label" for="inputImage">Supporting document(in pdf):
                                                 </label>
-                                                <input  type="file"  name="myfile"   id="inputImage" class="form-control"> 
+                                                <input  type="file"  name="myfile"   id="inputImage" class="form-control">
                                             @endif
                                         </div>
                                     </div>
@@ -543,10 +543,10 @@
                                     <h5>{{"Plan approvement is not completed"}} for kpi: <u>{{ $kpi->KeyPeformanceIndicatorTs[0]->name }}</u></h5>
                                     @endif
                                     @else
-                                    <h5>{{"No Plan for Keyperformance indicator"}}: <u>{{ $kpi->KeyPeformanceIndicatorTs[0]->name }}</u></h5>
+                                    <h5>{{"No Plan found for Key Performance Indicator"}}: <u>{{ $kpi->KeyPeformanceIndicatorTs[0]->name }}</u></h5>
                                     @endif
                                     @empty
-                                    <h4>No KPI exit with active reporting period in this office and Objective!</h4>
+                                    <h4>No KPI exist with active reporting period in this office and Objective!</h4>
                                     @endforelse
                                     <button type="submit" class="btn btn-primary" id="submit-for-{{ $objective->id }}">Submit</button>
                             </div>

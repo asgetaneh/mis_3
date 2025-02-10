@@ -37,10 +37,10 @@
     <div class="card">
         <div class="card-body">
             <div style="display: flex; justify-content: space-between;">
-                <h4 class="card-title">@lang('crud.users.index_title')</h4>
+                <h4 class="card-title">Feedback List</h4>
             </div>
 
-            <p class="mt-2">Total: <u>{{ App\Models\feedback::count()}}</u> users.</p>
+            <p class="mt-2">Total: <u>{{ App\Models\feedback::count()}}</u> feedback.</p>
 
             <div class="table-responsive">
                 <table class="table table-bordered table-hover">
@@ -62,7 +62,7 @@
                         @forelse($feedback as $feedback_ob)
                         <tr>
                             <td>{{ $count++ }}</td>
-                            <td>{{ $feedback_ob->description ?? '-' }}</td>
+                            <td>{!! $feedback_ob->description ?? '-' !!}</td>
                             <td>{{ $feedback_ob->created_at ?? '-' }}</td>
                              {{-- <td>
                                 @forelse ($user->roles as $role)
@@ -108,7 +108,7 @@
                                             <i class="icon ion-md-trash"></i>
                                         </button>
                                     </form>
-                                    @endcan 
+                                    @endcan
                                 </div>
                             </td>--}}
                         </tr>

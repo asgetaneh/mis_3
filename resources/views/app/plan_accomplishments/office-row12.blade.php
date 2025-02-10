@@ -23,17 +23,17 @@
 <table class="table table-bordered" style="background:#12cd4322;">
 <tr>
 <tr>
-    <th colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 3 }} ">
+    <th colspan="{{ $getQuarter->count() + 3 }} ">
         Offices: {{ $office->officeTranslations[0]->name }}
     </th>
-    <td rowspan="{{ $planAcc->Kpi->kpiChildOnes->count()  * $planAcc->Kpi->kpiChildTwos->count()+3}} ">
-         @if (!$office->offices->isEmpty())
+    <td rowspan="{{ $planAccKpiChildOne->count()  * $planAccKpiChildTwo->count()+3}} ">
+         @if (!$officeOffices->isEmpty())
                 <p>
-                    <button class="btn btn-primary btn-expand-new-two" 
-                        data-id="{{ $office->id }}-two-{{ $planAcc->Kpi->id }}" 
-                        data-url="{{ url('/smis/plan/plan-accomplishment/office/' . $office->id . '/kpi/' . $planAcc->kpi->id . '/year/' . $planAcc->planning_year_id) }}">
+                    <button class="btn btn-primary btn-expand-new-two"
+                        data-id="{{ $office->id }}-two-{{ $planAccKpi->id }}"
+                        data-url="{{ url('/smis/plan/plan-accomplishment/office/' . $office->id . '/kpi/' . $planAccKpi->id . '/year/' . $planAcc->planning_year_id) }}">
                         Details
-                         {{-- {{$office->id . '-' . $planAcc->kpi->id }} --}}
+                         {{-- {{$office->id . '-' . $planAccKpi->id }} --}}
                     </button>
                 </p>
             @else
@@ -44,7 +44,7 @@
 <tr>
     <th colspan="2">#</th>
     <th colspan="">Baseline</th>
-    @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+    @forelse($getQuarter as $period)
     <th>
             {{ $period->reportingPeriodTs[0]->name }}
         </th>
@@ -53,43 +53,43 @@
 </tr>
 
 
-    @forelse ($planAcc->Kpi->kpiChildOnes as $one)
+    @forelse ($planAccKpiChildOne as $one)
 
     <tr>
-        <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
+        <th rowspan="{{ $planAccKpiChildTwo->count() }}">
             {{ $one->kpiChildOneTranslations[0]->name }}
         </th>
-        @foreach ($planAcc->Kpi->kpiChildTwos as $two)
+        @foreach ($planAccKpiChildTwo as $two)
             <th>
                 {{ $two->kpiChildTwoTranslations[0]->name }}
             </th>
             @php
-                $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id,$office, $planning_year->id, $period->id,$one->id,$two->id,null);
+                $baselineOfOfficePlan  = planBaseline($planAccKpi->id,$office, $planning_year->id, $period->id,$one->id,$two->id,null);
              @endphp
             <td>{{ $baselineOfOfficePlan }}</td>
-            @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+            @forelse($getQuarter as $period)
                 @php
                     $childAndHimOffKpi_array = [];
-                    $childAndHimOffKpi = $office->offices;
+                    $childAndHimOffKpi = $officeOffices;
                     foreach ($childAndHimOffKpi as $key => $value) {
                         $childAndHimOffKpi_array[$key] = $value->id;
                     }
                     $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
-                    //$planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id, $office);
-                    //$planOneTwo = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id, $office, $period->id,false);
-                    $planOneTwo = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year->id ?? NULL ,$one->id, $two->id,null);
+                    //$planKpiOfficeYear = $planAcc->planSumOfKpi($planAccKpi->id, $office);
+                    //$planOneTwo = $planAcc->planOneTwo($planAccKpi->id, $one->id, $two->id, $office, $period->id,false);
+                    $planOneTwo = $planAcc->KpiOTT($planAccKpi->id, $office, $period->id,false,$planning_year->id ?? NULL ,$one->id, $two->id,null);
                         $office_level = $office->level;
                     if($office_level == 0) $office_level=1;
                 @endphp
                     <td>
                         @if($planOneTwo[2] <= $office_level)
-                                {{ $planOneTwo[0] }} 
+                                {{ $planOneTwo[0] }}
                         @else
                             {{0}}
                         @endif
                         <!-- {{ $planOneTwo[0] }} -->
                     </td>
-                         
+
         @empty
             @endforelse
 
@@ -101,7 +101,7 @@
         <th collapse="2">
             Major Activities
         </th>
-        <td colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 3 }}">
+        <td colspan="{{ $getQuarter->count() + 3 }}">
             @foreach ($narration as $key => $plannaration)
                 {!! html_entity_decode($plannaration->plan_naration) !!}
                 @php
@@ -113,12 +113,12 @@
     </table>
 
 <script>
-    {{-- const kpi_id = {{ $planAcc->kpi->id }};
+    {{-- const kpi_id = {{ $planAccKpi->id }};
     const planning_year = {{ $planAcc->planning_year_id }};
     const planAccId = {{ $planAcc->id }}; --}}
 </script>
-<div id="details-{{ $office->id }}-two-{{ $planAcc->Kpi->id }}" class="table table-bordered details-row-one" style="padding: 10px; border: 1px solid; display: none;">
-    <table id="details-data-{{ $office->id }}-two-{{ $planAcc->Kpi->id }}" style="padding: 20px; width:100%; border: 1px solid;"></table>
+<div id="details-{{ $office->id }}-two-{{ $planAccKpi->id }}" class="table table-bordered details-row-one" style="padding: 10px; border: 1px solid; display: none;">
+    <table id="details-data-{{ $office->id }}-two-{{ $planAccKpi->id }}" style="padding: 20px; width:100%; border: 1px solid;"></table>
 </div>
 <script>
    function attachNewExpandListeners() {
@@ -133,7 +133,7 @@
         button.addEventListener('click', function () {
             const officeIdTwo = this.getAttribute('data-id'); // Unique identifier for office
             const url = this.getAttribute('data-url'); // URL to fetch data
- 
+
             if (!url) {
                 console.error(`Error: URL is null or undefined for Office ID: ${officeIdTwo}`);
                 return;
@@ -150,17 +150,17 @@
             // Toggle display and fetch data if the row is hidden
             if (detailsRow.style.display === 'none') {
                 detailsTable.innerHTML = ''; // Clear previous content before fetching
-                
+
                 fetch(url)
                     .then(response => response.json())
                     .then(data => {
                         // Dynamically build the table HTML
                         let tableHTML = `
                             <table class="table table-bordered" > `;
-                                    
+
                                 data.office_trans_array.forEach(office => {
                                     let myChildOneArray = [];
-                                    let levelClass =  `level-${office.office_level || 1}`; // Fallback to level 1 if not defined 
+                                    let levelClass =  `level-${office.office_level || 1}`; // Fallback to level 1 if not defined
                                          tableHTML += `
                                         <tr style="background:#CDCDCD;">
                                             {{-- <td rowspan=""> ${Object.keys(data.office_trans_array)} </td> --}}
@@ -170,16 +170,16 @@
                                             <td rowspan="${ data.parent_office_trans_array[0].kpi_child_one_count*data.parent_office_trans_array[0].kpi_child_two_count+ 3}">
                                                  ${
                                                     office.has_child
-                                                        ? `<button class="btn btn-primary btn-expand-new-two" 
-                                                                data-id="${office.id}-two-${office.kpi_id}" 
+                                                        ? `<button class="btn btn-primary btn-expand-new-two"
+                                                                data-id="${office.id}-two-${office.kpi_id}"
                                                                 data-url="/smis/plan/plan-accomplishment/office/${office.id}/kpi/${office.kpi_id}/year/${office.pp_year}">
-                                                                 Details 
+                                                                 Details
                                                                  {{-- ${office.id}-${office.kpi_id} --}}
                                                             </button>`
                                                         : 'No child'
                                                 }
-                                                <a href="/smis/plan/plan-accomplishment/office/${office.id}/kpi/${office.kpi_id}/year/${office.pp_year}" 
-                                                    target="_blank" 
+                                                <a href="/smis/plan/plan-accomplishment/office/${office.id}/kpi/${office.kpi_id}/year/${office.pp_year}"
+                                                    target="_blank"
                                                     class="btn btn-link">
                                                    .
                                                 </a>
@@ -199,7 +199,7 @@
                                             if (office.plans && Array.isArray(office.plans)) {
                                                 office.plans.forEach(plan => {
                                                 tableHTML += `
-                                                    <tr>`; 
+                                                    <tr>`;
                                                     if (!myChildOneArray.includes(plan.kpi_child_one_name)) {
                                                         myChildOneArray.push(plan.kpi_child_one_name);
                                                         tableHTML += `
@@ -207,9 +207,9 @@
                                                     }
 
                                                         tableHTML += `
-                                                        <td>${plan.kpi_child_two_name}</td> 
-                                                         <td>${plan.kpi_child_baseline || 0}</td> `; 
-                                                        if (plan.plans && Array.isArray(plan.plans)) {    
+                                                        <td>${plan.kpi_child_two_name}</td>
+                                                         <td>${plan.kpi_child_baseline || 0}</td> `;
+                                                        if (plan.plans && Array.isArray(plan.plans)) {
                                                             plan.plans.forEach(plan2 => {
                                                                 if (plan2.plan_status <= data.office_level) { // check for approval of plan
                                                                     tableHTML += `<td>${plan2.plan_value}</td>`;
@@ -222,15 +222,15 @@
                                                     tableHTML += `</tr>`;
                                                 });
                                             }
-                                       
+
                                     // Add Major Activities row
                                     tableHTML += `
                                         <tr>
-                                            <th>Major Activities</th> 
+                                            <th>Major Activities</th>
                                             <td colspan="${data.period_array.length + 3 }">`;
-                                            
+
                                     // Loop through the `narration` array and append each `plan_naration` value
-                                    if (office.narration && Array.isArray(office.narration)) { 
+                                    if (office.narration && Array.isArray(office.narration)) {
                                         office.narration.forEach(narrationn => {
                                             tableHTML += `${narrationn.plan_naration}<br>`; // Add each narration, separated by a line break
                                         });
@@ -246,17 +246,17 @@
                                                     </tbody>
                                                 </table>
                                             </td>
-                                        </tr> `; 
-                                         
-                                }); 
-                                
+                                        </tr> `;
+
+                                });
+
                                 tableHTML += `
                                     {{-- display for office it self plan --}}
                                     <tr style="background:#CDCDCD;">  `;
                                     data.parent_office_trans_array.forEach(parent_office_data_a => {
                                         tableHTML += `
                                         <th colspan="${data.period_array.length + 3 }" style="width:90%;">Offices: ${parent_office_data_a.office_name}</th>`;
-                                       
+
                                         tableHTML += `
                                         <td rowspan="${ data.parent_office_trans_array[0].kpi_child_one_count*data.parent_office_trans_array[0].kpi_child_two_count+ 3}">
                                             Self plan
@@ -274,7 +274,7 @@
                                             // Populate rows for KPI children
                                             parent_office_data_a.planAndBaseline.forEach(kpi_child => {
                                             tableHTML += `
-                                                <tr> `; 
+                                                <tr> `;
                                                     if (!myChildOneParentArray.includes(kpi_child.kpi_child_one_name)) {
                                                         myChildOneParentArray.push(kpi_child.kpi_child_one_name);
                                                         tableHTML += `
@@ -282,21 +282,21 @@
                                                     }
 
                                                         tableHTML += `
-                                                     <td rowspan=""> ${kpi_child.kpi_child_two_name} </td> 
+                                                     <td rowspan=""> ${kpi_child.kpi_child_two_name} </td>
                                                      <td rowspan=""> ${kpi_child.kpi_child_baseline} </td>`;
-                                                    if (kpi_child.plans && Array.isArray(kpi_child.plans)) { 
+                                                    if (kpi_child.plans && Array.isArray(kpi_child.plans)) {
                                                         kpi_child.plans.forEach(plan => {
-                                                          tableHTML += `<td>${plan.plan_value}</td> 
+                                                          tableHTML += `<td>${plan.plan_value}</td>
                                                            {{-- <td rowspan=""> ${Object.keys(plan)} </td> --}}
-                                                           `; 
+                                                           `;
                                                         });
                                                     }
                                                     tableHTML += `
-                                                   
+
                                                 </tr>
-                                                    `; 
+                                                    `;
                                             });
-                                            tableHTML += ` 
+                                            tableHTML += `
                                                 <tr>
                                                 <th>Major Activities</th>
                                                  ${
@@ -305,9 +305,9 @@
                                                         : `<td colspan="${data.period_array.length + 3 }">No narration available</td>` // Else
                                                 }
                                                  </tr>
-                                                `;  
+                                                `;
                                              });
-                            
+
                        `</table>`;
 
                         // Insert the dynamically generated table HTML

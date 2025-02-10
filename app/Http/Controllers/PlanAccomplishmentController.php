@@ -296,25 +296,25 @@ class PlanAccomplishmentController extends Controller
        }
         $submit = "create";
          $getNaration =null;
-         $index = []; 
+         $index = [];
         $planning = PlaningYear::where('is_active',true)->first();
-        
-         foreach ($kpi as $key => $value) {  
+
+         foreach ($kpi as $key => $value) {
              if(str_contains($key, 'baseline') && next($kpi) == 'yes') {
-              $submit = "update";  
+              $submit = "update";
             }else if (str_contains($key, 'baseline') && next($kpi) == 'no'){
-                $submit = "create";  
+                $submit = "create";
             }
              $str_key= (string)$key ;
-           
+
               if($str_key!='_token'){
                // if($value=="yes"){ $submit = "update";}
                 // first time planning
-                if($submit == "create"){ 
-                    if($str_key[0]!='d' && $str_key!="myfile" && !str_contains($str_key, 'type')){ 
+                if($submit == "create"){
+                    if($str_key[0]!='d' && $str_key!="myfile" && !str_contains($str_key, 'type')){
                         $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
                         $trueindex =0;
-                        $index = [];  
+                        $index = [];
                         foreach ($arr_to_split_text as $splitkey => $splitvalue) {
                             $index[$trueindex] =$splitvalue;
                             $trueindex++;
@@ -390,18 +390,18 @@ class PlanAccomplishmentController extends Controller
                         $naration->save();
                         $getNaration =$naration;
                      }
-                     elseif($str_key=="myfile"){  
-                       
+                     elseif($str_key=="myfile"){
+
                         $fileName = $request->file('myfile')->getClientOriginalName();
                         $fileName = date('Y-m-d')."_".time().'_'.$fileName;
-                        // $filePath = 'uploads/' . $fileName; 
-                        $path = $request->file('myfile')->storeAs( 'uploads', $fileName); 
+                        // $filePath = 'uploads/' . $fileName;
+                        $path = $request->file('myfile')->storeAs( 'uploads', $fileName);
                         $getNaration->approval_text=$fileName;
                         $getNaration->save();
                     }
                 }
 
-                else{ 
+                else{
                     if(!str_contains($key, 'type')){ //dd($kpi);
 
                        // $this->updatePlan($key,$str_key,$length);
@@ -495,7 +495,7 @@ class PlanAccomplishmentController extends Controller
                             }
 
 
-                     } 
+                     }
                     else{
                          $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
                          $index = [];
@@ -510,7 +510,7 @@ class PlanAccomplishmentController extends Controller
                 }
               }
           }
-         } 
+         }
         $search = $request->get('search', '');
           $planAccomplishments = PlanAccomplishment::where('office_id' , '=', $user_offices)->where('planning_year_id' , '=', $planning->id ?? NULL)
 
@@ -583,7 +583,7 @@ class PlanAccomplishmentController extends Controller
         $off_level = $office->level;
         $planning_year = PlaningYear::where('is_active',true)->first();
         $all_office_list = $this->allChildAndChildChild($office);
-        $only_child_array = array_merge($all_office_list,array($office_id)); 
+        $only_child_array = array_merge($all_office_list,array($office_id));
 
            DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
         $is_admin = auth()->user()->isSuperAdmin();
@@ -1046,10 +1046,27 @@ class PlanAccomplishmentController extends Controller
                 $imagen_off = $office;
             }
 
-            $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $only_child_array)->whereIn('kpi_id', $kpi_array)->select('*', DB::raw('SUM(plan_value) AS sum'))
-            -> where('reporting_periods.slug',"=", 1)
-            -> where('planning_year_id','=', $planning_year->id ?? NULL)
-            ->groupBy('kpi_id')  ->get();
+            // $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')->whereIn('office_id', $only_child_array)->whereIn('kpi_id', $kpi_array)->select('*', DB::raw('SUM(plan_value) AS sum'))
+            // -> where('reporting_periods.slug',"=", 1)
+            // -> where('planning_year_id','=', $planning_year->id ?? NULL)
+            // ->groupBy('kpi_id')  ->get();
+
+            $planAccomplishments = PlanAccomplishment::
+            join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
+            ->whereIn('office_id', $only_child_array)
+            ->whereIn('kpi_id', $kpi_array)
+            ->select(
+                'plan_accomplishments.id as id',
+                'plan_accomplishments.kpi_id',
+                'plan_accomplishments.planning_year_id',
+                'plan_accomplishments.plan_value',
+                'plan_accomplishments.accom_value',
+                'reporting_periods.id as reporting_period_id',
+                DB::raw('SUM(plan_value) AS sum')
+            )            ->where('reporting_periods.slug',"=", 1)
+            ->where('planning_year_id','=', $planning_year->id ?? NULL)
+            ->groupBy('kpi_id')
+            ->paginate(2);
 
             // to persist the select input values
             $request->flash();
@@ -1060,12 +1077,12 @@ class PlanAccomplishmentController extends Controller
                 ->select('*', DB::raw('SUM(plan_value) AS sum'))
                 -> where('planning_year_id','=', $planning_year->id ?? NULL)
                 ->groupBy('kpi_id')
-                ->get();
+                ->paginate(2);
             //     $user_office = auth()->user()->offices[0]->id;
             //     $check = PlanAccomplishment::getOfficePlans($user_office);
             //  dump($check);
             //      $planAccomplishments = PlanAccomplishment::join('reporting_periods',
-            //      'reporting_periods.id', '=', 
+            //      'reporting_periods.id', '=',
             //      'plan_accomplishments.reporting_period_id')
             //     ->whereIn('office_id', $only_child_array)
             //     ->select('*', DB::raw('SUM(plan_value) AS sum'))
@@ -1073,7 +1090,7 @@ class PlanAccomplishmentController extends Controller
             //     -> where('planning_year_id','=', $planning_year->id ?? NULL)
             //     ->groupBy('reporting_period_id')
             //    ->groupBy('kpi_id')  ->get();
-      
+
          if( $is_admin){
             $imagen_off = Office::find(1); //immaginery office of which contain all office kpi plan
             $off_level = 1;
@@ -1095,13 +1112,13 @@ class PlanAccomplishmentController extends Controller
                 ->orderBy('objective_id')
                 ->groupBy('kpi_id')
                 ->orderBy('reporting_period_id')
-                ->get();
+                ->paginate(3);
                 //dd($planAccomplishments);
          }
         }
          return view(
             'app.plan_accomplishments.view-planning-acc',
-            compact('planAccomplishments','all_office_list','only_child_array','planning_year','office','off_level','imagen_off','planning_year','search')
+            compact( 'planAccomplishments','all_office_list','only_child_array','planning_year','office','off_level','imagen_off','planning_year','search')
         );
 
    }
@@ -1165,7 +1182,7 @@ class PlanAccomplishmentController extends Controller
        $goal = Goal::find($goalId);
        $user = auth()->user()->id;
        $getuser = User::find($user);
-       $user_offices = $getuser->offices[0]->id; 
+       $user_offices = $getuser->offices[0]->id;
 
        $objectives = Objective::select('objectives.*')
                      ->join('key_peformance_indicators', 'key_peformance_indicators.objective_id', '=', 'objectives.id')
@@ -1263,12 +1280,12 @@ class PlanAccomplishmentController extends Controller
                 else{
                     if($str_key=='type'){  $submit = "update";}
                     if($submit == "create"){
-                        if($str_key[0]=='d'){ 
+                        if($str_key[0]=='d'){
                             $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
                             $index = [];
                             foreach ($arr_to_split_text as $splitkey => $splitvalue) {
                             $index[$splitkey] =$splitvalue;
-                            }  
+                            }
                             $naration =new ReportNarrationReport;
                             $naration->report_naration=$value;
                             $naration->key_peformance_indicator_id=$index[1];
@@ -1278,16 +1295,16 @@ class PlanAccomplishmentController extends Controller
                             $naration->save();
                             $getNaration =$naration;
                         }
-                        elseif($str_key=="myfile"){  
+                        elseif($str_key=="myfile"){
                             $fileName = $request->file('myfile')->getClientOriginalName();
-                            $fileName = date('Y-m-d')."_".time().'_'.$fileName; 
-                            // $filePath = 'uploads/' . $fileName; 
-                            $path = $request->file('myfile')->storeAs( 'uploads', $fileName); 
+                            $fileName = date('Y-m-d')."_".time().'_'.$fileName;
+                            // $filePath = 'uploads/' . $fileName;
+                            $path = $request->file('myfile')->storeAs( 'uploads', $fileName);
                             $getNaration->approval_text=$fileName;
                             $getNaration->save();
                         }
-                    } 
-                    else{ 
+                    }
+                    else{
                        if($str_key[0]=='d' ){
                          $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
                          $index = [];
@@ -1304,11 +1321,11 @@ class PlanAccomplishmentController extends Controller
                         ->first();
                         $report_narration_report_ob = ReportNarrationReport::find($updated2->id);
                           }
-                         elseif($str_key=="myfile"){   
+                         elseif($str_key=="myfile"){
                             $fileName = $request->file('myfile')->getClientOriginalName();
-                            $fileName = date('Y-m-d')."_".time().'_'.$fileName; 
-                            // $filePath = 'uploads/' . $fileName; 
-                            $path = $request->file('myfile')->storeAs( 'uploads', $fileName); 
+                            $fileName = date('Y-m-d')."_".time().'_'.$fileName;
+                            // $filePath = 'uploads/' . $fileName;
+                            $path = $request->file('myfile')->storeAs( 'uploads', $fileName);
                             $report_narration_report_ob->approval_text=$fileName;
                             $report_narration_report_ob->save();
                          }
@@ -2383,7 +2400,7 @@ class PlanAccomplishmentController extends Controller
 
     public function getDetails($id, $kpi_id, $year_id, Request $request)
     {
-        $planAccom = $request->route()->parameters(); 
+        $planAccom = $request->route()->parameters();
         $kpi = KeyPeformanceIndicator::find($kpi_id);
         // if (!count($kpi->kpiChildOnes) == 0) {
         //     dump($kpi->kpiChildOnes);
@@ -2391,7 +2408,7 @@ class PlanAccomplishmentController extends Controller
         $kpi_children_name =[];
         foreach ($kpi->kpiChildOnes as $key => $value) {
             $kpi_children_name[] = $value->kpiChildOneTranslations[0]->name;
-         }  
+         }
         $planning_year = PlaningYear::find($year_id);
         $planAccomplishment = PlanAccomplishment::where('kpi_id',$kpi->id)
         ->where('planning_year_id',$planning_year->id)
@@ -2404,13 +2421,17 @@ class PlanAccomplishmentController extends Controller
         $parent_office_trans_array = []; // Initialize the array to store structured data
         $narrations = [];
         $userOffice = auth()->user()->offices[0];
-        $child_offices = $get_office->offices; 
+        $child_offices = $get_office->offices;
         $kpi_children_data = []; // Array to hold KPI child data
-        $baseline_self =null; 
+        $baseline_self =null;
+
+        // $childAndHimOffKpi = office_all_childs_ids($get_office);
+
         // KPI has child three, two, one
         if(!count($kpi->kpiChildThrees) == 0){
-             
+
         }
+
         // KPI has child  two, one
         else if(!count($kpi->kpiChildTwos) == 0){
             $parent_office_data_chOne = [
@@ -2421,9 +2442,10 @@ class PlanAccomplishmentController extends Controller
                 'kpi_child_one_count' => count($kpi->kpiChildOnes),
                 'kpi_child_two_count' => count($kpi->kpiChildTwos),
                 "narration" => $planAccomplishment->getNarration(
+                    $childAndHimOffKpi,
                     $kpi->id,
                     $planning_year->id ?? null,
-                    $get_office 
+                    $get_office
                 ),
                 'planAndBaseline' => [],
               ];
@@ -2432,9 +2454,10 @@ class PlanAccomplishmentController extends Controller
                     $kpi_officeSelf_plans = [];
                     foreach ($reportin_periods as $period) {
                         $planOfOfficePlanSelf = $planAccomplishment->OnlyKpiOTT(
+                            $childAndHimOffKpi,
                             $kpi->id, $get_office, $period->id,  false,
                             $planning_year->id ?? null,$one->id, $two->id,null
-                        );                   
+                        );
                         $kpi_officeSelf_plans[] = [
                             'reporting_period' => $period->reportingPeriodTs[0]->name,
                             'plan_value' => $planOfOfficePlanSelf[0] ?? 0,
@@ -2447,8 +2470,9 @@ class PlanAccomplishmentController extends Controller
                     $parent_office_data_chOne['planAndBaseline'][] = [
                         'kpi_child_one_name' => $one->kpiChildOneTranslations[0]->name,
                         'kpi_child_two_name' => $two->kpiChildTwoTranslations[0]->name,
-                      
+
                         'kpi_child_baseline' => OnlyKpiOttBaseline(
+                            $childAndHimOffKpi,
                             $kpi->id,
                             $get_office,
                             $planning_year->id,
@@ -2461,7 +2485,7 @@ class PlanAccomplishmentController extends Controller
                     ];
                 }
             }
-            foreach ($child_offices as $office) {   
+            foreach ($child_offices as $office) {
                 $hasChild = !$office->offices->isEmpty();
                 $office_level = $office->level ?: 1;
 
@@ -2474,19 +2498,21 @@ class PlanAccomplishmentController extends Controller
                     'kpi_id' => $kpi->id,
                     'pp_year' => $planning_year->id,
                     "narration" => $planAccomplishment->getNarration(
+                        $childAndHimOffKpi,
                         $kpi->id,
                         $planning_year->id ?? null,
-                        $office 
+                        $office
                     ),
                     'plans' => [] // Initialize to store plans for all KPI children
                 ];
                 // Process each KPI child
-                foreach ($kpi->kpiChildOnes as $one) {  
+                foreach ($kpi->kpiChildOnes as $one) {
                     foreach ($kpi->kpiChildTwos as $two) {
                         // Add plan data for each reporting period
                         $kpi_child_plans = [];
                         foreach ($reportin_periods as $period) {
                             $planOfOfficePlan = $planAccomplishment->KpiOTT(
+                                $childAndHimOffKpi,
                                 $kpi->id,
                                 $office,
                                 $period->id,
@@ -2503,7 +2529,7 @@ class PlanAccomplishmentController extends Controller
                                 'plan_value' => $planOfOfficePlan[0] ?? 0,
                                 'plan_status' => $planOfOfficePlan[2] ?? 0
                             ];
-                            
+
                         }
 
                         // Add the plans for the current KPI child
@@ -2511,6 +2537,7 @@ class PlanAccomplishmentController extends Controller
                             'kpi_child_one_name' => $one->kpiChildOneTranslations[0]->name,
                             'kpi_child_two_name' => $two->kpiChildTwoTranslations[0]->name,
                             'kpi_child_baseline' => planBaseline(
+                                $childAndHimOffKpi,
                                 $kpi->id,
                                 $office,
                                 $planning_year->id,
@@ -2524,10 +2551,10 @@ class PlanAccomplishmentController extends Controller
                     }
                 }
                 // Add the completed office data to the array
-                $office_trans_array[] = $office_data;                
-            } 
+                $office_trans_array[] = $office_data;
+            }
             $parent_office_trans_array[] = $parent_office_data_chOne;
-            //dump($parent_office_trans_array ); 
+            //dump($parent_office_trans_array );
 
         }
          // KPI has child  one
@@ -2535,22 +2562,22 @@ class PlanAccomplishmentController extends Controller
             $parent_office_data_chOne = [
                 'id' => $get_office->id,
                 'office_name' => $get_office->officeTranslations[0]->name,
-                 'kpi_id' => $kpi->id,
+                'kpi_id' => $kpi->id,
                 'pp_year' => $planning_year->id,
                 "narration" => $planAccomplishment->getNarration(
                     $kpi->id,
                     $planning_year->id ?? null,
-                    $get_office 
+                    $get_office
                 ),
                 'planAndBaseline' => [],
-              ];
+            ];
              foreach ($planAccomplishment->Kpi->kpiChildOnes as $one) {
                 $kpi_officeSelf_plans = [];
                 foreach ($reportin_periods as $period) {
                     $planOfOfficePlanSelf = $planAccomplishment->OnlyKpiOTT(
                          $kpi->id, $get_office, $period->id,  false,
                           $planning_year->id ?? null,$one->id, null,null
-                    );                   
+                    );
                     $kpi_officeSelf_plans[] = [
                         'reporting_period' => $period->reportingPeriodTs[0]->name,
                         'plan_value' => $planOfOfficePlanSelf[0] ?? 0,
@@ -2574,7 +2601,7 @@ class PlanAccomplishmentController extends Controller
                     'plans' => $kpi_officeSelf_plans
                 ];
             }
-            foreach ($child_offices as $office) {   
+            foreach ($child_offices as $office) {
                 $hasChild = !$office->offices->isEmpty();
                 $office_level = $office->level ?: 1;
 
@@ -2589,13 +2616,13 @@ class PlanAccomplishmentController extends Controller
                     "narration" => $planAccomplishment->getNarration(
                         $kpi->id,
                         $planning_year->id ?? null,
-                        $office 
+                        $office
                     ),
                     'plans' => [] // Initialize to store plans for all KPI children
                 ];
                 // Process each KPI child
-                foreach ($planAccomplishment->Kpi->kpiChildOnes as $one) {  
-                    
+                foreach ($planAccomplishment->Kpi->kpiChildOnes as $one) {
+
                     // Add plan data for each reporting period
                     $kpi_child_plans = [];
                     foreach ($reportin_periods as $period) {
@@ -2637,14 +2664,14 @@ class PlanAccomplishmentController extends Controller
                      ];
                 }
                 // Add the completed office data to the array
-                $office_trans_array[] = $office_data;                
-            } 
+                $office_trans_array[] = $office_data;
+            }
             $parent_office_trans_array[] = $parent_office_data_chOne;
-            //dump($parent_office_trans_array );            
+            //dump($parent_office_trans_array );
         }
-        // KPI has no child 
+        // KPI has no child
         else{ //dump($child_offices);
-            foreach ($child_offices as $office) {   
+            foreach ($child_offices as $office) {
                 $hasChild = !$office->offices->isEmpty();
                 $office_level = $office->level ?: 1;
                 //dump($planAccomplishment->);
@@ -2667,7 +2694,7 @@ class PlanAccomplishmentController extends Controller
                     "narration" => $planAccomplishment->getNarration(
                         $kpi->id,
                         $planning_year->id ?? null,
-                        $office 
+                        $office
                     ),
                     'plans' => [] // Store plans per reporting period
                 ];
@@ -2683,41 +2710,41 @@ class PlanAccomplishmentController extends Controller
                         $planAccomplishment->kpi_child_one_id,
                         $planAccomplishment->kpi_child_two_id,
                         $planAccomplishment->kpi_child_three_id
-                    ); 
+                    );
                      //dump($planAccomplishment);
                     //dump($office->id);
                     //dump($planAccomplishment->kpi_child_one_id);
-        
+
                     $office_data['plans'][] = [
                         'period_name' => $period->reportingPeriodTs[0]->name,
                         'plan_value' => $planOfOfficePlan[0],
                         'plan_status' => $planOfOfficePlan[2]?->plan_status,
                     ];
-        
+
                     $period_array[] = $period->reportingPeriodTs[0]->name;
                     $period_array = array_unique($period_array); // Avoid duplicates
                 }
-        
+
                 $office_trans_array[] = $office_data;
-        
-                
+
+
             }  //dump($office_level);
         }
-         
-        //dump($planning_year); 
-        //dump($kpi); 
-        //dump($get_office); 
-         
-        
+
+        //dump($planning_year);
+        //dump($kpi);
+        //dump($get_office);
+
+
         foreach ($reportin_periods as $period) {
-             $planOfOfficePlan_self[] = $planAccomplishment->OnlyKpiOTT( $planAccomplishment->Kpi->id,$get_office, $period->id, false, $planning_year->id ?? null,$planAccomplishment->kpi_child_one_id, $planAccomplishment->kpi_child_two_id,$planAccomplishment->kpi_child_three_id);
+             $planOfOfficePlan_self[] = $planAccomplishment->OnlyKpiOTT($planAccomplishment->Kpi->id,$get_office, $period->id, false, $planning_year->id ?? null,$planAccomplishment->kpi_child_one_id, $planAccomplishment->kpi_child_two_id,$planAccomplishment->kpi_child_three_id);
         }
         $narrations_self[] = $planAccomplishment->getNarrationSelf(
             $planAccomplishment->Kpi->id,
             $planning_year->id ?? null,
-            $get_office 
+            $get_office
         ); //dump($office_trans_array);
-      
+
         $parent_office_data[] = [
             'parent_office_name' => $parent_office_name,
             'baseline_self' => $baseline_self,
@@ -2736,21 +2763,21 @@ class PlanAccomplishmentController extends Controller
                 'parent_office_data' => $parent_office_data,
                 'kpi_children_data' => $kpi_children_data,
                 'kpi_children' => $kpi_children_name
-                
+
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to fetch data', 'message' => $e->getMessage()], 500);
         }
-    
-       
-    } 
+
+
+    }
     public function getDetailsTwo($id, $kpi_id, $year_id, Request $request)
     {
         $kpi = KeyPeformanceIndicator::find($kpi_id);
         // if (!count($kpi->kpiChildOnes) == 0) {
         //     dump($kpi->kpiChildOnes);
         // }
-        
+
         $planning_year = PlaningYear::find($year_id);
         $planAccomplishment = PlanAccomplishment::where('kpi_id',$kpi_id)
         ->where('planning_year_id',$planning_year->id)
@@ -2763,9 +2790,12 @@ class PlanAccomplishmentController extends Controller
         $parent_office_trans_array = []; // Initialize the array to store structured data
         $narrations = [];
         $userOffice = auth()->user()->offices[0];
-        $child_offices = $get_office->offices; 
+        $child_offices = $get_office->offices;
         $kpi_children_data = []; // Array to hold KPI child data
-        $baseline_self =null; 
+        $baseline_self =null;
+
+        $childAndHimOffKpi = office_all_childs_ids($get_office);
+
         if(!count($kpi->kpiChildThrees) == 0){
             $parent_office_data_chOne = [
                 'id' => $get_office->id,
@@ -2776,9 +2806,10 @@ class PlanAccomplishmentController extends Controller
                 'kpi_child_two_count' => count($kpi->kpiChildTwos),
                 'kpi_child_three_count' => count($kpi->kpiChildThrees),
                 "narration" => $planAccomplishment->getNarration(
+                    $childAndHimOffKpi,
                     $kpi->id,
                     $planning_year->id ?? null,
-                    $get_office 
+                    $get_office
                 ),
                 'planAndBaseline' => [],
               ];
@@ -2788,9 +2819,10 @@ class PlanAccomplishmentController extends Controller
                         $kpi_officeSelf_plans = [];
                         foreach ($reportin_periods as $period) {
                             $planOfOfficePlanSelf = $planAccomplishment->OnlyKpiOTT(
+                                $childAndHimOffKpi,
                                 $kpi->id, $get_office, $period->id,  false,
                                 $planning_year->id ?? null,$one->id, $two->id,$three->id
-                            );                   
+                            );
                             $kpi_officeSelf_plans[] = [
                                 'reporting_period' => $period->reportingPeriodTs[0]->name,
                                 'plan_value' => $planOfOfficePlanSelf[0] ?? 0,
@@ -2805,6 +2837,7 @@ class PlanAccomplishmentController extends Controller
                             'kpi_child_two_name' => $two->kpiChildTwoTranslations[0]->name,
                             'kpi_child_three_name' => $three->kpiChildThreeTranslations[0]->name,
                             'kpi_child_baseline' => OnlyKpiOttBaseline(
+                                $childAndHimOffKpi,
                                 $kpi->id,
                                 $get_office,
                                 $planning_year->id,
@@ -2818,7 +2851,7 @@ class PlanAccomplishmentController extends Controller
                     }
                 }
             }
-            foreach ($child_offices as $office) {   
+            foreach ($child_offices as $office) {
                 $hasChild = !$office->offices->isEmpty();
                 $office_level = $office->level ?: 1;
 
@@ -2831,20 +2864,22 @@ class PlanAccomplishmentController extends Controller
                     'kpi_id' => $kpi->id,
                     'pp_year' => $planning_year->id,
                     "narration" => $planAccomplishment->getNarration(
+                        $childAndHimOffKpi,
                         $kpi->id,
                         $planning_year->id ?? null,
-                        $office 
+                        $office
                     ),
                     'plans' => [] // Initialize to store plans for all KPI children
                 ];
                 // Process each KPI child
-                foreach ($kpi->kpiChildOnes as $one) {  
+                foreach ($kpi->kpiChildOnes as $one) {
                     foreach ($kpi->kpiChildTwos as $two) {
                         foreach ($kpi->kpiChildThrees as $three) {
                             // Add plan data for each reporting period
                             $kpi_child_plans = [];
                             foreach ($reportin_periods as $period) {
                                 $planOfOfficePlan = $planAccomplishment->KpiOTT(
+                                    $childAndHimOffKpi,
                                     $kpi->id,
                                     $office,
                                     $period->id,
@@ -2861,7 +2896,7 @@ class PlanAccomplishmentController extends Controller
                                     'plan_value' => $planOfOfficePlan[0] ?? 0,
                                     'plan_status' => $planOfOfficePlan[2] ?? 0
                                 ];
-                                
+
                             }
 
                             // Add the plans for the current KPI child
@@ -2869,6 +2904,7 @@ class PlanAccomplishmentController extends Controller
                                 'kpi_child_one_name' => $one->kpiChildOneTranslations[0]->name,
                                 'kpi_child_two_name' => $two->kpiChildTwoTranslations[0]->name,
                                 'kpi_child_baseline' => planBaseline(
+                                    $childAndHimOffKpi,
                                     $kpi->id,
                                     $office,
                                     $planning_year->id,
@@ -2883,10 +2919,10 @@ class PlanAccomplishmentController extends Controller
                     }
                 }
                 // Add the completed office data to the array
-                $office_trans_array[] = $office_data;                
-            } 
+                $office_trans_array[] = $office_data;
+            }
             $parent_office_trans_array[] = $parent_office_data_chOne;
-            //dump($parent_office_trans_array ); 
+            //dump($parent_office_trans_array );
         }
         else{
             $parent_office_data_chOne = [
@@ -2897,9 +2933,10 @@ class PlanAccomplishmentController extends Controller
                 'kpi_child_one_count' => count($kpi->kpiChildOnes),
                 'kpi_child_two_count' => count($kpi->kpiChildTwos),
                 "narration" => $planAccomplishment->getNarration(
+                    $childAndHimOffKpi,
                     $kpi->id,
                     $planning_year->id ?? null,
-                    $get_office 
+                    $get_office
                 ),
                 'planAndBaseline' => [],
               ];
@@ -2908,9 +2945,10 @@ class PlanAccomplishmentController extends Controller
                     $kpi_officeSelf_plans = [];
                     foreach ($reportin_periods as $period) {
                         $planOfOfficePlanSelf = $planAccomplishment->OnlyKpiOTT(
+                            $childAndHimOffKpi,
                             $kpi->id, $get_office, $period->id,  false,
                             $planning_year->id ?? null,$one->id, $two->id,null
-                        );                   
+                        );
                         $kpi_officeSelf_plans[] = [
                             'reporting_period' => $period->reportingPeriodTs[0]->name,
                             'plan_value' => $planOfOfficePlanSelf[0] ?? 0,
@@ -2923,8 +2961,9 @@ class PlanAccomplishmentController extends Controller
                     $parent_office_data_chOne['planAndBaseline'][] = [
                         'kpi_child_one_name' => $one->kpiChildOneTranslations[0]->name,
                         'kpi_child_two_name' => $two->kpiChildTwoTranslations[0]->name,
-                      
+
                         'kpi_child_baseline' => OnlyKpiOttBaseline(
+                            $childAndHimOffKpi,
                             $kpi->id,
                             $get_office,
                             $planning_year->id,
@@ -2937,7 +2976,7 @@ class PlanAccomplishmentController extends Controller
                     ];
                 }
             }
-            foreach ($child_offices as $office) {   
+            foreach ($child_offices as $office) {
                 $hasChild = !$office->offices->isEmpty();
                 $office_level = $office->level ?: 1;
 
@@ -2950,19 +2989,21 @@ class PlanAccomplishmentController extends Controller
                     'kpi_id' => $kpi->id,
                     'pp_year' => $planning_year->id,
                     "narration" => $planAccomplishment->getNarration(
+                        $childAndHimOffKpi,
                         $kpi->id,
                         $planning_year->id ?? null,
-                        $office 
+                        $office
                     ),
                     'plans' => [] // Initialize to store plans for all KPI children
                 ];
                 // Process each KPI child
-                foreach ($kpi->kpiChildOnes as $one) {  
+                foreach ($kpi->kpiChildOnes as $one) {
                     foreach ($kpi->kpiChildTwos as $two) {
                         // Add plan data for each reporting period
                         $kpi_child_plans = [];
                         foreach ($reportin_periods as $period) {
                             $planOfOfficePlan = $planAccomplishment->KpiOTT(
+                                $childAndHimOffKpi,
                                 $kpi->id,
                                 $office,
                                 $period->id,
@@ -2979,7 +3020,7 @@ class PlanAccomplishmentController extends Controller
                                 'plan_value' => $planOfOfficePlan[0] ?? 0,
                                 'plan_status' => $planOfOfficePlan[2] ?? 0
                             ];
-                            
+
                         }
 
                         // Add the plans for the current KPI child
@@ -2987,6 +3028,7 @@ class PlanAccomplishmentController extends Controller
                             'kpi_child_one_name' => $one->kpiChildOneTranslations[0]->name,
                             'kpi_child_two_name' => $two->kpiChildTwoTranslations[0]->name,
                             'kpi_child_baseline' => planBaseline(
+                                $childAndHimOffKpi,
                                 $kpi->id,
                                 $office,
                                 $planning_year->id,
@@ -3000,20 +3042,20 @@ class PlanAccomplishmentController extends Controller
                     }
                 }
                 // Add the completed office data to the array
-                $office_trans_array[] = $office_data;                
-            } 
+                $office_trans_array[] = $office_data;
+            }
             $parent_office_trans_array[] = $parent_office_data_chOne;
-            //dump($parent_office_trans_array );           
+            //dump($parent_office_trans_array );
         }
         foreach ($reportin_periods as $period) {
-             $planOfOfficePlan_self[] = $planAccomplishment->OnlyKpiOTT( $planAccomplishment->Kpi->id,$get_office, $period->id, false, $planning_year->id ?? null,$planAccomplishment->kpi_child_one_id, $planAccomplishment->kpi_child_two_id,$planAccomplishment->kpi_child_three_id);
+             $planOfOfficePlan_self[] = $planAccomplishment->OnlyKpiOTT($childAndHimOffKpi, $planAccomplishment->Kpi->id,$get_office, $period->id, false, $planning_year->id ?? null,$planAccomplishment->kpi_child_one_id, $planAccomplishment->kpi_child_two_id,$planAccomplishment->kpi_child_three_id);
         }
         $narrations_self[] = $planAccomplishment->getNarrationSelf(
             $planAccomplishment->Kpi->id,
             $planning_year->id ?? null,
-            $get_office 
+            $get_office
         ); //dump($office_trans_array);
-      
+
         $parent_office_data[] = [
             'parent_office_name' => $parent_office_name,
             'baseline_self' => $baseline_self,
@@ -3031,12 +3073,12 @@ class PlanAccomplishmentController extends Controller
                 'office_level' => $office_level,
                 'parent_office_data' => $parent_office_data,
                 'kpi_children_data' => $kpi_children_data,
-                 
+
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to fetch data', 'message' => $e->getMessage()], 500);
         }
-    
-       
-    } 
+
+
+    }
 }

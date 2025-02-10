@@ -29,7 +29,7 @@ class FeedbackController extends Controller
      */
     public function create(Request $request): View
     {
-        //$this->authorize('create', Feedback::class);        
+        //$this->authorize('create', Feedback::class);
 
         return view('app.feedback.create');
     }
@@ -48,14 +48,13 @@ class FeedbackController extends Controller
             $Feedback->created_at= new \DateTime();
             $Feedback->updated_at =new \DateTime();
             $Feedback->save();
-            
+
          return redirect()
-            ->route('feedback')
-            ->withSuccess(__('crud.common.created'));
-        } catch (Exception $e) {
+            ->back()
+            ->withSuccess(__('crud.common.saved'));
+        } catch (\Exception $e) {
             return redirect('feedback')->withErrors(['errors' => $e]);
-            }
-    return view('landing.index');
+        }
     }
 
     /**

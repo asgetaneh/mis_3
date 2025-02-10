@@ -34,24 +34,24 @@
         }
         $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
         $planKpiOfficeYear = planSumOfKpi($planAcc->Kpi->id, $office, $planning_year->id ?? NULL, 3);
-        $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id,$office, $planning_year->id, $period->id,$planAcc->kpi_child_one_id,null,null);
-    @endphp
+        @endphp
 @empty
 @endforelse
 
 @foreach ($planAcc->Kpi->kpiChildOnes as $one)
 <tr>
-<td>
-    {{ $one->kpiChildOneTranslations[0]->name }}
-</td>
-<td> {{ $baselineOfOfficePlan }} </td>
-@forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+    @php
+        $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id,$office, $planning_year->id, $period->id,$one->id,null,null);
+        // $planOne = planOne($planAcc->Kpi->id, $one->id, $office, $period->id, 3,$planning_year);
+        $planOne = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year->id ?? NULL ,$one->id,null,null);
+        $narration = getNarrationApproved($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
+    @endphp
     <td>
-        @php
-           // $planOne = planOne($planAcc->Kpi->id, $one->id, $office, $period->id, 3,$planning_year);
-            $planOne = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year->id ?? NULL ,$one->id,null,null);
-            $narration = getNarrationApproved($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
-        @endphp
+        {{ $one->kpiChildOneTranslations[0]->name }}
+    </td>
+    <td> {{ $baselineOfOfficePlan }} </td>
+    @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+    <td>
         {{ $planOne[0] }}
     </td>
 @empty

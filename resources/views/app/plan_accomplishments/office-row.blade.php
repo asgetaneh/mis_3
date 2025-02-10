@@ -25,7 +25,7 @@
             Offices
         </th>
         <th rowspan="">{{ 'Baseline' }}</th>
-        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+        @forelse($getQuarter as $period)
             <th>
                 {{ $period->reportingPeriodTs[0]->name }}
             </th>
@@ -33,8 +33,8 @@
         @endforelse
         <td rowspan="3">
             @if (!$office->offices->isEmpty())
-                <button class="btn btn-primary btn-expand" data-id="{{ $office->id }}-plain-{{ $planAcc->Kpi->id }}"
-                    data-url="{{ url('/smis/plan/plan-accomplishment/' . $office->id . '/details/' . $planAcc->kpi->id. '/kpi/' . $planAcc->planning_year_id) }}">
+                <button class="btn btn-primary btn-expand" data-id="{{ $office->id }}-plain-{{ $planAccKpi->id }}"
+                    data-url="{{ url('/smis/plan/plan-accomplishment/' . $office->id . '/details/' . $planAccKpi->id. '/kpi/' . $planAcc->planning_year_id) }}">
                     Details
                 </button>
             @else
@@ -46,7 +46,7 @@
         <td rowspan="" style="width:30%">{{ $office->officeTranslations[0]->name }}</td>
         @php
             $baselineOfOfficePlan = planBaseline(
-                $planAcc->Kpi->id,
+            $planAccKpi->id,
                 $office,
                 $planning_year->id,
                 $period->id,
@@ -56,10 +56,10 @@
             );
         @endphp
         <td>{{ $baselineOfOfficePlan }}</td>
-        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+        @forelse($getQuarter as $period)
             @php
                 $planOfOfficePlan = $planAcc->KpiOTT(
-                    $planAcc->Kpi->id,
+                $planAccKpi->id,
                     $office,
                     $period->id,
                     false,
@@ -69,7 +69,8 @@
                     null,
                 );
                 $narration = $planAcc->getNarration(
-                    $planAcc->Kpi->id,
+
+                $planAccKpi->id,
                     $planning_year->id ?? null,
                     $office,
                     $period->id,
@@ -105,13 +106,13 @@
     </tr>
 </table>
 <script>
-    const kpi_id = {{ $planAcc->kpi->id }};
-    const planning_year = {{ $planAcc->id }};
+    const kpi_id = {{ $planAccKpi->id }};
+    const planning_year = {{ $planAcc->planning_year_id }};
     const planAccId = {{ $planAcc->id }};
 </script>
 <div class="table table-bordered details-row"
-      id="details-{{ $office->id }}-plain-{{ $planAcc->Kpi->id }}" style="padding: 10px; border: 1px solid; display: none;">
-    <table id="details-data-{{ $office->id }}-plain-{{ $planAcc->Kpi->id }}"  style="padding: 10px; width:100%; border: 1px solid;"> </table>
+      id="details-{{ $office->id }}-plain-{{ $planAccKpi->id }}" style="padding: 10px; border: 1px solid; display: none;">
+    <table id="details-data-{{ $office->id }}-plain-{{ $planAccKpi->id }}"  style="padding: 10px; width:100%; border: 1px solid;"> </table>
 </div>
 
 <script>
@@ -135,7 +136,7 @@
                     console.error(`Error: Details row not found for Office ID: ${officeId}`);
                     return;
                 }
-                
+
                 // If the details row is hidden, fetch the data
                 if (detailsRow.style.display === 'none') {
                     fetch(url)
@@ -154,7 +155,7 @@
                             if (data.office_trans_array && Array.isArray(data.office_trans_array)) {
                             data.office_trans_array.forEach(office => {
                                 let levelClass =
-                                `level-${office.office_level || 1}`; // Fallback to level 1 if not defined    
+                                `level-${office.office_level || 1}`; // Fallback to level 1 if not defined
                                 tableHTML += `
                              <tr >
                                 {{-- <th>${office.office_level}</th> --}}
@@ -167,7 +168,7 @@
                                     tableHTML += `<th>${period}</th>`;
                                 });
                                 }
-                           
+
                                 tableHTML += `<th>Actions</th></tr>
                                 <tr>
                                     <td rowspan="">${office.office_name}</td>
@@ -193,7 +194,7 @@
                                                     data-id="${office.id}-plain-${office.kpi_id}"
                                                     data-url="/smis/plan/plan-accomplishment/${office.id}/details/${office.kpi_id}/kpi/${office.pp_year}">
                                                 Details
-                                            </button>` 
+                                            </button>`
                                         : 'No Child'}
                                     </td>
                                 </tr>   `;
@@ -261,7 +262,7 @@
                                 // Loop through the narrations and append each one to the table
                                 if ( data.narrations_self && Array.isArray(data.narrations_self)) {
                                     data.narrations_self.forEach(narrationnm => {
-                                        tableHTML += ` 
+                                        tableHTML += `
                                         {{-- <td rowspan=""> ${Object.keys(narrationnm[0])} </td> --}}
                                         ${narrationnm[0]?.plan_naration ?? ''}
                                         `; // Append each narration to the table HTML
@@ -279,7 +280,7 @@
                             detailsRow.style.display = '';
 
                             // Reattach listeners to new expand buttons (for sub-child offices)
-                            attachExpandListeners();  
+                            attachExpandListeners();
                            // alert(data);
                         })
                         .catch(error => console.error('Fetch error:', error));
