@@ -48,10 +48,10 @@
             <nav id="navbar" class="navbar">
                 <ul>
                     <li><a class="nav-link scrollto active" href="#">Home</a></li>
-                    <li>
+                    {{-- <li>
                         <a class="nav-link scrollto" href="#">Information</a>
                     </li>
-                    <li><a class="nav-link scrollto" href="#">Plan</a></li>
+                    <li><a class="nav-link scrollto" href="#">Plan</a></li> --}}
                     <li><a class="nav-link scrollto" href="{{ route('feedback') }}">Feedback</a></li>
 
                     {{-- <li class="dropdown">
@@ -275,6 +275,13 @@
 
     <!-- Template Main JS File -->
     <script src="{{ asset('assets/landing-page/assets/js/main.js') }}"></script>
+
+    @if (session()->has('success'))
+        <script>
+            var notyf = new Notyf({dismissible: true})
+            notyf.success('{{ session('success') }}')
+        </script>
+    @endif
 </body>
 
 </html>

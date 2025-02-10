@@ -1,6 +1,6 @@
 <table class="table table-bordered" style="background:#12cd4322;">
     @php
-         $ospan = $planAcc->Kpi->kpiChildThrees->count() * (getQuarter($planAcc->Kpi->reportingPeriodType->id)->count()+1) + 2;
+         $ospan = $planAccKpiChildThree->count() * ($getQuarter->count()+1) + 2;
     @endphp
     <!-- <tr id="child-ones"> -->
     <tr>
@@ -8,10 +8,10 @@
         <th colspan="{{ $ospan }} "  style="background:#fff7e6;width:100%">
             Offices: {{ $office->officeTranslations[0]->name }}
         </td>
-         <td rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() *count(getQuarter($planAcc->Kpi->reportingPeriodType->id))+4}}">
-        @if (!$office->offices->isEmpty())
+         <td rowspan="{{ $planAccKpiChildTwo->count() *count($getQuarter)+4}}">
+        @if (!$officeOffices->isEmpty())
             <p>
-                <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}{{$planAcc->Kpi->id}}" role="button"
+                <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}{{$planAccKpi->id}}" role="button"
                     aria-expanded="false" aria-controls="collapseExample0">
                     Details
                 </a>
@@ -25,9 +25,9 @@
 
     <tr>
         <th rowspan="2" colspan="2">#</th>
-        <th colspan="{{ $planAcc->Kpi->kpiChildThrees->count() }}">Baseline</th>
-        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
-            <th colspan="{{ $planAcc->Kpi->kpiChildThrees->count() }}">
+        <th colspan="{{ $planAccKpiChildThree->count() }}">Baseline</th>
+        @forelse($getQuarter as $period)
+            <th colspan="{{ $planAccKpiChildThree->count() }}">
                 {{ $period->reportingPeriodTs[0]->name }}
             </th>
         @empty
@@ -35,11 +35,11 @@
     </tr>
 
     <tr>
-    @foreach ($planAcc->Kpi->kpiChildThrees as $kpiThree)
+    @foreach ($planAccKpiChildThree as $kpiThree)
         <th>{{ $kpiThree->kpiChildThreeTranslations[0]->name }} </th>
     @endforeach
-        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
-            @foreach ($planAcc->Kpi->kpiChildThrees as $kpiThree)
+        @forelse($getQuarter as $period)
+            @foreach ($planAccKpiChildThree as $kpiThree)
                 <th>{{ $kpiThree->kpiChildThreeTranslations[0]->name }}
                 </th>
             @endforeach
@@ -50,19 +50,19 @@
 
     {{-- <tr>
         <td rowspan="2" colspan="2">#</td>
-        @foreach ($planAcc->Kpi->kpiChildOnes as $one)
-            <td colspan="{{ $planAcc->Kpi->kpiChildThrees->count() }}">{{ $one->kpiChildOneTranslations[0]->name }}
+        @foreach ($planAccKpiChildOne as $one)
+            <td colspan="{{ $planAccKpiChildThree->count() }}">{{ $one->kpiChildOneTranslations[0]->name }}
             </td>
         @endforeach --}}
         {{-- <td rowspan ="2">
     @php
         $childAndHimOffKpi_array =[];
-        $childAndHimOffKpi = $office->offices;
+        $childAndHimOffKpi = $officeOffices;
         foreach ($childAndHimOffKpi as $key => $value) {
             $childAndHimOffKpi_array[$key] = $value->id;
         }
         $childAndHimOffKpi_array = array_merge( $childAndHimOffKpi_array, array($office->id));
-        $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id,$office);
+        $planKpiOfficeYear = $planAcc->planSumOfKpi($planAccKpi->id,$office);
         @endphp
         {{$planKpiOfficeYear}}
 
@@ -70,62 +70,62 @@
     </td> --}}
     {{-- </tr> --}}
     {{-- <tr>
-        @foreach ($planAcc->Kpi->kpiChildOnes as $one)
-            @foreach ($planAcc->Kpi->kpiChildThrees as $kpiThree)
+        @foreach ($planAccKpiChildOne as $one)
+            @foreach ($planAccKpiChildThree as $kpiThree)
                 <td>{{ $kpiThree->kpiChildThreeTranslations[0]->name }}
             @endforeach
         @endforeach
     </tr> --}}
 
 
-    @forelse ($planAcc->Kpi->kpiChildOnes as $one)
+    @forelse ($planAccKpiChildOne as $one)
 
         <tr>
-            <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
+            <th rowspan="{{ $planAccKpiChildTwo->count() }}">
                 {{ $one->kpiChildOneTranslations[0]->name }}
             </th>
-        @foreach ($planAcc->Kpi->kpiChildTwos as $two)
+        @foreach ($planAccKpiChildTwo as $two)
                 <th>
                     {{ $two->kpiChildTwoTranslations[0]->name }}
                 </th>
-                @foreach ($planAcc->Kpi->kpiChildThrees as $three)
+                @foreach ($planAccKpiChildThree as $three)
                     @php
-                        $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id,$office, $planning_year->id, $period->id,$one->id,$two->id,$three->id);
+                        $baselineOfOfficePlan  = planBaseline($planAccKpi->id,$office, $planning_year->id, $period->id,$one->id,$two->id,$three->id);
                     @endphp
                 <td>{{ $baselineOfOfficePlan }}</td>
                 @endforeach
-                
 
-            @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+
+            @forelse($getQuarter as $period)
                 {{-- <tr>
-                    <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
+                    <th rowspan="{{ $planAccKpiChildTwo->count() }}">
                         {{ $period->reportingPeriodTs[0]->name }}
                     </th>
-                    @foreach ($planAcc->Kpi->kpiChildTwos as $two)
+                    @foreach ($planAccKpiChildTwo as $two)
                         <td>
                             {{ $two->kpiChildTwoTranslations[0]->name }}
                         </td>
-                        @foreach ($planAcc->Kpi->kpiChildOnes as $one) --}}
+                        @foreach ($planAccKpiChildOne as $one) --}}
                             @php
                                 $childAndHim_array = [];
                             @endphp
-                            @foreach ($planAcc->Kpi->kpiChildThrees as $kpiThree)
+                            @foreach ($planAccKpiChildThree as $kpiThree)
                                 <td>
                                     @php
-                                        $childAndHim = $office->offices;
+                                        $childAndHim = $officeOffices;
                                         foreach ($childAndHim as $key => $value) {
                                             $childAndHim_array[$key] = $value->id;
                                         }
                                         $childAndHim_array = array_merge($childAndHim_array, [$office->id]);
-                                    // $plan123 = $planAcc->planIndividual($planAcc->Kpi->id, $one->id, $two->id, $kpiThree->id, $office, $period->id,false);
-                                        $plan123 = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,false,$planning_year->id ?? NULL ,$one->id, $two->id, $kpiThree->id);
-                                        $narration = $planAcc->getNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
+                                    // $plan123 = $planAcc->planIndividual($planAccKpi->id, $one->id, $two->id, $kpiThree->id, $office, $period->id,false);
+                                        $plan123 = $planAcc->KpiOTT($planAccKpi->id, $office, $period->id,false,$planning_year->id ?? NULL ,$one->id, $two->id, $kpiThree->id);
+                                        $narration = $planAcc->getNarration($planAccKpi->id, $planning_year->id ?? NULL, $office, $period->id);
                                         $office_level = $office->level;
                                         if($office_level == 0) $office_level=1;
 
                                     @endphp
                                     @if($plan123[2] <= $office_level)
-                                         {{ $plan123[0] }} 
+                                         {{ $plan123[0] }}
                                     @else
                                         {{0}}
                                     @endif
@@ -137,13 +137,13 @@
                     <td>
                 @php
                     $planSumch2_array= [];
-                    $planSumch2 = $office->offices;
+                    $planSumch2 = $officeOffices;
                     foreach ($planSumch2 as $key => $value) {
                         $planSumch2_array[$key] = $value->id;
                     }
                     $planSumch2_array = array_merge( $planSumch2_array, array($office->id));
 
-                    $planSumch2Total = $planAcc->planIndividualChTwoSum($planAcc->Kpi->id,  $two->id,$planSumch2_array,$period->id);
+                    $planSumch2Total = $planAcc->planIndividualChTwoSum($planAccKpi->id,  $two->id,$planSumch2_array,$period->id);
                     @endphp
                     {{$planSumch2Total}}
                     </td>
@@ -164,18 +164,18 @@
         <th style ="background:#ffeecc;" colspan="2">
         {{ "Total"}}
         </td>
-        @foreach ($planAcc->Kpi->kpiChildOnes as $one)
-            @foreach ($planAcc->Kpi->kpiChildThrees as $kpiThree)
+        @foreach ($planAccKpiChildOne as $one)
+            @foreach ($planAccKpiChildThree as $kpiThree)
             <td>
             @php
                 $offices_array= [];
-                $userChild = $office->offices;
+                $userChild = $officeOffices;
                 foreach ($userChild as $key => $value) {
                     $offices_array[$key] = $value->id;
                 }
                 $offices_array = array_merge($offices_array, array($office->id));
 
-                $planSumch1ch3 = $planAcc->planIndividualChOnechThreeSum($planAcc->Kpi->id, $one->id, $two->id,$kpiThree->id,$offices_array);
+                $planSumch1ch3 = $planAcc->planIndividualChOnechThreeSum($planAccKpi->id, $one->id, $two->id,$kpiThree->id,$offices_array);
                 @endphp
                     {{$planSumch1ch3}}
             </td>
@@ -187,7 +187,7 @@
         <td>
             Major Activities
         </td>
-        <td colspan="{{ (getQuarter($planAcc->Kpi->reportingPeriodType->id)->count()+1) *$planAcc->Kpi->kpiChildThrees->count()+1}}">
+        <td colspan="{{ ($getQuarter->count()+1) *$planAccKpiChildThree->count()+1}}">
             @foreach ($narration as $key => $plannaration)
                 {!! html_entity_decode($plannaration->plan_naration) !!}
                 @php
@@ -200,43 +200,43 @@
 
 {{-- end total ch1ch3 --}}
 {{-- level two (directores and same level) --}}
- <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
+ <div class="collapse" id="off{{ $office->id }}{{$planAccKpi->id}}">
     <div class="card card-body">
         @php
-            $offices_twos = $office->offices;
+            $offices_twos = $officeOffices;
         @endphp
         @forelse ($offices_twos as $office)
 
             @include('app.plan_accomplishments.view-kpi1233')
-            <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
+            <div class="collapse" id="off{{ $office->id }}{{$planAccKpi->id}}">
                 <div class="card card-body">
                     @php
                         $offices_threes = $office->offices;
                     @endphp
                     @forelse ($offices_threes as $office)
                         @include('app.plan_accomplishments.view-kpi1233')
-                        <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
+                        <div class="collapse" id="off{{ $office->id }}{{$planAccKpi->id}}">
                             <div class="card card-body">
                                 @php
                                     $offices_fours = $office->offices;
                                 @endphp
                                 @forelse ($offices_fours as $office)
                                     @include('app.plan_accomplishments.view-kpi1233')
-                                    <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
+                                    <div class="collapse" id="off{{ $office->id }}{{$planAccKpi->id}}">
                                         <div class="card card-body">
                                             @php
                                                 $offices_fives = $office->offices;
                                             @endphp
                                             @forelse ($offices_fives as $office)
                                                 @include('app.plan_accomplishments.view-kpi1233')
-                                                <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
+                                                <div class="collapse" id="off{{ $office->id }}{{$planAccKpi->id}}">
                                                     <div class="card card-body">
                                                         @php
                                                             $offices_sixs = $office->offices;
                                                         @endphp
                                                         @forelse ($offices_sixs as $office)
                                                             @include('app.plan_accomplishments.view-kpi1233')
-                                                            <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
+                                                            <div class="collapse" id="off{{ $office->id }}{{$planAccKpi->id}}">
                                                                 <div class="card card-body">
 
                                                                 </div>
@@ -265,4 +265,4 @@
             <h4>on child!</h4>
         @endforelse
     </div>
-</div>  
+</div>

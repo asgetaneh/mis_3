@@ -276,7 +276,7 @@
                                                             </p>
                                                         </th>
                                                         <th style="width: 25%;" class="bg-light border">
-                                                            <p class="m-auto py-2 px-1">Total : <u>                                                                
+                                                            <p class="m-auto py-2 px-1">Total : <u>
                                                                 @php
                                                                 $avarage =0;
                                                                 $avarage_total =0;
@@ -290,29 +290,29 @@
                                                                                 foreach($planAcc->Kpi->kpiChildTwos as $key=>$value2){
                                                                                     foreach($planAcc->Kpi->kpiChildOnes as $key=>$value1){
                                                                                         $avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $active_period[0]->id, true, $planning_year->id, $value1->id,$value2->id,$value3->id);
-                                                                                        $avarage_total = $avarage_total+$avarage[0];  
+                                                                                        $avarage_total = $avarage_total+$avarage[0];
                                                                                     }
                                                                                 }
                                                                             }
-                                                                            $denominator = $planAcc->Kpi->kpiChildOnes->count()*$planAcc->Kpi->kpiChildTwos->count()*$planAcc->Kpi->kpiChildThrees->count(); 
+                                                                            $denominator = $planAcc->Kpi->kpiChildOnes->count()*$planAcc->Kpi->kpiChildTwos->count()*$planAcc->Kpi->kpiChildThrees->count();
                                                                         }else if(!$planAcc->kpi_child_two_id == null){
                                                                             foreach($planAcc->Kpi->kpiChildTwos as $key=>$value2){
                                                                                 foreach($planAcc->Kpi->kpiChildOnes as $key=>$value1){
                                                                                     $avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $active_period[0]->id, true, $planning_year->id,  $value1->id,$value2->id,null);
-                                                                                    $avarage_total = $avarage_total+$avarage[0];  
+                                                                                    $avarage_total = $avarage_total+$avarage[0];
                                                                                 }
                                                                             }
-                                                                            $denominator = $planAcc->Kpi->kpiChildOnes->count()*$planAcc->Kpi->kpiChildTwos->count(); 
+                                                                            $denominator = $planAcc->Kpi->kpiChildOnes->count()*$planAcc->Kpi->kpiChildTwos->count();
                                                                         }else if(!$planAcc->kpi_child_one_id == null){
                                                                             foreach($planAcc->Kpi->kpiChildOnes as $key=>$value1){
                                                                                 $avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $active_period[0]->id, true, $planning_year->id,  $value1->id,null,null);
-                                                                                $avarage_total = $avarage_total+$avarage[0];   
+                                                                                $avarage_total = $avarage_total+$avarage[0];
                                                                             }
                                                                             $denominator = $planAcc->Kpi->kpiChildOnes->count();
                                                                         }else{
                                                                             $avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $active_period[0]->id, true, $planning_year->id,  null,null,null);
                                                                             $avarage_total = $avarage_total+$avarage[0];
-                                                                             $denominator = 1; 
+                                                                             $denominator = 1;
                                                                         }
                                                                     }
                                                                 }
@@ -629,7 +629,11 @@
                             @endphp
 
                         @empty
-                            <p>No KPI!</p>
+                            <div class="callout callout-warning">
+                                <h5>No Record!</h5>
+
+                                <p>Either KPI is not assigned or no office has reported yet.</p>
+                            </div>
                         @endforelse
                     </div>
                 </div>

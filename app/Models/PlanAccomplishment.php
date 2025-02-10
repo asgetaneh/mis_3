@@ -57,7 +57,7 @@ class PlanAccomplishment extends Model
                       ->get();
              return $offices;
     }
-      
+
      // get plan and report with parametres for only one office
     public function OnlyKpiOTT($kkp,$office,$period,$is_report,$planning_year ,$one,$two,$three){
          $plan_accom = [];
@@ -68,7 +68,7 @@ class PlanAccomplishment extends Model
         $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
         $sum_of_sub_office_plan = 0;
         $sum_of_sub_office_report = 0;
-       
+
         $office_level = $office->level;
         if($office_level == 0) $office_level=1;
         $planAccomplishments = PlanAccomplishment::select('plan_value')
@@ -85,7 +85,7 @@ class PlanAccomplishment extends Model
         //dump($planning_year);
         if($is_report){
             $planAccomplishments = DB::select("
-                    SELECT accom_value 
+                    SELECT accom_value
                     FROM plan_accomplishments
                     WHERE office_id IN (?)
                     AND kpi_id = ?
@@ -96,13 +96,13 @@ class PlanAccomplishment extends Model
                     AND reporting_period_id = ?
                     AND plan_status <= ?
                 ", [
-                    implode(',', $childAndHimOffKpi_array), 
-                    $kkp, 
-                    $planning_year, 
-                    $one, 
-                    $two, 
-                    $three, 
-                    $period, 
+                    implode(',', $childAndHimOffKpi_array),
+                    $kkp,
+                    $planning_year,
+                    $one,
+                    $two,
+                    $three,
+                    $period,
                     $office_level
                 ]);
         $my_status = $status?->accom_status;
@@ -142,17 +142,17 @@ class PlanAccomplishment extends Model
                     $plan_accom = array_merge( $plan_accom,array($avarage_plan_of_percent));
                     $plan_accom = array_merge( $plan_accom,array($status));
                 }
-             return $plan_accom;
+                return $plan_accom;
             }
             else{
-                
+
                 //dd($avarage_plan[0]/$avarage_plan[1]);
                 $childAndHimOffKpi_array =[];
                 $childAndHimOffKpi = office_all_childs_ids($office);
                 $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
                 $sum_of_sub_office_plan = 0;
                 $sum_of_sub_office_report = 0;
-               
+
                 $office_level = $office->level;
                 if($office_level == 0) $office_level=1;
                 $planAccomplishments = PlanAccomplishment::select('*')
@@ -167,7 +167,7 @@ class PlanAccomplishment extends Model
                 ->get();
                 //dump($childAndHimOffKpi_array);
                 // $planAccomplishments = DB::select("
-                //     SELECT plan_value 
+                //     SELECT plan_value
                 //     FROM plan_accomplishments
                 //     WHERE office_id IN (?)
                 //     AND kpi_id = ?
@@ -178,13 +178,13 @@ class PlanAccomplishment extends Model
                 //     AND reporting_period_id = ?
                 //     AND plan_status <= ?
                 // ", [
-                //     implode(',', $childAndHimOffKpi_array), 
-                //     $kkp, 
-                //     $planning_year, 
-                //     $one, 
-                //     $two, 
-                //     $three, 
-                //     $period, 
+                //     implode(',', $childAndHimOffKpi_array),
+                //     $kkp,
+                //     $planning_year,
+                //     $one,
+                //     $two,
+                //     $three,
+                //     $period,
                 //     $office_level
                 // ]);
                 //$my_status = $status[0]?->plan_status;
@@ -203,10 +203,14 @@ class PlanAccomplishment extends Model
                 $my_status = $status?->accom_status;
                 }
                 //dump($planAccomplishments);
-                foreach ($planAccomplishments as $key => $planAccomplishment) {
-                   $sum_of_sub_office_plan = $sum_of_sub_office_plan+$planAccomplishment->plan_value;
-                   $sum_of_sub_office_report = $sum_of_sub_office_report+$planAccomplishment->accom_value;
-                }
+                // foreach ($planAccomplishments as $key => $planAccomplishment) {
+                //    $sum_of_sub_office_plan = $sum_of_sub_office_plan+$planAccomplishment->plan_value;
+                //    $sum_of_sub_office_report = $sum_of_sub_office_report+$planAccomplishment->accom_value;
+                // }
+
+                $sum_of_sub_office_plan = $sum_of_sub_office_plan+$planAccomplishments->sum('plan_value');
+                $sum_of_sub_office_report = $sum_of_sub_office_report+$planAccomplishments->sum('accom_value');
+
                 $plan_accom = array_merge( $plan_accom,array($sum_of_sub_office_plan));
                 $plan_accom = array_merge( $plan_accom,array($sum_of_sub_office_report));
                 $plan_accom = array_merge( $plan_accom,array($status));//dump($childAndHimOffKpi_array);
@@ -214,14 +218,14 @@ class PlanAccomplishment extends Model
             }
 
         } else{
-                
+
                 //dd($avarage_plan[0]/$avarage_plan[1]);
                 $childAndHimOffKpi_array =[];
                 $childAndHimOffKpi = office_all_childs_ids($office);
                 $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
                 $sum_of_sub_office_plan = 0;
                 $sum_of_sub_office_report = 0;
-               
+
                 $office_level = $office->level;
                 if($office_level == 0) $office_level=1;
                 $planAccomplishments = DB::select("
@@ -269,14 +273,15 @@ class PlanAccomplishment extends Model
     // get total for kpi
     public function ForKpi($kkp,$office,$period,$is_report,$planning_year, $one, $two, $three){
         $plan_accom = [];
-         $getkpi = KeyPeformanceIndicator::find($kkp); 
-         $status = getStatus($kkp,$office,$period,$is_report,$planning_year ,$one, $two, $three);          
+         $getkpi = KeyPeformanceIndicator::find($kkp);
+         $status = getStatus($kkp,$office,$period,$is_report,$planning_year ,$one, $two, $three);
          //dd($status);
+         $childAndHimOffKpi = office_all_childs_ids($office);
         if($getkpi->measurement){    //dump("measurement");
             // kpi measurement is in percent
             if($getkpi->measurement?->slug == 'percent'){ //dump("kpi measurement is in percent");
-                $avarage_plan = calculateAveragePlan($kkp,$office,$period,$is_report,$planning_year ,$one, $two, $three); 
-                
+                $avarage_plan = calculateAveragePlan($kkp,$office,$period,$is_report,$planning_year ,$one, $two, $three);
+
                 $avarage_plan_of_percent = 0;
                  if($avarage_plan && $avarage_plan[1]>0){
                     $avarage_plan_of_percent = (double)number_format($avarage_plan[0]/$avarage_plan[1], 2, ".", "");
@@ -296,7 +301,6 @@ class PlanAccomplishment extends Model
             // if kpi with  any measurement except percent.
             else{  //dump("if kpi with  any measurement except percent");
                 $childAndHimOffKpi_array =[];
-                $childAndHimOffKpi = office_all_childs_ids($office);
                 $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
                 $sum_of_sub_office_plan = 0;
                 $sum_of_sub_office_report = 0;
@@ -345,11 +349,10 @@ class PlanAccomplishment extends Model
                  return $plan_accom;
             }
 
-        } 
+        }
         // if kpi with out any measurement.
         else{ //dump("if kpi with out any measurement");
                 $childAndHimOffKpi_array =[];
-                $childAndHimOffKpi = office_all_childs_ids($office);
                 $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
                 $sum_of_sub_office_plan = 0;
                 $sum_of_sub_office_report = 0;
@@ -401,45 +404,45 @@ class PlanAccomplishment extends Model
     //dump("why");
     //dd("last");
     return $plan_accom;
-    
+
 }
 public static function getOfficePlans($office)
     {
         $sql = "
             WITH RECURSIVE OfficeHierarchy AS (
-                SELECT 
+                SELECT
                     o.id,
                     o.parent_office_id,
                     o.level
-                FROM 
+                FROM
                     offices o
-                WHERE 
+                WHERE
                     o.parent_office_id =".$office."
 
                 UNION ALL
 
-                SELECT 
+                SELECT
                     o.id,
                     o.parent_office_id,
                     o.level
-                FROM 
+                FROM
                     offices o
-                INNER JOIN 
+                INNER JOIN
                     OfficeHierarchy oh ON o.parent_office_id = oh.id
             )
-            SELECT 
+            SELECT
                 oh.id,
                 kpi.id,
                 SUM(pa.plan_value) AS total_plan_value
-            FROM 
+            FROM
                 OfficeHierarchy oh
-            LEFT JOIN 
+            LEFT JOIN
                 plan_accomplishments pa ON oh.id = pa.office_id
-            LEFT JOIN 
+            LEFT JOIN
                 key_peformance_indicators kpi ON pa.kpi_id = kpi.id
-            GROUP BY 
+            GROUP BY
                 oh.id, kpi.id
-            ORDER BY 
+            ORDER BY
                 oh.level, oh.id;
         ";
 
@@ -679,7 +682,7 @@ private static function buildHierarchy($data)
         ->get();
         // dump($plannarations_self);
         // dump("x");
-            return $plannarations_self;  
+            return $plannarations_self;
     }
      public function getReportNarration($kkp,$year,$office,$period){
         // get all child and subchild offices for login user

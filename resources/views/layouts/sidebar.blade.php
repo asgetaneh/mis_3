@@ -34,189 +34,191 @@
 
 
                     @if (!$user->offices->isEmpty())
-                        <li class="nav-item {{ Request::is('emis/*') ? 'menu-open' : '' }}">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-sitemap"></i>
-                                <p>
-                                    EMIS
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link">
-                                        <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                        <p>
-                                            Setting
-                                            <i class="right fas fa-angle-left"></i>
-                                        </p>
-                                    </a>
+                        @if ($user->hasPermission('hemis.*'))
+                            <li class="nav-item {{ Request::is('emis/*') ? 'menu-open' : '' }}">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon fas fa-sitemap"></i>
+                                    <p>
+                                        EMIS
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="#" class="nav-link">
+                                            <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                            <p>
+                                                Setting
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
 
-                                    <ul class="nav nav-treeview">
-                                        {{-- @can('view-any', App\Models\User::class) --}}
+                                        <ul class="nav nav-treeview">
+                                            {{-- @can('view-any', App\Models\User::class) --}}
+                                                <li class="nav-item">
+                                                    <a href="{{ route('emis.setting.student-id') }}" class="nav-link">
+                                                        <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                        <p>Student Id</p>
+                                                    </a>
+                                                </li>
+                                            {{-- @endcan --}}
+                                        </ul>
+
+                                        <ul class="nav nav-treeview">
+                                            {{-- @can('view-any', App\Models\User::class) --}}
+                                                <li class="nav-item">
+                                                    <a href="{{ route('users.index') }}" class="nav-link">
+                                                        <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                        <p>Staff Id</p>
+                                                    </a>
+                                                </li>
+                                            {{-- @endcan --}}
+                                        </ul>
+                                        <ul class="nav nav-treeview">
+                                            {{-- @can('view-any', App\Models\User::class) --}}
+                                                <li class="nav-item">
+                                                    <a href="{{ route('emis.setting.campus') }}" class="nav-link">
+                                                        <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                        <p>Campus</p>
+                                                    </a>
+                                                </li>
+                                            {{-- @endcan --}}
+                                        </ul>
+                                        <ul class="nav nav-treeview">
+                                            {{-- @can('view-any', App\Models\User::class) --}}
+                                                <li class="nav-item">
+                                                    <a href="{{ route('emis.setting.building.purpose') }}" class="nav-link">
+                                                        <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                        <p>Buiding purpose</p>
+                                                    </a>
+                                                </li>
+                                            {{-- @endcan --}}
+                                        </ul>
+
+                                    </li>
+
+
+
+                                    {{--  --}}
+
+                                    <li class="nav-item">
+                                        <a href="#" class="nav-link">
+                                            <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                            <p>
+                                                Institutions
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+
+                                        <ul class="nav nav-treeview">
                                             <li class="nav-item">
-                                                <a href="{{ route('emis.setting.student-id') }}" class="nav-link">
+                                                <a href="{{route('emis.institution.building')}}" class="nav-link">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                    <p>Student Id</p>
+                                                    <p>Buildings</p>
                                                 </a>
                                             </li>
-                                        {{-- @endcan --}}
-                                    </ul>
+                                        </ul>
+                                    </li>
 
-                                    <ul class="nav nav-treeview">
-                                        {{-- @can('view-any', App\Models\User::class) --}}
+
+                                    <li class="nav-item {{ Request::is('emis/student/*') ? 'menu-open' : '' }}">
+                                        <a href="#" class="nav-link">
+                                            <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                            <p>
+                                                Student
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+
+                                        <ul class="nav nav-treeview">
                                             <li class="nav-item">
-                                                <a href="{{ route('users.index') }}" class="nav-link">
+                                                <a href="{{route('emis.student.applicant.index')}}" class="nav-link {{ Request::is('emis/student/applicant') || Request::is('emis/student/applicant/*') ? 'active' : '' }}">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                    <p>Staff Id</p>
+                                                    <p>Applicants</p>
+                                                </a>
+                                                <a href="{{route('emis.student.overview.index')}}" class="nav-link {{ Request::is('emis/student/overview') || Request::is('emis/student/overview/*') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Overview</p>
+                                                </a>
+                                                <a href="{{route('emis.student.enrollment.index')}}" class="nav-link {{ Request::is('emis/student/enrollment') || Request::is('emis/student/enrollment/*') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Enrollment</p>
+                                                </a>
+                                                <a href="{{route('emis.student.results.index')}}" class="nav-link {{ Request::is('emis/student/results') || Request::is('emis/student/results/*') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Results</p>
+                                                </a>
+                                                <a href="{{route('emis.student.graduates.index')}}" class="nav-link {{ Request::is('emis/student/graduates') || Request::is('emis/student/graduates/*') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Graduates</p>
+                                                </a>
+                                                <a href="{{route('emis.student.attrition.index')}}" class="nav-link {{ Request::is('emis/student/attrition') || Request::is('emis/student/attrition/*') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Attritions</p>
+                                                </a>
+                                                <a href="{{route('emis.student.internship.index')}}" class="nav-link {{ Request::is('emis/student/internship') || Request::is('emis/student/internship/*') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Intership</p>
+                                                </a>
+                                                <a href="{{route('emis.student.employment.index')}}" class="nav-link {{ Request::is('emis/student/employment') || Request::is('emis/student/employment/*') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Employment</p>
+                                                </a>
+                                                <a href="{{route('emis.student.others.index')}}" class="nav-link {{ Request::is('emis/student/others') || Request::is('emis/student/others/*') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Other Reports</p>
                                                 </a>
                                             </li>
-                                        {{-- @endcan --}}
-                                    </ul>
-                                     <ul class="nav nav-treeview">
-                                        {{-- @can('view-any', App\Models\User::class) --}}
+                                        </ul>
+                                    </li>
+
+                                    <li class="nav-item {{ Request::is('emis/staff/*') ? 'menu-open' : '' }}">
+                                        <a href="#" class="nav-link">
+                                            <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                            <p>
+                                                Staff
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+
+                                        <ul class="nav nav-treeview">
                                             <li class="nav-item">
-                                                <a href="{{ route('emis.setting.campus') }}" class="nav-link">
+                                                <a href="{{ route('emis.staff.overview.index') }}" class="nav-link {{ Request::is('emis/staff/overview') || Request::is('emis/staff/overview/*') ? 'active' : '' }}">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                    <p>Campus</p>
+                                                    <p>Overview</p>
                                                 </a>
                                             </li>
-                                        {{-- @endcan --}}
-                                    </ul>
-                                     <ul class="nav nav-treeview">
-                                        {{-- @can('view-any', App\Models\User::class) --}}
                                             <li class="nav-item">
-                                                <a href="{{ route('emis.setting.building.purpose') }}" class="nav-link">
+                                                <a href="{{ route('emis.staff.assignment.index') }}" class="nav-link {{ Request::is('emis/staff/assignment') || Request::is('emis/staff/assignment/*') ? 'active' : '' }}">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                    <p>Buiding purpose</p>
+                                                    <p>Assignment</p>
                                                 </a>
                                             </li>
-                                        {{-- @endcan --}}
-                                    </ul>
+                                            <li class="nav-item">
+                                                <a href="{{ route('emis.staff.development.index') }}" class="nav-link {{ Request::is('emis/staff/development') || Request::is('emis/staff/development/*') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Development</p>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="{{ route('emis.staff.attrition.index') }}" class="nav-link {{ Request::is('emis/staff/attrition') || Request::is('emis/staff/attrition/*') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Attrition</p>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a href="{{ route('emis.staff.awards.index') }}" class="nav-link {{ Request::is('emis/staff/awards') || Request::is('emis/staff/awards/*') ? 'active' : '' }}">
+                                                    <i class="nav-icon icon fas fa fa-caret-right"></i>
+                                                    <p>Awards</p>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
 
-                                </li>
-
-
-
-                                {{--  --}}
-
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link">
-                                        <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                        <p>
-                                            Institutions
-                                            <i class="right fas fa-angle-left"></i>
-                                        </p>
-                                    </a>
-
-                                    <ul class="nav nav-treeview">
-                                        <li class="nav-item">
-                                            <a href="{{route('emis.institution.building')}}" class="nav-link">
-                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>Buildings</p>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-
-
-                                <li class="nav-item {{ Request::is('emis/student/*') ? 'menu-open' : '' }}">
-                                    <a href="#" class="nav-link">
-                                        <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                        <p>
-                                            Student
-                                            <i class="right fas fa-angle-left"></i>
-                                        </p>
-                                    </a>
-
-                                    <ul class="nav nav-treeview">
-                                        <li class="nav-item">
-                                            <a href="{{route('emis.student.applicant.index')}}" class="nav-link {{ Request::is('emis/student/applicant') || Request::is('emis/student/applicant/*') ? 'active' : '' }}">
-                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>Applicants</p>
-                                            </a>
-                                            <a href="{{route('emis.student.overview.index')}}" class="nav-link {{ Request::is('emis/student/overview') || Request::is('emis/student/overview/*') ? 'active' : '' }}">
-                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>Overview</p>
-                                            </a>
-                                            <a href="{{route('emis.student.enrollment.index')}}" class="nav-link {{ Request::is('emis/student/enrollment') || Request::is('emis/student/enrollment/*') ? 'active' : '' }}">
-                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>Enrollment</p>
-                                            </a>
-                                            <a href="{{route('emis.student.results.index')}}" class="nav-link {{ Request::is('emis/student/results') || Request::is('emis/student/results/*') ? 'active' : '' }}">
-                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>Results</p>
-                                            </a>
-                                            <a href="{{route('emis.student.graduates.index')}}" class="nav-link {{ Request::is('emis/student/graduates') || Request::is('emis/student/graduates/*') ? 'active' : '' }}">
-                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>Graduates</p>
-                                            </a>
-                                            <a href="{{route('emis.student.attrition.index')}}" class="nav-link {{ Request::is('emis/student/attrition') || Request::is('emis/student/attrition/*') ? 'active' : '' }}">
-                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>Attritions</p>
-                                            </a>
-                                            <a href="{{route('emis.student.internship.index')}}" class="nav-link {{ Request::is('emis/student/internship') || Request::is('emis/student/internship/*') ? 'active' : '' }}">
-                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>Intership</p>
-                                            </a>
-                                            <a href="{{route('emis.student.employment.index')}}" class="nav-link {{ Request::is('emis/student/employment') || Request::is('emis/student/employment/*') ? 'active' : '' }}">
-                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>Employment</p>
-                                            </a>
-                                            <a href="{{route('emis.student.others.index')}}" class="nav-link {{ Request::is('emis/student/others') || Request::is('emis/student/others/*') ? 'active' : '' }}">
-                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>Other Reports</p>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-
-                                <li class="nav-item {{ Request::is('emis/staff/*') ? 'menu-open' : '' }}">
-                                    <a href="#" class="nav-link">
-                                        <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                        <p>
-                                            Staff
-                                            <i class="right fas fa-angle-left"></i>
-                                        </p>
-                                    </a>
-
-                                    <ul class="nav nav-treeview">
-                                        <li class="nav-item">
-                                            <a href="{{ route('emis.staff.overview.index') }}" class="nav-link {{ Request::is('emis/staff/overview') || Request::is('emis/staff/overview/*') ? 'active' : '' }}">
-                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>Overview</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="{{ route('emis.staff.assignment.index') }}" class="nav-link {{ Request::is('emis/staff/assignment') || Request::is('emis/staff/assignment/*') ? 'active' : '' }}">
-                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>Assignment</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="{{ route('emis.staff.development.index') }}" class="nav-link {{ Request::is('emis/staff/development') || Request::is('emis/staff/development/*') ? 'active' : '' }}">
-                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>Development</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="{{ route('emis.staff.attrition.index') }}" class="nav-link {{ Request::is('emis/staff/attrition') || Request::is('emis/staff/attrition/*') ? 'active' : '' }}">
-                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>Attrition</p>
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="{{ route('emis.staff.awards.index') }}" class="nav-link {{ Request::is('emis/staff/awards') || Request::is('emis/staff/awards/*') ? 'active' : '' }}">
-                                                <i class="nav-icon icon fas fa fa-caret-right"></i>
-                                                <p>Awards</p>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-
-                                {{--  --}}
-                            </ul>
-                        </li>
+                                    {{--  --}}
+                                </ul>
+                            </li>
+                        @endif
                         <li class="nav-item {{ Request::is('smis/*') ? 'menu-open' : '' }}">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-chart-bar"></i>
@@ -445,22 +447,21 @@
                                     $planCommentCounter = 0;
                                     $planCounter = 0;
                                     $kpiPlanName = '';
+                                    $planAccomplishments = [];
+                                    $planStatus = [];
+                                    $count_planSubmited = 0;
+
 
                                     $obj_office = App\Models\Office::find($currentLoggedInOffice);
-                                    $all_child_and_subchild = office_all_childs_ids($obj_office);
-                                    $all_office_list = $all_child_and_subchild;
+                                    $all_office_list = office_all_childs_ids($obj_office);
                                     $only_child = $obj_office->offices;
-                                    $only_child_array = [];
-
-                                    foreach ($only_child as $key => $value) {
-                                        $only_child_array[$key] = $value->id;
-                                    }
 
                                     if ($obj_office->offices->isEmpty()) {
                                         $all_office_list = array($currentLoggedInOffice);
                                     }
 
-                                    $planAccomplishments = App\Models\PlanAccomplishment::select('kpi_id')
+                                    if(App\Models\PlanAccomplishment::count() > 0) {
+                                        $planAccomplishments = App\Models\PlanAccomplishment::select('kpi_id')
                                         ->where('office_id', $currentLoggedInOffice)
                                         ->distinct('kpi_id')
                                         ->get();
@@ -470,13 +471,14 @@
                                         ->where('planning_year_id', '=', $planning_year->id)
                                         ->distinct('kpi_id')
                                         ->get();
-                                    $planSubmited = App\Models\PlanAccomplishment::select('approved_by_id')
-                                        ->where('planning_year_id', '=', $planning_year->id)
-                                        ->where('plan_status', '=', 1)
-                                        ->distinct('approved_by_id')
-                                         ->get();
-                                    $count_planSubmited = count($planSubmited);
- 
+                                        $planSubmited = App\Models\PlanAccomplishment::select('approved_by_id')
+                                            ->where('planning_year_id', '=', $planning_year->id)
+                                            ->where('plan_status', '=', 1)
+                                            ->distinct('approved_by_id')
+                                            ->get();
+                                        $count_planSubmited = count($planSubmited);
+                                    }
+
                                 @endphp
 
                                 {{-- @dump($planAccomplishments) --}}
@@ -588,10 +590,10 @@
                                                         @if (auth()->user()->isSuperAdmin())
                                                         <span class="badge bg-info ml-2 rounded-circle px-2 py-1" title="You've {{ $count_planSubmited }}  office who is submitted the plan">
                                                             {{ $count_planSubmited }}
-                                                        </span> 
+                                                        </span>
                                                         @endif
                                                     @endif
-                                                        
+
                                                     @endif
                                                 </p>
                                             </a>
@@ -616,14 +618,8 @@
                                     $kpireportName = '';
 
                                     $obj_office = App\Models\Office::find($currentLoggedInOffice);
-                                    $all_child_and_subchild = office_all_childs_ids($obj_office);
-                                    $all_office_list = $all_child_and_subchild;
+                                    $all_office_list = office_all_childs_ids($obj_office);
                                     $only_child = $obj_office->offices;
-                                    $only_child_array = [];
-
-                                    foreach ($only_child as $key => $value) {
-                                        $only_child_array[$key] = $value->id;
-                                    }
 
                                     if ($obj_office->offices->isEmpty()) {
                                         $all_office_list = array($currentLoggedInOffice);

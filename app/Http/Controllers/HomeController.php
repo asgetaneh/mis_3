@@ -46,26 +46,26 @@ class HomeController extends Controller
         $activeUsers = '';
         $inactiveUsers = '';//dd($request->method());
 
-        $Objectives = Objective::all();
-        $Users = User::all();
-        $Offices = Office::all();
-        $Offices2 = Office::all();
+        // $Objectives = Objective::all();
+        // $Users = User::all();
+        $Offices = Office::all()->take(2);
+        $Offices2 = $Offices;
         $kpis = KeyPeformanceIndicator::all();
-        $kpis2 = KeyPeformanceIndicator::all();
+        $kpis2 = $kpis;
         $all_child_and_subchildoffices = [];
         $all_child_and_subchildoffices2 = [];
 
-        foreach ($Offices as $key => $value) { 
+        foreach ($Offices as $key => $value) {
             $all_child_and_subchildoffices=array_merge($all_child_and_subchildoffices,array($value->id));
         }
-        foreach ($Offices2 as $key => $value) { 
+        foreach ($Offices2 as $key => $value) {
             $all_child_and_subchildoffices2=array_merge($all_child_and_subchildoffices2,array($value->id));
         }
 
         //$periods = ReportingPeriod::all();
         $period =null;
         $period2 =null;
-        //$period_or_quarter = getReportingQuarter($kpii->reportingPeriodType->id); 
+        //$period_or_quarter = getReportingQuarter($kpii->reportingPeriodType->id);
         $input = $request->all();//dd($input);
         if($input){
             if($request->has('kpi')){
@@ -76,14 +76,14 @@ class HomeController extends Controller
              }
             if($request->has('office')){
                  $Offices = Office::where('id',$request->input('office'))->get();
-                 foreach ($Offices as $key => $value) { 
+                 foreach ($Offices as $key => $value) {
                     $all_child_and_subchildoffices = office_all_childs_ids($value);
                     $all_child_and_subchildoffices = array_merge($all_child_and_subchildoffices, array($value->id));
                 }
             }
             if($request->has('office2')){
                  $Offices2 = Office::where('id',$request->input('office2'))->get();
-                 foreach ($Offices2 as $key => $value) { 
+                 foreach ($Offices2 as $key => $value) {
                     $all_child_and_subchildoffices2 = office_all_childs_ids($value);
                     $all_child_and_subchildoffices2 = array_merge($all_child_and_subchildoffices2, array($value->id));
                 }
@@ -95,10 +95,10 @@ class HomeController extends Controller
                  $period = ReportingPeriod::where('id',$request->input('period2'))->get();
             }
          }
-        
- 
 
-        
+
+
+
         //dd($all_child_and_subchildoffices);
         // if($user_office->isEmpty()){
         //     $search = $request->get('search', '');

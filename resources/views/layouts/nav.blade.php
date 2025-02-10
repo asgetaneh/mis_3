@@ -10,7 +10,7 @@
 
     <ul class="navbar-nav ml-auto mr-3">
 
-        <li class="nav-item mr-3">
+        {{-- <li class="nav-item mr-3">
             <span class="content-header">
                 <select class="changeLang" style="">
                     <option value="en" {{ session()->get('locale') == 'en' ? 'selected' : '' }}>English</option>
@@ -18,7 +18,7 @@
                     <option value="oro" {{ session()->get('locale') == 'oro' ? 'selected' : '' }}>Oromifa</option>
                 </select>
             </span>
-        </li>
+        </li> --}}
 
         <li class="nav-item dropdown">
             {{-- <a class="dropdown-toggle text-white" data-toggle="dropdown" href="#"> --}}

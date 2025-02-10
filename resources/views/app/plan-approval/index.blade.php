@@ -226,7 +226,7 @@
                             $kpiListForApproval = [];
                             $user_level = auth()->user()->offices[0]->level;
                         @endphp
-                        @if($user_level > 0){
+                        @if($user_level > 0)
                         @forelse($planAccomplishments as $planAcc)
                             @php
 
@@ -286,7 +286,7 @@
                                                             </p>
                                                         </th>
                                                         <th style="width: 25%;" class="bg-light border">
-                                                            <p class="m-auto py-2 px-1">Total Yearly Plan : <u>                                                                
+                                                            <p class="m-auto py-2 px-1">Total Yearly Plan : <u>
                                                                 @php
                                                                 $avarage =0;
                                                                 $avarage_total =0;
@@ -299,29 +299,29 @@
                                                                                 foreach($planAcc->Kpi->kpiChildTwos as $key=>$value2){
                                                                                     foreach($planAcc->Kpi->kpiChildOnes as $key=>$value1){
                                                                                         $avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $getPeriod->id, false, $planning_year->id, $value1->id,$value2->id,$value3->id);
-                                                                                        $avarage_total = $avarage_total+$avarage[0];  
+                                                                                        $avarage_total = $avarage_total+$avarage[0];
                                                                                     }
                                                                                 }
                                                                             }
-                                                                            $denominator = $planAcc->Kpi->kpiChildOnes->count()*$planAcc->Kpi->kpiChildTwos->count()*$planAcc->Kpi->kpiChildThrees->count(); 
+                                                                            $denominator = $planAcc->Kpi->kpiChildOnes->count()*$planAcc->Kpi->kpiChildTwos->count()*$planAcc->Kpi->kpiChildThrees->count();
                                                                         }else if(!$planAcc->kpi_child_two_id == null){
                                                                             foreach($planAcc->Kpi->kpiChildTwos as $key=>$value2){
                                                                                 foreach($planAcc->Kpi->kpiChildOnes as $key=>$value1){
                                                                                     $avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $getPeriod->id, false, $planning_year->id,  $value1->id,$value2->id,null);
-                                                                                    $avarage_total = $avarage_total+$avarage[0];  
+                                                                                    $avarage_total = $avarage_total+$avarage[0];
                                                                                 }
                                                                             }
-                                                                            $denominator = $planAcc->Kpi->kpiChildOnes->count()*$planAcc->Kpi->kpiChildTwos->count(); 
+                                                                            $denominator = $planAcc->Kpi->kpiChildOnes->count()*$planAcc->Kpi->kpiChildTwos->count();
                                                                         }else if(!$planAcc->kpi_child_one_id == null){
                                                                             foreach($planAcc->Kpi->kpiChildOnes as $key=>$value1){
                                                                                 $avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $getPeriod->id, false, $planning_year->id,  $value1->id,null,null);
-                                                                                $avarage_total = $avarage_total+$avarage[0];   
+                                                                                $avarage_total = $avarage_total+$avarage[0];
                                                                             }
                                                                             $denominator = $planAcc->Kpi->kpiChildOnes->count();
                                                                         }else{
                                                                             $avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $getPeriod->id, false, $planning_year->id,  null,null,null);
                                                                             $avarage_total = $avarage_total+$avarage[0];
-                                                                            $denominator = 1; 
+                                                                            $denominator = 1;
                                                                         }
                                                                     }
                                                                 }
@@ -645,7 +645,11 @@
                             @endphp
 
                         @empty
-                            <p>No KPI!</p>
+                            <div class="callout callout-warning">
+                                <h5>No Record!</h5>
+
+                                <p>Either KPI is not assigned or no office has planned yet.</p>
+                            </div>
                         @endforelse
                         @else
                         {{ "Supper Admin user can't approve" }}
@@ -949,11 +953,11 @@
 
             // return true;
 
-        }
+        });
 
         // select all checkboxes at once
         let checkAllList = $('.checkAllOffices');
-        console.log(checkAllList);
+        // console.log(checkAllList);
 
         for (let i = 0; i < checkAllList.length; i++) {
 

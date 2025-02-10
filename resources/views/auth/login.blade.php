@@ -45,14 +45,14 @@
                                 </form>
                             </div>
                             <br>
-                            <div class="text-secondary text-center" style="display: flex; justify-content: space-between;">
+                            <div class="text-secondary text-center" style="">
                                 <p style="">
                                     <script>
                                         document.write(new Date().getFullYear());
                                     </script> - JU MIS
                                 </p>
 
-                                <p class=""><a href="{{ url('/') }}">HOME</a></p>
+                                {{-- <p class=""><a href="{{ url('/') }}">HOME</a></p> --}}
                             </div>
 
                         </div>

@@ -227,6 +227,8 @@ class DatabaseSeeder extends Seeder
         Permission::updateOrCreate(['name' => 'update users']);
         Permission::updateOrCreate(['name' => 'delete users']);
 
+        Permission::updateOrCreate(['name' => 'hemis.*']);
+
         // Create admin role and assign all permissions
         $allPermissions = Permission::all();
         $adminRole = Role::updateOrCreate(['name' => 'super-admin']);

@@ -15,11 +15,17 @@
             border-collapse: collapse;
             border: 1px solid #289CD8;
         }
-        
+
     </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 @section('content')
-    @php     $first=1; @endphp
+    @php
+        $first=1;
+        $userOffice = auth()->user()->offices[0];
+        $loggedUser = auth()->user();
+        $allOffices = getAllOffices();
+        $allKpis = getAllKpi();
+    @endphp
     <div class="justify-content-center">
         <div class="card card-primary card-outline card-outline-tabs fillable-objective">
             <div class="card-body">
@@ -28,13 +34,13 @@
                         <div class="col-md-4">
 
                             {{-- If admin put all offices --}}
-                            @if (auth()->user()->is_admin || auth()->user()->hasRole('super-admin'))
+                            @if ($loggedUser->is_admin || $loggedUser->hasRole('super-admin'))
                                 <label class="label" for="filters">Offices:</label>
                                 <select class="form-control select2" name="office">
                                     <option disabled {{ old('office') == '' ? 'selected' : '' }} value="">Select
                                         Office</option>
-                                    <option value="">ALL OFFICES</option>
-                                    @forelse(getAllOffices() as $office)
+                                    {{-- <option value="">ALL OFFICES</option> --}}
+                                    @forelse($allOffices as $office)
                                         @if ($office->id == 1)
                                             @continue
                                         @endif
@@ -50,9 +56,9 @@
                                 <select class="form-control select2" name="office">
                                     <option disabled {{ old('office') == '' ? 'selected' : '' }} value="">Select
                                         Office</option>
-                                    <option value="">ALL OFFICES</option>
-                                    @forelse(getAllOffices() as $office)
-                                        @if ($office->parent_office_id == auth()->user()->offices[0]->id || $office->id == auth()->user()->offices[0]->id)
+                                    {{-- <option value="">ALL OFFICES</option> --}}
+                                    @forelse($allOffices as $office)
+                                        @if ($office->parent_office_id == $userOffice->id || $office->id == $userOffice->id)
                                             <option {{ old('office') == $office->id ? 'selected' : '' }}
                                                 value="{{ $office->id }}">{{ $office->officeTranslations[0]->name }}
                                             </option>
@@ -67,8 +73,8 @@
                             <label class=" " for="filters">KPI:</label>
                             <select class="form-control select2" name="kpi">
                                 <option disabled {{ old('kpi') == '' ? 'selected' : '' }} value="">Select KPI</option>
-                                <option value="">ALL KPI</option>
-                                @forelse(getAllKpi() as $kpi)
+                                {{-- <option value="">ALL KPI</option> --}}
+                                @forelse($allKpis as $kpi)
                                     <option {{ old('kpi') == $kpi->id ? 'selected' : '' }} value="{{ $kpi->id }}">
                                         {{ $kpi->keyPeformanceIndicatorTs[0]->name }}
                                     </option>
@@ -110,22 +116,29 @@
                             $c = 1;
                             $objective_array = [];
                         @endphp
+                        @php
+                            $planAccomplishment = new App\Models\PlanAccomplishment();
+                            $offices = $planAccomplishment->getOfficeFromKpiAndOfficeList($only_child_array, $off_level);
+                        @endphp
                         @forelse($planAccomplishments as $planAcc)
-                            @php
-                                $offices = $planAcc->getOfficeFromKpiAndOfficeList($only_child_array, $off_level);
-                                //dd($offices[0]->id);
-                            @endphp
 
-                            @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
+                            @php $planAccKpi = $planAcc->Kpi; @endphp
+                            @php $planAccKpiChildOne = $planAccKpi->kpiChildOnes; @endphp
+                            @php $planAccKpiChildTwo = $planAccKpi->kpiChildTwos; @endphp
+                            @php $planAccKpiChildThree = $planAccKpi->kpiChildThrees; @endphp
+                            @php $planAccKpiReportingPeriodType = $planAccKpi->reportingPeriodType; @endphp
+                            @php $getQuarter = getQuarter($planAccKpiReportingPeriodType->id); @endphp
+
+                            @if (!in_array($planAccKpi->id, $kpi_repeat))
                                 <div class="card collapsed-card p-2" >
                                     <div class="card-header" >
                                         <table class="table">
                                             <tr style="background:#87cdc6;">
-                                                @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
+                                                @forelse($planAccKpi->KeyPeformanceIndicatorTs as $kpiT)
                                                     @if (app()->getLocale() == $kpiT->locale)
-                                                        @if (!in_array($planAcc->Kpi->objective->id, $objective_array))
+                                                        @if (!in_array($planAccKpi->objective->id, $objective_array))
                                                             <th colspan="9" style="width:100%;"> Objective:
-                                                                {{ $planAcc->Kpi->objective->objectiveTranslations[0]->name }}
+                                                                {{ $planAccKpi->objective->objectiveTranslations[0]->name }}
                                                             </th>
                                                         @endif
                                                     @endif
@@ -134,7 +147,7 @@
                                                 @endforelse
                                                 @php
                                                     $objective_array = array_merge($objective_array, [
-                                                        $planAcc->Kpi->objective->id,
+                                                        $planAccKpi->objective->id,
                                                     ]);
                                                 @endphp
                                             </tr>
@@ -148,7 +161,7 @@
                                                     @endif
                                                 </th>
                                                 <th rowspan="">{{ 'Baseline' }}</th>
-                                                @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+                                                @forelse($getQuarter as $period)
                                                     <th> {{ $period->reportingPeriodTs[0]->name }} </th>
                                                 @empty
                                                 @endforelse
@@ -159,14 +172,14 @@
                                                     $baseline_avarage_total = 0;
                                                     $baseline_denominator = 1;
                                                     if (!$planAcc->kpi_child_three_id == null) {
-                                                        foreach ($planAcc->Kpi->kpiChildThrees as $key => $value3) {
-                                                            foreach ($planAcc->Kpi->kpiChildTwos as $key => $value2) {
+                                                        foreach ($planAccKpiChildThree as $key => $value3) {
+                                                            foreach ($planAccKpiChildTwo as $key => $value2) {
                                                                 foreach (
-                                                                    $planAcc->Kpi->kpiChildOnes
+                                                                    $planAccKpiChildOne
                                                                     as $key => $value1
                                                                 ) {
                                                                     $baseline_avarage = planBaseline(
-                                                                        $planAcc->Kpi->id,
+                                                                        $planAccKpi->id,
                                                                         $imagen_off,
                                                                         $planning_year->id,
                                                                         $period->id,
@@ -174,21 +187,21 @@
                                                                         $value2->id,
                                                                         $value3->id,
                                                                     );
-                                                                    //$baseline_avarage = $planAcc->KpiOTT($planAcc->Kpi->id, auth()->user()->offices[0], $period->id, false, $planning_year->id, $value1->id,$value2->id,$value3->id);
+                                                                    //$baseline_avarage = $planAcc->KpiOTT($planAccKpi->id, $userOffice, $period->id, false, $planning_year->id, $value1->id,$value2->id,$value3->id);
                                                                     $baseline_avarage_total =
                                                                         $baseline_avarage_total + $baseline_avarage;
                                                                 }
                                                             }
                                                         }
                                                         $denominator =
-                                                            $planAcc->Kpi->kpiChildOnes->count() *
-                                                            $planAcc->Kpi->kpiChildTwos->count() *
-                                                            $planAcc->Kpi->kpiChildThrees->count();
+                                                            $planAccKpiChildOne->count() *
+                                                            $planAccKpiChildTwo->count() *
+                                                            $planAccKpiChildThree->count();
                                                     } elseif (!$planAcc->kpi_child_two_id == null) {
-                                                        foreach ($planAcc->Kpi->kpiChildTwos as $key => $value2) {
-                                                            foreach ($planAcc->Kpi->kpiChildOnes as $key => $value1) {
+                                                        foreach ($planAccKpiChildTwo as $key => $value2) {
+                                                            foreach ($planAccKpiChildOne as $key => $value1) {
                                                                 $baseline_avarage = planBaseline(
-                                                                    $planAcc->Kpi->id,
+                                                                    $planAccKpi->id,
                                                                     $imagen_off,
                                                                     $planning_year->id,
                                                                     $period->id,
@@ -201,12 +214,12 @@
                                                             }
                                                         }
                                                         $denominator =
-                                                            $planAcc->Kpi->kpiChildOnes->count() *
-                                                            $planAcc->Kpi->kpiChildTwos->count();
+                                                            $planAccKpiChildOne->count() *
+                                                            $planAccKpiChildTwo->count();
                                                     } elseif (!$planAcc->kpi_child_one_id == null) {
-                                                        foreach ($planAcc->Kpi->kpiChildOnes as $key => $value1) {
+                                                        foreach ($planAccKpiChildOne as $key => $value1) {
                                                             $baseline_avarage = planBaseline(
-                                                                $planAcc->Kpi->id,
+                                                                $planAccKpi->id,
                                                                 $imagen_off,
                                                                 $planning_year->id,
                                                                 $period->id,
@@ -217,10 +230,10 @@
                                                             $baseline_avarage_total =
                                                                 $baseline_avarage_total + $baseline_avarage;
                                                         }
-                                                        $denominator = $planAcc->Kpi->kpiChildOnes->count();
+                                                        $denominator = $planAccKpiChildOne->count();
                                                     } else {
                                                         $baseline_avarage = planBaseline(
-                                                            $planAcc->Kpi->id,
+                                                            $planAccKpi->id,
                                                             $imagen_off,
                                                             $planning_year->id,
                                                             $period->id,
@@ -232,10 +245,10 @@
                                                             $baseline_avarage_total + $baseline_avarage;
                                                         $denominator = 1;
                                                     }
-                                                    //$baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id,$imagen_off, $planning_year->id, $period->id,$planAcc->kpi_child_one_id,$planAcc->kpi_child_two_id,$planAcc->kpi_child_three_id);
+                                                    //$baselineOfOfficePlan  = planBaseline($planAccKpi->id,$imagen_off, $planning_year->id, $period->id,$planAcc->kpi_child_one_id,$planAcc->kpi_child_two_id,$planAcc->kpi_child_three_id);
                                                 @endphp
                                                 <td>
-                                                    @if ($planAcc->Kpi->measurement && $planAcc->Kpi->measurement->slug == 'percent' && $denominator > 0)
+                                                    @if ($planAccKpi->measurement && $planAccKpi->measurement->slug == 'percent' && $denominator > 0)
                                                         @php
                                                             $final_avarage_basline = number_format(
                                                                 $baseline_avarage_total / $denominator,
@@ -249,24 +262,26 @@
                                                         {{ $baseline_avarage_total }}
                                                     @endif
                                                 </td>
-                                                @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+
+                                                {{-- TODO: no calc --}}
+                                                @forelse($getQuarter as $period)
                                                     @php
                                                         $avarage = 0;
                                                         $avarage_total = 0;
                                                         $denominator = 1;
                                                         if (!$planAcc->kpi_child_three_id == null) {
-                                                            foreach ($planAcc->Kpi->kpiChildThrees as $key => $value3) {
+                                                            foreach ($planAccKpiChildThree as $key => $value3) {
                                                                 foreach (
-                                                                    $planAcc->Kpi->kpiChildTwos
+                                                                    $planAccKpiChildTwo
                                                                     as $key => $value2
                                                                 ) {
                                                                     foreach (
-                                                                        $planAcc->Kpi->kpiChildOnes
+                                                                        $planAccKpiChildOne
                                                                         as $key => $value1
                                                                     ) {
                                                                         $avarage = $planAcc->KpiOTT(
-                                                                            $planAcc->Kpi->id,
-                                                                            auth()->user()->offices[0],
+                                                                            $planAccKpi->id,
+                                                                            $userOffice,
                                                                             $period->id,
                                                                             false,
                                                                             $planning_year->id,
@@ -279,18 +294,18 @@
                                                                 }
                                                             }
                                                             $denominator =
-                                                                $planAcc->Kpi->kpiChildOnes->count() *
-                                                                $planAcc->Kpi->kpiChildTwos->count() *
-                                                                $planAcc->Kpi->kpiChildThrees->count();
+                                                                $planAccKpiChildOne->count() *
+                                                                $planAccKpiChildTwo->count() *
+                                                                $planAccKpiChildThree->count();
                                                         } elseif (!$planAcc->kpi_child_two_id == null) {
-                                                            foreach ($planAcc->Kpi->kpiChildTwos as $key => $value2) {
+                                                            foreach ($planAccKpiChildTwo as $key => $value2) {
                                                                 foreach (
-                                                                    $planAcc->Kpi->kpiChildOnes
+                                                                    $planAccKpiChildOne
                                                                     as $key => $value1
                                                                 ) {
                                                                     $avarage = $planAcc->KpiOTT(
-                                                                        $planAcc->Kpi->id,
-                                                                        auth()->user()->offices[0],
+                                                                        $planAccKpi->id,
+                                                                        $userOffice,
                                                                         $period->id,
                                                                         false,
                                                                         $planning_year->id,
@@ -302,13 +317,13 @@
                                                                 }
                                                             }
                                                             $denominator =
-                                                                $planAcc->Kpi->kpiChildOnes->count() *
-                                                                $planAcc->Kpi->kpiChildTwos->count();
+                                                                $planAccKpiChildOne->count() *
+                                                                $planAccKpiChildTwo->count();
                                                         } elseif (!$planAcc->kpi_child_one_id == null) {
-                                                            foreach ($planAcc->Kpi->kpiChildOnes as $key => $value1) {
+                                                            foreach ($planAccKpiChildOne as $key => $value1) {
                                                                 $avarage = $planAcc->KpiOTT(
-                                                                    $planAcc->Kpi->id,
-                                                                    auth()->user()->offices[0],
+                                                                    $planAccKpi->id,
+                                                                    $userOffice,
                                                                     $period->id,
                                                                     false,
                                                                     $planning_year->id,
@@ -318,11 +333,11 @@
                                                                 );
                                                                 $avarage_total = $avarage_total + $avarage[0];
                                                             }
-                                                            $denominator = $planAcc->Kpi->kpiChildOnes->count();
+                                                            $denominator = $planAccKpiChildOne->count();
                                                         } else {
                                                             $avarage = $planAcc->KpiOTT(
-                                                                $planAcc->Kpi->id,
-                                                                auth()->user()->offices[0],
+                                                                $planAccKpi->id,
+                                                                $userOffice,
                                                                 $period->id,
                                                                 false,
                                                                 $planning_year->id,
@@ -333,21 +348,14 @@
                                                             $avarage_total = $avarage_total + $avarage[0];
                                                             $denominator = 1;
                                                         }
-                                                        //$planOfOfficePlan = $planAcc->ForKpi($planAcc->Kpi->id, $imagen_off, $period->id,false,$planning_year->id ?? NULL,$planAcc->kpi_child_one_id,$planAcc->kpi_child_two_id,$planAcc->kpi_child_three_id);
-                                                        $narration = $planAcc->getNarration(
-                                                            $planAcc->Kpi->id,
-                                                            $planning_year->id ?? null,
-                                                            $imagen_off,
-                                                        );
-                                                        $userOffice = auth()->user()->offices[0];
-                                                        $userOffice = auth()->user()->offices[0];
+                                                        //$planOfOfficePlan = $planAcc->ForKpi($planAccKpi->id, $imagen_off, $period->id,false,$planning_year->id ?? NULL,$planAcc->kpi_child_one_id,$planAcc->kpi_child_two_id,$planAcc->kpi_child_three_id);
                                                         $office_level = $userOffice->level;
                                                         if ($office_level == 0) {
                                                             $office_level = 1;
                                                         }
                                                     @endphp
                                                     <td>
-                                                        @if ($planAcc->Kpi->measurement && $planAcc->Kpi->measurement->slug == 'percent' && $denominator > 0)
+                                                        @if ($planAccKpi->measurement && $planAccKpi->measurement->slug == 'percent' && $denominator > 0)
                                                             @php
                                                                 $final_avarage = number_format(
                                                                     $avarage_total / $denominator,
@@ -376,6 +384,13 @@
                                                 <th>
                                                     <h6> <b> Major Activities </b> </h6>
                                                 </th>
+                                                @php
+                                                    $narration = $planAcc->getNarration(
+                                                    $planAccKpi->id,
+                                                    $planning_year->id ?? null,
+                                                    $imagen_off,
+                                                );
+                                                @endphp
                                                 <td colspan="8">
                                                      @foreach ($narration as $key => $plannaration)
                                                         <p>
@@ -392,38 +407,41 @@
 
                                             @forelse($offices  as $office)
                                                 @php
+                                                    // $only_child_array = office_all_childs_ids($office);
                                                     $isOfficeBelongToKpi = isOfficeBelongToKpi(
                                                         $office,
-                                                        $planAcc->Kpi->id,
+                                                        $planAccKpi->id,
                                                     );
-                                                @endphp
+                                                    $officeOffices = $office->offices;
+                                                    @endphp
                                                 @if ($isOfficeBelongToKpi->count() > 0)
-                                                    @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
+                                                    @if (!$planAccKpiChildOne->isEmpty())
                                                         {{-- <table class="table table-bordered">
                                                             <thead> --}}
-                                                        @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
-                                                            @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
+
+                                                        @if (!$planAccKpiChildTwo->isEmpty())
+                                                            @if (!$planAccKpiChildThree->isEmpty())
                                                                 @include('app.plan_accomplishments.view-kpi123')
                                                                 {{-- KPI has  child one and child two --}}
                                                                  {{-- <a  href='{{ route('plan-accomplishment-details-two', [$office->id,$planAcc->Kpi->id, $planning_year->id]) }}'> {{"."}}</a> --}}
                                                                  {{-- @include('app.plan_accomplishments.office-row123', ['office' => $office,'kpi' => $planAcc->Kpi->id, $planning_year->id,'level' => 0]) --}}
                                                             @else
                                                                 {{-- @include('app.plan_accomplishments.view-kpi12') --}}
-                                                                 <a  href='{{ route('plan-accomplishment-details-two', [$office->id,$planAcc->Kpi->id, $planning_year->id]) }}'> {{"."}}</a>
-                                                                 @include('app.plan_accomplishments.office-row12', ['office' => $office,'kpi' => $planAcc->Kpi->id, $planning_year->id,'level' => 0])
+                                                                 <a  href='{{ route('plan-accomplishment-details-two', [$office->id,$planAccKpi->id, $planning_year->id]) }}'> {{"."}}</a>
+                                                                 @include('app.plan_accomplishments.office-row12', ['office' => $office,'kpi' => $planAccKpi->id, $planning_year->id,'level' => 0])
                                                             @endif
                                                             {{-- KPI has  child one only --}}
                                                         @else
                                                             {{-- @include('app.plan_accomplishments.view-kpi1') --}}
-                                                            <a  href='{{ route('plan-accomplishment-details', [$office->id,$planAcc->Kpi->id, $planning_year->id]) }}'> {{"."}}</a>
-                                                            @include('app.plan_accomplishments.office-row1', ['office' => $office, 'level' => 0])
+                                                            <a  href='{{ route('plan-accomplishment-details', [$office->id,$planAccKpi->id, $planning_year->id]) }}'> {{"."}}</a>
+                                                            @include('app.plan_accomplishments.office-row1', ['office' => $office,'planAcc' => $planAcc, 'level' => 0])
                                                         @endif
 
                                                         {{-- </thead>
                                                         </table> --}}
                                                         {{-- KPI has no child one, which means just only plain input --}}
                                                     @else
-                                                     <a href='{{ route('plan-accomplishment-details', [$office->id,$planAcc->Kpi->id, $planning_year->id]) }}'>  {{"."}} </a>
+                                                     <a href='{{ route('plan-accomplishment-details', [$office->id,$planAccKpi->id, $planning_year->id]) }}'>  {{"."}} </a>
                                                         @include('app.plan_accomplishments.office-row', ['office' => $office,'planAcc' => $planAcc, 'level' => 0])
                                                     @endif
                                                 @endif
@@ -440,7 +458,7 @@
                                 </div>
 
                                 @php
-                                    $kpi_repeat[$c] = $planAcc->Kpi->id;
+                                    $kpi_repeat[$c] = $planAccKpi->id;
                                     $c++;
 
                                 @endphp
@@ -448,14 +466,18 @@
                         @empty
                             {{-- <p>ugyftrdy</p> --}}
                         @endforelse
+
+                        <div class="mt-4">
+                            {{ $planAccomplishments->links() }}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        @php
-            $user_offices = auth()->user()->offices[0]->offices;
-        @endphp 
- 
+        {{-- @php
+            $user_offices = $userOffice->offices;
+        @endphp --}}
+
     </div>
 
     <script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>

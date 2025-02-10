@@ -32,7 +32,7 @@
                                     <label class="label" for="filters">Offices:</label>
                                     <select class="form-control select2" name="office">
                                         <option disabled {{ old('office') == "" ? 'selected' : '' }} value="">Select Office</option>
-                                        <option value="">ALL OFFICES</option>
+                                        {{-- <option value="">ALL OFFICES</option> --}}
                                         @forelse(getAllOffices() as $office)
                                             @if ($office->id == 1)
                                                 @continue
@@ -47,7 +47,7 @@
                                     <label class="label" for="filters">Offices:</label>
                                     <select class="form-control select2" name="office">
                                         <option disabled {{ old('office') == "" ? 'selected' : '' }} value="">Select Office</option>
-                                        <option value="">ALL OFFICES</option>
+                                        {{-- <option value="">ALL OFFICES</option> --}}
                                         @forelse(getAllOffices() as $office)
                                             @if ($office->parent_office_id == auth()->user()->offices[0]->id || $office->id == auth()->user()->offices[0]->id)
                                                 <option {{ old('office') == $office->id ? 'selected' : '' }} value="{{ $office->id }}">{{ $office->officeTranslations[0]->name }}
@@ -63,7 +63,7 @@
                                 <label class=" " for="filters">KPI:</label>
                                 <select class="form-control select2" name="kpi">
                                     <option disabled {{ old('kpi') == "" ? 'selected' : '' }} value="">Select KPI</option>
-                                    <option value="">ALL KPI</option>
+                                    {{-- <option value="">ALL KPI</option> --}}
                                     @forelse(getAllKpi() as $kpi)
                                         <option {{ old('kpi') == $kpi->id ? 'selected' : '' }} value="{{ $kpi->id }}">{{ $kpi->keyPeformanceIndicatorTs[0]->name }}
                                         </option>
@@ -136,7 +136,7 @@
                                                             KPI:   {{$kpiT->name }}
                                                              @if ($kpiT->keyPeformanceIndicator ->measurement)
                                                                <b> {{"( in "}}{{$kpiT->keyPeformanceIndicator ->measurement['slug'] }} {{")" }}</b>
-                                                             @endif 
+                                                             @endif
                                                         </td>
                                                          @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                                                             <th> {{ $period->reportingPeriodTs[0]->name }} </th>

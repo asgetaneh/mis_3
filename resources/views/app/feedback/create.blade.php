@@ -27,6 +27,9 @@
     <link href="{{ asset('assets/landing-page/assets/vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/landing-page/assets/vendor/remixicon/remixicon.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/landing-page/assets/vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ asset('assets/dist/css/notyf.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/summernote/summernote-bs4.min.css') }}">
+    <script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
 
     <!-- Template Main CSS File -->
     <link href="{{ asset('assets/landing-page/assets/css/style.css') }}" rel="stylesheet" />
@@ -47,12 +50,12 @@
 
             <nav id="navbar" class="navbar">
                 <ul>
-                    <li><a class="nav-link scrollto active" href="#">Home</a></li>
-                    <li>
+                    <li><a class="nav-link scrollto" href="{{ url('/') }}">Home</a></li>
+                    {{-- <li>
                         <a class="nav-link scrollto" href="#">Information</a>
                     </li>
-                    <li><a class="nav-link scrollto" href="#">Plan</a></li>
-                    <li><a class="nav-link scrollto" href="{{ route('feedback') }}">Feedback</a></li>
+                    <li><a class="nav-link scrollto" href="#">Plan</a></li> --}}
+                    <li><a class="nav-link scrollto active" href="{{ route('feedback') }}">Feedback</a></li>
 
                     {{-- <li class="dropdown">
               <a href="#"
@@ -95,7 +98,7 @@
 
                 <div class="col-lg-6 order-1 order-lg-2 hero-img" data-aos="zoom-in" data-aos-delay="200">
                     <form action="{{ route('feedback-save') }}" method="Get" id="comment-form">
-                    <div class="card card-primary card-outline card-outline-tabs fillable-objective">
+                    <div class="card card-primary card-outline card-outline-tabs fillable-objective p-3">
                         {{-- @dd($objectives) --}}
                         <div class="card-header p-0 border-bottom-0 objectives-list-tab">
 
@@ -105,11 +108,12 @@
                         {{-- <input type="hidden" name="type" value="yes"> --}}
                         <textarea name="fback" style="height: 250px;" class="form-control summernote"
                             placeholder="Type any feedback (comments,difficulties and ...) here" id="narration-field"></textarea>
+                            <p></p>
+                            <button type="submit" class="btn btn-success">Send</button>
                     </div>
-                        <button type="submit" class="btn btn-info pull-right">Send</button>
                     </form>
                 </div>
-                
+
             </div>
         </div>
     </section>
@@ -279,6 +283,7 @@
             class="bi bi-arrow-up-short"></i></a>
 
     <!-- Vendor JS Files -->
+    <script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/landing-page/assets/vendor/aos/aos.js') }}"></script>
     <script src="{{ asset('assets/landing-page/assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/landing-page/assets/vendor/glightbox/js/glightbox.min.js') }}"></script>
@@ -289,31 +294,24 @@
 
     <!-- Template Main JS File -->
     <script src="{{ asset('assets/landing-page/assets/js/main.js') }}"></script>
+    <script src="{{ asset('assets/dist/js/notyf.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/summernote/summernote-bs4.min.js') }}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.summernote').summernote({
+                height: 250
+            });
+            $('.dropdown-toggle').dropdown()
+        });
+    </script>
+
+    @if (session()->has('success'))
+        <script>
+            var notyf = new Notyf({dismissible: true})
+            notyf.success('{{ session('success') }}')
+        </script>
+    @endif
 </body>
 
 </html>
-
-
-    <div class="row justify-content-left mt-3">
-
-        <div class="col-md-12">
-            <div class="col-12">
-                <div class="card card-primary card-outline card-outline-tabs fillable-objective">
-                    {{-- @dd($objectives) --}}
-                    <div class="card-header p-0 border-bottom-0 objectives-list-tab">
-
-                    </div>
-
-                    <label for="summernote">Major Activities</label>
-                    <input type="hidden" name="type" value="yes">
-                    <textarea name="fback" style="height: 100px;" class="form-control summernote"
-                        placeholder="Narration here" id="narration-field"></textarea>
-                    <p class="narration-field text-danger" style="display: none;">Please fill Major
-                        Activities field!</p>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
- 
