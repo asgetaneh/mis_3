@@ -2442,7 +2442,6 @@ class PlanAccomplishmentController extends Controller
                 'kpi_child_one_count' => count($kpi->kpiChildOnes),
                 'kpi_child_two_count' => count($kpi->kpiChildTwos),
                 "narration" => $planAccomplishment->getNarration(
-                    $childAndHimOffKpi,
                     $kpi->id,
                     $planning_year->id ?? null,
                     $get_office
@@ -2454,7 +2453,6 @@ class PlanAccomplishmentController extends Controller
                     $kpi_officeSelf_plans = [];
                     foreach ($reportin_periods as $period) {
                         $planOfOfficePlanSelf = $planAccomplishment->OnlyKpiOTT(
-                            $childAndHimOffKpi,
                             $kpi->id, $get_office, $period->id,  false,
                             $planning_year->id ?? null,$one->id, $two->id,null
                         );
@@ -2472,7 +2470,6 @@ class PlanAccomplishmentController extends Controller
                         'kpi_child_two_name' => $two->kpiChildTwoTranslations[0]->name,
 
                         'kpi_child_baseline' => OnlyKpiOttBaseline(
-                            $childAndHimOffKpi,
                             $kpi->id,
                             $get_office,
                             $planning_year->id,
@@ -2498,7 +2495,6 @@ class PlanAccomplishmentController extends Controller
                     'kpi_id' => $kpi->id,
                     'pp_year' => $planning_year->id,
                     "narration" => $planAccomplishment->getNarration(
-                        $childAndHimOffKpi,
                         $kpi->id,
                         $planning_year->id ?? null,
                         $office
@@ -2512,7 +2508,6 @@ class PlanAccomplishmentController extends Controller
                         $kpi_child_plans = [];
                         foreach ($reportin_periods as $period) {
                             $planOfOfficePlan = $planAccomplishment->KpiOTT(
-                                $childAndHimOffKpi,
                                 $kpi->id,
                                 $office,
                                 $period->id,
@@ -2537,7 +2532,6 @@ class PlanAccomplishmentController extends Controller
                             'kpi_child_one_name' => $one->kpiChildOneTranslations[0]->name,
                             'kpi_child_two_name' => $two->kpiChildTwoTranslations[0]->name,
                             'kpi_child_baseline' => planBaseline(
-                                $childAndHimOffKpi,
                                 $kpi->id,
                                 $office,
                                 $planning_year->id,
@@ -2806,7 +2800,6 @@ class PlanAccomplishmentController extends Controller
                 'kpi_child_two_count' => count($kpi->kpiChildTwos),
                 'kpi_child_three_count' => count($kpi->kpiChildThrees),
                 "narration" => $planAccomplishment->getNarration(
-                    $childAndHimOffKpi,
                     $kpi->id,
                     $planning_year->id ?? null,
                     $get_office
@@ -2819,7 +2812,6 @@ class PlanAccomplishmentController extends Controller
                         $kpi_officeSelf_plans = [];
                         foreach ($reportin_periods as $period) {
                             $planOfOfficePlanSelf = $planAccomplishment->OnlyKpiOTT(
-                                $childAndHimOffKpi,
                                 $kpi->id, $get_office, $period->id,  false,
                                 $planning_year->id ?? null,$one->id, $two->id,$three->id
                             );
@@ -2837,7 +2829,6 @@ class PlanAccomplishmentController extends Controller
                             'kpi_child_two_name' => $two->kpiChildTwoTranslations[0]->name,
                             'kpi_child_three_name' => $three->kpiChildThreeTranslations[0]->name,
                             'kpi_child_baseline' => OnlyKpiOttBaseline(
-                                $childAndHimOffKpi,
                                 $kpi->id,
                                 $get_office,
                                 $planning_year->id,
@@ -2864,7 +2855,6 @@ class PlanAccomplishmentController extends Controller
                     'kpi_id' => $kpi->id,
                     'pp_year' => $planning_year->id,
                     "narration" => $planAccomplishment->getNarration(
-                        $childAndHimOffKpi,
                         $kpi->id,
                         $planning_year->id ?? null,
                         $office
@@ -2879,7 +2869,6 @@ class PlanAccomplishmentController extends Controller
                             $kpi_child_plans = [];
                             foreach ($reportin_periods as $period) {
                                 $planOfOfficePlan = $planAccomplishment->KpiOTT(
-                                    $childAndHimOffKpi,
                                     $kpi->id,
                                     $office,
                                     $period->id,
@@ -2904,7 +2893,6 @@ class PlanAccomplishmentController extends Controller
                                 'kpi_child_one_name' => $one->kpiChildOneTranslations[0]->name,
                                 'kpi_child_two_name' => $two->kpiChildTwoTranslations[0]->name,
                                 'kpi_child_baseline' => planBaseline(
-                                    $childAndHimOffKpi,
                                     $kpi->id,
                                     $office,
                                     $planning_year->id,
@@ -2933,7 +2921,6 @@ class PlanAccomplishmentController extends Controller
                 'kpi_child_one_count' => count($kpi->kpiChildOnes),
                 'kpi_child_two_count' => count($kpi->kpiChildTwos),
                 "narration" => $planAccomplishment->getNarration(
-                    $childAndHimOffKpi,
                     $kpi->id,
                     $planning_year->id ?? null,
                     $get_office
@@ -2945,7 +2932,6 @@ class PlanAccomplishmentController extends Controller
                     $kpi_officeSelf_plans = [];
                     foreach ($reportin_periods as $period) {
                         $planOfOfficePlanSelf = $planAccomplishment->OnlyKpiOTT(
-                            $childAndHimOffKpi,
                             $kpi->id, $get_office, $period->id,  false,
                             $planning_year->id ?? null,$one->id, $two->id,null
                         );
@@ -2963,7 +2949,6 @@ class PlanAccomplishmentController extends Controller
                         'kpi_child_two_name' => $two->kpiChildTwoTranslations[0]->name,
 
                         'kpi_child_baseline' => OnlyKpiOttBaseline(
-                            $childAndHimOffKpi,
                             $kpi->id,
                             $get_office,
                             $planning_year->id,
@@ -2989,7 +2974,6 @@ class PlanAccomplishmentController extends Controller
                     'kpi_id' => $kpi->id,
                     'pp_year' => $planning_year->id,
                     "narration" => $planAccomplishment->getNarration(
-                        $childAndHimOffKpi,
                         $kpi->id,
                         $planning_year->id ?? null,
                         $office
@@ -3003,7 +2987,6 @@ class PlanAccomplishmentController extends Controller
                         $kpi_child_plans = [];
                         foreach ($reportin_periods as $period) {
                             $planOfOfficePlan = $planAccomplishment->KpiOTT(
-                                $childAndHimOffKpi,
                                 $kpi->id,
                                 $office,
                                 $period->id,
@@ -3028,7 +3011,6 @@ class PlanAccomplishmentController extends Controller
                             'kpi_child_one_name' => $one->kpiChildOneTranslations[0]->name,
                             'kpi_child_two_name' => $two->kpiChildTwoTranslations[0]->name,
                             'kpi_child_baseline' => planBaseline(
-                                $childAndHimOffKpi,
                                 $kpi->id,
                                 $office,
                                 $planning_year->id,
@@ -3048,7 +3030,7 @@ class PlanAccomplishmentController extends Controller
             //dump($parent_office_trans_array );
         }
         foreach ($reportin_periods as $period) {
-             $planOfOfficePlan_self[] = $planAccomplishment->OnlyKpiOTT($childAndHimOffKpi, $planAccomplishment->Kpi->id,$get_office, $period->id, false, $planning_year->id ?? null,$planAccomplishment->kpi_child_one_id, $planAccomplishment->kpi_child_two_id,$planAccomplishment->kpi_child_three_id);
+             $planOfOfficePlan_self[] = $planAccomplishment->OnlyKpiOTT($planAccomplishment->Kpi->id,$get_office, $period->id, false, $planning_year->id ?? null,$planAccomplishment->kpi_child_one_id, $planAccomplishment->kpi_child_two_id,$planAccomplishment->kpi_child_three_id);
         }
         $narrations_self[] = $planAccomplishment->getNarrationSelf(
             $planAccomplishment->Kpi->id,
