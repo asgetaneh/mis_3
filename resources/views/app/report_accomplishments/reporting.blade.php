@@ -546,7 +546,7 @@
                                     <h5>{{"No Plan for Keyperformance indicator"}}: <u>{{ $kpi->KeyPeformanceIndicatorTs[0]->name }}</u></h5>
                                     @endif
                                     @empty
-                                    <h4>No KPI exit with active reporting period in this office and Objective!</h4>
+                                    <h4>No KPI exit with active reporting period in this office and Objective!cc</h4>
                                     @endforelse
                                     <button type="submit" class="btn btn-primary" id="submit-for-{{ $objective->id }}">Submit</button>
                             </div>
