@@ -1834,14 +1834,33 @@ class PlanAccomplishmentController extends Controller
                 $imagen_off = $office;
             }
 
+            // $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
+            // ->whereIn('office_id', $only_child_array)
+            // ->whereIn('kpi_id', $kpi_array)
+            // ->select('*', DB::raw('SUM(accom_value) AS sum'))
+            // -> where('planning_year_id','=', $planning_year->id ?? NULL)
+            //     //-> where('reporting_periods.slug',"=", 1)
+            // ->groupBy('kpi_id')
+            // ->get();
+
             $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
             ->whereIn('office_id', $only_child_array)
             ->whereIn('kpi_id', $kpi_array)
-            ->select('*', DB::raw('SUM(accom_value) AS sum'))
-            -> where('planning_year_id','=', $planning_year->id ?? NULL)
                 //-> where('reporting_periods.slug',"=", 1)
+            ->select(
+                'plan_accomplishments.id as id',
+                'plan_accomplishments.kpi_id',
+                'plan_accomplishments.planning_year_id',
+                'plan_accomplishments.plan_value',
+                'plan_accomplishments.accom_value',
+                'reporting_periods.id as reporting_period_id',
+                DB::raw('SUM(accom_value) AS sum')
+            )
+            // ->where('reporting_periods.slug',"=", 1)
+            ->where('planning_year_id','=', $planning_year->id ?? NULL)
             ->groupBy('kpi_id')
-            ->get();
+            ->paginate(2);
+
 
             // to persist the select input values
             $request->flash();
@@ -1849,11 +1868,20 @@ class PlanAccomplishmentController extends Controller
         else{
         $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
         ->whereIn('office_id', $only_child_array)
-        ->select('*', DB::raw('SUM(accom_value) AS sum'))
-        -> where('planning_year_id','=', $planning_year->id ?? NULL)
+        // ->select('*', DB::raw('SUM(accom_value) AS sum'))
+        ->select(
+            'plan_accomplishments.id as id',
+            'plan_accomplishments.kpi_id',
+            'plan_accomplishments.planning_year_id',
+            'plan_accomplishments.plan_value',
+            'plan_accomplishments.accom_value',
+            'reporting_periods.id as reporting_period_id',
+            DB::raw('SUM(accom_value) AS sum')
+        )
+        ->where('planning_year_id','=', $planning_year->id ?? NULL)
         //-> where('reporting_periods.slug',"=", 1)
        ->groupBy('kpi_id')
-       ->get();
+       ->paginate(2);
          if( $is_admin){
              $imagen_off = Office::find(1); //immaginery office of which contain all office kpi plan
             $off_level = 1;
@@ -1862,14 +1890,26 @@ class PlanAccomplishmentController extends Controller
             foreach ($all_offices as $key => $value) {
                 $only_child_array = array_merge($only_child_array,array($value->id));
             }
-            $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
+            $planAccomplishments = PlanAccomplishment::
+                join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
                 ->join('offices', 'offices.id', '=', 'plan_accomplishments.office_id')
-                 ->join('key_peformance_indicators', 'plan_accomplishments.kpi_id', '=', 'key_peformance_indicators.id')
-                    ->join('objectives', 'key_peformance_indicators.objective_id', '=', 'objectives.id')
-                ->select('*', DB::raw('SUM(accom_value) AS sum'))
+                ->join('key_peformance_indicators', 'plan_accomplishments.kpi_id', '=', 'key_peformance_indicators.id')
+                ->join('objectives', 'key_peformance_indicators.objective_id', '=', 'objectives.id')
+                // ->select('*', DB::raw('SUM(accom_value) AS sum'))
+                ->select(
+                    'plan_accomplishments.id as id',
+                    'plan_accomplishments.kpi_id',
+                    'plan_accomplishments.planning_year_id',
+                    'plan_accomplishments.plan_value',
+                    'plan_accomplishments.accom_value',
+                    'reporting_periods.id as reporting_period_id',
+                    DB::raw('SUM(accom_value) AS sum')
+                )
                 //-> where('reporting_periods.slug',"=", 2)
-                -> where('planning_year_id','=', $planning_year->id ?? NULL)
-                ->groupBy('objective_id')->groupBy('kpi_id') ->get();
+                ->where('planning_year_id','=', $planning_year->id ?? NULL)
+                ->groupBy('objective_id')
+                ->groupBy('kpi_id')
+                ->paginate(2);
         }
         }
        //dd($planAccomplishments);

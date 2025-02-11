@@ -18,7 +18,13 @@
 @endsection
 
 @section('content')
-    @php     $first=1; @endphp
+    @php
+        $first=1;
+        $userOffice = auth()->user()->offices[0];
+        $loggedUser = auth()->user();
+        $allOffices = getAllOffices();
+        $allKpis = getAllKpi();
+    @endphp
     <div class="justify-content-center">
             <div class="card card-primary card-outline card-outline-tabs fillable-objective">
                 <div class="card-body">
@@ -28,12 +34,12 @@
                             <div class="col-md-4">
 
                                 {{-- If admin put all offices --}}
-                                @if(auth()->user()->is_admin || auth()->user()->hasRole('super-admin'))
+                                @if($loggedUser->is_admin || $loggedUser->hasRole('super-admin'))
                                     <label class="label" for="filters">Offices:</label>
                                     <select class="form-control select2" name="office">
                                         <option disabled {{ old('office') == "" ? 'selected' : '' }} value="">Select Office</option>
                                         {{-- <option value="">ALL OFFICES</option> --}}
-                                        @forelse(getAllOffices() as $office)
+                                        @forelse($allOffices as $office)
                                             @if ($office->id == 1)
                                                 @continue
                                             @endif
@@ -48,8 +54,8 @@
                                     <select class="form-control select2" name="office">
                                         <option disabled {{ old('office') == "" ? 'selected' : '' }} value="">Select Office</option>
                                         {{-- <option value="">ALL OFFICES</option> --}}
-                                        @forelse(getAllOffices() as $office)
-                                            @if ($office->parent_office_id == auth()->user()->offices[0]->id || $office->id == auth()->user()->offices[0]->id)
+                                        @forelse($allOffices as $office)
+                                            @if ($office->parent_office_id == $userOffice->id || $office->id == $userOffice->id)
                                                 <option {{ old('office') == $office->id ? 'selected' : '' }} value="{{ $office->id }}">{{ $office->officeTranslations[0]->name }}
                                                 </option>
                                             @endif
@@ -64,7 +70,7 @@
                                 <select class="form-control select2" name="kpi">
                                     <option disabled {{ old('kpi') == "" ? 'selected' : '' }} value="">Select KPI</option>
                                     {{-- <option value="">ALL KPI</option> --}}
-                                    @forelse(getAllKpi() as $kpi)
+                                    @forelse($allKpis as $kpi)
                                         <option {{ old('kpi') == $kpi->id ? 'selected' : '' }} value="{{ $kpi->id }}">{{ $kpi->keyPeformanceIndicatorTs[0]->name }}
                                         </option>
                                     @empty
@@ -102,24 +108,32 @@
                             $c = 1;
                             $objective_array = [];
                         @endphp
+
+                        @php
+                            $planAccomplishment = new App\Models\PlanAccomplishment();
+                            $offices = $planAccomplishment->getOfficeFromKpiAndOfficeList($only_child_array, $off_level);
+                        @endphp
                         @forelse($planAccomplishments as $planAcc)
-                            @php
-                                $offices = $planAcc->getOfficeFromKpiAndOfficeList($only_child_array,$off_level);
+                            @php $planAccKpi = $planAcc->Kpi; @endphp
+                            @php $planAccKpiChildOne = $planAccKpi->kpiChildOnes; @endphp
+                            @php $planAccKpiChildTwo = $planAccKpi->kpiChildTwos; @endphp
+                            @php $planAccKpiChildThree = $planAccKpi->kpiChildThrees; @endphp
+                            @php $planAccKpiReportingPeriodType = $planAccKpi->reportingPeriodType; @endphp
+                            @php $getQuarter = getQuarter($planAccKpiReportingPeriodType->id); @endphp
+                            @php $getReportingQuarter = getReportingQuarter($planAcc->Kpi->reportingPeriodType->id); @endphp
 
-                            @endphp
-
-                            @if (!in_array($planAcc->Kpi->id, $kpi_repeat))
+                            @if (!in_array($planAccKpi->id, $kpi_repeat))
                                 <div class="card collapsed-card p-2">
                                     <div class="card-header">
-                                        @forelse($planAcc->Kpi->KeyPeformanceIndicatorTs as $kpiT)
+                                        @forelse($planAccKpi->KeyPeformanceIndicatorTs as $kpiT)
                                             @if (app()->getLocale() == $kpiT->locale)
                                                 <table class="table">
                                                     <tr style="background:#87cdc6;">
-                                                        @if (!in_array($planAcc->Kpi->objective->id, $objective_array))
+                                                        @if (!in_array($planAccKpi->objective->id, $objective_array))
                                                              <th colspan="8" style="width:100%;"> Objective:
-                                                                {{ $planAcc->Kpi->objective->objectiveTranslations[0]->name }}
+                                                                {{ $planAccKpi->objective->objectiveTranslations[0]->name }}
                                                             </th>
-                                                           {{-- @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+                                                           {{-- @forelse($getQuarter as $period)
                                                                 <th> {{ $period->reportingPeriodTs[0]->name }}
                                                                  </th>
                                                             @empty
@@ -127,7 +141,7 @@
                                                              {{-- <th>   </th> --}}
                                                          @endif
                                                         @php
-                                                            $objective_array = array_merge($objective_array, [$planAcc->Kpi->objective->id]);
+                                                            $objective_array = array_merge($objective_array, [$planAccKpi->objective->id]);
                                                         @endphp
                                                     </tr>
                                                     <tr style="background:#21212121;">
@@ -138,21 +152,21 @@
                                                                <b> {{"( in "}}{{$kpiT->keyPeformanceIndicator ->measurement['slug'] }} {{")" }}</b>
                                                              @endif
                                                         </td>
-                                                         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+                                                         @forelse($getQuarter as $period)
                                                             <th> {{ $period->reportingPeriodTs[0]->name }} </th>
                                                         @empty
                                                         @endforelse
                                                         <th> Action  </th>
                                                     </tr>
                                                     <tr>
-                                                        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+                                                        @forelse($getQuarter as $period)
                                                             @php
                                                                 $one =null;
                                                                 $three =null;
                                                                 $two =null; //dump($planAcc);
-                                                                $planOfOfficePlan = $planAcc->ForKpi($planAcc->Kpi->id, $imagen_off, $period->id,true,$planning_year->id ?? NULL,$planAcc->kpi_child_one_id ,$planAcc->kpi_child_two_id ,$planAcc->kpi_child_three_id);//dump($planOfOfficePlan);
-                                                                $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $imagen_off, $period->id);
-                                                                 $activeQuarter = getReportingQuarter($planAcc->Kpi->reportingPeriodType->id);
+                                                                $planOfOfficePlan = $planAcc->ForKpi($planAccKpi->id, $imagen_off, $period->id,true,$planning_year->id ?? NULL,$planAcc->kpi_child_one_id ,$planAcc->kpi_child_two_id ,$planAcc->kpi_child_three_id);//dump($planOfOfficePlan);
+                                                                $narration = $planAcc->getReportNarration($planAccKpi->id, $planning_year->id ?? NULL, $imagen_off, $period->id);
+                                                                 $activeQuarter = getReportingQuarter($planAccKpiReportingPeriodType->id);
 
                                                             @endphp
                                                              @forelse($activeQuarter as $aQ)
@@ -203,15 +217,17 @@
 
                                             @forelse($offices  as $office)
                                                 @php
-                                                    $isOfficeBelongToKpi = isOfficeBelongToKpi($office, $planAcc->Kpi->id);
+                                                    // $only_child_array = office_all_childs_ids($office);
+                                                    $isOfficeBelongToKpi = isOfficeBelongToKpi($office, $planAccKpi->id);
+                                                    $officeOffices = $office->offices;
                                                 @endphp
 
                                                 @if ($isOfficeBelongToKpi->count() > 0)
-                                                    @if (!$planAcc->Kpi->kpiChildOnes->isEmpty())
+                                                    @if (!$planAccKpi->kpiChildOnes->isEmpty())
                                                         {{-- <table class="table table-bordered">
                                                             <thead> --}}
-                                                                @if (!$planAcc->Kpi->kpiChildTwos->isEmpty())
-                                                                    @if (!$planAcc->Kpi->kpiChildThrees->isEmpty())
+                                                                @if (!$planAccKpiChildTwo->isEmpty())
+                                                                    @if (!$planAccKpiChildThree->isEmpty())
                                                                         @include('app.report_accomplishments.view-kpi123')
                                                                         {{-- KPI has  child one and child two --}}
                                                                     @else
@@ -242,7 +258,7 @@
                                 </div>
 
                                 @php
-                                    $kpi_repeat[$c] = $planAcc->Kpi->id;
+                                    $kpi_repeat[$c] = $planAccKpi->id;
                                     $c++;
 
                                 @endphp
@@ -250,6 +266,10 @@
                         @empty
                             {{-- <p>ugyftrdy</p> --}}
                         @endforelse
+
+                        <div class="mt-4">
+                            {{ $planAccomplishments->links() }}
+                        </div>
                     </div>
                 </div>
             </div>

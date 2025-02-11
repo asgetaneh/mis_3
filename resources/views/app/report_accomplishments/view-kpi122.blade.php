@@ -1,13 +1,13 @@
 <table class="table table-bordered" >
 <tr>
 <tr>
-    <th colspan="{{ getQuarter($planAcc->Kpi->reportingPeriodType->id)->count() + 3 }} ">
+    <th colspan="{{ $getQuarter->count() + 3 }} ">
         Offices: {{ $office->officeTranslations[0]->name }}
     </th>
-    <td rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }} *{{count(getQuarter($planAcc->Kpi->reportingPeriodType->id))}}+2">
+    <td rowspan="{{ $planAccKpiChildTwo->count() }} *{{count($getQuarter)}}+2">
         @if (!$office->offices->isEmpty())
             <p>
-                <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}{{$planAcc->Kpi->id}}" role="button"
+                <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}{{$planAccKpi->id}}" role="button"
                     aria-expanded="false" aria-controls="collapseExample0">
                     Details
                 </a>
@@ -18,7 +18,7 @@
     </td>
 </tr>
 {{-- <td colspan="2  ">#</td>
-@foreach ($planAcc->Kpi->kpiChildOnes as $one)
+@foreach ($planAccKpiChildOne as $one)
     <td>
         {{ $one->kpiChildOneTranslations[0]->name }}
     </td>
@@ -30,7 +30,7 @@
     <tr>
         <th colspan="2">#</th>
 
-        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+        @forelse($getQuarter as $period)
         <th>
                 {{ $period->reportingPeriodTs[0]->name }}
             </th>
@@ -39,18 +39,18 @@
     </tr>
 
 
-    @forelse ($planAcc->Kpi->kpiChildOnes as $one)
+    @forelse ($planAccKpiChildOne as $one)
 
     <tr>
-        <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
+        <th rowspan="{{ $planAccKpiChildTwo->count() }}">
             {{ $one->kpiChildOneTranslations[0]->name }}
         </th>
-        @foreach ($planAcc->Kpi->kpiChildTwos as $two)
+        @foreach ($planAccKpiChildTwo as $two)
             <th>
                 {{ $two->kpiChildTwoTranslations[0]->name }}
             </th>
 
-        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+        @forelse($getQuarter as $period)
             @php
                 $childAndHimOffKpi_array = [];
                 $childAndHimOffKpi = $office->offices;
@@ -58,22 +58,22 @@
                     $childAndHimOffKpi_array[$key] = $value->id;
                 }
                 $childAndHimOffKpi_array = array_merge($childAndHimOffKpi_array, [$office->id]);
-            // $planKpiOfficeYear = $planAcc->planSumOfKpi($planAcc->Kpi->id, $office);
-                $narration = $planAcc->getReportNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
+            // $planKpiOfficeYear = $planAcc->planSumOfKpi($planAccKpi->id, $office);
+                $narration = $planAcc->getReportNarration($planAccKpi->id, $planning_year->id ?? NULL, $office, $period->id);
             @endphp
             {{-- <tr>
-                <th rowspan="{{ $planAcc->Kpi->kpiChildTwos->count() }}">
+                <th rowspan="{{ $planAccKpiChildTwo->count() }}">
                     {{ $period->reportingPeriodTs[0]->name }}
                 </th>
-                @foreach ($planAcc->Kpi->kpiChildTwos as $two)
+                @foreach ($planAccKpiChildTwo as $two)
                     <td>
                         {{ $two->kpiChildTwoTranslations[0]->name }}
                     </td>
-                    @foreach ($planAcc->Kpi->kpiChildOnes as $one) --}}
+                    @foreach ($planAccKpiChildOne as $one) --}}
                         <td>
                             @php
-                                //$planOneTwo = $planAcc->planOneTwo($planAcc->Kpi->id, $one->id, $two->id, $office, $period->id,true);
-                                $planOneTwo = $planAcc->KpiOTT($planAcc->Kpi->id, $office, $period->id,true,$planning_year->id ?? NULL ,$one->id, $two->id,null);
+                                //$planOneTwo = $planAcc->planOneTwo($planAccKpi->id, $one->id, $two->id, $office, $period->id,true);
+                                $planOneTwo = $planAcc->KpiOTT($planAccKpi->id, $office, $period->id,true,$planning_year->id ?? NULL ,$one->id, $two->id,null);
                             @endphp
                             {{ $planOneTwo[1] }}
                         </td>
@@ -91,7 +91,7 @@
     <td>
         Major Activities
     </td>
-    <td colspan="{{ $planAcc->Kpi->kpiChildOnes->count() + 1 }}">
+    <td colspan="{{ $planAccKpiChildOne->count() + 1 }}">
         @foreach ($narration as $key => $plannaration)
             {!! html_entity_decode($plannaration->report_naration) !!}
             @php

@@ -1143,6 +1143,8 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period,$one,$two,$thr
             }else{ $office_baseline =0; }
 
         }else{
+            $planBaseline = collect();
+
             $previous_year = PlaningYear::where('id', '<', $planning_year_id)->orderby('id', 'desc')->first();
                 if($previous_year){
                    $planBaseline = Baseline::select('baseline', 'office_id')
