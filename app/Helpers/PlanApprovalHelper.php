@@ -369,6 +369,7 @@ function planIndividualChOnechThreeSum($kkp, $one, $two, $three, $office, $suffi
 function planIndividualChOnech($kkp, $one, $two, $office, $suffix)
 {
     $childAndHimOffKpi_array = [];
+    $planning_year = PlaningYear::where('is_active', true)->first();
     $childAndHimOffKpi = office_all_childs_ids($office);
     $planAccomplishmentsCurrent = '';
     $planAccomplishmentsChildren = '';
@@ -381,7 +382,7 @@ function planIndividualChOnech($kkp, $one, $two, $office, $suffix)
             ->whereIn('office_id', $childAndHimOffKpi)
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', '=', $two)
-            // ->where('reporting_period_id', '=', $period)
+            ->where('planning_year_id', '=', $planning_year->id)
             ->where(function ($q) {
                 $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
             })
@@ -392,7 +393,7 @@ function planIndividualChOnech($kkp, $one, $two, $office, $suffix)
             ->where('office_id', $office->id)
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', '=', $two)
-            // ->where('reporting_period_id', '=', $period)
+             ->where('planning_year_id', '=', $planning_year->id)
             ->get();
 
         // Current office children record if exists
@@ -401,7 +402,7 @@ function planIndividualChOnech($kkp, $one, $two, $office, $suffix)
             ->where('kpi_id', '=', $kkp)
             ->where('plan_status', $office->level)
             ->where('kpi_child_one_id', '=', $two)
-            // ->where('reporting_period_id', '=', $period)
+             ->where('planning_year_id', '=', $planning_year->id)
             ->get();
 
         $sum1 = 0;
@@ -424,7 +425,7 @@ function planIndividualChOnech($kkp, $one, $two, $office, $suffix)
             ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', '=', $two)
-            // ->where('reporting_period_id', '=', $period)
+             ->where('planning_year_id', '=', $planning_year->id)
             ->where(function ($q) {
                 $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
             })
@@ -441,7 +442,12 @@ function planIndividualChOnech($kkp, $one, $two, $office, $suffix)
 
     $sumch1ch3_value = 0;
     // $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id' , $office)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->get();
-    $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('kpi_child_one_id', '=', $one)->get();
+    $planAccomplishments = PlanAccomplishment::select('plan_value')
+        ->where('office_id', $office->id)
+        ->where('kpi_id', '=', $kkp)
+         ->where('planning_year_id', '=', $planning_year->id)
+        ->where('kpi_child_one_id', '=', $one)
+    ->get();
     foreach ($planAccomplishments as $key => $planAccomplishment) {
 
         $sumch1ch3_value = $sumch1ch3_value + $planAccomplishment->plan_value;
@@ -451,6 +457,7 @@ function planIndividualChOnech($kkp, $one, $two, $office, $suffix)
 function planIndividualChTwoSum($kkp, $two, $office, $period, $suffix)
 {
     $childAndHimOffKpi_array = [];
+    $planning_year = PlaningYear::where('is_active', true)->first();
     $childAndHimOffKpi = office_all_childs_ids($office);
     $planAccomplishmentsCurrent = '';
     $planAccomplishmentsChildren = '';
@@ -463,6 +470,7 @@ function planIndividualChTwoSum($kkp, $two, $office, $period, $suffix)
             ->whereIn('office_id', $childAndHimOffKpi)
             ->where('kpi_id', $kkp)
             ->where('kpi_child_two_id', '=', $two)
+             ->where('planning_year_id', '=', $planning_year->id)
             ->where('reporting_period_id', '=', $period)
             ->where(function ($q) {
                 $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
@@ -474,6 +482,7 @@ function planIndividualChTwoSum($kkp, $two, $office, $period, $suffix)
             ->where('office_id', $office->id)
             ->where('kpi_id', $kkp)
             ->where('kpi_child_two_id', '=', $two)
+             ->where('planning_year_id', '=', $planning_year->id)
             ->where('reporting_period_id', '=', $period)
             ->get();
 
@@ -483,6 +492,7 @@ function planIndividualChTwoSum($kkp, $two, $office, $period, $suffix)
             ->where('kpi_id', '=', $kkp)
             ->where('plan_status', $office->level)
             ->where('kpi_child_two_id', '=', $two)
+             ->where('planning_year_id', '=', $planning_year->id)
             ->where('reporting_period_id', '=', $period)
             ->get();
 
@@ -506,6 +516,7 @@ function planIndividualChTwoSum($kkp, $two, $office, $period, $suffix)
             ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
             ->where('kpi_id', $kkp)
             ->where('kpi_child_two_id', '=', $two)
+             ->where('planning_year_id', '=', $planning_year->id)
             ->where('reporting_period_id', '=', $period)
             ->where(function ($q) {
                 $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
@@ -523,7 +534,7 @@ function planIndividualChTwoSum($kkp, $two, $office, $period, $suffix)
 
     $sumch1ch3_value = 0;
     // $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id' , $office)->where('kpi_id' , '=', $kkp)->where('kpi_child_two_id' , '=', $two)->where('reporting_period_id' , '=', $period)->get();
-    $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('kpi_child_two_id', '=', $two)->where('reporting_period_id', '=', $period)->get();
+    $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('kpi_child_two_id', '=', $two) ->where('planning_year_id', '=', $planning_year->id)->where('reporting_period_id', '=', $period)->get();
     foreach ($planAccomplishments as $key => $planAccomplishment) {
 
         $sumch1ch3_value = $sumch1ch3_value + $planAccomplishment->plan_value;
@@ -545,6 +556,7 @@ function planIndividualChOneSum($kkp, $office)
 function planSumOfKpi($kkp, $office, $suffix)
 {
     $childAndHimOffKpi_array = [];
+     $planning_year = PlaningYear::where('is_active', true)->first();
     $childAndHimOffKpi = office_all_childs_ids($office);
     $planAccomplishmentsCurrent = '';
     $planAccomplishmentsChildren = '';
@@ -557,6 +569,7 @@ function planSumOfKpi($kkp, $office, $suffix)
             ->whereIn('office_id', $childAndHimOffKpi)
             ->where('kpi_id', $kkp)
             // ->where('reporting_period_id', '=', $period)
+            ->where('planning_year_id', '=', $planning_year->id)
             ->where(function ($q) {
                 $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
             })
@@ -566,6 +579,7 @@ function planSumOfKpi($kkp, $office, $suffix)
         $planAccomplishmentsCurrent = PlanAccomplishment::select()
             ->where('office_id', $office->id)
             ->where('kpi_id', $kkp)
+            ->where('planning_year_id', '=', $planning_year->id)
             // ->where('reporting_period_id', '=', $period)
             ->get();
 
@@ -574,6 +588,7 @@ function planSumOfKpi($kkp, $office, $suffix)
             ->whereIn('office_id', $childAndHimOffKpi)
             ->where('kpi_id', '=', $kkp)
             ->where('plan_status', $office->level)
+            ->where('planning_year_id', '=', $planning_year->id)
             // ->where('reporting_period_id', '=', $period)
             ->get();
 
@@ -596,6 +611,7 @@ function planSumOfKpi($kkp, $office, $suffix)
             // ->where('office_id', $office->id)
             ->whereIn('office_id', array_merge($childAndHimOffKpi, array($office->id)))
             ->where('kpi_id', $kkp)
+            ->where('planning_year_id', '=', $planning_year->id)
             // ->where('reporting_period_id', '=', $period)
             ->where(function ($q) {
                 $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
@@ -616,7 +632,11 @@ function planSumOfKpi($kkp, $office, $suffix)
     // dd($childAndHimOffKpi_array);
     $sumch1ch3_value = 0;
     // $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $childAndHimOffKpi_array)->where('kpi_id' , '=', $kkp)->get();
-    $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->get();
+    $planAccomplishments = PlanAccomplishment::select('plan_value')
+    ->where('office_id', $office->id)
+    ->where('kpi_id', '=', $kkp)
+    ->where('planning_year_id', '=', $planning_year->id)
+    ->get();
     foreach ($planAccomplishments as $key => $planAccomplishment) {
         $sumch1ch3_value = $sumch1ch3_value + $planAccomplishment->plan_value;
     } //dd($sumch1ch3_value);
@@ -731,6 +751,7 @@ function planOne($kkp, $one, $office, $period, $suffix, $planning_year)
 function planOneTwo($kkp, $one, $two, $office, $period, $suffix)
 {
     $childAndHimOffKpi_array = [];
+    $planning_year = PlaningYear::where('is_active', true)->first();
     $childAndHimOffKpi = office_all_childs_ids($office);
     $planAccomplishmentsCurrent = '';
     $planAccomplishmentsChildren = '';
@@ -744,6 +765,7 @@ function planOneTwo($kkp, $one, $two, $office, $period, $suffix)
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', $one)
             ->where('kpi_child_two_id', '=', $two)
+            ->where('planning_year_id', '=', $planning_year->id)
             ->where('reporting_period_id', '=', $period)
             ->where(function ($q) {
                 $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
@@ -790,6 +812,7 @@ function planOneTwo($kkp, $one, $two, $office, $period, $suffix)
             ->where('kpi_id', $kkp)
             ->where('kpi_child_one_id', $one)
             ->where('kpi_child_two_id', '=', $two)
+            ->where('planning_year_id', '=', $planning_year->id)
             ->where('reporting_period_id', '=', $period)
             ->where(function ($q) {
                 $q->where('plan_status', '<', auth()->user()->offices[0]->level)->orWhere('plan_status', '=', auth()->user()->offices[0]->level);
@@ -809,10 +832,17 @@ function planOneTwo($kkp, $one, $two, $office, $period, $suffix)
     $childAndHimOffKpi_array = array_merge($childAndHimOffKpi, array($office->id));
     $sum12 = 0;
     // $planAccomplishments = PlanAccomplishment::select('plan_value')->whereIn('office_id', $childAndHimOffKpi_array)->where('kpi_id' , '=', $kkp)->where('kpi_child_one_id' , '=', $one)->where('kpi_child_two_id' , '=', $two)->where('reporting_period_id' , '=', $period)->get();//dd($planAccomplishments);
-    $planAccomplishments = PlanAccomplishment::select('plan_value')->where('office_id', $office->id)->where('kpi_id', '=', $kkp)->where('kpi_child_one_id', '=', $one)->where('kpi_child_two_id', '=', $two)->where('reporting_period_id', '=', $period)->get();
+    $planAccomplishments = PlanAccomplishment::select('plan_value')
+        ->where('office_id', $office->id)
+        ->where('kpi_id', '=', $kkp)
+        ->where('kpi_child_one_id', '=', $one)
+        ->where('kpi_child_two_id', '=', $two)
+        ->where('planning_year_id', '=', $planning_year->id)
+        ->where('reporting_period_id', '=', $period)
+    ->get();
     foreach ($planAccomplishments as $key => $planAccomplishment) {
         $sum12 = $sum12 + $planAccomplishment->plan_value;
-        //dump($sum12);
+       // dump($planAccomplishment->plan_value);
     }
     return $sum12;
 }
