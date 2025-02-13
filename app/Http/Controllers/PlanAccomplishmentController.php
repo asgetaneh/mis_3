@@ -90,7 +90,7 @@ class PlanAccomplishmentController extends Controller
 
         return redirect()
             ->route('plan-accomplishments.edit', $planAccomplishment)
-            ->withSuccess(__('crud.common.created'));
+            ->withSuccess(__('crud.common.plan_submited'));
     }
 
     /**
@@ -141,7 +141,7 @@ class PlanAccomplishmentController extends Controller
 
         return redirect()
             ->route('plan-accomplishments.edit', $planAccomplishment)
-            ->withSuccess(__('crud.common.saved'));
+            ->withSuccess(__('crud.common.plan_submited'));
     }
 
     /**
@@ -519,7 +519,7 @@ class PlanAccomplishmentController extends Controller
             ->withQueryString(); //dd("o");
             return redirect()
             ->back()
-            ->withSuccess(__('crud.common.saved'));
+            ->withSuccess(__('crud.common.plan_submited'));
 
    }
 
@@ -1341,7 +1341,7 @@ class PlanAccomplishmentController extends Controller
             ->withQueryString(); //dd("o");
             return redirect()
             ->back()
-            ->withSuccess(__('crud.common.saved'));
+            ->withSuccess(__('crud.common.report_submited'));
 
    }
    public function viewReportAccomplishment(Request $request){
