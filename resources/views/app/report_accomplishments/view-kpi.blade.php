@@ -20,7 +20,7 @@
                 </a>
             </p>
              @else
-                {{"no child "}}
+                {{ "" }}
             @endif
         </td>
         </tr>

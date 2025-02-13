@@ -21,14 +21,14 @@
                 </a>
             </p>
              @else
-                {{"no child "}}
+                {{ "" }}
             @endif
         </td>
         </tr>
     @endif
     <tr>
         <td rowspan="2" style="width:30%">{{ $office->officeTranslations[0]->name }}</td>
-        @php 
+        @php
             $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id,$office, $planning_year->id, $period->id,null,null,null);
          @endphp
         <td>{{ $baselineOfOfficePlan }}</td>
@@ -44,7 +44,7 @@
             @endphp
             <td>
                 @if($planOfOfficePlan[2] <= $office_level)
-                     {{ $planOfOfficePlan[0] }} 
+                     {{ $planOfOfficePlan[0] }}
                 @else
                     {{0}}
                 @endif
@@ -70,7 +70,7 @@
 {{-- level two (directores and same level) --}}
 {{-- <div class="collapse" id="off{{ $office->id }}{{$planAcc->Kpi->id}}">
     <div class="card card-body" style="background:#12cd4322; padding: 70px; border: 1px solid;">
-       
+
         @php
             $offices_twos = $office->offices;
             $office_one_self = $office;
@@ -140,7 +140,7 @@
                                     <tr>
                                           <td rowspan="4">{{ $office_three_self->officeTranslations[0]->name }}</td>
                                     </tr>
-                                    @php 
+                                    @php
                                         $baselineOfOfficePlan  = OnlyKpiOttBaseline($planAcc->Kpi->id,$office_three_self, $planning_year->id, $period->id,null,null,null);
                                     @endphp
                                     <td>{{ $baselineOfOfficePlan }}</td>
@@ -151,10 +151,10 @@
                                             $userOffice =auth()->user()->offices[0];
                                             $office_level = $userOffice->level;
                                             if($office_level == 0) $office_level=1;
-                                        @endphp 
+                                        @endphp
                                         <td>
                                              @if($planOfOfficePlan[2] <= $office_level)
-                                                 {{ $planOfOfficePlan[0] }} 
+                                                 {{ $planOfOfficePlan[0] }}
                                             @else
                                                 {{0}}
                                             @endif
@@ -181,7 +181,7 @@
                     @empty
                         <h4>on child!</h4>
                     @endforelse
-                    
+
                      <!-- table to display leader(director) office plan in the level-->
                     <table class="table table-bordered">
                         <tr>
@@ -196,7 +196,7 @@
                         </tr>
                         <tr>
                               <td rowspan="4">{{ $office_two_self->officeTranslations[0]->name }}</td>
-                              @php 
+                              @php
                                     $baselineOfOfficePlan  = OnlyKpiOttBaseline($planAcc->Kpi->id,$office_two_self, $planning_year->id, $period->id,null,null,null);
                               @endphp
                               <td>{{ $baselineOfOfficePlan }}</td>
@@ -207,10 +207,10 @@
                                 $userOffice =auth()->user()->offices[0];
                                 $office_level = $userOffice->level;
                                 if($office_level == 0) $office_level=1;
-                            @endphp 
+                            @endphp
                             <td>
                                  @if($planOfOfficePlan[2] <= $office_level)
-                                     {{ $planOfOfficePlan[0] }} 
+                                     {{ $planOfOfficePlan[0] }}
                                 @else
                                     {{0}}
                                 @endif
@@ -251,10 +251,10 @@
             </tr>
             <tr>
                   <td rowspan="4">{{ $office_one_self->officeTranslations[0]->name }}</td>
-                    @php 
-                                                 
+                    @php
+
                         $baselineOfOfficePlan  = OnlyKpiOttBaseline($planAcc->Kpi->id,$office_one_self, $planning_year->id, $period->id,null,null,null);
-                    @endphp 
+                    @endphp
                 <td>{{ $baselineOfOfficePlan }}</td>
                  @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
                 @php
@@ -262,10 +262,10 @@
                     $narration = $planAcc->OnlygetNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office_one_self, $period->id);
                      $office_level = $office->level;
                     if($office_level == 0) $office_level=1;
-                @endphp 
+                @endphp
                 <td>
                      @if($planOfOfficePlan[2] <= $office_level)
-                         {{ $planOfOfficePlan[0] }} 
+                         {{ $planOfOfficePlan[0] }}
                     @else
                         {{0}}
                     @endif
@@ -286,7 +286,7 @@
             </td>
         </tr>
         </table>
-          
+
     </div>
 </div>
   --}}

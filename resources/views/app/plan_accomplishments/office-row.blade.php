@@ -38,7 +38,7 @@
                     Details
                 </button>
             @else
-                {{ 'no child ' }}
+            {{ '' }}
             @endif
         </td>
     </tr>
@@ -194,7 +194,7 @@
                                                     data-url="/smis/plan/plan-accomplishment/${office.id}/details/${office.kpi_id}/kpi/${office.pp_year}">
                                                 Details
                                             </button>`
-                                        : 'No Child'}
+                                        : ''}
                                     </td>
                                 </tr>   `;
                                 tableHTML += `

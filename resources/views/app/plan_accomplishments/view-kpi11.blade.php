@@ -13,7 +13,7 @@
                     </a>
                 </p>
             @else
-                {{ 'no child ' }}
+                {{ '' }}
             @endif
         </td>
     </tr>
@@ -58,7 +58,7 @@
                     if($office_level == 0) $office_level=1;
                 @endphp
                @if($planOne[2] <= $office_level)
-                     {{ $planOne[0] }} 
+                     {{ $planOne[0] }}
                 @else
                     {{0}}
                 @endif

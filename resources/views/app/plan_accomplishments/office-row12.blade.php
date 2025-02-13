@@ -37,7 +37,7 @@
                     </button>
                 </p>
             @else
-                {{ 'no child ' }}
+                {{ '' }}
             @endif
     </td>
 </tr>
@@ -176,7 +176,7 @@
                                                                  Details
                                                                  {{-- ${office.id}-${office.kpi_id} --}}
                                                             </button>`
-                                                        : 'No child'
+                                                        : ''
                                                 }
                                                 <a href="/smis/plan/plan-accomplishment/office/${office.id}/kpi/${office.kpi_id}/year/${office.pp_year}"
                                                     target="_blank"

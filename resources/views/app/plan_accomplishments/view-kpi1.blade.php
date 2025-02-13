@@ -13,7 +13,7 @@
                     </a>
                 </p>
             @else
-                {{ 'no child ' }}
+                {{ '' }}
             @endif
         </td>
     </tr>
@@ -50,7 +50,7 @@
                     //dd($planOne[2]?->plan_status);
                 @endphp
                 @if($planOne[2]?->plan_status <= $office_level)
-                     {{ $planOne[0] }} 
+                     {{ $planOne[0] }}
                 @else
                     {{0}}
                 @endif
@@ -170,7 +170,7 @@
                                                                 if($office_level == 0) $office_level=1;
                                                             @endphp
                                                         @if($planOne[2] <= $office_level)
-                                                                {{ $planOne[0] }} 
+                                                                {{ $planOne[0] }}
                                                             @else
                                                                 {{0}}
                                                             @endif
@@ -242,7 +242,7 @@
                                                     if($office_level == 0) $office_level=1;
                                                 @endphp
                                             @if($planOne[2] <= $office_level)
-                                                    {{ $planOne[0] }} 
+                                                    {{ $planOne[0] }}
                                                 @else
                                                     {{0}}
                                                 @endif
@@ -314,7 +314,7 @@
                                         if($office_level == 0) $office_level=1;
                                     @endphp
                                 @if($planOne[2] <= $office_level)
-                                        {{ $planOne[0] }} 
+                                        {{ $planOne[0] }}
                                     @else
                                         {{0}}
                                     @endif
@@ -345,7 +345,7 @@
             <h4>on child!</h4>
         @endforelse
 
-        <!-- table to display leader(director) office plan in the level--> 
+        <!-- table to display leader(director) office plan in the level-->
         <table class="table table-bordered" >
         {{-- style="background:#34214322;" --}
             <tr>
@@ -388,7 +388,7 @@
                             if($office_level == 0) $office_level=1;
                         @endphp
                     @if($planOne[2] <= $office_level)
-                            {{ $planOne[0] }} 
+                            {{ $planOne[0] }}
                         @else
                             {{0}}
                         @endif

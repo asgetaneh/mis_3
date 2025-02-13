@@ -17,13 +17,13 @@
                     </a>
                 </p>
             @else
-                {{ 'no child ' }}
+                {{ '' }}
             @endif
         </td>
     </tr>
     <tr>
         <td rowspan="2" style="width:20%">{{ $office->officeTranslations[0]->name }}</td>
-        @php 
+        @php
             $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id, $office, $planning_year->id, $period->id,null,null,null);
         @endphp
         <td>{{ $baselineOfOfficePlan }}</td>
@@ -37,7 +37,7 @@
             @endphp
             <td>
                  @if($planOfOfficePlan[2] <= $office_level)
-                     {{ $planOfOfficePlan[0] }} 
+                     {{ $planOfOfficePlan[0] }}
                 @else
                     {{0}}
                 @endif

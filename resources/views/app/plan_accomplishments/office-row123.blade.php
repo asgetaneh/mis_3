@@ -43,7 +43,7 @@
                     </button>
                 </p>
             @else
-                {{ 'no child ' }}
+                {{ '' }}
             @endif
         </td>
     </tr>
@@ -217,7 +217,7 @@
                             data.office_trans_array.forEach(office => {
                                 let myChildOneArray = [];
                                 let levelClass =
-                                    `level-${office.office_level || 1}`; // Fallback to level 1 if not defined 
+                                    `level-${office.office_level || 1}`; // Fallback to level 1 if not defined
                                 tableHTML += `
                                         <tr style="background:#CDCDCD;">
                                             {{-- <td rowspan=""> ${Object.keys(data.office_trans_array)} </td> --}}
@@ -227,16 +227,16 @@
                                             <td rowspan="${ data.parent_office_trans_array[0].kpi_child_one_count*data.parent_office_trans_array[0].kpi_child_two_count+ 3}">
                                                  ${
                                                     office.has_child
-                                                        ? `<button class="btn btn-primary btn-expand-new-two" 
-                                                                data-id="${office.id}-two-${office.kpi_id}" 
+                                                        ? `<button class="btn btn-primary btn-expand-new-two"
+                                                                data-id="${office.id}-two-${office.kpi_id}"
                                                                 data-url="/smis/plan/plan-accomplishment/office/${office.id}/kpi/${office.kpi_id}/year/${office.pp_year}">
-                                                                 Details 
+                                                                 Details
                                                                  {{-- ${office.id}-${office.kpi_id} --}}
                                                             </button>`
-                                                        : 'No child'
+                                                        : ''
                                                 }
-                                                <a href="/smis/plan/plan-accomplishment/office/${office.id}/kpi/${office.kpi_id}/year/${office.pp_year}" 
-                                                    target="_blank" 
+                                                <a href="/smis/plan/plan-accomplishment/office/${office.id}/kpi/${office.kpi_id}/year/${office.pp_year}"
+                                                    target="_blank"
                                                     class="btn btn-link">
                                                    .
                                                 </a>
@@ -284,7 +284,7 @@
                                         }
 
                                         tableHTML += `
-                                                        <td>${plan.kpi_child_two_name}</td> 
+                                                        <td>${plan.kpi_child_two_name}</td>
                                                          <td>${plan.kpi_child_baseline || 0}</td> `;
                                         if (plan.plans && Array.isArray(plan
                                                 .plans)) {
@@ -308,7 +308,7 @@
                                 // Add Major Activities row
                                 tableHTML += `
                                         <tr>
-                                            <th>Major Activities</th> 
+                                            <th>Major Activities</th>
                                             <td colspan="${data.period_array.length + 3 }">`;
 
                                 // Loop through the `narration` array and append each `plan_naration` value
@@ -369,22 +369,22 @@
                                     }
 
                                     tableHTML += `
-                                                     <td rowspan=""> ${kpi_child.kpi_child_two_name} </td> 
+                                                     <td rowspan=""> ${kpi_child.kpi_child_two_name} </td>
                                                      <td rowspan=""> ${kpi_child.kpi_child_baseline} </td>`;
                                     if (kpi_child.plans && Array.isArray(kpi_child
                                             .plans)) {
                                         kpi_child.plans.forEach(plan => {
-                                            tableHTML += `<td>${plan.plan_value}</td> 
+                                            tableHTML += `<td>${plan.plan_value}</td>
                                                            {{-- <td rowspan=""> ${Object.keys(plan)} </td> --}}
                                                            `;
                                         });
                                     }
                                     tableHTML += `
-                                                   
+
                                                 </tr>
                                                     `;
                                 });
-                                tableHTML += ` 
+                                tableHTML += `
                                                 <tr>
                                                 <th>Major Activities</th>
                                                  ${
