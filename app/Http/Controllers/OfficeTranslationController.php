@@ -27,9 +27,7 @@ class OfficeTranslationController extends Controller
         $search = $request->get('search', '');
 
         $officeTranslations = OfficeTranslation::search($search)
-            ->latest()
-            ->paginate(130)
-            ->withQueryString();
+            ->get();
         $officesT = OfficeTranslation ::select('office_translations.*')
          ->join('offices', 'offices.id', '=', 'office_translations.translation_id')->where('offices.parent_office_id','=',NULL)->get();
         return view(

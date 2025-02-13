@@ -71,236 +71,477 @@
                         </thead>
                         <tbody>
                             @php $count =0;@endphp
-                            @forelse($officesT as $officeTranslation)
-                                @if (app()->getLocale() == $officeTranslation->locale)
-                                    @php $office = $officeTranslation->office; @endphp
-                                    @php $count = $count+1;@endphp
-                                    <tr>
-                                        {{-- @dd($office->id) --}}
-                                        <td>
-                                            <p>
-                                                <a class="btn btn-flat btn-info" data-toggle="collapse"
+
+                            @if (!empty($search))
+                                @forelse($officeTranslations as $officeTranslation)
+                                    @if (app()->getLocale() == $officeTranslation->locale)
+                                        @php $office = $officeTranslation->office; @endphp
+                                        @php $count = $count+1;@endphp
+                                        <tr>
+                                            <td>
+                                                <p>
+                                                    <a class="btn btn-flat btn-info" data-toggle="collapse"
                                                     href="#off{{ $office->id }}" role="button" aria-expanded="false"
                                                     aria-controls="collapseExample0">
                                                     >>
                                                 </a>
                                             </p>
-                                        <td>
+                                            <td>
+                                                {{ $count }}
+                                            </td>
+                                            <td>{{ $officeTranslation->name ?? '-' }} {{ "(" }} <span style="color:blue" title="Number of Sub offices">{{$officeTranslation->office->offices->count()}} </span>{{ ")" }}</td>
+                                            <td>
+                                                {{ $officeTranslation->description ?? '-' }}
+                                            </td>
+                                            <td>
+                                                {{ $officeTranslation->office->office->officeTranslations[0]->name ?? '-' }}
+                                            </td>
 
-                                            {{ $count }}
-                                        </td>
-                                        <td>{{ $officeTranslation->name ?? '-' }} {{ "-->(" }} <span style="color:blue" title="Number of Sub offices">{{$officeTranslation->office->offices->count()}} </span>{{ ")" }}</td>
-                                        <td>
-                                            {{ $officeTranslation->description ?? '-' }}
-                                        </td>
-                                        <td>
-                                            {{ $officeTranslation->office->office->officeTranslations[0]->name ?? '-' }}
-                                        </td>
+                                            <td>
+                                                {!! $officeTranslation->office->users[0]->name ?? '<span class="badge badge-secondary">Not assigned</span>' !!}
+                                                @if ($officeTranslation->office->users->count() > 0)
 
-                                        <td>
-                                            {!! $officeTranslation->office->users[0]->name ?? '<span class="badge badge-secondary">Not assigned</span>' !!}
-                                            @if ($officeTranslation->office->users->count() > 0)
-
-                                                @if ($officeTranslation->translation_id == 1)
-                                                @else
-                                                    <form
-                                                        action="{{ route('office-manager.remove', $officeTranslation->office->users[0]->id) }}"
-                                                        class="d-inline" method="POST">
-                                                        @csrf
-                                                        <button
-                                                            class="btn btn-sm btn-outline-danger ml-3 float-right">Remove</button>
-                                                    </form>
-                                                @endif
-                                            @endif
-                                        </td>
-
-                                        <td class="text-center" style="width: 134px;">
-                                            <div role="group" aria-label="Row Actions" class="btn-group">
-                                                @can('update', $officeTranslation)
                                                     @if ($officeTranslation->translation_id == 1)
                                                     @else
-                                                        <a href="{{ route('office-translations.edit', $officeTranslation) }}">
+                                                        <form
+                                                            action="{{ route('office-manager.remove', $officeTranslation->office->users[0]->id) }}"
+                                                            class="d-inline" method="POST">
+                                                            @csrf
+                                                            <button
+                                                                class="btn btn-sm btn-outline-danger ml-3 float-right">Remove</button>
+                                                        </form>
+                                                    @endif
+                                                @endif
+                                            </td>
+
+                                            <td class="text-center" style="width: 134px;">
+                                                <div role="group" aria-label="Row Actions" class="btn-group">
+                                                    @can('update', $officeTranslation)
+                                                        @if ($officeTranslation->translation_id == 1)
+                                                        @else
+                                                            <a href="{{ route('office-translations.edit', $officeTranslation) }}">
+                                                                <button type="button" class="btn btn-light">
+                                                                    <i class="icon ion-md-create"></i>
+                                                                </button>
+                                                            </a>
+                                                        @endif
+                                                        @endcan @can('view', $officeTranslation)
+                                                        <a href="{{ route('office-translations.show', $officeTranslation) }}">
                                                             <button type="button" class="btn btn-light">
-                                                                <i class="icon ion-md-create"></i>
+                                                                <i class="icon ion-md-eye"></i>
                                                             </button>
                                                         </a>
-                                                    @endif
-                                                    @endcan @can('view', $officeTranslation)
-                                                    <a href="{{ route('office-translations.show', $officeTranslation) }}">
-                                                        <button type="button" class="btn btn-light">
-                                                            <i class="icon ion-md-eye"></i>
-                                                        </button>
-                                                    </a>
-                                                @endcan
-                                                {{-- @can('delete', $officeTranslation)
-                                        <form
-                                            action="{{ route('office-translations.destroy', $officeTranslation) }}"
-                                            method="POST"
-                                            onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
-                                        >
-                                            @csrf @method('DELETE')
-                                            <button
-                                                type="submit"
-                                                class="btn btn-light text-danger"
+                                                    @endcan
+                                                    {{-- @can('delete', $officeTranslation)
+                                            <form
+                                                action="{{ route('office-translations.destroy', $officeTranslation) }}"
+                                                method="POST"
+                                                onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
                                             >
-                                                <i class="icon ion-md-trash"></i>
-                                            </button>
-                                        </form>
-                                    @endcan --}}
-                                            </div>
+                                                @csrf @method('DELETE')
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-light text-danger"
+                                                >
+                                                    <i class="icon ion-md-trash"></i>
+                                                </button>
+                                            </form>
+                                        @endcan --}}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endif
+                                @empty
+                                    <tr>
+                                        <td colspan="4">
+                                            @lang('crud.common.no_items_found')
                                         </td>
                                     </tr>
-                                @endif
-                            @empty
-                                <tr>
-                                    <td colspan="4">
-                                        @lang('crud.common.no_items_found')
-                                    </td>
-                                </tr>
-                            @endforelse
+                                @endforelse
+                            @else
+                                @forelse($officesT as $officeTranslation)
+                                    @if (app()->getLocale() == $officeTranslation->locale)
+                                        @php $office = $officeTranslation->office; @endphp
+                                        @php $count = $count+1;@endphp
+                                        <tr>
+                                            {{-- @dd($office->id) --}}
+                                            <td>
+                                                <p>
+                                                    <a class="btn btn-flat btn-info" data-toggle="collapse"
+                                                        href="#off{{ $office->id }}" role="button" aria-expanded="false"
+                                                        aria-controls="collapseExample0">
+                                                        >>
+                                                    </a>
+                                                </p>
+                                            <td>
+
+                                                {{ $count }}
+                                            </td>
+                                            <td>{{ $officeTranslation->name ?? '-' }} {{ "(" }} <span style="color:blue" title="Number of Sub offices">{{$officeTranslation->office->offices->count()}} </span>{{ ")" }}</td>
+                                            <td>
+                                                {{ $officeTranslation->description ?? '-' }}
+                                            </td>
+                                            <td>
+                                                {{ $officeTranslation->office->office->officeTranslations[0]->name ?? '-' }}
+                                            </td>
+
+                                            <td>
+                                                {!! $officeTranslation->office->users[0]->name ?? '<span class="badge badge-secondary">Not assigned</span>' !!}
+                                                @if ($officeTranslation->office->users->count() > 0)
+
+                                                    @if ($officeTranslation->translation_id == 1)
+                                                    @else
+                                                        <form
+                                                            action="{{ route('office-manager.remove', $officeTranslation->office->users[0]->id) }}"
+                                                            class="d-inline" method="POST">
+                                                            @csrf
+                                                            <button
+                                                                class="btn btn-sm btn-outline-danger ml-3 float-right">Remove</button>
+                                                        </form>
+                                                    @endif
+                                                @endif
+                                            </td>
+
+                                            <td class="text-center" style="width: 134px;">
+                                                <div role="group" aria-label="Row Actions" class="btn-group">
+                                                    @can('update', $officeTranslation)
+                                                        @if ($officeTranslation->translation_id == 1)
+                                                        @else
+                                                            <a href="{{ route('office-translations.edit', $officeTranslation) }}">
+                                                                <button type="button" class="btn btn-light">
+                                                                    <i class="icon ion-md-create"></i>
+                                                                </button>
+                                                            </a>
+                                                        @endif
+                                                        @endcan
+                                                        @can('view', $officeTranslation)
+                                                            <a href="{{ route('office-translations.show', $officeTranslation) }}">
+                                                                <button type="button" class="btn btn-light">
+                                                                    <i class="icon ion-md-eye"></i>
+                                                                </button>
+                                                            </a>
+                                                        @endcan
+                                                        @can('delete', $officeTranslation)
+                                                            <form action="{{ route('office-translations.destroy', $officeTranslation) }}"
+                                                                method="POST" onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')">
+                                                                @csrf @method('DELETE')
+                                                                <button type="submit" class="btn btn-light text-danger">
+                                                                    <i class="icon ion-md-trash"></i>
+                                                                </button>
+                                                            </form>
+                                                        @endcan
+                                                    {{-- @can('delete', $officeTranslation)
+                                            <form
+                                                action="{{ route('office-translations.destroy', $officeTranslation) }}"
+                                                method="POST"
+                                                onsubmit="return confirm('{{ __('crud.common.are_you_sure') }}')"
+                                            >
+                                                @csrf @method('DELETE')
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-light text-danger"
+                                                >
+                                                    <i class="icon ion-md-trash"></i>
+                                                </button>
+                                            </form>
+                                        @endcan --}}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endif
+                                @empty
+                                    <tr>
+                                        <td colspan="4">
+                                            @lang('crud.common.no_items_found')
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            @endif
+
                         </tbody>
                     </table>
 
-                    @forelse($officesT as $officeTranslation)
-                        @if (app()->getLocale() == $officeTranslation->locale)
-                            @php $office = $officeTranslation->office; @endphp
-                            {{-- level two (directores and same level) --}}
-                            <div class="collapse mx-auto" id="off{{ $office->id }}">
-                                <div class="card card-body" style="background:#8cffad23; padding: 70px; border: 1px solid;">
-                                    @php
-                                        $offices_twos = $office->offices;
-                                    @endphp
-                                     @php $count1 =0;@endphp
-                                    @forelse ($offices_twos as $office)
+                    @if (!empty($search))
+                        @forelse($officeTranslations as $officeTranslation)
+                            @if (app()->getLocale() == $officeTranslation->locale)
+                                @php $office = $officeTranslation->office; @endphp
+                                {{-- level two (directores and same level) --}}
+                                <div class="collapse mx-auto" id="off{{ $office->id }}">
+                                    <div class="card card-body" style="background:#8cffad23; padding: 70px; border: 1px solid;">
                                         @php
-                                            $count1 = $count1+1;
-                                            $count =  $count1;
+                                            $offices_twos = $office->offices;
                                         @endphp
-                                        @include('app.office_translations.sub')
-                                        <div class="collapse" id="off{{ $office->id }}">
-                                            <div class="card card-body" style="padding: 70px; border: 1px solid;">
-                                                @php
-                                                    $offices_threes = $office->offices;
-                                                    $count2 =0;
-                                                @endphp
-                                                @forelse ($offices_threes as $office)
+                                        @php $count1 =0;@endphp
+                                        @forelse ($offices_twos as $office)
+                                            @php
+                                                $count1 = $count1+1;
+                                                $count =  $count1;
+                                            @endphp
+                                            @include('app.office_translations.sub')
+                                            <div class="collapse" id="off{{ $office->id }}">
+                                                <div class="card card-body" style="padding: 70px; border: 1px solid;">
                                                     @php
-                                                        $count2 = $count2+1;
-                                                        $count =  $count2;
+                                                        $offices_threes = $office->offices;
+                                                        $count2 =0;
                                                     @endphp
-                                                    @include('app.office_translations.sub')
-                                                    <div class="collapse" id="off{{ $office->id }}">
-                                                        <div class="card card-body" style="background:#8cffad23; padding: 70px; border: 1px solid;">
-                                                            @php
-                                                                $offices_fours = $office->offices;
-                                                                $count3 =0;
-                                                            @endphp
-                                                            @forelse ($offices_fours as $office)
-                                                                 @php
-                                                                    $count3 = $count3+1;
-                                                                    $count =  $count3;
+                                                    @forelse ($offices_threes as $office)
+                                                        @php
+                                                            $count2 = $count2+1;
+                                                            $count =  $count2;
+                                                        @endphp
+                                                        @include('app.office_translations.sub')
+                                                        <div class="collapse" id="off{{ $office->id }}">
+                                                            <div class="card card-body" style="background:#8cffad23; padding: 70px; border: 1px solid;">
+                                                                @php
+                                                                    $offices_fours = $office->offices;
+                                                                    $count3 =0;
                                                                 @endphp
-                                                                @include('app.office_translations.sub')
-                                                                <div class="collapse" id="off{{ $office->id }}">
-                                                                    <div class="card card-body" style="background:#D3D3D3; padding: 70px; border: 1px solid;">
-                                                                        @php
-                                                                            $offices_fives = $office->offices;
-                                                                             $count4 =0;
-                                                                        @endphp
-                                                                        @forelse ($offices_fives as $office)
+                                                                @forelse ($offices_fours as $office)
+                                                                    @php
+                                                                        $count3 = $count3+1;
+                                                                        $count =  $count3;
+                                                                    @endphp
+                                                                    @include('app.office_translations.sub')
+                                                                    <div class="collapse" id="off{{ $office->id }}">
+                                                                        <div class="card card-body" style="background:#D3D3D3; padding: 70px; border: 1px solid;">
                                                                             @php
-                                                                                $count4 = $count4+1;
-                                                                                $count =  $count4;
+                                                                                $offices_fives = $office->offices;
+                                                                                $count4 =0;
                                                                             @endphp
-                                                                            @include('app.office_translations.sub')
-                                                                            <div class="collapse"
-                                                                                id="off{{ $office->id }}">
-                                                                                <div class="card card-body" style=" padding: 70px; border: 1px solid;">
-                                                                                    @php
-                                                                                        $offices_sixs = $office->offices;
-                                                                                        $count5 = 0;
-                                                                                    @endphp
-                                                                                    @forelse ($offices_sixs as $office)
+                                                                            @forelse ($offices_fives as $office)
+                                                                                @php
+                                                                                    $count4 = $count4+1;
+                                                                                    $count =  $count4;
+                                                                                @endphp
+                                                                                @include('app.office_translations.sub')
+                                                                                <div class="collapse"
+                                                                                    id="off{{ $office->id }}">
+                                                                                    <div class="card card-body" style=" padding: 70px; border: 1px solid;">
                                                                                         @php
-                                                                                            $count5 = $count5+1;
-                                                                                            $count =  $count5;
+                                                                                            $offices_sixs = $office->offices;
+                                                                                            $count5 = 0;
                                                                                         @endphp
-                                                                                        @include('app.office_translations.sub')
-                                                                                        <div class="collapse"
-                                                                                            id="off{{ $office->id }}">
-                                                                                            <div class="card card-body">
-                                                                                                @php
-                                                                                                    $offices_sevens = $office->offices;
-                                                                                                    $count6 = 0;
-                                                                                                @endphp
-                                                                                                @forelse ($offices_sevens as $office)
+                                                                                        @forelse ($offices_sixs as $office)
+                                                                                            @php
+                                                                                                $count5 = $count5+1;
+                                                                                                $count =  $count5;
+                                                                                            @endphp
+                                                                                            @include('app.office_translations.sub')
+                                                                                            <div class="collapse"
+                                                                                                id="off{{ $office->id }}">
+                                                                                                <div class="card card-body">
                                                                                                     @php
-                                                                                                        $count6 = $count6+1;
-                                                                                                        $count =  $count6;
+                                                                                                        $offices_sevens = $office->offices;
+                                                                                                        $count6 = 0;
                                                                                                     @endphp
-                                                                                                    @include('app.office_translations.sub')
-                                                                                                    <div class="collapse"
-                                                                                                        id="off{{ $office->id }}">
-                                                                                                        <div class="card card-body">
-                                                                                                            {{-- uytty --}}
-                                                                                                            @php
-                                                                                                                $offices_eights = $office->offices;
-                                                                                                                $count7 = 0;
-                                                                                                            @endphp
-                                                                                                            @forelse ($offices_eights as $office)
+                                                                                                    @forelse ($offices_sevens as $office)
+                                                                                                        @php
+                                                                                                            $count6 = $count6+1;
+                                                                                                            $count =  $count6;
+                                                                                                        @endphp
+                                                                                                        @include('app.office_translations.sub')
+                                                                                                        <div class="collapse"
+                                                                                                            id="off{{ $office->id }}">
+                                                                                                            <div class="card card-body">
+                                                                                                                {{-- uytty --}}
                                                                                                                 @php
-                                                                                                                    $count7 = $count7+1;
-                                                                                                                    $count =  $count7;
+                                                                                                                    $offices_eights = $office->offices;
+                                                                                                                    $count7 = 0;
                                                                                                                 @endphp
-                                                                                                                @include('app.office_translations.sub')
-                                                                                                                <div class="collapse"
-                                                                                                                    id="off{{ $office->id }}">
-                                                                                                                    <div class="card card-body">
+                                                                                                                @forelse ($offices_eights as $office)
+                                                                                                                    @php
+                                                                                                                        $count7 = $count7+1;
+                                                                                                                        $count =  $count7;
+                                                                                                                    @endphp
+                                                                                                                    @include('app.office_translations.sub')
+                                                                                                                    <div class="collapse"
+                                                                                                                        id="off{{ $office->id }}">
+                                                                                                                        <div class="card card-body">
 
+                                                                                                                        </div>
                                                                                                                     </div>
-                                                                                                                </div>
-                                                                                                            @empty
-                                                                                                                <h5>No offices found!</h5>
-                                                                                                            @endforelse
-                                                                                                            {{-- hygutfgyhk --}}
+                                                                                                                @empty
+                                                                                                                    <h5>No offices found!</h5>
+                                                                                                                @endforelse
+                                                                                                                {{-- hygutfgyhk --}}
+                                                                                                            </div>
                                                                                                         </div>
-                                                                                                    </div>
-                                                                                                @empty
-                                                                                                    <h5>No offices found!</h5>
-                                                                                                @endforelse
+                                                                                                    @empty
+                                                                                                        <h5>No offices found!</h5>
+                                                                                                    @endforelse
+                                                                                                </div>
                                                                                             </div>
-                                                                                        </div>
-                                                                                    @empty
-                                                                                        <h5>No offices found!</h5>
-                                                                                    @endforelse
+                                                                                        @empty
+                                                                                            <h5>No offices found!</h5>
+                                                                                        @endforelse
+                                                                                    </div>
                                                                                 </div>
-                                                                            </div>
-                                                                        @empty
-                                                                            <h5>No offices found!</h5>
-                                                                        @endforelse
+                                                                            @empty
+                                                                                <h5>No offices found!</h5>
+                                                                            @endforelse
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                            @empty
-                                                                <h5>No offices found!</h5>
-                                                            @endforelse
+                                                                @empty
+                                                                    <h5>No offices found!</h5>
+                                                                @endforelse
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                @empty
-                                                    <h5>No offices found!</h5>
-                                                @endforelse
+                                                    @empty
+                                                        <h5>No offices found!</h5>
+                                                    @endforelse
+                                                </div>
                                             </div>
-                                        </div>
-                                    @empty
-                                        <h5>No offices found!</h5>
-                                    @endforelse
+                                        @empty
+                                            <h5>No offices found!</h5>
+                                        @endforelse
+                                    </div>
                                 </div>
-                            </div>
-                        @endif
+                            @endif
+                        @empty
+                        @endforelse
+                    @else
+                        {{-- @php
+                            $officeT = !empty($search) ? $officeTranslations : $officesT;
+                        @endphp --}}
+                        @forelse($officesT as $officeTranslation)
+                            @if (app()->getLocale() == $officeTranslation->locale)
+                                @php $office = $officeTranslation->office; @endphp
+                                {{-- level two (directores and same level) --}}
+                                <div class="collapse mx-auto" id="off{{ $office->id }}">
+                                    <div class="card card-body" style="background:#8cffad23; padding: 70px; border: 1px solid;">
+                                        @php
+                                            $offices_twos = $office->offices;
+                                        @endphp
+                                        @php $count1 =0;@endphp
+                                        @forelse ($offices_twos as $office)
+                                            @php
+                                                $count1 = $count1+1;
+                                                $count =  $count1;
+                                            @endphp
+                                            @include('app.office_translations.sub')
+                                            <div class="collapse" id="off{{ $office->id }}">
+                                                <div class="card card-body" style="padding: 70px; border: 1px solid;">
+                                                    @php
+                                                        $offices_threes = $office->offices;
+                                                        $count2 =0;
+                                                    @endphp
+                                                    @forelse ($offices_threes as $office)
+                                                        @php
+                                                            $count2 = $count2+1;
+                                                            $count =  $count2;
+                                                        @endphp
+                                                        @include('app.office_translations.sub')
+                                                        <div class="collapse" id="off{{ $office->id }}">
+                                                            <div class="card card-body" style="background:#8cffad23; padding: 70px; border: 1px solid;">
+                                                                @php
+                                                                    $offices_fours = $office->offices;
+                                                                    $count3 =0;
+                                                                @endphp
+                                                                @forelse ($offices_fours as $office)
+                                                                    @php
+                                                                        $count3 = $count3+1;
+                                                                        $count =  $count3;
+                                                                    @endphp
+                                                                    @include('app.office_translations.sub')
+                                                                    <div class="collapse" id="off{{ $office->id }}">
+                                                                        <div class="card card-body" style="background:#D3D3D3; padding: 70px; border: 1px solid;">
+                                                                            @php
+                                                                                $offices_fives = $office->offices;
+                                                                                $count4 =0;
+                                                                            @endphp
+                                                                            @forelse ($offices_fives as $office)
+                                                                                @php
+                                                                                    $count4 = $count4+1;
+                                                                                    $count =  $count4;
+                                                                                @endphp
+                                                                                @include('app.office_translations.sub')
+                                                                                <div class="collapse"
+                                                                                    id="off{{ $office->id }}">
+                                                                                    <div class="card card-body" style=" padding: 70px; border: 1px solid;">
+                                                                                        @php
+                                                                                            $offices_sixs = $office->offices;
+                                                                                            $count5 = 0;
+                                                                                        @endphp
+                                                                                        @forelse ($offices_sixs as $office)
+                                                                                            @php
+                                                                                                $count5 = $count5+1;
+                                                                                                $count =  $count5;
+                                                                                            @endphp
+                                                                                            @include('app.office_translations.sub')
+                                                                                            <div class="collapse"
+                                                                                                id="off{{ $office->id }}">
+                                                                                                <div class="card card-body">
+                                                                                                    @php
+                                                                                                        $offices_sevens = $office->offices;
+                                                                                                        $count6 = 0;
+                                                                                                    @endphp
+                                                                                                    @forelse ($offices_sevens as $office)
+                                                                                                        @php
+                                                                                                            $count6 = $count6+1;
+                                                                                                            $count =  $count6;
+                                                                                                        @endphp
+                                                                                                        @include('app.office_translations.sub')
+                                                                                                        <div class="collapse"
+                                                                                                            id="off{{ $office->id }}">
+                                                                                                            <div class="card card-body">
+                                                                                                                {{-- uytty --}}
+                                                                                                                @php
+                                                                                                                    $offices_eights = $office->offices;
+                                                                                                                    $count7 = 0;
+                                                                                                                @endphp
+                                                                                                                @forelse ($offices_eights as $office)
+                                                                                                                    @php
+                                                                                                                        $count7 = $count7+1;
+                                                                                                                        $count =  $count7;
+                                                                                                                    @endphp
+                                                                                                                    @include('app.office_translations.sub')
+                                                                                                                    <div class="collapse"
+                                                                                                                        id="off{{ $office->id }}">
+                                                                                                                        <div class="card card-body">
 
-                    @empty
-                    @endforelse
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                @empty
+                                                                                                                    <h5>No offices found!</h5>
+                                                                                                                @endforelse
+                                                                                                                {{-- hygutfgyhk --}}
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    @empty
+                                                                                                        <h5>No offices found!</h5>
+                                                                                                    @endforelse
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        @empty
+                                                                                            <h5>No offices found!</h5>
+                                                                                        @endforelse
+                                                                                    </div>
+                                                                                </div>
+                                                                            @empty
+                                                                                <h5>No offices found!</h5>
+                                                                            @endforelse
+                                                                        </div>
+                                                                    </div>
+                                                                @empty
+                                                                    <h5>No offices found!</h5>
+                                                                @endforelse
+                                                            </div>
+                                                        </div>
+                                                    @empty
+                                                        <h5>No offices found!</h5>
+                                                    @endforelse
+                                                </div>
+                                            </div>
+                                        @empty
+                                            <h5>No offices found!</h5>
+                                        @endforelse
+                                    </div>
+                                </div>
+                            @endif
 
-
+                        @empty
+                        @endforelse
+                    @endif
 
                     {{-- <div class="float-right">
                         {!! $officeTranslations->render() !!}
