@@ -552,13 +552,25 @@
                                         </div>
                                     </div>
                                     @else
-                                    <h5>{{"Plan approvement is not completed"}} for kpi: <u>{{ $kpi->KeyPeformanceIndicatorTs[0]->name }}</u></h5>
+
+                                    <div class="callout callout-warning">
+                                        <i class="icon fas fa-info-circle mr-2"></i>
+                                        <p class="d-inline">{{"Plan approvement is not completed"}} for kpi: <u>{{ $kpi->KeyPeformanceIndicatorTs[0]->name }}</u></p>
+                                    </div>
+
                                     @endif
                                     @else
-                                    <h5>{{"No Plan found for Key Performance Indicator"}}: <u>{{ $kpi->KeyPeformanceIndicatorTs[0]->name }}</u></h5>
+
+                                        <div class="callout callout-warning">
+                                            <i class="icon fas fa-info-circle mr-2"></i>
+                                            <p class="d-inline">{{"Plan record not found for Key Performance Indicator"}}: <u>{{ $kpi->KeyPeformanceIndicatorTs[0]->name }}</u></p>
+                                        </div>
                                     @endif
                                     @empty
-                                    <h4>No KPI exist with active reporting period in this office and Objective!</h4>
+                                        <div class="callout callout-warning">
+                                            <i class="icon fas fa-info-circle mr-2"></i>
+                                            <p class="d-inline">No KPI exist with active reporting period in this office and Objective!</p>
+                                        </div>
                                     @endforelse
                                     <button type="submit" class="btn btn-primary" id="submit-for-{{ $objective->id }}">Submit</button>
                             </div>
