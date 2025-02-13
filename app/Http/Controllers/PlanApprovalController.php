@@ -74,11 +74,11 @@ class PlanApprovalController extends Controller
                 ->whereIn('office_id', $all_office_list)
                 ->get();
 
-            $planAccomplishments = PlanAccomplishment::join('reporting_periods', 
+            $planAccomplishments = PlanAccomplishment::join('reporting_periods',
             'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
-               // ->join('key_peformance_indicators', 
+               // ->join('key_peformance_indicators',
                // 'key_peformance_indicators.id', '=', 'plan_accomplishments.kpi_id')
-               // ->join('objectives', 
+               // ->join('objectives',
                 //'objectives.id', '=', 'key_peformance_indicators.objective_id')
                 ->whereIn('office_id', $all_office_list)
                 ->select('*', DB::raw('SUM(plan_value) AS sum'))
@@ -296,7 +296,7 @@ class PlanApprovalController extends Controller
         $selectedOfficeList = $request->input('disapproved-office-list');
         $writtenComment = $request->input('written_comment');
         // dd($selectedOfficeList);
-
+        $planning_year = PlaningYear::where('is_active',true)->first()?->id;
         $loggedInOffice = (int)$requestData[0];
         $kpi = (int)$requestData[1];
         $planningYear = (int)$requestData[2];

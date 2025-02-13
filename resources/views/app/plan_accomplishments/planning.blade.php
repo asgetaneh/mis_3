@@ -181,7 +181,7 @@
                                                     @endphp
                                                     <b>({{ $kpi->behavior->behaviorTranslations[0]->name }})</b>
                                                     (Reporting:{{ $kpi->reportingPeriodType->reportingPeriodTypeTs[0]->name }})
-                                                    
+
                                                     {{--  <strong  > ({{ $period->reportingPeriodTs[0]->name }})</strong> --}}
                                                     {{--
                                                           getReportingPeriod($kpi->reportingPeriodType->id,$date) --}}
@@ -351,7 +351,7 @@
                                                                                         );
                                                                                         $off_level = auth()->user()
                                                                                             ->offices[0]->level;
-                                                                                        $disabled = '';
+                                                                                        $disabled = 'enable';
 
                                                                                         $baselineLastYear = getBaselineLastYear(
                                                                                             $kpi->id,
@@ -1331,25 +1331,39 @@
                             @if ($plan_naration)
                                 <label for="summernote">Major Activities</label>
                                 <input type="hidden" name="type{{ $kpi->id }}" value="yes">
-                                <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;"
-                                    class="form-control summernote" placeholder="Narration here" id="narration-field-{{ $kpi->id }}">{!! $plan_naration !!}</textarea>
+                                @if ($disabled === "disabled")
+                                    <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;"
+                                        class="form-control summernote" placeholder="Narration here"
+                                        id="narration-field-{{ $kpi->id }}" disabled> {{ $plan_naration }}</textarea>
+                                        <script>
+                                            $(document).ready(function() {
+                                                @if($disabled === "disabled")
+                                                    $('#narration-field-{{ $kpi->id }}').summernote('disable');
+                                                @endif
+                                            });
+                                        </script>
+                                @else
+                                    <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;"
+                                        class="form-control summernote" placeholder="Narration here"
+                                        id="narration-field-{{ $kpi->id }}">{{ $plan_naration }}</textarea>
+                                @endif
                                 <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please
                                     fill Major Activities field!</p>
                             @else
                                 <label for="summernote">Major Activities</label>
                                 <input type="hidden" name="type{{ $kpi->id }}" value="no">
                                 <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;"
-                                    class="form-control summernote" placeholder="Narration here" id="narration-field-{{ $kpi->id }}"></textarea>
+                                    class="form-control summernote" placeholder="Narration here" id="narration-field-{{ $kpi->id }}" {{ $disabled }}></textarea>
                                 <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please
                                     fill Major Activities field!</p>
                             @endif
                             {{-- @if ($plan_docment)
                              <label class="form-label" for="inputImage">Supporting document(in pdf):</label><br/>
                                 <a  href="{{ route('view-file', $plan_docment) }}" title="MyPdf">view file
-                                </a> 
+                                </a>
                             @else
                              <label class="form-label" for="inputImage">Supporting document(in pdf):</label>
-                            <input  type="file"  name="myfile"   id="inputImage" class="form-control"> 
+                            <input  type="file"  name="myfile"   id="inputImage" class="form-control">
                             @endif --}}
                         </div>
                     </div>

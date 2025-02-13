@@ -29,6 +29,9 @@ return [
         'replied' => 'Successfully replied',
         'accepted' => 'Successfully accepted',
         'rejected' => 'Successfully rejected',
+        'plan_submited' => 'Plan submited Successfully',
+        'report_submited' => 'Report submited Successfully',
+
     ],
 
     'users' => [

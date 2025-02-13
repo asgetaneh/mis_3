@@ -519,8 +519,20 @@
                                             @if ($report_naration)
                                                 <label for="summernote">Major Activities</label>
                                                 <input type="hidden" name="type" value="yes">
-                                                <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote" id="narration-field-{{ $kpi->id }}" placeholder="Narration here">{!! $report_naration !!}
-                                                </textarea>
+                                                @if ($disabled === "disabled")
+                                                    <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote" id="narration-field-{{ $kpi->id }}" placeholder="Narration here" disabled>{!! $report_naration !!}
+                                                    </textarea>
+                                                    <script>
+                                                        $(document).ready(function() {
+                                                            @if($disabled === "disabled")
+                                                                $('#narration-field-{{ $kpi->id }}').summernote('disable');
+                                                            @endif
+                                                        });
+                                                    </script>
+                                                @else
+                                                    <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote" id="narration-field-{{ $kpi->id }}" placeholder="Narration here">{!! $report_naration !!}
+                                                    </textarea>
+                                                @endif
                                                 <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>
                                             @else
                                                 <label for="summernote">Major Activities</label>
