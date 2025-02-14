@@ -15,6 +15,7 @@
             border: 1px solid #289CD8;
         }
     </style>
+    <script src="{{ asset('assets/dist/js/xlsx.full.min.js') }}"></script>
 @endsection
 
 @section('content')
@@ -92,7 +93,8 @@
                                     <button class="btn btn-info" value="pdf" name="pdf" type="submit">PDF</button>
                                     {{-- <button class="btn btn-success" value="excel" name="excel" type="submit">Excel</button> --}}
                                     {{-- <button class="btn btn-primary" value="word" name="word" type="submit">Word</button> --}}
-
+                                    <button class="btn btn-outline-info" onclick="exportTableToExcel()">Export to Excel</button>
+                                    <button class="btn btn-outline-info" onclick="window.print()">Print</button>
                                 </div>
                             </div>
                         </div>
@@ -105,7 +107,7 @@
 
 
 
-    <div class="row justify-content-center">
+    <div class="row justify-content-center" id="yourTableId">
         <div class="col-12">
             @if ($planAccomplishments->count() > 0)
                 <div class="card card-primary card-outline card-outline-tabs fillable-objective">
@@ -330,6 +332,19 @@
     <script>
         function expandAll() {
 
+        }
+    </script>
+
+    <script>
+        function exportTableToExcel() {
+            // Get the table element by its ID
+            const table = document.getElementById("yourTableId");
+
+            // Convert the HTML table to a workbook
+            const workbook = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+
+            // Export the workbook to a file
+            XLSX.writeFile(workbook, "table_data.xlsx");
         }
     </script>
 
