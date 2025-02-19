@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Models\Office;
 use App\Models\Language;
 use App\Models\Strategy;
+use App\Models\PlanAccomplishment;
+use App\Models\PlaningYear;
 use App\Models\Objective;
 use Illuminate\View\View;
 use App\Models\KpiChildOne;
@@ -537,11 +539,18 @@ class KeyPeformanceIndicatorController extends Controller
                      }
          //$officesAdds = $keyPeformanceIndicator->offices;
         $languages = Language::all();
+        $planning_year = PlaningYear::where( 'is_active',true)->first();
+        $office_has_plan =PlanAccomplishment::select('*')
+        ->where('office_id', $office)
+        ->where('kpi_id', '=', $id)
+        ->where('planning_year_id', '=', $planning_year)
+        ->first();
 
         return view(
             'app.key_peformance_indicators.office-assign',
             compact(
                 'keyPeformanceIndicator',
+                'planning_year',
                 'office_t',
                 'officesAdds',
                 'languages'
@@ -577,6 +586,24 @@ class KeyPeformanceIndicatorController extends Controller
         $user_office = auth()->user()->offices[0]->id;
         $keyPeformanceIndicator = KeyPeformanceIndicator::find($keyPeformanceIndicator_id);
         //dd($keyPeformanceIndicator);
+        $planning_year = PlaningYear::where( 'is_active',true)->first();
+        $office_has_plan =PlanAccomplishment::select('*')
+        ->where('office_id', $office)
+        ->where('kpi_id', '=', $keyPeformanceIndicator_id)
+        ->where('planning_year_id', '=', $planning_year)
+        ->first();
+        $office_has_plan =PlanAccomplishment::select('*')
+        ->where('office_id', $office)
+        ->where('kpi_id', '=', $keyPeformanceIndicator_id)
+        ->where('planning_year_id', '=', $planning_year->id)
+        ->first();
+        //dd(vars: $office_has_plan);
+        if($office_has_plan!=null){
+            return redirect()
+            ->back()
+            ->withErrors(__('crud.common.office_not_removed'));
+        }
+
         $keyPeformanceIndicator->find($keyPeformanceIndicator_id)->offices()->detach($office);
 
         $kpiOfficesList = [];

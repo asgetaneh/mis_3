@@ -19,6 +19,7 @@ use Illuminate\Http\Request;
 use PhpOffice\PhpWord\PhpWord;
 use App\Models\ReportingPeriod;
 use App\Models\ReportNarration;
+use App\Models\SuportiveDocuments;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Andegna\DateTime as Et_date;
 use App\Exports\PlanExcelExport;
@@ -1296,12 +1297,29 @@ class PlanAccomplishmentController extends Controller
                             $getNaration =$naration;
                         }
                         elseif($str_key=="myfile"){
-                            $fileName = $request->file('myfile')->getClientOriginalName();
-                            $fileName = date('Y-m-d')."_".time().'_'.$fileName;
-                            // $filePath = 'uploads/' . $fileName;
-                            $path = $request->file('myfile')->storeAs( 'uploads', $fileName);
-                            $getNaration->approval_text=$fileName;
-                            $getNaration->save();
+                            $request->validate([
+                                'myfile.*' => 'required|file|max:10240|mimes:jpeg,png,pdf,doc,docx,mp3,wav,odp,ppt', // 10MB max per file
+                            ]);
+
+                            $uploadedFiles = [];
+                            foreach ($request->file('myfile') as $file) {
+                                // Get the original file name
+                                $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+
+                                // Get the file extension
+                                $extension = $file->getClientOriginalExtension();
+
+                                // Generate a new file name with current date (YYYYMMDD format)
+                                $newFileName = $originalName . '_' . Carbon::now()->format('Ymd') . '.' . $extension;
+
+                                // Store file with new name
+                                $path = $file->storeAs('uploads', $newFileName, 'public'); // Stores in storage/app/public/uploads
+                                $SuportiveDocuments =new SuportiveDocuments;
+                                $SuportiveDocuments->report_naration_report_id=$getNaration->id;
+                                $SuportiveDocuments->name=$newFileName;
+                                $SuportiveDocuments->save();
+                                $uploadedFiles[] = $path;
+                            }
                         }
                     }
                     else{
@@ -1319,15 +1337,41 @@ class PlanAccomplishmentController extends Controller
                         ->where('reporting_period_id' , '=', $index[2]))
                         ->update(['report_naration' => $value])
                         ->first();
-                        $report_narration_report_ob = ReportNarrationReport::find($updated2->id);
+                        $getNaration =$updated2;
+                        //$report_narration_report_ob = ReportNarrationReport::find($updated2->id);
                           }
                          elseif($str_key=="myfile"){
-                            $fileName = $request->file('myfile')->getClientOriginalName();
-                            $fileName = date('Y-m-d')."_".time().'_'.$fileName;
-                            // $filePath = 'uploads/' . $fileName;
-                            $path = $request->file('myfile')->storeAs( 'uploads', $fileName);
-                            $report_narration_report_ob->approval_text=$fileName;
-                            $report_narration_report_ob->save();
+                            $request->validate([
+                                'files.*' => 'required|file|max:10240|mimes:jpeg,png,pdf,doc,docx,mp3,wav,odp,ppt', // 10MB max per file
+                            ]);
+
+                            $uploadedFiles = [];
+                            if ($request->hasFile('myfile')) {
+                                $request->validate([
+                                    'myfile.*' => 'required|file|max:10240|mimes:jpeg,png,pdf,doc,docx,mp3,wav,odp,ppt', // 10MB max per file
+                                ]);
+
+                                $uploadedFiles = [];
+                                foreach ($request->file('myfile') as $file) {
+                                    // Get the original file name
+                                    $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+
+                                    // Get the file extension
+                                    $extension = $file->getClientOriginalExtension();
+
+                                    // Generate a new file name with current date (YYYYMMDD format)
+                                    $newFileName = $originalName . '_' . Carbon::now()->format('Ymd') . '.' . $extension;
+
+                                    // Store file with new name
+                                    $path = $file->storeAs('uploads', $newFileName, 'public'); // Stores in storage/app/public/uploads
+                                    $SuportiveDocuments =new SuportiveDocuments;
+                                    $SuportiveDocuments->report_naration_report_id=$getNaration->id;
+                                    $SuportiveDocuments->name=$newFileName;
+                                    $SuportiveDocuments->save();
+                                    $uploadedFiles[] = $path;
+                                }
+                            }
+
                          }
                     }
                 }
@@ -3103,4 +3147,46 @@ class PlanAccomplishmentController extends Controller
 
 
     }
+    public function delete(Request $request)
+{
+    $fileName = $request->file; // Only the filename
+    $filePath = 'uploads/' . $fileName; // Full file path
+
+    // Extract additional parameters
+    $kpi = $request->kpi;
+    $period = $request->period;
+    $office = $request->office;
+    $year = $request->year;
+
+    // Find the related database entry
+    $ReportNarrationReport = ReportNarrationReport::where('key_peformance_indicator_id', $kpi)
+        ->where('reporting_period_id', $period)
+        ->where('office_id', $office)
+        ->where('planing_year_id', $year)
+        ->first();
+
+    if (!$ReportNarrationReport) {
+        return response()->json(['error' => 'Report record not found!'], 404);
+    }
+
+    // Find the supportive document related to the report
+    $suportingDocFile = SuportiveDocuments::where('report_naration_report_id', $ReportNarrationReport->id)
+        ->where('name', $fileName) // Compare only filename, not full path
+        ->first();
+
+    if ($suportingDocFile) {
+        // Delete file from storage if it exists
+        if (Storage::disk('public')->exists($filePath)) {
+            Storage::disk('public')->delete($filePath);
+        }
+        // Delete the database record
+        $suportingDocFile->delete();
+
+        return response()->json(['success' => 'File and database record deleted successfully!']);
+    }
+
+    return response()->json(['error' => 'File not found in the database!'], 404);
+}
+
+
 }

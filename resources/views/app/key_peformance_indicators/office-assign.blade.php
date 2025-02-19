@@ -22,7 +22,7 @@
                         <a href="{{ route('key-peformance-indicators.index') }}" class="btn btn-light">
                             <i class="icon ion-md-return-left text-primary"></i>
                             @lang('crud.common.back')
-                        </a>                       
+                        </a>
                     </div>
                 </x-form>
                 <br>
@@ -60,10 +60,12 @@
                                         {{ $officesAdd->office->officeTranslations[0]->name ?? '-' }}
                                     </td>
                                     <td>
+
+                                        @if(auth()->user() && auth()->user()->hasPermission('view keypeformanceindicators'))
                                         @php
-                                        $user = auth()->user();
-                                        @endphp 
-                                        @if($user->hasPermission('view keypeformanceindicators'))
+                                            $office_has_plan =  getOfficePlanForCascadeRemove($keyPeformanceIndicator->id, $officesAdd->id,$planning_year->id);
+                                        @endphp
+                                            @if($office_has_plan)
                                              <form
                                                 action="{{ route('kpi-remove-from-office', [$keyPeformanceIndicator, $officesAdd]) }}"
                                                 method="POST"
@@ -73,6 +75,10 @@
                                                     <i class="icon ion-md-trash"></i>
                                                 </button>
                                             </form>
+                                            @else
+                                            <button type="submit" class="btn btn-light text-danger" disabled title="Office has plan">
+                                                <i class="icon ion-md-trash"></i>
+                                            @endif
                                          @endif
                                     </td>
                                 </tr>

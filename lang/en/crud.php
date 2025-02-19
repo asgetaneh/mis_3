@@ -31,6 +31,7 @@ return [
         'rejected' => 'Successfully rejected',
         'plan_submited' => 'Plan submited Successfully',
         'report_submited' => 'Report submited Successfully',
+        'office_not_removed' => 'Office not removed since it has plan for this year on KPI',
 
     ],
 

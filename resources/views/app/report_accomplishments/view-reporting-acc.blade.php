@@ -167,7 +167,7 @@
                                                                 $planOfOfficePlan = $planAcc->ForKpi($planAccKpi->id, $imagen_off, $period->id,true,$planning_year->id ?? NULL,$planAcc->kpi_child_one_id ,$planAcc->kpi_child_two_id ,$planAcc->kpi_child_three_id);//dump($planOfOfficePlan);
                                                                 $narration = $planAcc->getReportNarration($planAccKpi->id, $planning_year->id ?? NULL, $imagen_off, $period->id);
                                                                  $activeQuarter = getReportingQuarter($planAccKpiReportingPeriodType->id);
-
+                                                                $upload_documents = getUploadDocumentsForAllSubOffice($planAcc->Kpi->id, $period->id, auth()->user()->offices[0]->id, $planning_year->id);
                                                             @endphp
                                                              @forelse($activeQuarter as $aQ)
                                                              @if($period->id!= $aQ->id)
@@ -205,6 +205,25 @@
                                                             @endforeach
                                                         </td>
                                                     </tr>
+                                                    <tr>
+                                                        @if (count($upload_documents)> 0)
+                                                        <!-- Display Uploaded Files -->
+                                                        <th></th>
+                                                        <th><h6>Uploaded Files</h6></th>
+                                                        <td>
+                                                        <ul class="list-group mb-4">
+                                                            @foreach ($upload_documents as $filee)
+                                                                {{-- @dump($filee); --}}
+                                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                                    <a href="{{ asset('storage/uploads/' . basename($filee->name)) }}" target="_blank">
+                                                                        {{ basename($filee->name) }}
+                                                                    </a>
+                                                                </li>
+                                                                @endforeach
+                                                        </ul>
+                                                        </td>
+                                                        @endif
+                                                   </tr>
                                                 </table>
                                             @endif
                                         @empty
