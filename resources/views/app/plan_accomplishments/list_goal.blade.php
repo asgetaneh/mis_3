@@ -51,7 +51,7 @@
     <div class="col-md-10">
 
          <div class="card" class="collapse">
-            <div class="card-header bg-light">Management information systems (MIS) - Planning Area</div>
+            <div class="card-header bg-light">Strategic Management Information System (SMIS) - Planning Area</div>
             <div class="card-body">
                    {{-- <table class="table table-borderless table-hover">
                     <tbody>

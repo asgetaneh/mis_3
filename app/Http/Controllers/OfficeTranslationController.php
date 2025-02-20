@@ -88,7 +88,7 @@ class OfficeTranslationController extends Controller
          return redirect()
             ->route('office_translations.index', $office_translation)
             ->withSuccess(__('crud.common.created'));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return redirect('app.office_translations/new')->withErrors(['errors' => $e]);
             }
         $offices = officeTranslation::all();

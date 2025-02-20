@@ -217,8 +217,8 @@
                     ['color', ['color']],
                     ['para', ['ul', 'ol', 'paragraph']],
                     ['height', ['height']],
-                    ['insert', ['link', 'picture', 'video']],
-                    ['view', ['fullscreen', 'codeview', 'help']]
+                    ['insert', ['link']],
+                    ['view', ['fullscreen']]
                 ]
             });
         </script>
