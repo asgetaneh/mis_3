@@ -1,16 +1,16 @@
 <table class="table table-bordered" style ="background:#F0F8FF">
     @if ($first == '1')
         <tr>
-            <th>
+            <th style="width:30%">
                 Offices
             </th>
             @forelse($getQuarter as $period)
-            <th>
+            <th style="width:60%">
              {{ $period->reportingPeriodTs[0]->name }}
             </th>
             @empty
             @endforelse
-            <td rowspan="3">
+            <td rowspan="2"style="padding:10px">
             @if(!$officeOffices->isEmpty())
             <p>
                 <a class="btn btn-info" data-toggle="collapse"
@@ -26,7 +26,7 @@
         </tr>
     @endif
     <tr>
-        <td rowspan="2">{{ $office->officeTranslations[0]->name }}</td>
+        <td rowspan="1">{{ $office->officeTranslations[0]->name }}</td>
         @forelse($getQuarter as $period)
             @php
                 //$planOfOfficePlan = $planAcc->planSum($planAccKpi->id, $office, $period->id,true,$planning_year);

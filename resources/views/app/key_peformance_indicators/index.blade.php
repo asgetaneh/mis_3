@@ -58,14 +58,14 @@
                                             Description
                                         </th>
                                         {{-- <th class="text-left">
-                                Output
-                            </th>
-                            <th class="text-left">
-                                Outcome
-                            </th> --}}
-                                        {{-- <th class="text-left">
-                                Strategy
-                            </th> --}}
+                                            Output
+                                        </th>
+                                        <th class="text-left">
+                                            Outcome
+                                        </th> --}}
+                                                    {{-- <th class="text-left">
+                                            Strategy
+                                        </th> --}}
                                         <th class="text-left">
                                             Reporting Period Type
                                         </th>
@@ -81,8 +81,8 @@
                             @endphp
                             @forelse(auth()->user()->offices[0]-> keyPeformanceIndicators as $key => $offkpi)
                                 @php
-                                    $office_kpi = array_merge( $office_kpi,array($offkpi->id));        
-                                @endphp              
+                                    $office_kpi = array_merge( $office_kpi,array($offkpi->id));
+                                @endphp
                             @empty
                             @endforelse
                             @forelse($objective->keyPeformanceIndicators as $keyPeformanceIndicator)
@@ -190,7 +190,7 @@
                                                                 <i class="icon ion-md-create"></i>
                                                             </button>
                                                         </a>
-                                                        @endcan 
+                                                        @endcan
                                                         @can('view',
                                                         $keyPeformanceIndicator->keyPeformanceIndicatorTs[0])
                                                         <a
@@ -199,7 +199,7 @@
                                                                 <i class="icon ion-md-eye"></i>
                                                             </button>
                                                         </a>
-                                                        @endcan 
+                                                        @endcan
                                                         @can('delete',
                                                         $keyPeformanceIndicator->keyPeformanceIndicatorTs[0])
                                                         <form
@@ -214,7 +214,7 @@
                                                     @endcan
                                                     @php
                                                     $user = auth()->user();
-                                                    @endphp 
+                                                    @endphp
                                                     @forelse(auth()->user()->offices[0]-> keyPeformanceIndicators as $key => $offkpi)
                                                     @if($user->hasPermission('view keypeformanceindicators') && $offkpi->id ==$keyPeformanceIndicator->id)
                                                         <a href="{{ route('kpi-assign-tooffices', $keyPeformanceIndicator->keyPeformanceIndicatorTs[0]->keyPeformanceIndicator) }}">

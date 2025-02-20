@@ -84,6 +84,7 @@
                                     <button class="btn btn-primary" value="search" name="search" type="submit">Filter</button>
                                     <span class="border border-right mx-3"></span>
                                     <button class="btn btn-info" value="pdf" name="pdf" type="submit">PDF</button>
+                                    <button id="exportBtn">Export to Excel</button>
                                     {{-- <button class="btn btn-success" value="excel" name="excel" type="submit">Excel</button> --}}
                                     {{-- <button class="btn btn-primary" value="word" name="word" type="submit">Word</button> --}}
 
@@ -101,7 +102,7 @@
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="card card-primary card-outline card-outline-tabs fillable-objective">
-                <div class="card-body">
+                <div class="card-body"  id="tobeprintable">
                     <div class="tab-content" id="custom-tabs-four-tabContent">
                         @php
                             $kpi_repeat[0] = null;
@@ -210,7 +211,7 @@
                                                         <!-- Display Uploaded Files -->
                                                         <th></th>
                                                         <th><h6>Uploaded Files</h6></th>
-                                                        <td>
+                                                        <td colspan="2">
                                                         <ul class="list-group mb-4">
                                                             @foreach ($upload_documents as $filee)
                                                                 {{-- @dump($filee); --}}
@@ -295,6 +296,15 @@
         </div>
 
     </div>
+    <script>
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            var table = document.getElementById('tobeprintable');
+            var wb = XLSX.utils.table_to_book(table, { sheet: "Sheet 1" });
+
+            // Save the Excel file with a specified name
+            XLSX.writeFile(wb, 'users_data.xlsx');
+        });
+    </script>
 
     <script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script>

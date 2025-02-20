@@ -557,7 +557,7 @@
                                                             data-period="{{ $period->id }}"
                                                             data-office="{{ auth()->user()->offices[0]->id }}"
                                                             data-year="{{ $planning_year->id }}">
-                                                            Delete
+                                                            <i class="icon ion-md-trash"></i>
                                                         </button>                                                        </li>
                                                      @endforeach
                                                 </ul>

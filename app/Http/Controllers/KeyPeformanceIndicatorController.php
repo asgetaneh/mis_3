@@ -45,41 +45,96 @@ class KeyPeformanceIndicatorController extends Controller
                     abort(403);
                 }
         $search = $request->get('search', '');
-        $objectives = Objective::oldest() //latest()
-            ->paginate(20)
-            ->withQueryString();
-        // $objectives = Objective::join('objective_translations', 'objective_translations.translation_id', '=', 'objectives.id')
-        //     ->orderBy('objective_translations.name') ->get();//dd($objectives);
-        $keyPeformanceIndicator_ts = KeyPeformanceIndicatorT::search($search)
-            ->latest()
-            ->paginate(15)
-            ->withQueryString();//dd( $keyPeformanceIndicator_ts);
 
-        $kpiChildOneTranslations = KpiChildOneTranslation::search($search)
+        if(auth()->user()->is_admin || auth()->user()->hasRole('super-admin')){
+
+            $objectives = Objective::oldest() //latest()
+                ->paginate(20)
+                ->withQueryString();
+            // $objectives = Objective::join('objective_translations', 'objective_translations.translation_id', '=', 'objectives.id')
+            //     ->orderBy('objective_translations.name') ->get();//dd($objectives);
+            $keyPeformanceIndicator_ts = KeyPeformanceIndicatorT::search($search)
+                ->latest()
+                ->paginate(15)
+                ->withQueryString();//dd( $keyPeformanceIndicator_ts);
+
+            $kpiChildOneTranslations = KpiChildOneTranslation::search($search)
+                ->latest()
+                ->paginate(15)
+                ->withQueryString();
+
+                $kpiChildTwoTranslations = KpiChildTwoTranslation::search($search)
+                ->latest()
+                ->paginate(15)
+                ->withQueryString();
+
+                $kpiChildThreeTranslations = KpiChildThreeTranslation::search($search)
+                ->latest()
+                ->paginate(5)
+                ->withQueryString();
+
+            $kpiAllCount = KeyPeformanceIndicatorT::latest()
+                ->paginate(15)
+                ->withQueryString();
+
+            $kpiAllCount = $kpiAllCount->total();
+
+            return view(
+                'app.key_peformance_indicators.index',
+                compact('objectives','keyPeformanceIndicator_ts','kpiChildOneTranslations', 'kpiChildTwoTranslations','kpiChildThreeTranslations','search', 'kpiAllCount')
+            );
+        }else{
+            $user_office = auth()->user()->offices[0]->id;
+            $user_kpi = KeyPeformanceIndicator::select('key_peformance_indicators.*')
+            ->join('kpi_office', 'kpi_office.kpi_id', '=', 'key_peformance_indicators.id')
+            ->where('kpi_office.office_id', '=', $user_office)
+            ->get();
+            // get kpi id using foreach loop
+            $kpi_ids = [];
+            foreach ($user_kpi as $kpi){
+                array_push($kpi_ids, $kpi->id);
+            }
+            // get objectives using kpi id sorted by oldest
+            $objectives = Objective::select('objectives.*')
+            ->join('key_peformance_indicators', 'key_peformance_indicators.objective_id', '=', 'objectives.id')
+            ->whereIn('key_peformance_indicators.id', $kpi_ids)
+            ->groupBy('objectives.id')
+             ->orderBy('objectives.id', 'asc')
              ->latest()
-            ->paginate(15)
-            ->withQueryString();
+                ->paginate(3)
+                ->withQueryString();
 
-             $kpiChildTwoTranslations = KpiChildTwoTranslation::search($search)
-            ->latest()
-            ->paginate(15)
-            ->withQueryString();
+            $keyPeformanceIndicator_ts = KeyPeformanceIndicatorT::search($search)
+                ->latest()
+                ->paginate(15)
+                ->withQueryString();//dd( $keyPeformanceIndicator_ts);
 
-            $kpiChildThreeTranslations = KpiChildThreeTranslation::search($search)
-            ->latest()
-            ->paginate(5)
-            ->withQueryString();
+            $kpiChildOneTranslations = KpiChildOneTranslation::search($search)
+                ->latest()
+                ->paginate(15)
+                ->withQueryString();
 
-        $kpiAllCount = KeyPeformanceIndicatorT::latest()
-            ->paginate(15)
-            ->withQueryString();
+                $kpiChildTwoTranslations = KpiChildTwoTranslation::search($search)
+                ->latest()
+                ->paginate(15)
+                ->withQueryString();
 
-        $kpiAllCount = $kpiAllCount->total();
+                $kpiChildThreeTranslations = KpiChildThreeTranslation::search($search)
+                ->latest()
+                ->paginate(5)
+                ->withQueryString();
 
-        return view(
-            'app.key_peformance_indicators.index',
-            compact('objectives','keyPeformanceIndicator_ts','kpiChildOneTranslations', 'kpiChildTwoTranslations','kpiChildThreeTranslations','search', 'kpiAllCount')
-        );
+            $kpiAllCount = KeyPeformanceIndicatorT::latest()
+                ->paginate(15)
+                ->withQueryString();
+
+            $kpiAllCount = $kpiAllCount->total();
+            return view(
+                'app.key_peformance_indicators.index',
+                compact('objectives','keyPeformanceIndicator_ts','kpiChildOneTranslations', 'kpiChildTwoTranslations','kpiChildThreeTranslations','search', 'kpiAllCount')
+            );
+        }
+            // $objectives = Objective
     }
 
     /**
