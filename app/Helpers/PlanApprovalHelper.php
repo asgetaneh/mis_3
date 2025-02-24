@@ -1143,36 +1143,51 @@ function planBaseline($kpi_id,$office, $planning_year_id, $period,$one,$two,$thr
             }else{ $office_baseline =0; }
 
         }else{
-            $planBaseline = collect();
+            $planBaseline = collect(); // Initialize empty collection
 
+            // Get previous year
             $previous_year = PlaningYear::where('id', '<', $planning_year_id)->orderby('id', 'desc')->first();
-                if($previous_year){
-                   $planBaseline = Baseline::select('baseline', 'office_id')
+
+            if ($previous_year) {
+                // Get previous year's baselines
+                $previousYearBaselines = Baseline::select('baseline', 'office_id')
                     ->whereIn('office_id', $all_office_list)
                     ->where('kpi_id', $kpi_id)
                     ->where('planning_year_id', $previous_year->id)
                     ->where('kpi_one_id', $one)
                     ->where('kpi_two_id', $two)
                     ->where('kpi_three_id', $three)
-                     ->where('plan_status' , '<=', $office_level)
+                    ->where('plan_status', '<=', $office_level)
                     ->get();
-                }
-            if($planBaseline->count()==0){
 
-
-                $planBaseline = Baseline::select()
-                //->whereIn('office_id', $all_office_list)
-                ->whereIn('office_id', $all_office_list)
-                ->where('kpi_id', $kpi_id)
-                ->where('planning_year_id', '=', $planning_year_id)
-                ->where('kpi_one_id', '=', $one)
-                ->where('kpi_two_id', '=', $two)
-                ->where('kpi_three_id', '=', $three)
-                 ->where('plan_status' , '<=', $office_level)
-                ->get();//dd($planBaseline);
+                // Merge with main collection
+                $planBaseline = $planBaseline->merge($previousYearBaselines);
             }
 
+            // Identify offices missing from last year's baseline
+            $officesWithBaseline = $planBaseline->pluck('office_id')->toArray();
+            $officesWithoutBaseline = array_diff($all_office_list, $officesWithBaseline);
+
+            if (!empty($officesWithoutBaseline)) {
+                // Get current year's baselines for offices that were missing in the previous year
+                $currentYearBaselines = Baseline::select('baseline', 'office_id')
+                    ->whereIn('office_id', $officesWithoutBaseline) // Only missing offices
+                    ->where('kpi_id', $kpi_id)
+                    ->where('planning_year_id', $planning_year_id)
+                    ->where('kpi_one_id', $one)
+                    ->where('kpi_two_id', $two)
+                    ->where('kpi_three_id', $three)
+                    ->where('plan_status', '<=', $office_level)
+                    ->get();
+
+                // Merge current-year data into main collection
+                $planBaseline = $planBaseline->merge($currentYearBaselines);
+            }
+
+            // Sum the baselines
             $office_baseline = $planBaseline->sum('baseline');
+
+
         }
 
             // foreach ($all_office_list as $key => $off_list) {
