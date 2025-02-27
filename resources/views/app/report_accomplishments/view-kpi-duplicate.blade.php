@@ -4,7 +4,7 @@
             Offices
         </th>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
-            <th style="width:60%"> {{ $period->reportingPeriodTs[0]->name }} </th>
+            <th> {{ $period->reportingPeriodTs[0]->name }} </th>
         @empty
         @endforelse
         <td rowspan="3">

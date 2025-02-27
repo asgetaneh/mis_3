@@ -171,22 +171,81 @@
                                                         <tr>
                                                             @forelse($getQuarter as $period)
                                                                 @php
-                                                                    $one =null;
-                                                                    $three =null;
-                                                                    $two =null; //dump($planAcc);
-                                                                    $planOfOfficePlan = $planAcc->ForKpi($planAccKpi->id, $imagen_off, $period->id,true,$planning_year->id ?? NULL,$planAcc->kpi_child_one_id ,$planAcc->kpi_child_two_id ,$planAcc->kpi_child_three_id);//dump($planOfOfficePlan);
+                                                                    $one =[];
+                                                                    $three =[];
+                                                                    $two =[];
+                                                                    $report_avarage = 0;
+                                                                    $report_avarage_total = 0;
+                                                                    $denominator = 1;
+                                                                    $kpi_child_one = $planAccKpi->kpiChildOnes;
+                                                                    $kpi_child_twos = $planAccKpi->kpiChildTwos;
+                                                                    $kpi_child_threes = $planAccKpi->kpiChildThrees;
+
+                                                                    if($planAccKpi->measurement && $planAccKpi->measurement->slug == 'percent'){
+                                                                        if(!$kpi_child_threes->isEmpty()){
+                                                                            if(!$kpi_child_twos->isEmpty()){
+                                                                                if(!$kpi_child_one->isEmpty()){
+                                                                                    foreach ($kpi_child_threes as $key => $three) {
+                                                                                        foreach ($kpi_child_twos as $key => $two) {
+                                                                                            foreach ($kpi_child_one as $key => $one) {
+                                                                                                $planOfOfficePlan = $planAcc->ForKpi($planAccKpi->id, $imagen_off, $period->id,true,$planning_year->id ?? NULL,$one->id ,$two->id ,$three->id);
+                                                                                                $report_avarage = $report_avarage + $planOfOfficePlan[1];
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                    $denominator =$kpi_child_threes->count() *$kpi_child_twos->count() *$kpi_child_one->count();
+                                                                                }
+                                                                            }
+                                                                        }elseif(!$kpi_child_twos->isEmpty()){
+                                                                            if(!$kpi_child_one->isEmpty()){
+                                                                                foreach ($kpi_child_twos as $key => $two) {
+                                                                                    foreach ($kpi_child_one as $key => $one) {
+                                                                                        $planOfOfficePlan = $planAcc->ForKpi($planAccKpi->id, $imagen_off, $period->id,true,$planning_year->id ?? NULL,$one->id ,$two->id ,null);
+                                                                                        $report_avarage = $report_avarage + $planOfOfficePlan[1];
+                                                                                    }
+                                                                                }
+                                                                                $denominator =$kpi_child_twos->count() *$kpi_child_one->count();
+                                                                            }
+                                                                        }elseif(!$kpi_child_one->isEmpty()){
+                                                                            foreach ($kpi_child_one as $key => $one) {
+                                                                                $planOfOfficePlan = $planAcc->ForKpi($planAccKpi->id, $imagen_off, $period->id,true,$planning_year->id ?? NULL,$one->id ,null ,null);
+                                                                                $report_avarage = $report_avarage + $planOfOfficePlan[1];
+                                                                            }
+                                                                                $denominator = $kpi_child_one->count();
+                                                                        }else{
+                                                                            $planOfOfficePlan = $planAcc->ForKpi($planAccKpi->id, $imagen_off, $period->id,true,$planning_year->id ?? NULL,null ,null ,null);
+                                                                            $report_avarage = $planOfOfficePlan[1];
+                                                                            $denominator = 1;
+                                                                        }
+
+                                                                        $report_avarage_total = $report_avarage / $denominator;
+                                                                        $display = $report_avarage_total.'%';
+                                                                  }else{
+
+                                                                        foreach ($kpi_child_one as $key => $kpi_child_onee) {
+                                                                            $one = array_merge($one,array($kpi_child_onee->id));
+                                                                        }
+                                                                        foreach ($kpi_child_twos as $key => $kpi_child_two) {
+                                                                            $two = array_merge($two,array($kpi_child_two->id));
+                                                                        }
+                                                                        foreach ($kpi_child_threes as $key => $kpi_child_three) {
+                                                                            $three = array_merge($three,array($kpi_child_three->id));
+                                                                        }
+                                                                        $planOfOfficePlan = $planAcc->ForKpiTotalOnKpi($planAccKpi->id, $imagen_off, $period->id,true,$planning_year->id ?? NULL,$one ,$two ,$three);
+                                                                        $display = $planOfOfficePlan[1];
+                                                                    }
                                                                     $narration = $planAcc->getReportNarration($planAccKpi->id, $planning_year->id ?? NULL, $imagen_off, $period->id);
                                                                     $activeQuarter = getReportingQuarter($planAccKpiReportingPeriodType->id);
-
+                                                                    //dump($planAccKpi->id);
                                                                 @endphp
                                                                 @forelse($activeQuarter as $aQ)
                                                                 @if($period->id!= $aQ->id)
                                                                 <td>
-                                                                    {{ $planOfOfficePlan[1] }}
+                                                                    {{ $display }}
                                                                 </td>
                                                                 @else
                                                                 <td style="background:#99cd99;">
-                                                                <span >  {{ $planOfOfficePlan[1] }}</span>
+                                                                <span >  {{ $display }}</span>
                                                                 </td>
                                                                 @endif
                                                                 @empty

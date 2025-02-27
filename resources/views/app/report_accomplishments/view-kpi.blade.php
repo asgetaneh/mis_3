@@ -5,7 +5,7 @@
                 Offices
             </th>
             @forelse($getQuarter as $period)
-            <th style="width:60%">
+            <th>
              {{ $period->reportingPeriodTs[0]->name }}
             </th>
             @empty
@@ -56,7 +56,7 @@
         <td>
             Major Activities
         </td>
-        <td colspan="4">
+        <td colspan="7">
              @foreach ($narration as $key => $plannaration)
                 <p>
                     {!! html_entity_decode($plannaration->report_naration) !!}

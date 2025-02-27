@@ -1,10 +1,10 @@
 <table class="table table-bordered" >
 <tr>
 <tr>
-    <th colspan="{{ $getQuarter->count() + 3 }} ">
+    <th colspan="{{ $getQuarter->count() + 2 }} ">
         Offices: {{ $office->officeTranslations[0]->name }}
     </th>
-    <td rowspan="{{ $planAccKpiChildTwo->count() }} *{{count($getQuarter)}}+2">
+    <td rowspan="{{ $planAccKpiChildTwo->count() }} * {{ $planAccKpiChildOne->count() }}+2">
         @if (!$office->offices->isEmpty())
             <p>
                 <a class="btn btn-info" data-toggle="collapse" href="#off{{ $office->id }}{{$planAccKpi->id}}" role="button"
@@ -13,7 +13,7 @@
                 </a>
             </p>
         @else
-            {{ '' }}
+            {{ '---' }}
         @endif
     </td>
 </tr>
