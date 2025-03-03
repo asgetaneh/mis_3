@@ -180,7 +180,7 @@
                                                                     $kpi_child_one = $planAccKpi->kpiChildOnes;
                                                                     $kpi_child_twos = $planAccKpi->kpiChildTwos;
                                                                     $kpi_child_threes = $planAccKpi->kpiChildThrees;
-
+                                                                    $display = 0;
                                                                     if($planAccKpi->measurement && $planAccKpi->measurement->slug == 'percent'){
                                                                         if(!$kpi_child_threes->isEmpty()){
                                                                             if(!$kpi_child_twos->isEmpty()){
@@ -216,10 +216,12 @@
                                                                             $planOfOfficePlan = $planAcc->ForKpi($planAccKpi->id, $imagen_off, $period->id,true,$planning_year->id ?? NULL,null ,null ,null);
                                                                             $report_avarage = $planOfOfficePlan[1];
                                                                             $denominator = 1;
+                                                                        }//dump($planOfOfficePlan[2]);
+                                                                        if(auth()->user()->offices[0]->level == $planOfOfficePlan[2]){
+                                                                            $report_avarage_total = $report_avarage / $denominator;
+                                                                            $display = $report_avarage_total.'%';
                                                                         }
 
-                                                                        $report_avarage_total = $report_avarage / $denominator;
-                                                                        $display = $report_avarage_total.'%';
                                                                   }else{
 
                                                                         foreach ($kpi_child_one as $key => $kpi_child_onee) {

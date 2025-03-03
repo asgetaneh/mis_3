@@ -291,6 +291,7 @@ class PlanAccomplishment extends Model
                 $plan_accom = array_merge( $plan_accom,array($avarage_plan_of_percent));
                 $plan_accom = array_merge( $plan_accom,array($status?->plan_status));
                 if($is_report){
+                    $plan_accom = [];
                     $plan_accom = array_merge( $plan_accom,array($avarage_plan_of_percent));
                     $plan_accom = array_merge( $plan_accom,array($avarage_plan_of_percent));
                     $plan_accom = array_merge( $plan_accom,array($status?->accom_status));
