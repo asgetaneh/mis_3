@@ -21,7 +21,9 @@ class PlanApprovalController extends Controller
         $all_office_list = $all_child_and_subchild;
         $planning_year = PlaningYear::where('is_active',true)->first();
 
-        $all_office_list = array_merge( $all_child_and_subchild,array($office));
+        if($obj_office->level == 1) {
+            $all_office_list = array_merge( $all_child_and_subchild,array($office));
+        }
         $only_child = $obj_office->offices;
          //dd($only_child);
         $only_child_array = [];

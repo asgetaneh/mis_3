@@ -87,14 +87,16 @@
     <tr>
         @php
             $baselineOfOfficePlan  = planBaseline($planAcc->Kpi->id,$office, $planning_year->id, $period->id,$one->id,null,null);
-            $planOne = planOne($planAcc->Kpi->id, $one->id, $office, $period->id, 2,$planning_year);
-            $narration = getNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
         @endphp
         <td>
             {{ $one->kpiChildOneTranslations[0]->name }}
         </td>
         <td> {{ $baselineOfOfficePlan }} </td>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
+        @php
+            $planOne = planOne($planAcc->Kpi->id, $one->id, $office, $period->id, 2,$planning_year);
+            $narration = getNarration($planAcc->Kpi->id, $planning_year->id ?? NULL, $office, $period->id);
+        @endphp
         <td>
             {{ $planOne }}
         </td>
