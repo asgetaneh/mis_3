@@ -1,6 +1,6 @@
 <table class="table table-bordered">
     <tr>
-        <th>
+        <th style="width:30%">
             Offices
         </th>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
@@ -22,7 +22,7 @@
         </td>
     </tr>
     <tr>
-        <td rowspan="2">{{ $office->officeTranslations[0]->name }}</td>
+        <td rowspan="1">{{ $office->officeTranslations[0]->name }}</td>
         @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
             @php
                // $planOfOfficePlan = $planAcc->planSum($planAcc->Kpi->id, $office, $period->id,true,$planning_year);

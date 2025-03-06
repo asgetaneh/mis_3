@@ -7,7 +7,7 @@
   use App\Models\ReportNarration;
  use App\Models\KeyPeformanceIndicator;
 use App\Models\ReportNarrationReport;
-
+use App\Models\SuportiveDocuments;
 use Carbon\Carbon;
 use Andegna\DateTime as Et_date;
 use Andegna\DateTimeFactory;
@@ -199,7 +199,7 @@ if (! function_exists('getOfficeBaseline')) {
         //         $office->id,$kkp,$planning_year,$one,$two,$three
         //     ]);
             if(!$planBaseline){
-                $planning_year = PlaningYear::where('is_active',true)->first();
+                $planning_year = PlaningYear::where( 'is_active',true)->first();
                 $previous_year = PlaningYear::where('id', '<', $planning_year->id)->orderby('id', 'desc')->first();
                 if($previous_year){ $planBaseline = Baseline::select()
                     //->whereIn('office_id', $all_office_list)
@@ -444,7 +444,12 @@ if (! function_exists('gettrans')) {
         }
     }
     function getSavedReportNaration($year,$period,$kpi, $office){
-     $ReportNarrations = ReportNarrationReport::select()->where('planing_year_id' , '=', $year)->where('reporting_period_id' , '=', $period)->where('office_id' , '=', $office)->where('key_peformance_indicator_id' , '=', $kpi)->get();
+     $ReportNarrations = ReportNarrationReport::select()
+        ->where('planing_year_id' , '=', $year)
+        ->where('reporting_period_id' , '=', $period)
+        ->where('office_id' , '=', $office)
+        ->where('key_peformance_indicator_id' , '=', $kpi)
+     ->get();
         foreach ($ReportNarrations as $key => $ReportNarration) {
             return $ReportNarration->report_naration;
         }
@@ -614,7 +619,7 @@ if (! function_exists('gettrans')) {
     //     ->where('kpi_child_three_id', $three)
     //     ->where('reporting_periods.slug',"=", 1)
     //     ->first();
-        
+
                  $previous_year = PlaningYear::where('id', '<', $planningYear)->orderby('id', 'desc')->first();
                 if($previous_year){ $planBaseline = Baseline::select()
                     //->whereIn('office_id', $all_office_list)
@@ -628,7 +633,7 @@ if (! function_exists('gettrans')) {
                    // dump($planBaseline);
 
        }
-    
+
 
     return $planBaseline->baseline ?? '';
 }
@@ -774,4 +779,61 @@ if (! function_exists('gettrans')) {
         }//dd( $stu_record_result);
              return $stu_record_result;
         }
+        function getOfficePlanForCascadeRemove($kpi, $office,$planning_year){
+            $office_has_plan =PlanAccomplishment::select('*')
+            ->where('office_id', $office)
+            ->where('kpi_id', '=', $kpi)
+            ->where('planning_year_id', '=', $planning_year)
+            ->first();
+            if($office_has_plan!=null){
+                return false;
+            }
+            else{
+                return true;
+            }
+        }
+     function getUploadDocuments($kpi,$period,$office,$planning_year){
+        $suportingDocFile =[];
+        $ReportNarrationReport = ReportNarrationReport::where('key_peformance_indicator_id', $kpi)
+            ->where('reporting_period_id', $period)
+            ->where('office_id', $office)
+            ->where('planing_year_id', $planning_year)
+        ->first();
+        if ($ReportNarrationReport) {
+            $suportingDocFile = SuportiveDocuments::where('report_naration_report_id', $ReportNarrationReport->id)
+            ->get();
+        }
+             //sdump($suportingDocFile);
+        return $suportingDocFile;
+            // $files = Storage::disk('public')->files('uploads'); // Get all uploaded files
+            // return compact('files');
+        }
+        function getUploadDocumentsForAllSubOffice($kpi,$period,$office,$planning_year){
+            $office =Office::find($office);
+            $off_level = $office->level;
+             $only_child_array = allChildAndChildChild($office);
+            $all_office_list = array_merge($only_child_array,array($office->id));
+            $suportingDocFile =[];
+            $ReportNarrationReport_id =[];
+            $ReportNarrationReport = ReportNarrationReport::where('key_peformance_indicator_id', $kpi)
+                ->where('reporting_period_id', $period)
+                ->whereIn('office_id', $all_office_list)
+                ->where('planing_year_id', $planning_year)
+            ->get();
+            foreach ($ReportNarrationReport as $key => $ReportNarrationReportObj) {
+               // dump($ReportNarrationReportObj);
+                $ReportNarrationReport_id = array_merge($ReportNarrationReport_id,array($ReportNarrationReportObj->id));
+            }
+
+            if (count($ReportNarrationReport_id)>0) {
+                $suportingDocFile = SuportiveDocuments::whereIn('report_naration_report_id', $ReportNarrationReport_id)
+                ->get();
+            }
+                 //sdump($suportingDocFile);
+            return $suportingDocFile;
+                // $files = Storage::disk('public')->files('uploads'); // Get all uploaded files
+                // return compact('files');
+            }
+
+
 }

@@ -515,7 +515,9 @@
                                             @php
                                             $report_naration = getSavedReportNaration($planning_year->id ?? NULL, $period->id, $kpi->id, auth()->user()->offices[0]->id);
                                             $plan_docment = getSavedPlanDocument($planning_year->id ?? NULL, $period->id, $kpi->id, auth()->user()->offices[0]->id);
+                                            $upload_documents = getUploadDocuments($kpi->id, $period->id, auth()->user()->offices[0]->id, $planning_year->id);
                                             @endphp
+                                            {{-- @dump($kpi->id); --}}
                                             @if ($report_naration)
                                                 <label for="summernote">Major Activities</label>
                                                 <input type="hidden" name="type" value="yes">
@@ -539,15 +541,33 @@
                                                 <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;" class="form-control summernote" id="narration-field-{{ $kpi->id }}" placeholder="Narration here"></textarea>
                                                 <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please fill Major Activities field!</p>
                                             @endif
-                                            @if ($plan_docment)
-                                                <label class="form-label" for="inputImage"> Supporting document(in pdf):
-                                                </label><br/>
-                                                <a  href="{{ route('view-file', $plan_docment) }}" title="MyPdf"> view file
-                                                </a>
+                                             @if (count($upload_documents)> 0)
+                                                     <!-- Display Uploaded Files -->
+                                                <h4>Uploaded Files</h4>
+                                                <ul class="list-group mb-4">
+                                                    @foreach ($upload_documents as $filee)
+                                                     {{-- @dump($filee); --}}
+                                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                            <a href="{{ asset('storage/uploads/' . basename($filee->name)) }}" target="_blank">
+                                                                {{ basename($filee->name) }}
+                                                            </a>
+                                                            <button class="btn btn-danger btn-sm delete-file"
+                                                            data-file="{{ basename($filee->name) }}"
+                                                            data-kpi="{{ $kpi->id }}"
+                                                            data-period="{{ $period->id }}"
+                                                            data-office="{{ auth()->user()->offices[0]->id }}"
+                                                            data-year="{{ $planning_year->id }}">
+                                                            <i class="icon ion-md-trash"></i>
+                                                        </button>                                                        </li>
+                                                     @endforeach
+                                                </ul>
                                             @else
-                                                <label class="form-label" for="inputImage">Supporting document(in pdf):
+                                                <label for="file" class="form-label">Choose Supporting document (Images, PDFs, Audio, Word, etc.)</label>
+                                                <input type="file" name="myfile[]" id="file" class="form-control" multiple>
+
+                                                {{-- <label class="form-label" for="inputImage">Supporting document(in pdf):
                                                 </label>
-                                                <input  type="file"  name="myfile"   id="inputImage" class="form-control">
+                                                <input  type="file"  name="myfile"   id="inputImage" class="form-control"> --}}
                                             @endif
                                         </div>
                                     </div>
@@ -639,6 +659,41 @@
             $('.dropdown-toggle').dropdown()
         });
 
+    </script>
+    <script>
+        $(document).ready(function() {
+        $(".delete-file").click(function(e) {
+            e.preventDefault()
+            var btn = $(this);
+            var fileName = btn.data("file");
+            var kpi = btn.data("kpi");
+            var period = btn.data("period");
+            var office = btn.data("office");
+            var year = btn.data("year");
+
+            if (confirm("Are you sure you want to delete " + fileName + "?")) {
+                $.ajax({
+                    url: "{{ route('delete.file') }}",
+                    type: "DELETE",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        file: fileName,
+                        kpi: kpi,
+                        period: period,
+                        office: office,
+                        year: year
+                    },
+                    success: function(response) {
+                        alert(response.success);
+                        btn.closest("li").remove(); // Remove file from UI
+                    },
+                    error: function(xhr) {
+                        alert("Error deleting file.");
+                    }
+                });
+            }
+        });
+    });
     </script>
 
     <script>

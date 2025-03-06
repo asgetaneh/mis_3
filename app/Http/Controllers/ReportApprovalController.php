@@ -184,6 +184,15 @@ class ReportApprovalController extends Controller
                                 'accom_status' => 1, // decide what value it is later.
                                 'approved_by_id' => auth()->user()->id
                             ]);
+                            // approve for major activities
+                            $approvedMjoractivitySelfOffice = DB::table('report_narration_reports')
+                            ->where('planing_year_id', $singleOfficePlan[2])
+                            ->where('office_id', auth()->user()->offices[0]->id)
+                            ->where('key_peformance_indicator_id', $singleOfficePlan[0])
+                            ->whereIn('reporting_period_id', $activeReportingPeriodList)
+                            ->update([
+                                'approval_status' => 1 // decide what value it is later.
+                            ]);
                     } else {
                         $office = (int)$singleOfficePlan[1];
                         $findOffice = Office::find($office);
@@ -215,6 +224,15 @@ class ReportApprovalController extends Controller
                             ->update([
                                 'accom_status' => $loggedInUserOfficeLevel->level,
                                 'approved_by_id' => auth()->user()->id
+                            ]);
+                            // approve for major activities
+                            $approvedMjoractivity = DB::table('report_narration_reports')
+                            ->where('planing_year_id', $singleOfficePlan[2])
+                            ->whereIn('office_id', $mergedOffices)
+                            ->where('key_peformance_indicator_id', $singleOfficePlan[0])
+                            ->whereIn('reporting_period_id', $activeReportingPeriodList)
+                            ->update([
+                                'approval_status' => $loggedInUserOfficeLevel->level // decide what value it is later.
                             ]);
 
                         $forPlanComment = array_merge($allChildrenApproved, array($office));

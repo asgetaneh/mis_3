@@ -311,6 +311,7 @@ Route::prefix('/')
                  Route::POST('/report-save', [PlanAccomplishmentController::class, 'saveReport'])->name('report.save');
 
                 Route::POST('/download', [PlanAccomplishmentController::class, 'downloadReport'])->name('report.download');
+                Route::delete('/delete', [PlanAccomplishmentController::class, 'delete'])->name('delete.file'); // Delete files
 
             });
 
@@ -332,7 +333,7 @@ Route::prefix('/')
             Route::resource('permissions', PermissionController::class);
             Route::resource('users', UserController::class);
         });
-        
+
         Route::get('/export-excel', function () {
             return Excel::download(new TableExport, 'table.xlsx');
         });
