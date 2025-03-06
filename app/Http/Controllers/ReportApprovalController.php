@@ -22,6 +22,7 @@ class ReportApprovalController extends Controller
         //$all_office_list = array_merge( $all_child_and_subchild,array($office));
         $only_child = $obj_office->offices;
         $activeReportingPeriodList = getReportingPeriod();
+        $planning_year = PlaningYear::where('is_active',true)->first();
 
         // dd($only_child);
          $only_child_array = [];
@@ -66,12 +67,14 @@ class ReportApprovalController extends Controller
         } else {
             $planAccomplishments = PlanAccomplishment::join('reporting_periods', 'reporting_periods.id', '=', 'plan_accomplishments.reporting_period_id')
                 ->whereIn('office_id', $all_office_list)
+                ->where('planning_year_id', $planning_year->id ?? NULL)
                 ->select('*', DB::raw('SUM(accom_value) AS sum'))
                 ->whereNotNull('accom_value')
                 ->whereIn('reporting_period_id', $activeReportingPeriodList)
                 //-> where('reporting_periods.slug',"=", 1)
-                ->groupBy('kpi_id')->get();
-
+                ->groupBy('kpi_id')
+            ->get();
+            //dump($planAccomplishments);
             // $is_admin = auth()->user()->is_admin;
             // if( $is_admin){
             //     $all_offices = getAllOffices();
@@ -117,6 +120,7 @@ class ReportApprovalController extends Controller
                                 ->select('*', DB::raw('SUM(accom_value) AS sum'))
                                 ->whereIn('reporting_period_id', $activeReportingPeriodList)
                                 ->where('kpi_id', $plan->kpi_id)
+                                ->where('planning_year_id', $planning_year->id ?? NULL)
                                 ->get();
 
                             // last office's sum added up so that to display the total sum in the kpi header view
@@ -137,6 +141,7 @@ class ReportApprovalController extends Controller
                 ->whereIn('reporting_period_id', $activeReportingPeriodList)
                 ->whereNotNull('accom_value')
                 ->groupBy('kpi_id')
+                ->where('planning_year_id', $planning_year->id ?? NULL)
                 ->get();
 
             // dd($planAccomplishmentsLastOffice);

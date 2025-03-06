@@ -1980,8 +1980,10 @@ class PlanAccomplishmentController extends Controller
         )
         ->where('planning_year_id','=', $planning_year->id ?? NULL)
         //-> where('reporting_periods.slug',"=", 1)
+        ->whereNotNull('accom_value')
        ->groupBy('kpi_id')
        ->paginate(2);
+       //dump($planAccomplishments);
          if( $is_admin){
              $imagen_off = Office::find(1); //immaginery office of which contain all office kpi plan
             $off_level = 1;
