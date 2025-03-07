@@ -3,9 +3,18 @@
         <th style="width:30%">
             Offices
         </th>
-        @forelse(getQuarter($planAcc->Kpi->reportingPeriodType->id) as $period)
-            <th> {{ $period->reportingPeriodTs[0]->name }} </th>
+        @php
+            // Get the total count of reportingPeriodTs across all periods
+            $totalPeriods = collect($getQuarter)->sum(fn($p) => count($p->reportingPeriodTs));
+        @endphp
+        @forelse($getQuarter as $period)
+            @foreach($period->reportingPeriodTs as $report)
+                <th style="width: {{ 60 / max(1, $totalPeriods) }}%;">
+                    {{ $report->name }}
+                </th>
+            @endforeach
         @empty
+            <th>No data available</th>
         @endforelse
         <td rowspan="3">
             @if(!$office->offices->isEmpty())
@@ -50,7 +59,7 @@
         <td>
             Major Activities
         </td>
-        <td colspan="4">
+        <td colspan="{{ $getQuarter->count() }}">
             @foreach ($narration as $key => $plannaration)
                 <p>
                     {!! html_entity_decode($plannaration->report_naration) !!}
