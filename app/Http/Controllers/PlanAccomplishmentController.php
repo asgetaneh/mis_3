@@ -299,7 +299,7 @@ class PlanAccomplishmentController extends Controller
          $getNaration =null;
          $index = [];
         $planning = PlaningYear::where('is_active',true)->first();
-
+        //dd($kpi);
          foreach ($kpi as $key => $value) {
              if(str_contains($key, 'baseline') && next($kpi) == 'yes') {
               $submit = "update";
