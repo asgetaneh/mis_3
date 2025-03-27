@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Builder;
 
 
 class User extends Authenticatable
@@ -27,6 +28,13 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'is_admin' => 'boolean',
     ];
+
+    // protected static function booted()
+    // {
+    //     static::addGlobalScope('excludeSuperAdmin', function (Builder $builder) {
+    //         $builder->where('name', '!=', 'Super Admin');
+    //     });
+    // }
 
     public function goals()
     {

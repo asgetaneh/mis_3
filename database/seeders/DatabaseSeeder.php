@@ -237,14 +237,21 @@ class DatabaseSeeder extends Seeder
         $user = \App\Models\User::whereEmail('admin@admin')->first();
 
         if ($user) {
+            $user->update([
+                'username' => 'super',
+                'name' => 'Super Admin',
+                'email' => 'admin@admin.ju.edu.et',
+                'is_admin' => '1',
+                'password' => bcrypt('kzs04G7T')
+            ]);
             $user->assignRole($adminRole);
         } else {
 
             // Admin User Seeder
             $adminUser = User::create([
-                'username' => 'admin',
+                'username' => 'super',
                 'name' => 'Super Admin',
-                'email' => 'admin@admin',
+                'email' => 'admin@admin.ju.edu.et',
                 'is_admin' => '1',
                 'password' => bcrypt('admin')
             ]);

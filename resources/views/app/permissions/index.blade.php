@@ -69,7 +69,7 @@
                                     aria-label="Row Actions"
                                     class="btn-group"
                                 >
-                                    @can('update', $permission)
+                                    {{-- @can('update', $permission)
                                     <a
                                         href="{{ route('permissions.edit', $permission) }}"
                                     >
@@ -80,7 +80,8 @@
                                             <i class="icon ion-md-create"></i>
                                         </button>
                                     </a>
-                                    @endcan @can('view', $permission)
+                                    @endcan  --}}
+                                    @can('view', $permission)
                                     <a
                                         href="{{ route('permissions.show', $permission) }}"
                                     >
