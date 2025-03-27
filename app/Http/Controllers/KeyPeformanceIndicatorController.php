@@ -94,6 +94,7 @@ class KeyPeformanceIndicatorController extends Controller
             foreach ($user_kpi as $kpi){
                 array_push($kpi_ids, $kpi->id);
             }
+            DB::statement("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
             // get objectives using kpi id sorted by oldest
             $objectives = Objective::select('objectives.*')
             ->join('key_peformance_indicators', 'key_peformance_indicators.objective_id', '=', 'objectives.id')

@@ -1,7 +1,7 @@
 <table class="table table-bordered" >
 {{-- style="background:#34214322;" --}}
     <tr>
-        <th colspan="{{ $getQuarter->count() + 1 }} style="width: 90%"">
+        <th colspan="{{ $getQuarter->count() + 1 }} style="width: 90%">
             Offices: {{ $office->officeTranslations[0]->name }}
         </th>
          <td rowspan="{{ $planAccKpiChildOne->count() + 3 }}">
@@ -13,7 +13,7 @@
                     </a>
                 </p>
             @else
-                {{ '' }}
+                {{ '--' }}
             @endif
         </td>
     </tr>

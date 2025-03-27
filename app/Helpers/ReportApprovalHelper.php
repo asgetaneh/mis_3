@@ -817,10 +817,9 @@ function reportSum($kkp, $office, $period, $suffix)
             if($kpi->measurement->slug =="percent"){
                 $sum1 =0;
                 $planAccomplishments = calculateAveragePlan($kkp,$office,$period,true,$planning_year ,null,null,null);
-                dump($planAccomplishments[0]);
-                if($planAccomplishments[1]!=0){
-                    $sum1 = $planAccomplishments[0]/$planAccomplishments[1]; 
-                }                
+                 if($planAccomplishments[1]!=0){
+                    $sum1 = $planAccomplishments[0]/$planAccomplishments[1];
+                }
             }else{
 
                 // All current office children if exist with the logged in user office level

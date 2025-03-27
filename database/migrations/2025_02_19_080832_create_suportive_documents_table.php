@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('suportive_documents', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->integer('aproval_status')->default(100);
             $table->text('description')->nullable();
             $table->unsignedBigInteger('report_naration_report_id');
             $table

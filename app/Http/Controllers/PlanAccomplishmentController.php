@@ -299,7 +299,7 @@ class PlanAccomplishmentController extends Controller
          $getNaration =null;
          $index = [];
         $planning = PlaningYear::where('is_active',true)->first();
-
+        //dd($kpi);
          foreach ($kpi as $key => $value) {
              if(str_contains($key, 'baseline') && next($kpi) == 'yes') {
               $submit = "update";
@@ -1320,30 +1320,43 @@ class PlanAccomplishmentController extends Controller
                                 $SuportiveDocuments =new SuportiveDocuments;
                                 $SuportiveDocuments->report_naration_report_id=$getNaration->id;
                                 $SuportiveDocuments->name=$newFileName;
+                                $SuportiveDocuments->aproval_status=$off_level;
                                 $SuportiveDocuments->save();
                                 $uploadedFiles[] = $path;
                             }
                         }
                     }
                     else{
+                       // $getNaration ="no";
                        if($str_key[0]=='d' ){
-                         $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
-                         $index = [];
-                         foreach ($arr_to_split_text as $splitkey => $splitvalue) {
-                            $index[$splitkey] =$splitvalue;
+                            $arr_to_split_text = preg_split("/[_,\- ]+/", $str_key);
+                            $index = [];
+                            foreach ($arr_to_split_text as $splitkey => $splitvalue) {
+                                $index[$splitkey] =$splitvalue;
+                            }
+                            $updated2 = tap(DB::table('report_narration_reports')
+                            ->where('planing_year_id' , '=', $planning
+                            ->id ?? NULL)
+                            ->where('office_id' , '=', $user_offices)
+                            ->where('key_peformance_indicator_id' , '=', $index[1])
+                            ->where('reporting_period_id' , '=', $index[2]))
+                            ->update(['report_naration' => $value])
+                            ->first();
+                            if(!$updated2){
+                                $naration =new ReportNarrationReport;
+                                $naration->report_naration=$value;
+                                $naration->key_peformance_indicator_id=$index[1];
+                                $naration->office_id=$user_offices;
+                                $naration->reporting_period_id=$index[2];
+                                $naration->planing_year_id=$planning->id;
+                                $naration->approval_status=$accom_status;
+                                $naration->save();
+                                $updated2 =$naration;
+                            }
+                            $getNaration =$updated2;
+                            //$report_narration_report_ob = ReportNarrationReport::find($updated2->id);
                         }
-                        $updated2 = tap(DB::table('report_narration_reports')
-                        ->where('planing_year_id' , '=', $planning
-                        ->id ?? NULL)
-                        ->where('office_id' , '=', $user_offices)
-                        ->where('key_peformance_indicator_id' , '=', $index[1])
-                        ->where('reporting_period_id' , '=', $index[2]))
-                        ->update(['report_naration' => $value])
-                         ->first();
-                        $getNaration =$updated2;
-                        //$report_narration_report_ob = ReportNarrationReport::find($updated2->id);
-                          }
-                         elseif($str_key=="myfile"){
+                         elseif($str_key=="myfile" && $getNaration!=null){
                             $request->validate([
                                 'files.*' => 'required|file|max:10240|mimes:jpeg,png,pdf,doc,docx,mp3,wav,odp,ppt', // 10MB max per file
                             ]);
@@ -1404,9 +1417,11 @@ class PlanAccomplishmentController extends Controller
                                     $path = $file->storeAs('uploads', $newFileName, 'public');
 
                                     // Save to database
+                                    //dump($getNaration);
                                     $SuportiveDocuments = new SuportiveDocuments();
                                     $SuportiveDocuments->report_naration_report_id = $getNaration->id;
                                     $SuportiveDocuments->name = $newFileName;
+                                    $SuportiveDocuments->aproval_status=$off_level;
                                     $SuportiveDocuments->save();
 
                                     $uploadedFiles[] = $path;
@@ -1980,8 +1995,10 @@ class PlanAccomplishmentController extends Controller
         )
         ->where('planning_year_id','=', $planning_year->id ?? NULL)
         //-> where('reporting_periods.slug',"=", 1)
+        ->whereNotNull('accom_value')
        ->groupBy('kpi_id')
        ->paginate(2);
+       //dump($planAccomplishments);
          if( $is_admin){
              $imagen_off = Office::find(1); //immaginery office of which contain all office kpi plan
             $off_level = 1;

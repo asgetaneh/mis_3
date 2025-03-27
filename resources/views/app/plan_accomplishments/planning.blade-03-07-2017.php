@@ -17,8 +17,6 @@
             margin-bottom: 0 !important;
         }
     </style>
-        <script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-
 @endsection
 
 @section('content')
@@ -44,7 +42,6 @@
                                                 {{ optional($goal->goalTranslations[0])->name ?? '-' }}
                                             </a>
                                             {{-- </td> --}}
-
 
                                         </tr>
                                     @empty
@@ -89,7 +86,6 @@
                                     array_push($objectiveList, $objective->id);
                                 @endphp
                                 {{-- @dd($objective->objectiveTranslations) --}}
-
 
                                 {{-- @forelse($objective as $kpi) --}}
                                 {{-- @dd($kpi->objective->objectiveTranslations) --}}
@@ -136,10 +132,7 @@
                     <div class="card-body">
                         {{-- <button class="btn" onclick="expandAll()"><h5><i class="fas fa-plus"></i> Expand All</h5></button> --}}
                         <div class="tab-content" id="custom-tabs-four-tabContent">
-                            <div>
-                                <input type="checkbox" id="selectAll" class="form-check-input">
-                                <label for="selectAll">Select All d</label>
-                            </div>
+
                             @forelse($objectives as $objective)
                                 {{-- @dd($objective) --}}
                                 {{-- @forelse($objective as $kpi) --}}
@@ -155,8 +148,8 @@
                                             @endphp
                                 @endif
 
-                                <form action="{{ route('plan.save') }}" method="POST"
-                                    onsubmit="return validateForm()" enctype="multipart/form-data" class="needs-validation collapse show" id="formSection">
+                                <form action="{{ route('plan.save') }}" method="POST" onsubmit="return validateForm()"
+                                    enctype="multipart/form-data" class="needs-validation collapse show" id="formSection">
                                     @csrf
 
                                     {{-- @if ($objective) --}}
@@ -166,95 +159,12 @@
                                             $user_offices,
                                         );
                                     @endphp
+                                    <div>
+                                        <!-- Select All Checkbox -->
+                                        <input type="checkbox" id="selectAll" class="form-check-input">
+                                        <label for="selectAll">Select All</label>
+                                    </div>
                                     @forelse($KeyPeformanceIndicators as $kpi)
-                                    <script>
-                                        document.addEventListener("DOMContentLoaded", function () {
-                           const selectAllCheckbox = document.getElementById("selectAll");
-                           // Function to toggle inputs for a specific KPI
-                           function toggleInputs(kpiId, isEnabled) {
-                               console.log(`Toggling KPI ${kpiId} to ${isEnabled ? "enabled" : "disabled"}`); // Debugging
-
-                               document.querySelectorAll(`.kpi-input[data-kpi='${kpiId}']`).forEach(input => {
-                                   input.disabled = !isEnabled;
-
-                                   // Remove "required" when disabled & reset validation
-                                   if (!isEnabled) {
-                                       input.removeAttribute("required");
-                                       input.setCustomValidity("");
-                                       input.classList.remove("is-invalid", "is-valid");
-                                   } else {
-                                       input.setAttribute("required", "required");
-                                   }
-
-                                   // Handle Summernote fields
-                                   if (input.classList.contains("summernote")) {
-                                       const summernoteDiv = $(input).next(".note-editor"); // Get Summernote editor
-                                       if (!isEnabled) {
-                                           $(input).summernote("disable");
-                                           summernoteDiv.addClass("disabled"); // Grey out Summernote
-                                           input.removeAttribute("required"); // Remove required
-                                           input.setCustomValidity(""); // Fix browser validation
-                                       } else {
-                                           $(input).summernote("enable");
-                                           summernoteDiv.removeClass("disabled");
-                                           input.setAttribute("required", "required");
-                                       }
-                                   }
-                               });
-                           }
-
-                           // Select All functionality
-                           if (selectAllCheckbox) {
-                               selectAllCheckbox.addEventListener("change", function () {
-                                   const isChecked = this.checked;
-
-                                   document.querySelectorAll(".toggle-inputKPI").forEach(checkbox => {
-                                       checkbox.checked = isChecked;
-                                       //console.log(`Select All checkbox changed to ${isChecked}`); // Debugging
-                                       toggleInputs(checkbox.dataset.kpi, isChecked);
-                                   });
-                               });
-                           } else {
-                               console.error("Select All checkbox not found!"); // Debugging
-                           }
-
-                           // Individual KPI toggle
-                           document.querySelectorAll(".toggle-inputKPI").forEach(checkbox => {
-                               checkbox.addEventListener("change", function () {
-                                   toggleInputs(checkbox.dataset.kpi, this.checked);
-                               });
-                           });
-
-                           // Form validation: Ignore disabled fields
-                           document.querySelectorAll("form.needs-validation").forEach((form) => {
-                               form.addEventListener("submit", function (event) {
-                                   let isValid = true;
-
-                                   form.querySelectorAll("input[required]:not(:disabled), textarea[required]:not(:disabled)").forEach((element) => {
-                                       if (!element.value.trim()) {
-                                           isValid = false;
-                                           element.setCustomValidity("This field is required!");
-                                           element.classList.add("is-invalid");
-                                       } else {
-                                           element.setCustomValidity("");
-                                           element.classList.remove("is-invalid");
-                                           element.classList.add("is-valid");
-                                       }
-                                   });
-
-                                   if (!isValid) {
-                                       event.preventDefault();
-                                       event.stopPropagation();
-                                       alert("Please fill out all required fields.");
-                                   }
-
-                                   form.classList.add("was-validated");
-                               });
-                           });
-                       });
-
-
-                                       </script>
                                         @php
                                             array_push($kpiList, $kpi->id);
                                         @endphp
@@ -265,8 +175,9 @@
                                             <div class="card-header bg-light">
                                                 <h3 class="card-title">KPI:
                                                     {{ $kpi->KeyPeformanceIndicatorTs[0]->name }}
-                                                     @if ($kpi ->measurement)
-                                                       <b> {{"( in "}}{{$kpi ->measurement['slug'] }} {{")" }}</b>
+                                                    @if ($kpi->measurement)
+                                                        <b> {{ '( in ' }}{{ $kpi->measurement['slug'] }}
+                                                            {{ ')' }}</b>
                                                     @endif
                                                     @php
                                                         $kpi_id = $kpi->id;
@@ -274,7 +185,6 @@
                                                     @endphp
                                                     <b>({{ $kpi->behavior->behaviorTranslations[0]->name }})</b>
                                                     (Reporting:{{ $kpi->reportingPeriodType->reportingPeriodTypeTs[0]->name }})
-
                                                     {{--  <strong  > ({{ $period->reportingPeriodTs[0]->name }})</strong> --}}
                                                     {{--
                                                           getReportingPeriod($kpi->reportingPeriodType->id,$date) --}}
@@ -305,14 +215,8 @@
                                                         @if (!$kpi->kpiChildOnes->isEmpty())
                                                             @if (!$kpi->kpiChildTwos->isEmpty())
                                                                 @if (!$kpi->kpiChildThrees->isEmpty())
-
-
                                                                     <tr>
-                                                                        <th rowspan="2" colspan="2">
-                                                                            <!-- Individual KPI Toggle Checkbox -->
-                                                                            <input type="checkbox" class="toggle-inputKPI" data-kpi="{{ $kpi->id }}" checked>
-                                                                            <label>Leave KPI</label>
-                                                                        </th>
+                                                                        <th rowspan="2" colspan="2">#</th>
                                                                         <th colspan="{{ $kpi->kpiChildThrees->count() }}">
                                                                             Baseline
                                                                         </th>
@@ -341,7 +245,6 @@
                                                                         @empty
                                                                         @endforelse
                                                                     </tr>
-
 
                                                                     @foreach ($kpi->kpiChildOnes as $one)
                                                                         <tr>
@@ -392,31 +295,30 @@
                                                                                                 @if ($off_level === $baseline->plan_status)
                                                                                                     @php $disabled ="disabled"; @endphp
                                                                                                 @endif
-                                                                                            @elseif  ($off_level != $baseline->plan_status)
+                                                                                                @elseif
+                                                                                                ($off_level != $baseline->plan_status)
                                                                                                 @php $disabled ="disabled"; @endphp
                                                                                             @endif
                                                                                             <td>
                                                                                                 <!-- <input type="hidden"
-                                                                                            name="type{{ $kpi->id }}"
-                                                                                            value="yes"> -->
+                                                                                                name="type{{ $kpi->id }}"
+                                                                                                value="yes"> -->
                                                                                                 <input
                                                                                                     name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
                                                                                                     value="{{ $baseline->baseline }}"
-                                                                                                     class="form-control kpi-input"
+                                                                                                    class="form-control"
                                                                                                     type="number" required
-                                                                                                    data-kpi="{{ $kpi->id }}"
                                                                                                     {{ $disabled }}>
-
 
                                                                                             </td>
                                                                                         @else
                                                                                             <td>
                                                                                                 <input
                                                                                                     name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
-                                                                                                     class="form-control kpi-input"
-                                                                                                    type="number" required
-                                                                                                    data-kpi="{{ $kpi->id }}" >
-                                                                                             </td>
+                                                                                                    class="form-control"
+                                                                                                    type="number" required>
+
+                                                                                            </td>
                                                                                         @endif
                                                                                     @endif
                                                                                 @endforeach
@@ -447,7 +349,8 @@
                                                                                                 @if ($off_level === $plan->plan_status)
                                                                                                     @php $disabled ="disabled"; @endphp
                                                                                                 @endif
-                                                                                                @elseif   ($off_level != $plan->plan_status)
+                                                                                                @elseif
+                                                                                                ($off_level != $plan->plan_status)
                                                                                                 @php $disabled ="disabled"; @endphp
                                                                                             @endif
                                                                                             <td>
@@ -457,11 +360,9 @@
                                                                                                 <input
                                                                                                     name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
                                                                                                     value="{{ $plan->plan_value }}"
-                                                                                                     class="form-control kpi-input {{ $inputname }}"
+                                                                                                    class="form-control {{ $inputname }}"
                                                                                                     type="number" required
-                                                                                                    data-kpi="{{ $kpi->id }}"
-                                                                                                     {{ $disabled }}>
-
+                                                                                                    {{ $disabled }}>
 
                                                                                             </td>
                                                                                         @else
@@ -472,10 +373,11 @@
                                                                                                 <input id="selectProducts"
                                                                                                     name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}-{{ $kpiThree->id }}"
                                                                                                     @if ($period->slug == 1) id = "yearly"
-                                                                                                    @else  id = "period" @endif
-                                                                                                 class="form-control kpi-input {{ $inputname }}"
-                                                                                                 type="number" required
-                                                                                                 data-kpi="{{ $kpi->id }}"
+                                                                                                @else
+                                                                                                 id = "period" @endif
+                                                                                                    class="form-control {{ $inputname }}"
+                                                                                                    type="number"
+                                                                                                    required>
 
                                                                                             </td>
                                                                                         @endif
@@ -502,11 +404,7 @@
                                                                 {{-- KPI has  child one and child two --}}
                                                             @else
                                                                 <tr>
-                                                                    <th colspan="2">
-                                                                         <!-- Individual KPI Toggle Checkbox -->
-                                                                         <input type="checkbox" class="toggle-inputKPI" data-kpi="{{ $kpi->id }}" checked>
-                                                                         <label>Leave KPI</label>
-                                                                    </th>
+                                                                    <th colspan="2">#</th>
                                                                     <th>
                                                                         Baseline
                                                                     </th>
@@ -567,15 +465,16 @@
                                                                                         @if ($off_level === $baseline->plan_status)
                                                                                             @php $disabled ="disabled"; @endphp
                                                                                         @endif
-                                                                                        @elseif ($off_level != $baseline->plan_status)
+                                                                                        @elseif
+                                                                                        ($off_level != $baseline->plan_status)
                                                                                         @php $disabled ="disabled"; @endphp
                                                                                     @endif
                                                                                     <td>
                                                                                         <!-- <input type="hidden" name="type{{ $kpi->id }}"
-                                                                                                value="yes"> -->
+                                                                                                    value="yes"> -->
                                                                                         <input
                                                                                             name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}"
-                                                                                             class="form-control kpi-input" data-kpi="{{ $kpi->id }}"
+                                                                                            class="form-control"
                                                                                             value="{{ $baseline->baseline }}"
                                                                                             type="number" required
                                                                                             {{ $disabled }}>
@@ -584,7 +483,7 @@
                                                                                     <td>
                                                                                         <input
                                                                                             name="baseline-{{ $kpi->id }}-{{ $one->id }}-{{ $two->id }}"
-                                                                                            class="form-control kpi-input" data-kpi="{{ $kpi->id }}"
+                                                                                            class="form-control"
                                                                                             type="number" required>
                                                                                     </td>
                                                                                 @endif
@@ -616,7 +515,8 @@
                                                                                         @if ($off_level === $plan12->plan_status)
                                                                                             @php $disabled ="disabled"; @endphp
                                                                                         @endif
-                                                                                        @elseif   ($off_level != $plan12->plan_status)
+                                                                                        @elseif
+                                                                                        ($off_level != $plan12->plan_status)
                                                                                         @php $disabled ="disabled"; @endphp
                                                                                     @endif
                                                                                     <td>
@@ -625,7 +525,7 @@
                                                                                             value="yes">
                                                                                         <input
                                                                                             name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}"
-                                                                                            class="form-control kpi-input" data-kpi="{{ $kpi->id }}"
+                                                                                            class="form-control"
                                                                                             value="{{ $plan12->plan_value }}"
                                                                                             type="number" required
                                                                                             {{ $disabled }}>
@@ -638,7 +538,7 @@
                                                                                         <input
                                                                                             name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}-{{ $two->id }}"
                                                                                             id="koneT{{ $one->id }}{{ $two->id }}{{ $period->slug }}"
-                                                                                            class="form-control kpi-input" data-kpi="{{ $kpi->id }}"
+                                                                                            class="form-control"
                                                                                             type="number" required>
                                                                                         <span class="text-danger"
                                                                                             id="spankOneT{{ $one->id }}{{ $period->slug }}"></span>
@@ -684,11 +584,7 @@
                                                         {{-- KPI has  child one only --}}
                                                     @else
                                                         <tr>
-                                                            <th>
-                                                                 <!-- Individual KPI Toggle Checkbox -->
-                                                                 <input type="checkbox" class="toggle-inputKPI" data-kpi="{{ $kpi->id }}" checked>
-                                                                 <label>Leave KPI</label>
-                                                            </th>
+                                                            <th>#</th>
                                                             <th>Baseline</th>
                                                             @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
                                                                 <th>
@@ -735,7 +631,7 @@
                                                                     <td>
                                                                         <input
                                                                             name="baseline-{{ $kpi->id }}-{{ $one->id }}"
-                                                                            class="form-control kpi-input" data-kpi="{{ $kpi->id }}"
+                                                                            class="form-control"
                                                                             value="{{ $baseline->baseline }}"
                                                                             type="number" required {{ $disabled }}>
                                                                     </td>
@@ -743,7 +639,7 @@
                                                                     <td>
                                                                         <input
                                                                             name="baseline-{{ $kpi->id }}-{{ $one->id }}"
-                                                                            class="form-control kpi-input" data-kpi="{{ $kpi->id }}" value=""
+                                                                            class="form-control" value=""
                                                                             type="number" required>
                                                                     </td>
                                                                 @endif
@@ -784,7 +680,7 @@
                                                                             value="yes">
                                                                         <input
                                                                             name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}";
-                                                                            class="form-control kpi-input" data-kpi="{{ $kpi->id }}"
+                                                                            class="form-control"
                                                                             value="{{ $plan1->plan_value }}"
                                                                             type="number" required {{ $disabled }}>
                                                                     </td>
@@ -796,8 +692,7 @@
                                                                         <input
                                                                             name="{{ $kpi->id }}-{{ $period->id }}-{{ $one->id }}"
                                                                             id="kone{{ $kpi->id }}{{ $one->id }}{{ $period->slug }}"
-                                                                            class="form-control kpi-input" data-kpi="{{ $kpi->id }}"
-                                                                             type="number" required>
+                                                                            class="form-control" type="number" required>
                                                                         <span class="text-danger"
                                                                             id="spankOne{{ $kpi->id }}{{ $one->id }}{{ $period->slug }}"></span>
                                                                     </td>
@@ -938,12 +833,7 @@
                         @else
                             <table class="table table-bordered">
                                 <tr>
-                                    <th>
-                                         <!-- Individual KPI Toggle Checkbox -->
-                                         <input type="checkbox" class="toggle-inputKPI" data-kpi="{{ $kpi->id }}" checked>
-                                         <label>Leave KPI </label>
-                                        Baseline
-                                    </th>
+                                    <th>Baseline</th>
                                     @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
                                         <th>
                                             {{ $period->reportingPeriodTs[0]->name }}
@@ -982,13 +872,11 @@
                                             @elseif ($off_level != $baseline->plan_status)
                                                 @php $disabled ="disabled"; @endphp
                                             @endif
-                                            <input name="baseline-{{ $kpi->id }}"
-                                            class="form-control kpi-input" data-kpi="{{ $kpi->id }}"
+                                            <input name="baseline-{{ $kpi->id }}" class="form-control"
                                                 value="{{ $baseline->baseline }}" type="number" required
                                                 {{ $disabled }}>
                                         @else
-                                            <input name="baseline-{{ $kpi->id }}"
-                                             class="form-control kpi-input" data-kpi="{{ $kpi->id }}"
+                                            <input name="baseline-{{ $kpi->id }}" class="form-control"
                                                 value="" type="number" required placeholder="Enter baseline">
                                         @endif
                                     </td>
@@ -1019,8 +907,7 @@
                                             <td>
                                                 <input type="hidden" name="type{{ $kpi->id }}" value="yes">
                                                 <input name="{{ $kpi->id }}-{{ $period->id }}"
-                                                class="form-control kpi-input" data-kpi="{{ $kpi->id }}"
-                                                 value="{{ $plan->plan_value }}"
+                                                    class="form-control" value="{{ $plan->plan_value }}"
                                                     id="{{ $kpi->id }}{{ $period->slug }}" type="number"
                                                     required {{ $disabled }}>
                                                 <span id="s{{ $kpi->id }}{{ $period->slug }}"></span>
@@ -1028,7 +915,7 @@
                                         @else
                                             <td>
                                                 <input type="hidden" name="type{{ $kpi->id }}" value="no">
-                                                <input class="form-control kpi-input" data-kpi="{{ $kpi->id }}" type="number" placeholder="Enter KPI value"
+                                                <input class="form-control" type="number" placeholder="Enter KPI value"
                                                     id="{{ $kpi->id }}{{ $period->slug }}"
                                                     name="{{ $kpi->id }}-{{ $period->id }}" required>
                                                 <span class="text-danger"
@@ -1182,23 +1069,21 @@
                                 //  $plan_docment = getSavedPlanDocument($planning_year->id ?? NULL, $kpi->id, auth()->user()->offices[0]->id);
                             @endphp
                             @if ($plan_naration)
-                                <label for="summernote"> Major Activities</label>
+                                <label for="summernote">Major Activities</label>
                                 <input type="hidden" name="type{{ $kpi->id }}" value="yes">
-                                @if ($disabled === "disabled")
+                                @if ($disabled === 'disabled')
                                     <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;"
-                                        class="form-control kpi-input summernote" placeholder="Narration here"
-                                        id="narration-field-{{ $kpi->id }}"  data-kpi="{{ $kpi->id }}" disabled> {{ $plan_naration }}</textarea>
-                                        <script>
-                                            $(document).ready(function() {
-                                                @if($disabled === "disabled")
-                                                    $('#narration-field-{{ $kpi->id }}').summernote('disable');
-                                                @endif
-                                            });
-                                        </script>
+                                        class="form-control summernote" placeholder="Narration here" id="narration-field-{{ $kpi->id }}" disabled> {{ $plan_naration }}</textarea>
+                                    <script>
+                                        $(document).ready(function() {
+                                            @if ($disabled === 'disabled')
+                                                $('#narration-field-{{ $kpi->id }}').summernote('disable');
+                                            @endif
+                                        });
+                                    </script>
                                 @else
                                     <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;"
-                                        class="form-control kpi-input summernote" placeholder="Narration here"
-                                        id="narration-field-{{ $kpi->id }}"  data-kpi="{{ $kpi->id }}">{{ $plan_naration }}</textarea>
+                                        class="form-control summernote" placeholder="Narration here" id="narration-field-{{ $kpi->id }}">{{ $plan_naration }}</textarea>
                                 @endif
                                 <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please
                                     fill Major Activities field!</p>
@@ -1206,14 +1091,14 @@
                                 <label for="summernote">Major Activities</label>
                                 <input type="hidden" name="type{{ $kpi->id }}" value="no">
                                 <textarea name="dx-{{ $kpi->id }}-{{ $period->id }}" style="height: 100px;"
-                                    class="form-control kpi-input summernote" placeholder="Narration here" id="narration-field-{{ $kpi->id }}" data-kpi="{{ $kpi->id }}" {{ $disabled }}></textarea>
+                                    class="form-control summernote" placeholder="Narration here" id="narration-field-{{ $kpi->id }}"
+                                    {{ $disabled }}></textarea>
                                 <p class="narration-field-{{ $kpi->id }} text-danger" style="display: none;">Please
                                     fill Major Activities field!</p>
                             @endif
 
                         </div>
                     </div>
-
 
                 @empty
                     <h4>No KPI registered for this Goal and Objective!</h4>
@@ -1225,8 +1110,6 @@
             @empty
                 {{-- <p>ugyftrdy</p> --}}
                 @endforelse
-
-
 
             </div>
         </div>
@@ -1274,6 +1157,7 @@
         <!-- /.modal-dialog -->
     </div>
 
+    <script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script> --}}
     {{-- <script src="{{ asset('assets/plugins/summernote/summernote-bs4.min.js') }}"></script> --}}
     <script type="text/javascript">
@@ -1287,34 +1171,31 @@
 
     <script>
         function validateForm() {
+            // $('.tab-pane.active #planning-form').on('submit', function(e) {
+
             let kpiList = {{ json_encode($kpiList) }};
+            // console.log(kpiList.length);
 
             for (let i = 0; i < kpiList.length; i++) {
-                // Hide the error message initially
                 $(`.tab-pane.active .narration-field-${kpiList[i]}`).css("display", "none");
-
-                // Selector for the Summernote field
                 let summernoteSelector = `.tab-pane.active #narration-field-${kpiList[i]}`;
 
-                // Check if the field exists and is not disabled
-                if ($(summernoteSelector).length > 0 && !$(summernoteSelector).prop('disabled')) {
-                    // Check if the Summernote field is empty
-                    if ($(summernoteSelector).summernote('isEmpty')) {
-                        // Focus on the empty field
-                        $(summernoteSelector).focus();
-                        $(summernoteSelector).summernote('focus');
 
-                        // Show the error message
-                        $(`.tab-pane.active .narration-field-${kpiList[i]}`).css("display", "block");
+                if ($(summernoteSelector).length > 0 && $(summernoteSelector).summernote('isEmpty')) {
 
-                        // Cancel form submission
-                        return false;
-                    }
+                    // focus on the empty field
+                    $(`.tab-pane.active #narration-field-${kpiList[i]}`).focus();
+                    $(`.tab-pane.active #narration-field-${kpiList[i]}`).summernote('focus');
+
+                    $(`.tab-pane.active .narration-field-${kpiList[i]}`).css("display", "block");
+
+                    // cancel submit
+                    return false;
+                    preventDefault();
                 }
-            }
 
-            // If all fields are valid, allow form submission
-            return true;
+            }
+            // })
         }
     </script>
 
@@ -1388,6 +1269,51 @@
         });
     </script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const selectAllCheckbox = document.getElementById("selectAll");
 
+            // Toggle enabling/disabling inputs and textareas based on the "select all" checkbox
+            selectAllCheckbox.addEventListener("change", function() {
+                const allInputsAndTextareas = document.querySelectorAll(
+                    "form.needs-validation .form-control, form.needs-validation textarea");
+                const isChecked = selectAllCheckbox.checked;
+
+                allInputsAndTextareas.forEach(element => {
+                    element.disabled = isChecked; // Disable all inputs and textareas if checked
+                    if (!isChecked) {
+                        element.classList.remove("is-invalid",
+                        "is-valid"); // Reset validation feedback
+                    }
+                });
+            });
+
+            // Form validation logic (this works for uncollapsed, enabled inputs/textarea only)
+            document.querySelectorAll("form.needs-validation").forEach((form) => {
+                form.addEventListener("submit", function(event) {
+                    let isValid = true; // Assume form is valid initially
+
+                    form.querySelectorAll("input[required], select[required], textarea[required]")
+                        .forEach((element) => {
+                            if (!element.disabled && !element.value.trim()) {
+                                isValid = false;
+                                element.classList.add("is-invalid"); // Bootstrap styling
+                            } else {
+                                element.classList.remove("is-invalid");
+                                element.classList.add("is-valid");
+                            }
+                        });
+
+                    if (!isValid) {
+                        event.preventDefault(); // Stop form submission if validation fails
+                        event.stopPropagation();
+                        alert("Please fill out all required fields.");
+                    }
+
+                    form.classList.add("was-validated"); // Apply Bootstrap validation styling
+                });
+            });
+        });
+    </script>
 
 @endsection

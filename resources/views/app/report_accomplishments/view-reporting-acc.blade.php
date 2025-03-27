@@ -217,7 +217,7 @@
                                                                             $report_avarage = $planOfOfficePlan[1];
                                                                             $denominator = 1;
                                                                         }//dump($planOfOfficePlan[2]);
-                                                                        if(auth()->user()->offices[0]->level == $planOfOfficePlan[2]){
+                                                                        if(auth()->user()->offices[0]->level > $planOfOfficePlan[2]){
                                                                             $report_avarage_total = $report_avarage / $denominator;
                                                                             $display = $report_avarage_total.'%';
                                                                         }
@@ -238,6 +238,7 @@
                                                                     }
                                                                     $narration = $planAcc->getReportNarration($planAccKpi->id, $planning_year->id ?? NULL, $imagen_off, $period->id);
                                                                     $activeQuarter = getReportingQuarter($planAccKpiReportingPeriodType->id);
+                                                                    $upload_documents = getUploadDocumentsForAllSubOffice($planAccKpi->id,  $period->id, auth()->user()->offices[0]->id, $planning_year->id);
                                                                     //dump($planAccKpi->id);
                                                                 @endphp
                                                                 @forelse($activeQuarter as $aQ)
@@ -263,17 +264,38 @@
                                                             </th>
                                                         </tr>
                                                         <tr>
-                                                            <th></th>
+                                                            <th rowspan="2"></th>
 
                                                             <td colspan="7">
                                                             <h6>
-                                                                Major Activities
+                                                               <b> Major Activities</b>
                                                             </h6>
                                                                 @foreach ($narration as $key => $plannaration)
                                                                     <p>
                                                                         {!! html_entity_decode($plannaration->report_naration) !!}
                                                                     </p>
                                                                 @endforeach
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <h6><b> Supporting Documents</b></h6>
+                                                            </td>
+                                                            <td colspan="7">
+                                                                @if (count($upload_documents)> 0)
+                                                                <!-- Display Uploaded Files -->
+                                                                    <ul class="list-group mb-4">
+                                                                        @foreach ($upload_documents as $filee)
+                                                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                                                <a href="{{ asset('storage/uploads/' . basename($filee->name)) }}" target="_blank">
+                                                                                    {{ basename($filee->name) }}
+                                                                                </a>
+                                                                             </li>
+                                                                            @endforeach
+                                                                    </ul>
+                                                                    @else
+                                                                    <p>No supporting documents</p>
+                                                                     @endif
                                                             </td>
                                                         </tr>
                                                     </table>

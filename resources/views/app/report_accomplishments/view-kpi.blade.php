@@ -1,14 +1,21 @@
 <table class="table table-bordered" style ="background:#F0F8FF">
     @if ($first == '1')
         <tr>
-            <th style="width:30%">
+            <th style="width:25%">
                 Offices
             </th>
+            @php
+                // Get the total count of reportingPeriodTs across all periods
+                $totalPeriods = collect($getQuarter)->sum(fn($p) => count($p->reportingPeriodTs));
+            @endphp
             @forelse($getQuarter as $period)
-            <th>
-             {{ $period->reportingPeriodTs[0]->name }}
-            </th>
+                @foreach($period->reportingPeriodTs as $report)
+                    <th style="width: {{ 60 / max(1, $totalPeriods) }}%;">
+                        {{ $report->name }}
+                    </th>
+                @endforeach
             @empty
+                <th>No data available</th>
             @endforelse
             <td rowspan="2"style="padding:10px">
             @if(!$officeOffices->isEmpty())
@@ -30,18 +37,23 @@
         @forelse($getQuarter as $period)
             @php
                 //$planOfOfficePlan = $planAcc->planSum($planAccKpi->id, $office, $period->id,true,$planning_year);
+                $display = 0;
                 $activeQuarter = $getReportingQuarter;
                  $planOfOfficePlan =$planAcc->KpiOTT($planAccKpi->id, $office, $period->id,true,$planning_year->id ?? NULL ,null,null,null);
                 $narration = $planAcc->getReportNarration($planAccKpi->id, $planning_year->id ?? NULL, $office, $period->id);
+               //dump($planOfOfficePlan[2]->accom_status);
+                if(auth()->user()->offices[0]->level == $planOfOfficePlan[2]->accom_status){
+                    $display = $planOfOfficePlan[1];
+                }
             @endphp
             @if($activeQuarter)
                 @if($period->id!= $activeQuarter[0]?->id)
                 <td>
-                    {{ $planOfOfficePlan[1] }}
+                    {{ $display }}
                 </td>
                 @else
                 <td style="background-color:#99cd99;">
-                  <span >  {{ $planOfOfficePlan[1] }}</span>
+                  <span >  {{ $display }}</span>
                 </td>
                 @endif
             @else
@@ -56,7 +68,7 @@
         <td>
             Major Activities
         </td>
-        <td colspan="7">
+        <td colspan="{{ $getQuarter->count() }}">
              @foreach ($narration as $key => $plannaration)
                 <p>
                     {!! html_entity_decode($plannaration->report_naration) !!}
