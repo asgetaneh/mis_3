@@ -751,7 +751,7 @@
                                     @endif
                                 </ul>
                             </li>
-                            @if($user->hasPermission('create task'))
+                            {{-- @if($user->hasPermission('create task'))
                               <li class="nav-item {{ Request::is('smis/performer/*') ? 'menu-open' : '' }}">
                                     <a href="#" class="nav-link">
                                         <i class="nav-icon icon fas fa fa-users"></i>
@@ -791,31 +791,31 @@
                                                     <p>Performer</p>
                                                 </a>
                                             </li> --}}
-                                        {{-- @endcan --}}
+                                        {{-- @endcan --}
                                     </ul>
                                      <ul class="nav nav-treeview">
-                                        {{-- @can('view-any', App\Models\User::class) --}}
+                                        {{-- @can('view-any', App\Models\User::class) --}
                                             <li class="nav-item">
                                                 <a href="{{ route('performer.create') }}" class="nav-link">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Performer task list</p>
                                                 </a>
                                             </li>
-                                        {{-- @endcan --}}
+                                        {{-- @endcan --}
                                     </ul>
                                      <ul class="nav nav-treeview">
-                                        {{-- @can('view-any', App\Models\User::class) --}}
+                                        {{-- @can('view-any', App\Models\User::class) --}
                                             <li class="nav-item">
                                                 <a href="{{ route('taskassign.index') }}" class="nav-link">
                                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
                                                     <p>Performer report</p>
                                                 </a>
                                             </li>
-                                        {{-- @endcan --}}
+                                        {{-- @endcan --}
                                     </ul>
 
                                 </li>
-                                @endif
+                                @endif --}}
 
 
                         </ul>
