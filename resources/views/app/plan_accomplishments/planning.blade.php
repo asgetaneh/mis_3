@@ -76,6 +76,7 @@
             $appended = false;
             $kpiList = [];
             $objectiveList = [];
+            $disabled = 'enable';
         @endphp
 
         <div class="col-md-10">
@@ -138,7 +139,7 @@
                         <div class="tab-content" id="custom-tabs-four-tabContent">
                             <div>
                                 <input type="checkbox" id="selectAll" class="form-check-input">
-                                <label for="selectAll">Select All d</label>
+                                <label for="selectAll">Enable or Disable All</label>
                             </div>
                             @forelse($objectives as $objective)
                                 {{-- @dd($objective) --}}
@@ -311,7 +312,7 @@
                                                                         <th rowspan="2" colspan="2">
                                                                             <!-- Individual KPI Toggle Checkbox -->
                                                                             <input type="checkbox" class="toggle-inputKPI" data-kpi="{{ $kpi->id }}" checked>
-                                                                            <label>Leave KPI</label>
+                                                                            <label>Enable or Disable for KPI</label>
                                                                         </th>
                                                                         <th colspan="{{ $kpi->kpiChildThrees->count() }}">
                                                                             Baseline
@@ -505,7 +506,7 @@
                                                                     <th colspan="2">
                                                                          <!-- Individual KPI Toggle Checkbox -->
                                                                          <input type="checkbox" class="toggle-inputKPI" data-kpi="{{ $kpi->id }}" checked>
-                                                                         <label>Leave KPI</label>
+                                                                         <label>Enable or Disable for KPI</label>
                                                                     </th>
                                                                     <th>
                                                                         Baseline
@@ -687,7 +688,7 @@
                                                             <th>
                                                                  <!-- Individual KPI Toggle Checkbox -->
                                                                  <input type="checkbox" class="toggle-inputKPI" data-kpi="{{ $kpi->id }}" checked>
-                                                                 <label>Leave KPI</label>
+                                                                 <label>Enable or Disable for KPI</label>
                                                             </th>
                                                             <th>Baseline</th>
                                                             @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
@@ -941,7 +942,7 @@
                                     <th>
                                          <!-- Individual KPI Toggle Checkbox -->
                                          <input type="checkbox" class="toggle-inputKPI" data-kpi="{{ $kpi->id }}" checked>
-                                         <label>Leave KPI </label>
+                                         <label>Enable or Disable for KPI </label>
                                         Baseline
                                     </th>
                                     @forelse(getQuarter($kpi->reportingPeriodType->id) as $period)
