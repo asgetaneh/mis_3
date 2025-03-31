@@ -874,7 +874,7 @@
                     @endif
                 @endif
                 @if($user->hasPermission('view task'))
-                <li class="nav-item {{ Request::is('performer/tasks/assigned') || Request::is('performer/tasks/assigned/history') ? 'menu-open' : '' }}">
+                {{-- <li class="nav-item {{ Request::is('performer/tasks/assigned') || Request::is('performer/tasks/assigned/history') ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link">
                         <i class="nav-icon icon fas fa fa-list"></i>
                         <p>
@@ -884,7 +884,7 @@
                     </a>
 
                     <ul class="nav nav-treeview">
-                        {{-- @can('view-any', App\Models\User::class) --}}
+                        {{-- @can('view-any', App\Models\User::class) --}
                             <li class="nav-item">
                                 <a href="{{ route('assigned-tasks.index') }}" class="nav-link {{ Request::is('performer/tasks/assigned') ? 'active' : '' }}">
                                     <i class="nav-icon icon fas fa fa-caret-right"></i>
@@ -897,10 +897,10 @@
                                     <p>View Tasks</p>
                                 </a>
                             </li>
-                        {{-- @endcan --}}
+                        {{-- @endcan --}
                     </ul>
 
-                </li>
+                </li> --}}
                 @endif
             @endauth
 
